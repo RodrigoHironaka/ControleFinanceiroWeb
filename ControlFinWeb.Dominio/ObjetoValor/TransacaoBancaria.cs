@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CFP.Dominio.ObjetoValor
+namespace ControlFinWeb.Dominio.ObjetoValor
 {
     public enum TransacaoBancaria
     {

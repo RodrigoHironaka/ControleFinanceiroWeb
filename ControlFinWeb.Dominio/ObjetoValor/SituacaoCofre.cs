@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Dominio.ObejtoValor
+namespace ControlFinWeb.Dominio.ObjetoValor
 {
-    public enum SituacaoCofre
+    public enum SituacaoBanco
     {
         RecebimentoCaixa,
         RetiradoCaixa,

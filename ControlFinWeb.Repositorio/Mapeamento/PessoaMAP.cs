@@ -1,17 +1,10 @@
-﻿using CFP.Dominio.ObjetoValor;
-using Dominio.Dominio;
-using Dominio.ObejtoValor;
-using Dominio.ObjetoValor;
+﻿using ControlFinWeb.Dominio.Entidades;
+using ControlFinWeb.Dominio.ObjetoValor;
 using NHibernate.Mapping.ByCode;
 using NHibernate.Mapping.ByCode.Conformist;
 using NHibernate.Type;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Repositorio.Mapeamentos
+namespace ControlFinWeb.Repositorio.Mapeamentos
 {
     public class PessoaMAP : ClassMapping<Pessoa>
     {
@@ -26,27 +19,19 @@ namespace Repositorio.Mapeamentos
             Property(x => x.Nome, m => m.Length(70));
             Property(x => x.DataGeracao);
             Property(x => x.DataAlteracao);
-            Property(x => x.ValorTotalBruto, m =>
-            {
-                m.Precision(10);
-                m.Scale(2);
-            });
-            Property(x => x.ValorTotalLiquido, m =>
-            {
-                m.Precision(10);
-                m.Scale(2);
-            });
+            Property(x => x.ValorTotalBruto);
+            Property(x => x.ValorTotalLiquido);
             Property(x => x.Situacao, m => m.Type<EnumType<Situacao>>());
             Property(x => x.UsarRendaParaCalculos, m => m.Type<EnumType<SimNao>>());
             ManyToOne(x => x.UsuarioCriacao, m => m.Column("UsuarioCriacao"));
             ManyToOne(x => x.UsuarioAlteracao, m => m.Column("UsuarioAlteracao"));
 
-            Bag(x => x.PessoaTipoRendas, m =>
+            Bag(x => x.PessoaRendas, m =>
             {
                 m.Cascade(Cascade.All);
                 m.Key(k => k.Column("Pessoa"));
                 m.Inverse(true);
-            }, map => map.OneToMany(a => a.Class(typeof(PessoaTipoRendas))));
+            }, map => map.OneToMany(a => a.Class(typeof(PessoaRendas))));
         }
     }
 }

@@ -1,17 +1,10 @@
-﻿using CFP.Dominio.Dominio;
-using Dominio.Dominio;
-using Dominio.ObejtoValor;
-using Dominio.ObjetoValor;
+﻿using ControlFinWeb.Dominio.Entidades;
+using ControlFinWeb.Dominio.ObjetoValor;
 using NHibernate.Mapping.ByCode;
 using NHibernate.Mapping.ByCode.Conformist;
 using NHibernate.Type;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Repositorio.Mapeamentos
+namespace ControlFinWeb.Repositorio.Mapeamentos
 {
     public class ContaMAP : ClassMapping<Conta>
     {
@@ -46,21 +39,21 @@ namespace Repositorio.Mapeamentos
             ManyToOne(x => x.FaturaCartaoCredito, m => m.Column("FaturaCartaoCredito"));
             ManyToOne(x => x.UsuarioCriacao, m => m.Column("UsuarioCriacao"));
             ManyToOne(x => x.UsuarioAlteracao, m => m.Column("UsuarioAlteracao"));
-            ManyToOne(x => x.SubGrupoGasto, m => m.Column("SubGrupoGasto"));
+            ManyToOne(x => x.SubGasto, m => m.Column("SubGasto"));
 
-            Bag(x => x.ContaPagamentos, m =>
+            Bag(x => x.Parcelas, m =>
             {
                 m.Cascade(Cascade.All);
                 m.Key(k => k.Column("Conta"));
                 m.Inverse(true);
-            }, map => map.OneToMany(a => a.Class(typeof(ContaPagamento))));
+            }, map => map.OneToMany(a => a.Class(typeof(Parcela))));
 
-            Bag(x => x.ContaArquivos, m =>
+            Bag(x => x.Arquivos, m =>
             {
                 m.Cascade(Cascade.All);
                 m.Key(k => k.Column("Conta"));
                 m.Inverse(true);
-            }, map => map.OneToMany(a => a.Class(typeof(ContaArquivo))));
+            }, map => map.OneToMany(a => a.Class(typeof(Arquivo))));
         }
     }
 }

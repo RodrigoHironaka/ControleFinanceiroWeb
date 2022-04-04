@@ -1,13 +1,8 @@
-﻿using CFP.Dominio.Dominio;
+﻿using ControlFinWeb.Dominio.Entidades;
 using NHibernate.Mapping.ByCode;
 using NHibernate.Mapping.ByCode.Conformist;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace CFP.Repositorio.Mapeamento
+namespace ControlFinWeb.Repositorio.Mapeamentos
 {
     public class CartaoCreditoItensMAP : ClassMapping<CartaoCreditoItens>
     {
@@ -32,7 +27,7 @@ namespace CFP.Repositorio.Mapeamento
             });
 
             ManyToOne(x => x.Pessoa, m => m.Column("Pessoa"));
-            ManyToOne(x => x.SubGrupoGasto, m => m.Column("SubGrupoGasto"));
+            ManyToOne(x => x.SubGasto, m => m.Column("SubGasto"));
             ManyToOne(x => x.CartaoCredito, m => m.Column("CartaoCredito"));
             ManyToOne(x => x.UsuarioCriacao, m => m.Column("UsuarioCriacao"));
             ManyToOne(x => x.UsuarioAlteracao, m => m.Column("UsuarioAlteracao"));

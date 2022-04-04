@@ -1,16 +1,10 @@
-﻿using CFP.Dominio.Dominio;
-using Dominio.Dominio;
-using Dominio.ObejtoValor;
+﻿using ControlFinWeb.Dominio.Entidades;
+using ControlFinWeb.Dominio.ObjetoValor;
 using NHibernate.Mapping.ByCode;
 using NHibernate.Mapping.ByCode.Conformist;
 using NHibernate.Type;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Repositorio.Mapeamentos
+namespace ControlFinWeb.Repositorio.Mapeamentos
 {
     public class CaixaMAP : ClassMapping<Caixa> 
     {

@@ -1,14 +1,7 @@
-﻿using CFP.Dominio.Dominio;
-using Dominio.Dominio;
-using NHibernate.Mapping.ByCode;
+﻿using NHibernate.Mapping.ByCode;
 using NHibernate.Mapping.ByCode.Conformist;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace CFP.Repositorio.Mapeamento
+namespace ControlFinWeb.Repositorio.Mapeamentos
 {
     public class ConfiguracaoMAP : ClassMapping<Configuracao>
     {
@@ -28,7 +21,6 @@ namespace CFP.Repositorio.Mapeamento
             ManyToOne(x => x.FormaPagamentoPadraoConta, m => m.Column("FormaPagamentoPadraoConta"));
             ManyToOne(x => x.TransacaoBancariaPadrao, m => m.Column("TransacaoBancariaPadrao"));
             ManyToOne(x => x.UsuarioCriacao, m => m.Column("UsuarioCriacao"));
-            ManyToOne(x => x.GrupoGastoFaturaPadrao, m => m.Column("GrupoGastoFaturaPadrao"));
         }
     }
 }

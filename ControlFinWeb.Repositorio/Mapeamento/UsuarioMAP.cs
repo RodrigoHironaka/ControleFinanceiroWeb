@@ -1,16 +1,10 @@
-﻿using Dominio.Dominio;
-using Dominio.ObejtoValor;
-using Dominio.ObjetoValor;
+﻿using ControlFinWeb.Dominio.Entidades;
+using ControlFinWeb.Dominio.ObjetoValor;
 using NHibernate.Mapping.ByCode;
 using NHibernate.Mapping.ByCode.Conformist;
 using NHibernate.Type;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Repositorio.Mapeamentos
+namespace ControlFinWeb.Repositorio.Mapeamentos
 {
     public class UsuarioMAP : ClassMapping<Usuario>
     {
@@ -28,6 +22,7 @@ namespace Repositorio.Mapeamentos
             Property(x => x.DataGeracao);
             Property(x => x.DataAlteracao);
             Property(x => x.Senha, m => m.Length(255));
+            Property(x => x.Autorizado, m => m.Type<EnumType<SimNao>>());
             Property(x => x.TipoUsuario, m => m.Type<EnumType<TipoUsuario>>());
             Property(x => x.Situacao, m => m.Type<EnumType<Situacao>>());
         }

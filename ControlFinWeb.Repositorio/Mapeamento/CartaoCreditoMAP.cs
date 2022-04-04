@@ -1,15 +1,10 @@
-﻿using CFP.Dominio.Dominio;
-using CFP.Dominio.ObjetoValor;
+﻿using ControlFinWeb.Dominio.Entidades;
+using ControlFinWeb.Dominio.ObjetoValor;
 using NHibernate.Mapping.ByCode;
 using NHibernate.Mapping.ByCode.Conformist;
 using NHibernate.Type;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace CFP.Repositorio.Mapeamento
+namespace ControlFinWeb.Repositorio.Mapeamentos
 {
     public class CartaoCreditoMAP : ClassMapping<CartaoCredito>
     {
@@ -23,8 +18,7 @@ namespace CFP.Repositorio.Mapeamento
             Property(x => x.Nome, m => m.Length(300));
             Property(x => x.DataGeracao);
             Property(x => x.DataAlteracao);
-            Property(x => x.MesReferencia);
-            Property(x => x.AnoReferencia);
+            Property(x => x.MesAnoReferencia);
             Property(x => x.SituacaoFatura, m => m.Type<EnumType<SituacaoFatura>>());
             
             Property(x => x.ValorFatura, m =>
@@ -37,7 +31,7 @@ namespace CFP.Repositorio.Mapeamento
             ManyToOne(x => x.UsuarioCriacao, m => m.Column("UsuarioCriacao"));
             ManyToOne(x => x.UsuarioAlteracao, m => m.Column("UsuarioAlteracao"));
 
-            Bag(x => x.CartaoCreditos, m =>
+            Bag(x => x.CartoesCreditoItens, m =>
             {
                 m.Cascade(Cascade.All);
                 m.Key(k => k.Column("CartaoCredito"));

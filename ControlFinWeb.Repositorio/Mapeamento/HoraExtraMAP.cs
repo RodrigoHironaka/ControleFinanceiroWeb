@@ -1,13 +1,8 @@
-﻿using Dominio.Dominio;
+﻿using ControlFinWeb.Dominio.Entidades;
 using NHibernate.Mapping.ByCode;
 using NHibernate.Mapping.ByCode.Conformist;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Repositorio.Mapeamentos
+namespace ControlFinWeb.Repositorio.Mapeamentos
 {
     public class HoraExtraMAP : ClassMapping<HoraExtra>
     {

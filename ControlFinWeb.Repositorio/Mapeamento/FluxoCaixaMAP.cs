@@ -1,15 +1,10 @@
-﻿using CFP.Dominio.Dominio;
-using CFP.Dominio.ObjetoValor;
+﻿using ControlFinWeb.Dominio.Entidades;
+using ControlFinWeb.Dominio.ObjetoValor;
 using NHibernate.Mapping.ByCode;
 using NHibernate.Mapping.ByCode.Conformist;
 using NHibernate.Type;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace CFP.Repositorio.Mapeamento
+namespace ControlFinWeb.Repositorio.Mapeamentos
 {
     public class FluxoCaixaMAP : ClassMapping<FluxoCaixa>
     {
@@ -23,11 +18,7 @@ namespace CFP.Repositorio.Mapeamento
             Property(x => x.Nome, m => m.Length(150));
             Property(x => x.DataGeracao);
             Property(x => x.DataAlteracao);
-            Property(x => x.Valor, m =>
-            {
-                m.Precision(10);
-                m.Scale(2);
-            });
+            Property(x => x.Valor);
             Property(x => x.TipoFluxo, m => m.Type<EnumType<EntradaSaida>>());
             ManyToOne(x => x.Caixa, m => m.Column("Caixa"));
             ManyToOne(x => x.Conta, m => m.Column("Conta"));

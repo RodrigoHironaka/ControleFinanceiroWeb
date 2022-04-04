@@ -1,13 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using ControlFinWeb.Dominio.Entidades;
+using System;
 
-namespace Dominio.Interfaces
+namespace ControlFinWeb.Dominio.Interfaces
 {
     public interface IEntidade
     {
-        
+        public Int64 Id { get; set; }
+        public String Nome { get; set; }
+        public  DateTime DataGeracao { get; set; }
+        public DateTime? DataAlteracao { get; set; }
+        public Usuario UsuarioCriacao { get; set; }
+        public Usuario UsuarioAlteracao { get; set; }
     }
 }

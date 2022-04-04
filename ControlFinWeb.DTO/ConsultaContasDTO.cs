@@ -1,14 +1,11 @@
-﻿using CFP.Dominio.ObjetoValor;
-using Dominio.Dominio;
-using Dominio.ObjetoValor;
+﻿using ControlFinWeb.Dominio.Entidades;
+using ControlFinWeb.Dominio.ObjetoValor;
 using NHibernate;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace CFP.DTO.Contas
+namespace ControlFinWeb.DTO.Contas
 {
     public class ConsultaContasDTO
     {
@@ -30,21 +27,21 @@ namespace CFP.DTO.Contas
             return v.ToList();
         }
 
-        public IList<ConsultaContasDTO> ToList(System.Linq.Expressions.Expression<Func<ContaPagamento, bool>> predicado, ISession session)
+        public IList<ConsultaContasDTO> ToList(System.Linq.Expressions.Expression<Func<Parcela, bool>> predicado, ISession session)
         {
             var v = Query(predicado, session);
             return v.ToList();
         }
 
-        public ConsultaContasDTO Load(System.Linq.Expressions.Expression<Func<ContaPagamento, bool>> predicado, ISession session)
+        public ConsultaContasDTO Load(System.Linq.Expressions.Expression<Func<Parcela, bool>> predicado, ISession session)
         {
             var v = Query(predicado, session);
             return v.SingleOrDefault();
         }
 
-        private static IQueryable<ConsultaContasDTO> Query(System.Linq.Expressions.Expression<Func<ContaPagamento, bool>> predicado, ISession session)
+        private static IQueryable<ConsultaContasDTO> Query(System.Linq.Expressions.Expression<Func<Parcela, bool>> predicado, ISession session)
         {
-            var query = session.Query<ContaPagamento>();
+            var query = session.Query<Parcela>();
             if (predicado != null)
                 query = query.Where(predicado);
 
@@ -54,7 +51,7 @@ namespace CFP.DTO.Contas
                 ValorParcela = x.ValorParcela,
                 ValorReajustado = x.ValorReajustado,
                 DataVencimento = x.DataVencimento,
-                SituacaoParcelas = Enum.GetName(typeof(SituacaoParcela), x.SituacaoParcelas),
+                SituacaoParcelas = Enum.GetName(typeof(SituacaoParcela), x.SituacaoParcela),
                 TipoConta = Enum.GetName(typeof(TipoConta), x.Conta.TipoConta), 
                 CodigoConta = x.Conta.Codigo,
                 NomeConta = x.Conta.Nome,
