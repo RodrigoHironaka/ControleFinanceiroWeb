@@ -6,9 +6,11 @@ using System.Threading.Tasks;
 
 namespace ControlFinWeb.Dominio.ObjetoValor
 {
-    public enum SimNao
+    public enum PeriodoConta
     {
-        Sim,
-        Não
+        Unica,
+        Mensal,
+        Fixa
+
     }
 }

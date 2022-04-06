@@ -6,11 +6,9 @@ using System.Threading.Tasks;
 
 namespace ControlFinWeb.Dominio.ObjetoValor
 {
-    public enum TipoPeriodo
+    public enum DebitoCredito
     {
-        Unica,
-        Mensal,
-        Fixa
-
+        Débito,
+        Crédito
     }
 }

@@ -44,7 +44,7 @@ namespace App1.Repositorio.Configuracao
                         configure.AddMapping(mapping);
 
                         _sessionFactory = configure.BuildSessionFactory();
-                        //BuildSchema(configure);
+                        BuildSchema(configure);
                     }
                 }
             }

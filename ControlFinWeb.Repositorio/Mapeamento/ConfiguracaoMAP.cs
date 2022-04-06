@@ -12,15 +12,16 @@ namespace ControlFinWeb.Repositorio.Mapeamentos
             {
                 m.Generator(Generators.HighLow, g => g.Params(new { max_lo = 0 }));
             });
-
+            Property(x => x.Nome, m => m.Length(70));
             Property(x => x.CaminhoArquivos, m => m.Length(250));
             Property(x => x.CaminhoBackup, m => m.Length(250));
             Property(x => x.DiasAlertaVencimento);
             Property(x => x.DataGeracao);
             Property(x => x.DataAlteracao);
             ManyToOne(x => x.FormaPagamentoPadraoConta, m => m.Column("FormaPagamentoPadraoConta"));
-            ManyToOne(x => x.TransacaoBancariaPadrao, m => m.Column("TransacaoBancariaPadrao"));
+            ManyToOne(x => x.GastoFaturaPadrao, m => m.Column("GastoFaturaPadrao"));
             ManyToOne(x => x.UsuarioCriacao, m => m.Column("UsuarioCriacao"));
+            ManyToOne(x => x.UsuarioAlteracao, m => m.Column("UsuarioAlteracao"));
         }
     }
 }

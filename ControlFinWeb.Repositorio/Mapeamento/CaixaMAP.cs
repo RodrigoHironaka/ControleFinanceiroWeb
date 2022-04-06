@@ -16,34 +16,14 @@ namespace ControlFinWeb.Repositorio.Mapeamentos
                 m.Generator(Generators.HighLow, g => g.Params(new { max_lo = 0 }));
             });
             Property(x => x.Codigo);
-            Property(x => x.DataAbertura);
-            Property(x => x.DataFechamento);
-            Property(x => x.ValorInicial, m =>
-            {
-                m.Precision(10);
-                m.Scale(2);
-            });
-            Property(x => x.TotalEntrada, m =>
-            {
-                m.Precision(10);
-                m.Scale(2);
-            });
-            Property(x => x.TotalSaida, m =>
-            {
-                m.Precision(10);
-                m.Scale(2);
-            });
-            Property(x => x.BalancoFinal, m =>
-            {
-                m.Precision(10);
-                m.Scale(2);
-            });
+            Property(x => x.ValorInicial);
+            Property(x => x.DataGeracao);
+            Property(x => x.DataAlteracao);
             Property(x => x.Situacao, m => m.Type<EnumType<SituacaoCaixa>>());
-            ManyToOne(x => x.Pessoa, m => m.Column("Pessoa"));
-            ManyToOne(x => x.UsuarioAbertura, m => m.Column("UsuarioAbertura"));
-            ManyToOne(x => x.UsuarioFechamento, m => m.Column("UsuarioFechamento"));
+            ManyToOne(x => x.UsuarioCriacao, m => m.Column("UsuarioAbertura"));
+            ManyToOne(x => x.UsuarioAlteracao, m => m.Column("UsuarioFechamento"));
 
-            Bag(x => x.FluxoCaixas, m =>
+            Bag(x => x.FluxosCaixa, m =>
             {
                 m.Cascade(Cascade.All);
                 m.Key(k => k.Column("Caixa"));

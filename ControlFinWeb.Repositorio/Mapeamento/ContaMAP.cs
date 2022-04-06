@@ -17,7 +17,6 @@ namespace ControlFinWeb.Repositorio.Mapeamentos
             });
 
             Property(x => x.Codigo);
-            Property(x => x.QtdParcelas, m => m.Length(3));
             Property(x => x.Nome, m => m.Length(70));
             Property(x => x.Observacao, m => m.Length(400));
             Property(x => x.DataEmissao);
@@ -26,21 +25,14 @@ namespace ControlFinWeb.Repositorio.Mapeamentos
             Property(x => x.DataAlteracao);
             Property(x => x.Situacao, m => m.Type<EnumType<SituacaoConta>>());
             Property(x => x.TipoConta, m => m.Type<EnumType<TipoConta>>());
-            Property(x => x.TipoPeriodo, m => m.Type<EnumType<TipoPeriodo>>());
-
-            Property(x => x.ValorTotal, m =>
-            {
-                m.Precision(10);
-                m.Scale(2);
-            });
-         
+            Property(x => x.TipoPeriodo, m => m.Type<EnumType<PeriodoConta>>());
             ManyToOne(x => x.FormaCompra, m => m.Column("FormaCompra"));
+            ManyToOne(x => x.SubGasto, m => m.Column("SubGasto"));
             ManyToOne(x => x.Pessoa, m => m.Column("Pessoa"));
             ManyToOne(x => x.FaturaCartaoCredito, m => m.Column("FaturaCartaoCredito"));
             ManyToOne(x => x.UsuarioCriacao, m => m.Column("UsuarioCriacao"));
             ManyToOne(x => x.UsuarioAlteracao, m => m.Column("UsuarioAlteracao"));
-            ManyToOne(x => x.SubGasto, m => m.Column("SubGasto"));
-
+            
             Bag(x => x.Parcelas, m =>
             {
                 m.Cascade(Cascade.All);

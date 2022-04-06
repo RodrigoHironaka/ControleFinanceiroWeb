@@ -33,9 +33,7 @@ namespace ControlFinWeb.App.Controllers
                 {
                     Id = formaPagamento.Id,
                     Nome = formaPagamento.Nome,
-                    PossuiFaturaMensal = formaPagamento.PossuiFaturaMensal,
                     DebitoAutomatico = formaPagamento.DebitoAutomatico,
-                    DiaVencimento = formaPagamento.DiaVencimento
                 };
             }
 
@@ -52,9 +50,7 @@ namespace ControlFinWeb.App.Controllers
                     formaPagamento = Repositorio.ObterPorId(formaPagamentoVM.Id);
 
                 formaPagamento.Nome = formaPagamentoVM.Nome;
-                formaPagamento.PossuiFaturaMensal = formaPagamentoVM.PossuiFaturaMensal;
                 formaPagamento.DebitoAutomatico = formaPagamentoVM.DebitoAutomatico;
-                formaPagamento.DiaVencimento = formaPagamentoVM.DiaVencimento;
 
                 if (formaPagamentoVM.Id == 0)
                     Repositorio.Salvar(formaPagamento);

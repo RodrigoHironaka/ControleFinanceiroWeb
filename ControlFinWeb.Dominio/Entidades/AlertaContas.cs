@@ -12,12 +12,12 @@ namespace ControlFinWeb.Dominio.Entidades
 
         public TipoAlertaContas TipoAlertaContas { get; set; }
         public String Mensagem { get; set; }
-        public Parcela ContaPagamento { get; set; }
+        public Parcela Parcela { get; set; }
         public String DescricaoCompleta
         {
             get
             {
-                return String.Format("{0}-{1}- Parcela {2}", ContaPagamento.Conta.Codigo, ContaPagamento.Conta.Nome, ContaPagamento.Numero);
+                return String.Format("{0}-{1}- Parcela {2}", Parcela.Conta.Codigo, Parcela.Conta.Nome, Parcela.NumeroParcela);
             }
         }
     }

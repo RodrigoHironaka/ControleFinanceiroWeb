@@ -14,13 +14,7 @@ namespace ControlFinWeb.App.ViewModels
         [Required(ErrorMessage = "Campo Obrigatório")]
         public String Nome { get; set; }
 
-        [DisplayName("Possui Fatura Mensal?")]
-        public SimNao PossuiFaturaMensal { get; set; }
-
         [DisplayName("Possui função débito automático?")]
         public SimNao DebitoAutomatico { get; set; }
-
-        [DisplayName("Dia do vencimento")]
-        public Int32 DiaVencimento { get; set; }
     }
 }

@@ -3,30 +3,34 @@ using ControlFinWeb.Dominio.ObjetoValor;
 using NHibernate.Mapping.ByCode;
 using NHibernate.Mapping.ByCode.Conformist;
 using NHibernate.Type;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace ControlFinWeb.Repositorio.Mapeamentos
+namespace ControlFinWeb.Repositorio.Mapeamento
 {
-    public class BancoFinanceiroMAP : ClassMapping<BancoFinanceiro>
+    public class CartaoMAP : ClassMapping<Cartao>
     {
-        public BancoFinanceiroMAP()
+        public CartaoMAP()
         {
-            Table("BancosFinanceiro");
+            Table("Cartoes");
             Id(x => x.Id, m =>
             {
                 m.Generator(Generators.HighLow, g => g.Params(new { max_lo = 0 }));
             });
-            Property(x => x.Codigo);
-            Property(x => x.Nome, m => m.Length(200));
-            Property(x => x.Valor);
-            Property(x => x.Situacao, m => m.Type<EnumType<EntradaSaida>>());
-            Property(x => x.TransacaoBancaria, m => m.Type<EnumType<TransacaoBancaria>>());
+
+            Property(x => x.Nome, m => m.Length(70));
+            Property(x => x.LimiteFatura);
+            Property(x => x.DiaVencimento);
+            Property(x => x.VencimentoCartao);
             Property(x => x.DataGeracao);
             Property(x => x.DataAlteracao);
-            ManyToOne(x => x.Caixa, m => m.Column("Caixa"));
-            ManyToOne(x => x.Banco, m => m.Column("Banco"));
+            Property(x => x.TipoCartao, m => m.Type<EnumType<TipoCartao>>());
+            Property(x => x.Situacao, m => m.Type<EnumType<Situacao>>());
             ManyToOne(x => x.UsuarioCriacao, m => m.Column("UsuarioCriacao"));
             ManyToOne(x => x.UsuarioAlteracao, m => m.Column("UsuarioAlteracao"));
-
         }
     }
 }

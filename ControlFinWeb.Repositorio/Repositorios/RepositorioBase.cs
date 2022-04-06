@@ -1,4 +1,5 @@
-﻿using LinqKit;
+﻿using ControlFinWeb.Dominio.Interfaces;
+using LinqKit;
 using NHibernate;
 using NHibernate.Criterion;
 using System;
@@ -8,7 +9,7 @@ using Expression = NHibernate.Criterion.Expression;
 
 namespace ControlFinWeb.Repositorio.Repositorios
 {
-    public class RepositorioBase<T> where T : class
+    public class RepositorioBase<T> where T : class, IEntidade
     {
         public RepositorioBase(ISession session)
         {
@@ -29,7 +30,7 @@ namespace ControlFinWeb.Repositorio.Repositorios
             {
                 try
                 {
-                    //entidade.DataGeracao = DateTime.Now;
+                    entidade.DataGeracao = DateTime.Now;
                     this.Session.Save(entidade);
                     trans.Commit();
                 }
@@ -53,7 +54,7 @@ namespace ControlFinWeb.Repositorio.Repositorios
             {
                 try
                 {
-                    //entidade.DataAlteracao = DateTime.Now;
+                    entidade.DataAlteracao = DateTime.Now;
                     this.Session.Merge<T>(entidade);
                     trans.Commit();
                 }

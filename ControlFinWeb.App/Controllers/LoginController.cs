@@ -56,6 +56,10 @@ namespace ControlFinWeb.App.Controllers
                         else
                             return RedirectToAction("Index", "Home");
                     }
+                    else
+                    {
+                        ViewData["Mensagem"] = "<div class='alert alert-danger'>Senha Inválida!</div>";
+                    }
                 }
                 else
                 {

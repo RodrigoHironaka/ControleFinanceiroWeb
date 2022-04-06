@@ -6,11 +6,13 @@ using System.Threading.Tasks;
 
 namespace ControlFinWeb.Dominio.ObjetoValor
 {
-    public enum TipoContaBanco
+    public enum TipoCartao
     {
-        ContaCorrente,
-        ContaPoupanca,
-        ContaSalario,
+        CC, //ContaCorrente
+        CP, //ContaPoupança
+        CS, //ContaSalario
+        Ticket,
+        ValeTransporte,
         Outros
     }
 }

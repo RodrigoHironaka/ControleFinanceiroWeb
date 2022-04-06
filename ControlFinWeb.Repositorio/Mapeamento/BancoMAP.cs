@@ -18,11 +18,10 @@ namespace ControlFinWeb.Repositorio.Mapeamentos
             });
 
             Property(x => x.Nome, m => m.Length(70));
+            Property(x => x.TipoContaBanco, m => m.Type<EnumType<TipoCartao>>());
+            Property(x => x.Situacao, m => m.Type<EnumType<Situacao>>());
             Property(x => x.DataGeracao);
             Property(x => x.DataAlteracao);
-            Property(x => x.TipoContaBanco, m => m.Type<EnumType<TipoContaBanco>>());
-            Property(x => x.Situacao, m => m.Type<EnumType<Situacao>>());
-
             ManyToOne(x => x.PessoaRefBanco, m => m.Column("Pessoa"));
             ManyToOne(x => x.UsuarioCriacao, m => m.Column("UsuarioCriacao"));
             ManyToOne(x => x.UsuarioAlteracao, m => m.Column("UsuarioAlteracao"));

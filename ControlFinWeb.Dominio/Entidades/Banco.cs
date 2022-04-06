@@ -10,7 +10,7 @@ namespace ControlFinWeb.Dominio.Entidades
             Situacao = Situacao.Ativo;
         }
        
-        public virtual TipoContaBanco TipoContaBanco { get; set; }
+        public virtual TipoCartao TipoContaBanco { get; set; }
         public virtual Situacao Situacao { get; set; }
         public virtual Pessoa PessoaRefBanco { get; set; }
         public override string ToString()

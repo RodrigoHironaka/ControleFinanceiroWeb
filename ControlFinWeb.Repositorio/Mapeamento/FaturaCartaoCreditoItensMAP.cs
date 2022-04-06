@@ -4,11 +4,11 @@ using NHibernate.Mapping.ByCode.Conformist;
 
 namespace ControlFinWeb.Repositorio.Mapeamentos
 {
-    public class CartaoCreditoItensMAP : ClassMapping<CartaoCreditoItens>
+    public class FaturaCartaoCreditoItensMAP : ClassMapping<FaturaCartaoCreditoItens>
     {
-        public CartaoCreditoItensMAP()
+        public FaturaCartaoCreditoItensMAP()
         {
-            Table("CartaoCreditoItens");
+            Table("FaturasCartoesCreditoItens");
             Id(x => x.Id, m =>
             {
                 m.Generator(Generators.HighLow, g => g.Params(new { max_lo = 0 }));
@@ -17,15 +17,9 @@ namespace ControlFinWeb.Repositorio.Mapeamentos
             Property(x => x.Nome, m => m.Length(100));
             Property(x => x.NumeroParcelas, m => m.Length(30));
             Property(x => x.DataCompra);
+            Property(x => x.Valor);
             Property(x => x.DataGeracao);
             Property(x => x.DataAlteracao);
-
-            Property(x => x.Valor, m =>
-            {
-                m.Precision(10);
-                m.Scale(2);
-            });
-
             ManyToOne(x => x.Pessoa, m => m.Column("Pessoa"));
             ManyToOne(x => x.SubGasto, m => m.Column("SubGasto"));
             ManyToOne(x => x.CartaoCredito, m => m.Column("CartaoCredito"));

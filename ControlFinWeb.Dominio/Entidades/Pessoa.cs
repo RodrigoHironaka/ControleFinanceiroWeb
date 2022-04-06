@@ -12,9 +12,6 @@ namespace ControlFinWeb.Dominio.Entidades
             PessoaRendas = new List<PessoaRendas>();
         }
 
-        public virtual Decimal ValorTotalBruto { get; set; }
-        public virtual Decimal ValorTotalLiquido { get; set; }
-        public virtual SimNao UsarRendaParaCalculos { get; set; }
         public virtual Situacao Situacao { get; set; }
         public virtual IList<PessoaRendas> PessoaRendas { get; set; }
 

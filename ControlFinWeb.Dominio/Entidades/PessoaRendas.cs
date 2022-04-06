@@ -1,14 +1,19 @@
-﻿using System;
+﻿using ControlFinWeb.Dominio.Interfaces;
+using System;
 
 namespace ControlFinWeb.Dominio.Entidades
 {
-    public class PessoaRendas
+    public class PessoaRendas : IEntidade
     {
-        public virtual Int64 ID { get; set; }
+        public virtual Int64 Id { get; set; }
         public virtual Decimal RendaBruta { get; set; }
         public virtual Decimal RendaLiquida { get; set; }
         public virtual Renda TipoRenda { get; set; }
         public virtual Pessoa Pessoa { get; set; }
+        public virtual DateTime DataGeracao { get; set; }
+        public virtual DateTime? DataAlteracao { get; set; }
+        public virtual Usuario UsuarioCriacao { get; set; }
+        public virtual Usuario UsuarioAlteracao { get; set; }
 
         public override string ToString()
         {

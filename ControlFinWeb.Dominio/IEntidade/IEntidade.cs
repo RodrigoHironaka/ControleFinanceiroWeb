@@ -6,7 +6,6 @@ namespace ControlFinWeb.Dominio.Interfaces
     public interface IEntidade
     {
         public Int64 Id { get; set; }
-        public String Nome { get; set; }
         public  DateTime DataGeracao { get; set; }
         public DateTime? DataAlteracao { get; set; }
         public Usuario UsuarioCriacao { get; set; }

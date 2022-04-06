@@ -5,10 +5,6 @@ namespace ControlFinWeb.Dominio.Entidades
 {
     public class Base : IEntidade
     {
-        public Base()
-        {
-
-        }
         public virtual Int64 Id { get; set; }
         public virtual String Nome { get; set; }
         public virtual DateTime DataGeracao { get; set; }
