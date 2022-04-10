@@ -45,6 +45,7 @@ namespace ControlFinWeb.Repositorio.Repositorios
         }
         public void SalvarLote(T entidade)
         {
+            entidade.DataGeracao = DateTime.Now;
             Session.Save(entidade);
         }
 
@@ -68,7 +69,8 @@ namespace ControlFinWeb.Repositorio.Repositorios
 
         public void AlterarLote(T entidade)
         {
-          Session.Merge<T>(entidade);
+            entidade.DataAlteracao = DateTime.Now;
+            Session.Merge<T>(entidade);
         }
 
         public void Excluir(T entidade)

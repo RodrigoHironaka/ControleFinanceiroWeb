@@ -47,7 +47,7 @@ namespace ControlFinWeb.DTO.Contas
 
             var consulta = from x in query select new ConsultaContasDTO
             {
-                NumeroParcela = x.Numero,
+                NumeroParcela = x.NumeroParcela,
                 ValorParcela = x.ValorParcela,
                 ValorReajustado = x.ValorReajustado,
                 DataVencimento = x.DataVencimento,

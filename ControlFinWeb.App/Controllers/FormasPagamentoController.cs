@@ -1,4 +1,6 @@
-﻿using ControlFinWeb.Dominio.Dominios;
+﻿using ControlFinWeb.App.ViewModels;
+using ControlFinWeb.Dominio.Dominios;
+using ControlFinWeb.Dominio.ObjetoValor;
 using ControlFinWeb.Repositorio.Repositorios;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -15,21 +17,20 @@ namespace ControlFinWeb.App.Controllers
         }
 
         FormaPagamento formaPagamento = new FormaPagamento();
-        ViewModels.FormaPagamentoVM formaPagamentoVM = new ViewModels.FormaPagamentoVM();
+        FormaPagamentoVM formaPagamentoVM = new FormaPagamentoVM();
 
         public IActionResult Index()
         {
-            return View(formaPagamentoVM);
-            //return View(Repositorio.ObterPorParametros(x => x.Situacao == Situacao.Ativo));
+           return View(Repositorio.ObterPorParametros(x => x.Situacao == Situacao.Ativo));
         }
 
-        public IActionResult Editar(Int64 Id = 0)
+        public JsonResult Editar(Int64 Id = 0)
         {
             if (Id > 0)
             {
                 formaPagamento = Repositorio.ObterPorId(Id);
 
-                formaPagamentoVM = new ViewModels.FormaPagamentoVM
+                formaPagamentoVM = new FormaPagamentoVM
                 {
                     Id = formaPagamento.Id,
                     Nome = formaPagamento.Nome,
@@ -37,30 +38,31 @@ namespace ControlFinWeb.App.Controllers
                 };
             }
 
-            return View(formaPagamentoVM);
+            return Json(formaPagamentoVM);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Editar(ViewModels.FormaPagamentoVM formaPagamentoVM)
+        public JsonResult Editar(FormaPagamentoVM formaPagamentoVM)
         {
             if (ModelState.IsValid)
             {
-                if (formaPagamentoVM.Id > 0)
+                if (formaPagamento.Id > 0)
                     formaPagamento = Repositorio.ObterPorId(formaPagamentoVM.Id);
 
                 formaPagamento.Nome = formaPagamentoVM.Nome;
                 formaPagamento.DebitoAutomatico = formaPagamentoVM.DebitoAutomatico;
+                formaPagamento.Situacao = formaPagamentoVM.Situacao;
 
                 if (formaPagamentoVM.Id == 0)
                     Repositorio.Salvar(formaPagamento);
                 else
                     Repositorio.Alterar(formaPagamento);
 
-                return RedirectToAction("Index");
+                return Json(formaPagamentoVM);
             }
 
-            return View(formaPagamentoVM);
+            return Json(formaPagamentoVM);
         }
     }
 }

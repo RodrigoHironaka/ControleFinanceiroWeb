@@ -1,0 +1,139 @@
+﻿@model IEnumerable<ControlFinWeb.Dominio.Dominios.FormaPagamento>
+
+@{
+    ViewData["Title"] = "Forma de Pagamento";
+}
+
+<p>
+    <a class="btn btn-dark" onclick="ExibirModalAlterar()">Novo</a>
+</p>
+<table class="table table-striped table-hover">
+    <thead>
+        <tr>
+            <th>Nome</th>
+            <th>É Débito Automático?</th>
+            <th>Situação</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Nome)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.DebitoAutomatico)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Situacao)
+                </td>
+                <td>
+                    <a class="btn btn-info modal-trigger" onclick="ExibirModalAlterar(@item.Id)">Alterar</a>
+                    <a class="btn btn-danger modal-trigger" onclick="ExibirModalExcluir(@item.Id)">Excluir</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+
+<!--Modal Excluir-->
+<div class="modal fade modal-excluir" id="modal-excluir" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Excluir</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Confirma exclusão do registro?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary btnConfirmar">Confirmar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--Modal Novo/Alterar-->
+<div class="modal fade modal-alterar" id="modal-alterar" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Editar</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form action="Editar" class="row g-3">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <div class="form-floating mb-3">
+                        <input type="text" class="form-control" id="floatingInput" placeholder="Nome">
+                        <label asp-validation-for="Nome" for="floatingInput">Nome</label>
+                        @*<label for="Nome" class="form-label">Nome</label>
+                            <input type="text" class="form-control" id="inputAddress" placeholder="Nome">*@
+                    </div>
+                    <div class="form-check col-md-6">
+                        <input class="form-check-input" type="checkbox" id="gridCheck">
+                        <label class="form-check-label" for="gridCheck">Débito Automático</label>
+                    </div>
+                    <div class="form-check col-md-6">
+                        <input class="form-check-input" type="checkbox" id="gridCheck">
+                        <label class="form-check-label" for="gridCheck">Ativo</label>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-success btnConfirmar">Salvar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts
+{
+    <script>
+        $(document).ready(function () {
+            $(".modal-excluir").modal();
+        });
+
+        function ExibirModalExcluir(id) {
+            $("#modal-excluir").modal("show");
+            $(".btnConfirmar").on("click", function () {
+                $.ajax({
+                    method: "POST",
+                    url: "/FormasPagamento/Deletar",
+                    data: { id: id },
+                    success: function () {
+                        alert("Exclusão feita com sucesso!");
+                        location.reload();
+                    }
+                });
+            })
+        }
+    </script>
+
+    <script>
+            $(document).ready(function () {
+                $(".modal-alterar").modal();
+            });
+
+            function ExibirModalAlterar(id) {
+                $("#modal-alterar").modal("show");
+                $(".btnConfirmar").on("click", function () {
+                    $.ajax({
+                        method: "POST",
+                        url: "/FormasPagamento/Editar",
+                        data: { id: id },
+                        success: function () {
+                            alert("Alteração realizada com sucesso!");
+                            location.reload();
+                        }
+                    });
+                })
+            }
+        </script>
+}
