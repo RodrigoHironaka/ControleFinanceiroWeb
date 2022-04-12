@@ -1,4 +1,5 @@
-﻿using ControlFinWeb.App.ViewModels;
+﻿using ControlFinWeb.App.Utilitarios;
+using ControlFinWeb.App.ViewModels;
 using ControlFinWeb.Dominio.Dominios;
 using ControlFinWeb.Dominio.ObjetoValor;
 using ControlFinWeb.Repositorio.Repositorios;
@@ -24,7 +25,7 @@ namespace ControlFinWeb.App.Controllers
            return View(Repositorio.ObterPorParametros(x => x.Situacao == Situacao.Ativo));
         }
 
-        public JsonResult Editar(Int64 Id = 0)
+        public IActionResult Editar(Int64 Id = 0)
         {
             if (Id > 0)
             {
@@ -38,17 +39,22 @@ namespace ControlFinWeb.App.Controllers
                 };
             }
 
-            return Json(formaPagamentoVM);
+            return View(formaPagamentoVM);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public JsonResult Editar(FormaPagamentoVM formaPagamentoVM)
+        public IActionResult Editar(FormaPagamentoVM formaPagamentoVM)
         {
             if (ModelState.IsValid)
             {
-                if (formaPagamento.Id > 0)
+                if (formaPagamentoVM.Id > 0)
+                {
                     formaPagamento = Repositorio.ObterPorId(formaPagamentoVM.Id);
+                    formaPagamento.UsuarioAlteracao = Configuracao.Usuario;
+                }
+                else
+                    formaPagamento.UsuarioCriacao = Configuracao.Usuario;
 
                 formaPagamento.Nome = formaPagamentoVM.Nome;
                 formaPagamento.DebitoAutomatico = formaPagamentoVM.DebitoAutomatico;
@@ -59,10 +65,18 @@ namespace ControlFinWeb.App.Controllers
                 else
                     Repositorio.Alterar(formaPagamento);
 
-                return Json(formaPagamentoVM);
+                return RedirectToAction("Index");
             }
 
-            return Json(formaPagamentoVM);
+            return View(formaPagamentoVM);
+        }
+
+        [HttpPost]
+        public JsonResult Deletar(int id)
+        {
+            var formaPagamento = Repositorio.ObterPorId(id);
+            Repositorio.Excluir(formaPagamento);
+            return Json(formaPagamento.Nome + "excluído com sucesso");
         }
     }
 }

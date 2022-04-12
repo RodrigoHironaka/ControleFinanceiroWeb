@@ -15,7 +15,7 @@ namespace ControlFinWeb.App.ViewModels
         public String Nome { get; set; }
 
         [DisplayName("Possui função débito automático?")]
-        public SimNao DebitoAutomatico { get; set; }
+        public bool DebitoAutomatico { get; set; }
 
         [DisplayName("Situação")]
         public Situacao Situacao { get; set; }
