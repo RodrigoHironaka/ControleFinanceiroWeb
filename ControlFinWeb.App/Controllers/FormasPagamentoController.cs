@@ -8,7 +8,6 @@ using System;
 
 namespace ControlFinWeb.App.Controllers
 {
-
     public class FormasPagamentoController : Controller
     {
         private readonly RepositorioFormaPagamento Repositorio;
