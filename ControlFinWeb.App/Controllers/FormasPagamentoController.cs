@@ -5,6 +5,7 @@ using ControlFinWeb.Dominio.ObjetoValor;
 using ControlFinWeb.Repositorio.Repositorios;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Linq;
 
 namespace ControlFinWeb.App.Controllers
 {
@@ -21,7 +22,7 @@ namespace ControlFinWeb.App.Controllers
 
         public IActionResult Index()
         {
-           return View(Repositorio.ObterPorParametros(x => x.Situacao == Situacao.Ativo));
+            return View(Repositorio.ObterTodos());
         }
 
         public IActionResult Editar(Int64 Id = 0)

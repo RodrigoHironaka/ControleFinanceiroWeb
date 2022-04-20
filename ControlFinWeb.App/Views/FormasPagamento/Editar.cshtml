@@ -2,7 +2,6 @@
 @using ControlFinWeb.Dominio.ObjetoValor;
 
 @{
-
     ViewData["Title"] = "Forma de Pagamento";
 }
 
@@ -33,12 +32,10 @@
                 </div>
                 <br/>
                 <button type="submit" class="w-100 btn btn-success btnConfirmar">Salvar</button>
-
             </form>
         </div>
     </div>
 </div>
-
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}

@@ -79,7 +79,7 @@ namespace ControlFinWeb.Repositorio.Repositorios
             {
                 try
                 {
-                    this.Session.Delete(entidade);
+                    Session.Delete(entidade);
                     trans.Commit();
                 }
                 catch (Exception ex)
