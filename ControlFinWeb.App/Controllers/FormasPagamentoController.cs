@@ -6,6 +6,7 @@ using ControlFinWeb.Dominio.ObjetoValor;
 using ControlFinWeb.Repositorio.Repositorios;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace ControlFinWeb.App.Controllers
@@ -23,7 +24,12 @@ namespace ControlFinWeb.App.Controllers
 
         public IActionResult Index()
         {
-            return View(Repositorio.ObterTodos());
+            var formasPagamentoVM = new List<FormaPagamentoVM>();
+            var formasPagamento = Repositorio.ObterTodos();
+            foreach (var forma in formasPagamento)
+                formasPagamentoVM.Add(AutoMapperConfig<FormaPagamento, FormaPagamentoVM>.Mapear(forma));
+            
+            return View(formasPagamentoVM);
         }
 
         public IActionResult Editar(Int64 Id = 0)
@@ -31,16 +37,8 @@ namespace ControlFinWeb.App.Controllers
             if (Id > 0)
             {
                 formaPagamento = Repositorio.ObterPorId(Id);
-                //formaPagamentoVM = AutoMapperConfig<FormaPagamento, FormaPagamentoVM>.Mapear(formaPagamento);
-
-                formaPagamentoVM = new FormaPagamentoVM
-                {
-                    Id = formaPagamento.Id,
-                    Nome = formaPagamento.Nome,
-                    DebitoAutomatico = formaPagamento.DebitoAutomatico,
-                };
+                formaPagamentoVM = AutoMapperConfig<FormaPagamento, FormaPagamentoVM>.Mapear(formaPagamento);
             }
-
             return View(formaPagamentoVM);
         }
 
@@ -52,24 +50,21 @@ namespace ControlFinWeb.App.Controllers
             {
                 if (formaPagamentoVM.Id > 0)
                 {
-                    formaPagamento = Repositorio.ObterPorId(formaPagamentoVM.Id);
+                    var formaPagamentoRep = Repositorio.ObterPorId(formaPagamentoVM.Id);
+                    formaPagamento = AutoMapperConfig<FormaPagamentoVM, FormaPagamento>.Mapear(formaPagamentoVM);
+                    formaPagamento.DataGeracao = formaPagamentoRep.DataGeracao;
+                    formaPagamento.UsuarioCriacao = formaPagamentoRep.UsuarioCriacao;
                     formaPagamento.UsuarioAlteracao = Configuracao.Usuario;
+                    Repositorio.Alterar(formaPagamento);
                 }
                 else
+                {
+                    formaPagamento = AutoMapperConfig<FormaPagamentoVM, FormaPagamento>.Mapear(formaPagamentoVM);
                     formaPagamento.UsuarioCriacao = Configuracao.Usuario;
-
-                formaPagamento.Nome = formaPagamentoVM.Nome;
-                formaPagamento.DebitoAutomatico = formaPagamentoVM.DebitoAutomatico;
-                formaPagamento.Situacao = formaPagamentoVM.Situacao;
-
-                if (formaPagamentoVM.Id == 0)
                     Repositorio.Salvar(formaPagamento);
-                else
-                    Repositorio.Alterar(formaPagamento);
-
+                }
                 return RedirectToAction("Index");
             }
-
             return View(formaPagamentoVM);
         }
 
