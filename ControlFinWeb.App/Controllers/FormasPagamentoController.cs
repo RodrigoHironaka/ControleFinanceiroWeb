@@ -1,4 +1,5 @@
-﻿using ControlFinWeb.App.Utilitarios;
+﻿using ControlFinWeb.App.AutoMapper;
+using ControlFinWeb.App.Utilitarios;
 using ControlFinWeb.App.ViewModels;
 using ControlFinWeb.Dominio.Dominios;
 using ControlFinWeb.Dominio.ObjetoValor;
@@ -30,6 +31,7 @@ namespace ControlFinWeb.App.Controllers
             if (Id > 0)
             {
                 formaPagamento = Repositorio.ObterPorId(Id);
+                //formaPagamentoVM = AutoMapperConfig<FormaPagamento, FormaPagamentoVM>.Mapear(formaPagamento);
 
                 formaPagamentoVM = new FormaPagamentoVM
                 {
