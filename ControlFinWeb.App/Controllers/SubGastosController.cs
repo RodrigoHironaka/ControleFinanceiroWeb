@@ -1,9 +1,11 @@
-﻿using ControlFinWeb.App.AutoMapper;
+﻿using App1.Repositorio.Configuracao;
+using ControlFinWeb.App.AutoMapper;
 using ControlFinWeb.App.Utilitarios;
 using ControlFinWeb.App.ViewModels;
 using ControlFinWeb.Dominio.Entidades;
 using ControlFinWeb.Repositorio.Repositorios;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -39,6 +41,7 @@ namespace ControlFinWeb.App.Controllers
                 subGasto = Repositorio.ObterPorId(Id);
                 subGastoVM = AutoMapperConfig<SubGasto, SubGastoVM>.Mapear(subGasto);
             }
+            //ViewBag.GastoId = new SelectList(new RepositorioGasto(NHibernateHelper.ObterSessao()).ObterPorParametros(x => x.Situacao == Dominio.ObjetoValor.Situacao.Ativo), "GastoId", "Nome", subGastoVM.GastoId);
             return View(subGastoVM);
         }
 
@@ -48,6 +51,7 @@ namespace ControlFinWeb.App.Controllers
         {
             if (ModelState.IsValid)
             {
+               
                 if (subGastoVM.Id > 0)
                 {
                     var gastoRep = Repositorio.ObterPorId(subGastoVM.Id);
@@ -63,8 +67,10 @@ namespace ControlFinWeb.App.Controllers
                     subGasto.UsuarioCriacao = Configuracao.Usuario;
                     Repositorio.Salvar(subGasto);
                 }
+                
                 return RedirectToAction("Index");
             }
+            //ViewBag.GastoId = new SelectList(new RepositorioGasto(NHibernateHelper.ObterSessao()).ObterPorParametros(x => x.Situacao == Dominio.ObjetoValor.Situacao.Ativo), "GastoId", "Nome", subGastoVM.GastoId);
             return View(subGastoVM);
         }
 
