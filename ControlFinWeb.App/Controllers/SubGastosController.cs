@@ -1,25 +1,26 @@
 ﻿using App1.Repositorio.Configuracao;
-using ControlFinWeb.App.AutoMapper;
+using AutoMapper;
 using ControlFinWeb.App.Utilitarios;
 using ControlFinWeb.App.ViewModels;
 using ControlFinWeb.Dominio.Entidades;
+using ControlFinWeb.Dominio.ObjetoValor;
 using ControlFinWeb.Repositorio.Repositorios;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace ControlFinWeb.App.Controllers
 {
     public class SubGastosController : Controller
     {
         private readonly RepositorioSubGasto Repositorio;
+        private readonly IMapper Mapper;
 
-        public SubGastosController(RepositorioSubGasto repositorio)
+        public SubGastosController(RepositorioSubGasto repositorio, IMapper mapper)
         {
             Repositorio = repositorio;
+            Mapper = mapper;
         }
 
         SubGasto subGasto = new SubGasto();
@@ -27,10 +28,8 @@ namespace ControlFinWeb.App.Controllers
 
         public IActionResult Index()
         {
-            var subGastosVM = new List<SubGastoVM>();
-            var subGastos = Repositorio.ObterTodos();
-            foreach (SubGasto subGasto in subGastos)
-                subGastosVM.Add(AutoMapperConfig<SubGasto, SubGastoVM>.Mapear(subGasto));
+            IEnumerable<SubGasto> subGastos = Repositorio.ObterTodos();
+            List<SubGastoVM> subGastosVM = Mapper.Map<List<SubGastoVM>>(subGastos);
             return View(subGastosVM);
         }
 
@@ -39,9 +38,9 @@ namespace ControlFinWeb.App.Controllers
             if (Id > 0)
             {
                 subGasto = Repositorio.ObterPorId(Id);
-                subGastoVM = AutoMapperConfig<SubGasto, SubGastoVM>.Mapear(subGasto);
+                subGastoVM = Mapper.Map<SubGastoVM>(subGasto);
             }
-            //ViewBag.GastoId = new SelectList(new RepositorioGasto(NHibernateHelper.ObterSessao()).ObterPorParametros(x => x.Situacao == Dominio.ObjetoValor.Situacao.Ativo), "GastoId", "Nome", subGastoVM.GastoId);
+            ViewBag.GastoId = new SelectList(new RepositorioGasto(NHibernateHelper.ObterSessao()).ObterPorParametros(x => x.Situacao == Situacao.Ativo), "Id", "Nome", Id);
             return View(subGastoVM);
         }
 
@@ -51,26 +50,23 @@ namespace ControlFinWeb.App.Controllers
         {
             if (ModelState.IsValid)
             {
-               
                 if (subGastoVM.Id > 0)
                 {
-                    var gastoRep = Repositorio.ObterPorId(subGastoVM.Id);
-                    subGasto = AutoMapperConfig<SubGastoVM, SubGasto>.Mapear(subGastoVM);
-                    subGasto.DataGeracao = gastoRep.DataGeracao;
-                    subGasto.UsuarioCriacao = gastoRep.UsuarioCriacao;
+                    subGasto = Repositorio.ObterPorId(subGastoVM.Id);
+                    subGasto = Mapper.Map(subGastoVM, subGasto);
                     subGasto.UsuarioAlteracao = Configuracao.Usuario;
                     Repositorio.Alterar(subGasto);
                 }
                 else
                 {
-                    subGasto = AutoMapperConfig<SubGastoVM, SubGasto>.Mapear(subGastoVM);
+                    subGasto = Mapper.Map(subGastoVM,subGasto);
                     subGasto.UsuarioCriacao = Configuracao.Usuario;
                     Repositorio.Salvar(subGasto);
                 }
-                
+               
                 return RedirectToAction("Index");
             }
-            //ViewBag.GastoId = new SelectList(new RepositorioGasto(NHibernateHelper.ObterSessao()).ObterPorParametros(x => x.Situacao == Dominio.ObjetoValor.Situacao.Ativo), "GastoId", "Nome", subGastoVM.GastoId);
+            ViewBag.GastoId = new SelectList(new RepositorioGasto(NHibernateHelper.ObterSessao()).ObterPorParametros(x => x.Situacao == Situacao.Ativo), "Id", "Nome", subGastoVM.GastoId);
             return View(subGastoVM);
         }
 

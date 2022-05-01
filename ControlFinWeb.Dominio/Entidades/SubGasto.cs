@@ -13,6 +13,7 @@ namespace ControlFinWeb.Dominio.Entidades
         {
             return String.Format("{0}/{1}", Gasto.Nome, Nome);
         }
+
         public virtual Gasto Gasto { get; set; }
         public virtual Situacao Situacao { get; set; }
     }

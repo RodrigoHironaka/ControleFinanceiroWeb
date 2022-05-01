@@ -1,4 +1,5 @@
 ﻿using ControlFinWeb.Dominio.ObjetoValor;
+using System.Collections.Generic;
 
 namespace ControlFinWeb.Dominio.Entidades
 {
@@ -13,5 +14,6 @@ namespace ControlFinWeb.Dominio.Entidades
             return Nome;
         }
         public virtual Situacao Situacao { get; set; }
+
     }
 }

@@ -26,10 +26,7 @@ namespace ControlFinWeb.App.ViewModels
         [Range(1, Int64.MaxValue, ErrorMessage = "Informe um Gasto")]
         public Int64 GastoId { get; set; }
 
-        //public virtual GastoVM Gasto { get; set; }
-        public SelectList ListaGastos
-        {
-            get { return PreencheCombo.Instance.PreencheComboGasto(); }
-        }
+        public GastoVM GastoVM { get; set; }
+
     }
 }

@@ -1,3 +1,4 @@
+using ControlFinWeb.App.AutoMapper;
 using ControlFinWeb.App.Utilitarios;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
@@ -49,6 +50,8 @@ namespace ControlFinWeb.App
             {
                 options.IdleTimeout = System.TimeSpan.FromHours(2);
             });
+
+            services.AddAutoMapper(typeof(AutoMapperSetup));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
