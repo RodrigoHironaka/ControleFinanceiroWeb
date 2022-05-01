@@ -24,13 +24,16 @@
                 <div class="form-group">
                     <label asp-for="GastoId" class="control-label"></label>
                     @*@Html.DropDownListFor(model => model.Gasto, new SelectList(@Model.ListaGastos, "Id", "Nome"))*@
-                    @Html.DropDownListFor(model => model.GastoId, null, htmlAttributes: new { @class = "form-control" })
-                    @*<select class="form-select" asp-for="Gasto" asp-items="@Model.ListaGastos"></select>*@
+                    @*@Html.DropDownListFor(model => model.GastoId, null, htmlAttributes: new { @class = "form-control"  })*@
+                <select class="form-select" asp-for="GastoId" asp-items="ViewBag.GastoId">
+                    <option value="0">---Selecione um item---</option>
+                </select>
                     <span asp-validation-for="GastoId" class="text-danger"></span>
                 </div>
                 <div class="form-group">
                     <label asp-for="Situacao" class="control-label"></label>
-                    <select class="form-select" asp-for="Situacao" asp-items="Html.GetEnumSelectList<Situacao>()"></select>
+                    <select class="form-select" asp-for="Situacao" asp-items="Html.GetEnumSelectList<Situacao>()">
+                    </select>
                     <span asp-validation-for="Situacao" class="text-danger"></span>
                 </div>
                 <br />

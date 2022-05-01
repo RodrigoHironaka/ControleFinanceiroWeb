@@ -40,6 +40,7 @@ namespace ControlFinWeb.App.Controllers
                 subGasto = Repositorio.ObterPorId(Id);
                 subGastoVM = Mapper.Map<SubGastoVM>(subGasto);
             }
+            
             ViewBag.GastoId = new SelectList(new RepositorioGasto(NHibernateHelper.ObterSessao()).ObterPorParametros(x => x.Situacao == Situacao.Ativo), "Id", "Nome", Id);
             return View(subGastoVM);
         }
