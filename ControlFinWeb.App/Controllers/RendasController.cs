@@ -1,4 +1,5 @@
-﻿using ControlFinWeb.App.AutoMapper;
+﻿using AutoMapper;
+using ControlFinWeb.App.AutoMapper;
 using ControlFinWeb.App.Utilitarios;
 using ControlFinWeb.App.ViewModels;
 using ControlFinWeb.Dominio.Entidades;
@@ -15,9 +16,11 @@ namespace ControlFinWeb.App.Controllers
     public class RendasController : Controller
     {
         private readonly RepositorioRenda Repositorio;
-        public RendasController(RepositorioRenda repositorio)
+        private readonly IMapper Mapper;
+        public RendasController(RepositorioRenda repositorio, IMapper mapper)
         {
             Repositorio = repositorio;
+            Mapper = mapper;
         }
 
         Renda renda = new Renda();
@@ -25,10 +28,9 @@ namespace ControlFinWeb.App.Controllers
 
         public IActionResult Index()
         {
-            var rendasVM = new List<RendaVM>();
-            var rendas = Repositorio.ObterTodos();
-            foreach (Renda renda in rendas)
-                rendasVM.Add(AutoMapperConfig<Renda, RendaVM>.Mapear(renda));
+            IEnumerable<Renda> rendas = Repositorio.ObterTodos();
+            List<RendaVM> rendasVM = Mapper
+                .Map<List<RendaVM>>(rendas);
             return View(rendasVM);
         }
 
@@ -37,7 +39,7 @@ namespace ControlFinWeb.App.Controllers
             if (Id > 0)
             {
                 renda = Repositorio.ObterPorId(Id);
-                rendaVM = AutoMapperConfig<Renda, RendaVM>.Mapear(renda);
+                rendaVM = Mapper.Map<RendaVM>(renda);
             }
             return View(rendaVM);
         }
@@ -50,16 +52,14 @@ namespace ControlFinWeb.App.Controllers
             {
                 if (rendaVM.Id > 0)
                 {
-                    var rendaRep = Repositorio.ObterPorId(rendaVM.Id);
-                    renda = AutoMapperConfig<RendaVM, Renda>.Mapear(rendaVM);
-                    renda.DataGeracao = rendaRep.DataGeracao;
-                    renda.UsuarioCriacao = rendaRep.UsuarioCriacao;
+                    renda = Repositorio.ObterPorId(rendaVM.Id);
+                    renda = Mapper.Map(rendaVM, renda);
                     renda.UsuarioAlteracao = Configuracao.Usuario;
                     Repositorio.Alterar(renda);
                 }
                 else
                 {
-                    renda = AutoMapperConfig<RendaVM, Renda>.Mapear(rendaVM);
+                    renda = Mapper.Map(rendaVM, renda);
                     renda.UsuarioCriacao = Configuracao.Usuario;
                     Repositorio.Salvar(renda);
                 }

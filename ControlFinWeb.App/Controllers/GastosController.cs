@@ -1,4 +1,5 @@
-﻿using ControlFinWeb.App.AutoMapper;
+﻿using AutoMapper;
+using ControlFinWeb.App.AutoMapper;
 using ControlFinWeb.App.Utilitarios;
 using ControlFinWeb.App.ViewModels;
 using ControlFinWeb.Dominio.Entidades;
@@ -14,10 +15,12 @@ namespace ControlFinWeb.App.Controllers
     public class GastosController : Controller
     {
         private readonly RepositorioGasto Repositorio;
+        private readonly IMapper Mapper;
 
-        public GastosController(RepositorioGasto repositorio)
+        public GastosController(RepositorioGasto repositorio, IMapper mapper)
         {
             Repositorio = repositorio;
+            Mapper = mapper;
         }
 
         Gasto gasto = new Gasto();
@@ -25,11 +28,10 @@ namespace ControlFinWeb.App.Controllers
 
         public IActionResult Index()
         {
-            var gastosVM = new List<GastoVM>();
-            var gastos = Repositorio.ObterTodos();
-            foreach (Gasto gasto in gastos)
-                gastosVM.Add(AutoMapperConfig<Gasto, GastoVM>.Mapear(gasto));
-            return View(gastosVM);
+            IEnumerable<Gasto> gasto = Repositorio.ObterTodos();
+            List<GastoVM> gastoVM = Mapper
+                .Map<List<GastoVM>>(gasto);
+            return View(gastoVM);
         }
 
         public IActionResult Editar(Int64 Id = 0)
@@ -37,7 +39,7 @@ namespace ControlFinWeb.App.Controllers
             if (Id > 0)
             {
                 gasto = Repositorio.ObterPorId(Id);
-                gastoVM = AutoMapperConfig<Gasto, GastoVM>.Mapear(gasto);
+                gastoVM = Mapper.Map<GastoVM>(gasto);
             }
             return View(gastoVM);
         }
@@ -50,16 +52,14 @@ namespace ControlFinWeb.App.Controllers
             {
                 if (gastoVM.Id > 0)
                 {
-                    var gastoRep = Repositorio.ObterPorId(gastoVM.Id);
-                    gasto = AutoMapperConfig<GastoVM, Gasto>.Mapear(gastoVM);
-                    gasto.DataGeracao = gastoRep.DataGeracao;
-                    gasto.UsuarioCriacao = gastoRep.UsuarioCriacao;
+                    gasto = Repositorio.ObterPorId(gastoVM.Id);
+                    gasto = Mapper.Map(gastoVM, gasto);
                     gasto.UsuarioAlteracao = Configuracao.Usuario;
                     Repositorio.Alterar(gasto);
                 }
                 else
                 {
-                    gasto = AutoMapperConfig<GastoVM, Gasto>.Mapear(gastoVM);
+                    gasto = Mapper.Map(gastoVM, gasto);
                     gasto.UsuarioCriacao = Configuracao.Usuario;
                     Repositorio.Salvar(gasto);
                 }
@@ -74,6 +74,7 @@ namespace ControlFinWeb.App.Controllers
             gasto = Repositorio.ObterPorId(Id);
             Repositorio.Excluir(gasto);
             return Json(gasto.Nome + "excluído com sucesso");
+
         }
     }
 }
