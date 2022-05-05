@@ -15,9 +15,9 @@ namespace ControlFinWeb.Dominio.Entidades
         public virtual Usuario UsuarioCriacao { get; set; }
         public virtual Usuario UsuarioAlteracao { get; set; }
 
-        public override string ToString()
-        {
-            return string.Format("{0} - Renda Bruta: {1} - Renda Liquida: {2}", TipoRenda.Nome, RendaBruta.ToString("N2"), RendaLiquida.ToString("N2"));
-        }
+        //public override string ToString()
+        //{
+        //    return string.Format("{0} - Renda Bruta: {1} - Renda Liquida: {2}", TipoRenda.Nome, RendaBruta.ToString("N2"), RendaLiquida.ToString("N2"));
+        //}
     }
 }

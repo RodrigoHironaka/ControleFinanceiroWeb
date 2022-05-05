@@ -1,0 +1,105 @@
+﻿@model ControlFinWeb.App.ViewModels.PessoaVM
+@using ControlFinWeb.Dominio.ObjetoValor;
+
+@{
+    ViewData["Title"] = "Pessoas";
+}
+
+
+<div class="modal-dialog">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title"></h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="javascript:window.location.reload()"></button>
+        </div>
+        <div class="modal-body">
+            <form asp-action="Editar">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input asp-for="Id" type="hidden" />
+                <div class="form-group">
+                    <label asp-for="Nome" class="control-label"></label>
+                    <input asp-for="Nome" class="form-control" />
+                    <span asp-validation-for="Nome" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Situacao" class="control-label"></label>
+                    <select class="form-select" asp-for="Situacao" asp-items="Html.GetEnumSelectList<Situacao>()"></select>
+                    <span asp-validation-for="Situacao" class="text-danger"></span>
+                </div>
+                <div class="row">
+                    <div class="col-md-5">
+                        <label class="control-label"></label>
+                        <input class="form-control" />
+                    </div>
+                    <div class="col-md-5">
+                        <label asp-for="TotalRendaBruta" class="control-label"></label>
+                        <input asp-for="TotalRendaBruta" class="form-control" />
+                    </div>
+                    <div class="col-md-2">
+                        <button type="button" class="w-100 btn btn-dark"><i class="bi bi-plus-lg"></i></button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <table class="table table-hover">
+
+                    </table>
+                </div>
+                <br />
+                <button type="submit" class="w-100 btn btn-success">Salvar</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
+
+
+@*<h1>Editar</h1>
+
+    <h4>PessoaVM</h4>
+    <hr />
+    <div class="row">
+        <div class="col-md-4">
+            <form asp-action="Editar">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="form-group">
+                    <label asp-for="Id" class="control-label"></label>
+                    <input asp-for="Id" class="form-control" />
+                    <span asp-validation-for="Id" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Nome" class="control-label"></label>
+                    <input asp-for="Nome" class="form-control" />
+                    <span asp-validation-for="Nome" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Situacao" class="control-label"></label>
+                    <input asp-for="Situacao" class="form-control" />
+                    <span asp-validation-for="Situacao" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="TotalRendaBruta" class="control-label"></label>
+                    <input asp-for="TotalRendaBruta" class="form-control" />
+                    <span asp-validation-for="TotalRendaBruta" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="TotalRendaLiquida" class="control-label"></label>
+                    <input asp-for="TotalRendaLiquida" class="form-control" />
+                    <span asp-validation-for="TotalRendaLiquida" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <input type="submit" value="Save" class="btn btn-primary" />
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div>
+        <a asp-action="Index">Back to List</a>
+    </div>
+
+    @section Scripts {
+        @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    }*@
