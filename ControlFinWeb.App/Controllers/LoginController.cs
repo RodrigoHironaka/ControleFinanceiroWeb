@@ -84,7 +84,7 @@ namespace ControlFinWeb.App.Controllers
             var propriedadesDeAutenticacao = new AuthenticationProperties
             {
                 AllowRefresh = true,
-                ExpiresUtc = DateTime.Now.ToLocalTime().AddHours(2),
+                ExpiresUtc = DateTime.Now.ToLocalTime().AddHours(8),
                 IsPersistent = true
             };
 

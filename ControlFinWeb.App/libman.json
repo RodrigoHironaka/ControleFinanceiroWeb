@@ -27,6 +27,10 @@
     {
       "library": "bootstrap-icons@1.8.1",
       "destination": "wwwroot/lib/bootstrap-icons/"
+    },
+    {
+      "library": "jquery-maskmoney@3.0.2",
+      "destination": "wwwroot/lib/jquery-maskmoney/"
     }
   ]
 }

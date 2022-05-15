@@ -4,14 +4,12 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.AspNetCore.Localization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using System.Globalization;
 
 namespace ControlFinWeb.App
 {
@@ -57,6 +55,17 @@ namespace ControlFinWeb.App
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IHttpContextAccessor accessor)
         {
+            #region Definindo Cultura Pt-Br
+            var defaultCulture = new CultureInfo("pt-BR");
+            var localizationOptions = new RequestLocalizationOptions
+            {
+                DefaultRequestCulture = new RequestCulture(defaultCulture),
+                SupportedCultures = new List<CultureInfo> { defaultCulture },
+                SupportedUICultures = new List<CultureInfo> { defaultCulture }
+            };
+            app.UseRequestLocalization(localizationOptions);
+            #endregion
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -94,6 +103,8 @@ namespace ControlFinWeb.App
                     name: "default",
                     pattern: "{controller=Login}/{action=Entrar}/{id?}");
             });
+
+
         }
     }
 }

@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -10,6 +11,11 @@ namespace ControlFinWeb.App.ViewModels
 {
     public class PessoaVM
     {
+        public PessoaVM()
+        {
+            PessoaRendasVM = new List<PessoaRendasVM>();
+        }
+
         public Int64 Id { get; set; }
 
         [DisplayName("Descrição")]
@@ -21,25 +27,35 @@ namespace ControlFinWeb.App.ViewModels
         public Situacao Situacao { get; set; }
 
         public IList<PessoaRendasVM> PessoaRendasVM { get; set; }
+        
+        [DisplayName("R.Bruta")]
+        [DisplayFormat(DataFormatString = "{0:N2}")]
+        [Column(TypeName = "decimal(18,2)")]
+        public Decimal RendaBruta { get; set; }
+
+        [DisplayName("R.Líquida")]
+        [DisplayFormat(DataFormatString = "{0:N2}")]
+        public Decimal RendaLiquida { get; set; }
+
+        [DisplayName("Renda")]
+        public Int64 TipoRendaId { get; set; }
+        public RendaVM TipoRendaVM { get; set; }
 
         [DisplayName("Total Renda Bruta")]
-        [DataType(DataType.Currency)]
-        //[DisplayFormat(DataFormatString = "{0:C}")]
-        public virtual Decimal TotalRendaBruta
+        public String TotalRendaBruta
         {
             get
             {
-                return PessoaRendasVM.Select(x => x.RendaBruta).Sum();
+                return PessoaRendasVM.Select(x => x.RendaBruta).Sum().ToString("C2");
             }
         }
 
         [DisplayName("Total Renda Líquida")]
-        [DataType(DataType.Currency)]
-        public virtual Decimal TotalRendaLiquida
+        public String TotalRendaLiquida
         {
             get
             {
-                return PessoaRendasVM.Select(x => x.RendaLiquida).Sum();
+                return PessoaRendasVM.Select(x => x.RendaLiquida).Sum().ToString("C2");
             }
         }
 
