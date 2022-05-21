@@ -29,12 +29,11 @@ namespace ControlFinWeb.App.ViewModels
         public IList<PessoaRendasVM> PessoaRendasVM { get; set; }
         
         [DisplayName("R.Bruta")]
-        [DisplayFormat(DataFormatString = "{0:N2}")]
-        [Column(TypeName = "decimal(18,2)")]
+        //[DisplayFormat(DataFormatString = "{0:N2}")]
         public Decimal RendaBruta { get; set; }
 
         [DisplayName("R.Líquida")]
-        [DisplayFormat(DataFormatString = "{0:N2}")]
+        //[DisplayFormat(DataFormatString = "{0:N2}")]
         public Decimal RendaLiquida { get; set; }
 
         [DisplayName("Renda")]

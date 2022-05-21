@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace ControlFinWeb.App.ViewModels
 {
@@ -22,8 +19,6 @@ namespace ControlFinWeb.App.ViewModels
         [Range(1, Int64.MaxValue, ErrorMessage = "Informe um Gasto")]
         public Int64 TipoRendaId { get; set; }
         public RendaVM TipoRendaVM { get; set; }
-
-        public PessoaVM PessoaVM { get; set; }
 
         public override string ToString()
         {

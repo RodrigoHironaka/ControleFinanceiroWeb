@@ -80,8 +80,5 @@ namespace ControlFinWeb.App.Controllers
             Repositorio.Excluir(pessoa);
             return Json(pessoa.Nome + "excluído com sucesso");
         }
-
-
-      
     }
 }

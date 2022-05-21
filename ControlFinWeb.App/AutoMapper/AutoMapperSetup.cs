@@ -21,6 +21,7 @@ namespace ControlFinWeb.App.AutoMapper
             CreateMap<SubGastoVM, SubGasto>()
                 .AfterMap((src, dest) =>{ dest.Gasto = new Gasto { Id = src.GastoId }; }); //outro exemplo: .ForPath(dest => dest.Gasto.Id, m =>  m.MapFrom(src => src.GastoId));
             CreateMap<PessoaVM, Pessoa>();
+            CreateMap<PessoaRendasVM, PessoaRendas>();
             #endregion
 
             #region Dominio Para ViewModel
@@ -30,6 +31,7 @@ namespace ControlFinWeb.App.AutoMapper
             CreateMap<SubGasto, SubGastoVM>()
                 .AfterMap((src, dest) =>{dest.GastoVM = AutoMapperConfig<Gasto, GastoVM>.Mapear(src.Gasto); }); //Outro Exemplo: dest.GastoVM = new MapperConfiguration(cfg => cfg.CreateMap<Gasto, GastoVM>()).CreateMapper().Map<GastoVM>(src.Gasto);
             CreateMap<Pessoa, PessoaVM>();
+            CreateMap<PessoaRendas, PessoaRendasVM>();
             #endregion
         }
 
