@@ -84,7 +84,7 @@
             $(".btnConfirmar").on("click", function () {
                 $.ajax({
                     method: "POST",
-                    url: "/FormasPagamento/Deletar",
+                    url: "/Pessoas/Deletar",
                     data: { id: id },
                     success: function () {
                         location.reload();

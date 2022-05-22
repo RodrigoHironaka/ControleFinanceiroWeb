@@ -39,12 +39,12 @@
                         <div class="row">
                             <div class="col-5">
                                 <label asp-for="RendaBruta" class="control-label"></label>
-                                <input asp-for="RendaBruta" class="form-control" />
+                                <input asp-for="RendaBruta" class="form-control" style="text-align:right" />
                                 <span asp-validation-for="RendaBruta" class="text-danger"></span>
                             </div>
                             <div class="col-5">
                                 <label asp-for="RendaLiquida" class="control-label"></label>
-                                <input asp-for="RendaLiquida" class="form-control" />
+                                <input asp-for="RendaLiquida" class="form-control" style="text-align:right" />
                                 <span asp-validation-for="RendaLiquida" class="text-danger"></span>
                             </div>
                             <div class="col-2">
@@ -56,8 +56,8 @@
                             <thead>
                                 <tr>
                                     <th>Renda</th>
-                                    <th>R.Bruta</th>
-                                    <th>R.Líquida</th>
+                                    <th style="text-align:right">R.Bruta</th>
+                                    <th style="text-align:right">R.Líquida</th>
                                     <th></th>
                                 </tr>
                             </thead>
@@ -66,29 +66,38 @@
                                 {
                                     <tr>
                                         <td>
-                                            <input asp-for="PessoaRendasVM[i].Id" type="hidden"/>
-                                            <span>@Model.PessoaRendasVM[i].TipoRendaVM.Nome</span>
-                                            @*@Html.DisplayFor(modelItem => Model.PessoaRendasVM[i].TipoRendaVM.Nome)
-                                            @Html.HiddenFor(modelItem => Model.PessoaRendasVM[i].TipoRendaVM.Id)*@
+                                            <input asp-for="PessoaRendasVM[i].Id" type="hidden" />
+                                            <input asp-for="PessoaRendasVM[i].TipoRendaId" type="hidden" />
+                                            <input asp-for="PessoaRendasVM[i].TipoRendaVM.Nome" type="hidden" />
+                                            <span>@Model.PessoaRendasVM[i].TipoRendaVM.Id - @Model.PessoaRendasVM[i].TipoRendaVM.Nome</span>
                                         </td>
-                                        <td>
+                                        <td align="right">
                                             <input asp-for="PessoaRendasVM[i].RendaBruta" type="hidden" />
-                                            <span>@Model.PessoaRendasVM[i].RendaBruta</span>
-                                            @*@Html.DisplayFor(modelItem => Model.PessoaRendasVM[i].RendaBruta)
-        @Html.HiddenFor(modelItem => Model.PessoaRendasVM[i].RendaBruta)*@
+                                            <span>@Model.PessoaRendasVM[i].RendaBruta.ToString("n2")</span>
                                         </td>
-                                        <td>
+                                        <td align="right">
                                             <input asp-for="PessoaRendasVM[i].RendaLiquida" type="hidden" />
-                                            <span>@Model.PessoaRendasVM[i].RendaLiquida</span>
-                                            @*@Html.DisplayFor(modelItem => Model.PessoaRendasVM[i].RendaLiquida)
-        @Html.HiddenFor(modelItem => Model.PessoaRendasVM[i].RendaLiquida)*@
+                                            <span>@Model.PessoaRendasVM[i].RendaLiquida.ToString("n2")</span>
                                         </td>
-                                        <td>
-                                            <button type="button" class="btn btn-danger btn-sm"><i class="bi bi-dash"></i></button>
+                                        <td align="right">
+                                            <button type="button" class="btn btn-danger btn-sm excluirRenda"><i class="bi bi-dash"></i></button>
                                         </td>
                                     </tr>
                                 }
                             </tbody>
+                            <tfoot>
+                                <tr>
+                                    <th> Totais</th>
+                                    <td align="right">
+                                        <span>@Model.TotalRendaBruta</span>
+                                    </td>
+                                    <td align="right">
+                                        <span>@Model.TotalRendaLiquida</span>
+                                    </td>
+                                    <td></td>
+                                </tr>
+                           
+                            </tfoot>
                         </table>
                     </div>
                 </div>
@@ -102,7 +111,7 @@
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 
-    <script type="text/javascript">
+<script type="text/javascript">
     $(function () {
         $("#RendaBruta, #RendaLiquida").maskMoney({ thousands: '.', decimal: ',', allowZero: true });
 
@@ -110,26 +119,45 @@
         var $rendas = $("#rendas");
         $(".addRenda").on("click", function () {
             var rendaId = $("#TipoRendaId").val();
+            var nomeRenda = $('#TipoRendaId').find(":selected").text();
             var rendaBruta = $("#RendaBruta").val();
             var rendaLiquida = $("#RendaLiquida").val();
 
-            var tdRenda = `<td> ${rendaId} <input type="hidden" name="PessoaRendasVM[${countRenda}].TipoRendaVM.Id" value=${rendaId} /> </td>`;
-            var tdRendaBruta = `<td> ${rendaBruta} <input type="hidden" name="PessoaRendasVM[${countRenda}].RendaBruta" value=${rendaBruta} /> </td>`;
-            var tdRendaLiquida = `<td> ${rendaLiquida} <input type="hidden" name="PessoaRendasVM[${countRenda}].RendaLiquida" value=${rendaLiquida} /> </td>`;
-            var tdRemover = `<td> <button type="button" class="btn btn-danger btn-sm"><i class="bi bi-dash"></i></button> </td>`;
+            var tdRenda = `<td> ${rendaId} <input type="hidden" name="PessoaRendasVM[${countRenda}].TipoRendaId" value=${rendaId} /> - ${nomeRenda} <input type="hidden"/> </td>`;
+            var tdRendaBruta = `<td align="right"> ${rendaBruta} <input type="hidden" name="PessoaRendasVM[${countRenda}].RendaBruta" value=${rendaBruta} /> </td>`;
+            var tdRendaLiquida = `<td align="right"> ${rendaLiquida} <input type="hidden" name="PessoaRendasVM[${countRenda}].RendaLiquida" value=${rendaLiquida} /> </td>`;
+            var tdRemover = `<td align="right"> <button type="button" class="btn btn-danger btn-sm excluirRenda"><i class="bi bi-dash"></i></button> </td>`;
 
             var tr = `<tr>${tdRenda}${tdRendaBruta}${tdRendaLiquida}${tdRemover}</tr>`;
-
+            
             $rendas.find('tbody').append(tr);
+            @*$("#rendas").find('tfoot').remove;
+            $("#rendas").find('tfoot').append($('<td><b>Totais</b></td><td>@Model.PessoaRendasVM.Sum(x => x.RendaBruta)</td><td>@Model.PessoaRendasVM.Sum(x => x.RendaLiquida)</td><td></td>'));*@
             countRenda++;
+
+            $("#TipoRendaId").val(0);
+            $("#RendaBruta").val('0,00');
+            $("#RendaLiquida").val('0,00');
         })
+
+        //$(".excluirRenda").on("click", function () {
+        //    $(this).closest('tr').remove();
+        //})
+
+        //$(".excluirRenda").on("click", function () {
+        //    var renda = $(this).parent().parent();
+        //    renda.remove();
+        //})
+
+
+        $(".excluirRenda").on("click", function (id) {
+            var renda = $(this).parent().parent();
+            renda.remove();
+        })
+
+
+
     });
-
-
-
-
-
-
-    </script>
+</script>
 }
 

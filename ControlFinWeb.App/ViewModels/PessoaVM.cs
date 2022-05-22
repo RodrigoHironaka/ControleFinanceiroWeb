@@ -27,19 +27,20 @@ namespace ControlFinWeb.App.ViewModels
         public Situacao Situacao { get; set; }
 
         public IList<PessoaRendasVM> PessoaRendasVM { get; set; }
-        
+
+        #region Campos Apenas para digitar valores e add a lista PessaRendasVM
         [DisplayName("R.Bruta")]
-        //[DisplayFormat(DataFormatString = "{0:N2}")]
         public Decimal RendaBruta { get; set; }
 
         [DisplayName("R.Líquida")]
-        //[DisplayFormat(DataFormatString = "{0:N2}")]
         public Decimal RendaLiquida { get; set; }
 
         [DisplayName("Renda")]
         public Int64 TipoRendaId { get; set; }
         public RendaVM TipoRendaVM { get; set; }
+        #endregion
 
+        #region Totalizadores
         [DisplayName("Total Renda Bruta")]
         public String TotalRendaBruta
         {
@@ -57,6 +58,8 @@ namespace ControlFinWeb.App.ViewModels
                 return PessoaRendasVM.Select(x => x.RendaLiquida).Sum().ToString("C2");
             }
         }
+        #endregion
+
 
         public override string ToString()
         {

@@ -15,12 +15,8 @@ namespace ControlFinWeb.Repositorio.Mapeamentos
             });
             Property(x => x.RendaBruta);
             Property(x => x.RendaLiquida);
-            Property(x => x.DataGeracao);
-            Property(x => x.DataAlteracao);
             ManyToOne(x => x.TipoRenda, m=>m.Column("TipoRenda"));
             ManyToOne(x => x.Pessoa, m => m.Column("Pessoa"));
-            ManyToOne(x => x.UsuarioCriacao, m => m.Column("UsuarioCriacao"));
-            ManyToOne(x => x.UsuarioAlteracao, m => m.Column("UsuarioAlteracao"));
         }
     }
 }

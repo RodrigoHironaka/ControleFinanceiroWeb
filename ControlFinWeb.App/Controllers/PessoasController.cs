@@ -5,6 +5,7 @@ using ControlFinWeb.App.ViewModels;
 using ControlFinWeb.Dominio.Entidades;
 using ControlFinWeb.Dominio.ObjetoValor;
 using ControlFinWeb.Repositorio.Repositorios;
+using LinqKit;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -58,18 +59,20 @@ namespace ControlFinWeb.App.Controllers
                     pessoa = Repositorio.ObterPorId(pessoaVM.Id);
                     pessoa = Mapper.Map(pessoaVM, pessoa);
                     pessoa.UsuarioAlteracao = Configuracao.Usuario;
+                    pessoa.PessoaRendas.ForEach(x => x.Pessoa = pessoa);
                     Repositorio.Alterar(pessoa);
                 }
                 else
                 {
                     pessoa = Mapper.Map(pessoaVM, pessoa);
                     pessoa.UsuarioCriacao = Configuracao.Usuario;
+                    pessoa.PessoaRendas.ForEach(x => x.Pessoa = pessoa);
                     Repositorio.Salvar(pessoa);
                 }
                 return RedirectToAction("Index");
             }
             ViewBag.TipoRendaId = new SelectList(new RepositorioRenda(NHibernateHelper.ObterSessao()).ObterPorParametros(x => x.Situacao == Situacao.Ativo), "Id", "Nome", pessoaVM.Id);
-            return View(pessoaVM);
+            return PartialView(pessoaVM);
         }
 
 

@@ -14,26 +14,5 @@ namespace ControlFinWeb.Dominio.Entidades
 
         public virtual Situacao Situacao { get; set; }
         public virtual IList<PessoaRendas> PessoaRendas { get; set; }
-
-        //public virtual Decimal TotalRendaBruta
-        //{
-        //    get 
-        //    {
-        //        return PessoaRendas.Select(x => x.RendaBruta).Sum();
-        //    }
-        //}
-
-        //public virtual Decimal TotalRendaLiquida
-        //{
-        //    get
-        //    {
-        //        return PessoaRendas.Select(x => x.RendaLiquida).Sum();
-        //    }
-        //}
-
-        //public override string ToString()
-        //{
-        //    return Nome;
-        //}
     }
 }
