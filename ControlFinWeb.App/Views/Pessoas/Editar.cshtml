@@ -66,9 +66,9 @@
                                 {
                                     <tr>
                                         <td>
-                                            <input asp-for="PessoaRendasVM[i].Id" type="hidden" />
+                                            @*<input asp-for="PessoaRendasVM[i].Id" type="hidden" />*@
                                             <input asp-for="PessoaRendasVM[i].TipoRendaId" type="hidden" />
-                                            <input asp-for="PessoaRendasVM[i].TipoRendaVM.Nome" type="hidden" />
+                                            @*<input asp-for="PessoaRendasVM[i].TipoRendaVM.Nome" type="hidden" />*@
                                             <span>@Model.PessoaRendasVM[i].TipoRendaVM.Id - @Model.PessoaRendasVM[i].TipoRendaVM.Nome</span>
                                         </td>
                                         <td align="right">
@@ -85,7 +85,7 @@
                                     </tr>
                                 }
                             </tbody>
-                            <tfoot>
+                            @*<tfoot>
                                 <tr>
                                     <th> Totais</th>
                                     <td align="right">
@@ -97,7 +97,7 @@
                                     <td></td>
                                 </tr>
                            
-                            </tfoot>
+                            </tfoot>*@
                         </table>
                     </div>
                 </div>
@@ -131,8 +131,6 @@
             var tr = `<tr>${tdRenda}${tdRendaBruta}${tdRendaLiquida}${tdRemover}</tr>`;
             
             $rendas.find('tbody').append(tr);
-            @*$("#rendas").find('tfoot').remove;
-            $("#rendas").find('tfoot').append($('<td><b>Totais</b></td><td>@Model.PessoaRendasVM.Sum(x => x.RendaBruta)</td><td>@Model.PessoaRendasVM.Sum(x => x.RendaLiquida)</td><td></td>'));*@
             countRenda++;
 
             $("#TipoRendaId").val(0);
@@ -150,13 +148,17 @@
         //})
 
 
-        $(".excluirRenda").on("click", function (id) {
-            var renda = $(this).parent().parent();
-            renda.remove();
-        })
+        //$(".excluirRenda").on("click", function (id) {
+        //    var renda = $(this).parent().parent();
+        //    renda.remove();
 
-
-
+        //    //var valores = document.querySelectorAll("table tr td span");
+        //    //for (i = 0; i < valores.length; i++) {
+               
+               
+        //    //    alert(valores[i].innerHTML);
+        //    //}
+        //})
     });
 </script>
 }

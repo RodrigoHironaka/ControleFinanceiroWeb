@@ -1,0 +1,51 @@
+﻿@model ControlFinWeb.App.ViewModels.BancoVM
+@using ControlFinWeb.Dominio.ObjetoValor;
+@using ControlFinWeb.Dominio.Entidades;
+@{
+    ViewData["Title"] = "Bancos";
+}
+
+<div class="modal-dialog">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title"></h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="javascript:window.location.reload()"></button>
+        </div>
+        <div class="modal-body">
+            <form asp-action="Editar">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input asp-for="Id" type="hidden" />
+                <div class="form-group">
+                    <label asp-for="Nome" class="control-label"></label>
+                    <input asp-for="Nome" class="form-control" />
+                    <span asp-validation-for="Nome" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="PessoaId" class="control-label"></label>
+                    <select class="form-select" asp-for="PessoaId" asp-items="ViewBag.PessoaId">
+                        <option value="0">---Selecione um item---</option>
+                    </select>
+                    <span asp-validation-for="PessoaId" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="TipoContaBanco" class="control-label"></label>
+                    <select class="form-select" asp-for="TipoContaBanco" asp-items="Html.GetEnumSelectList<TipoCartao>()">
+                    </select>
+                    <span asp-validation-for="TipoContaBanco" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Situacao" class="control-label"></label>
+                    <select class="form-select" asp-for="Situacao" asp-items="Html.GetEnumSelectList<Situacao>()">
+                    </select>
+                    <span asp-validation-for="Situacao" class="text-danger"></span>
+                </div>
+                <br />
+                <button type="submit" class="w-100 btn btn-success btnConfirmar">Salvar</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

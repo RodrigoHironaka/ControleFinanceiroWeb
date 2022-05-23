@@ -23,7 +23,8 @@ namespace ControlFinWeb.App.AutoMapper
                 .AfterMap((src, dest) =>{ dest.Gasto = new Gasto { Id = src.GastoId }; }); //outro exemplo: .ForPath(dest => dest.Gasto.Id, m =>  m.MapFrom(src => src.GastoId));
             CreateMap<PessoaVM, Pessoa>()
                 .AfterMap((src, dest) => { dest.PessoaRendas = new MapperConfiguration(cfg => cfg.CreateMap<PessoaRendasVM, PessoaRendas>().AfterMap((src, dest) => { dest.TipoRenda = new Renda { Id = src.TipoRendaId }; })).CreateMapper().Map<List<PessoaRendas>>(src.PessoaRendasVM); });
-         
+            CreateMap<BancoVM, Banco>()
+                 .AfterMap((src, dest) => { dest.PessoaRefBanco = new Pessoa { Id = src.PessoaId }; });
             #endregion
 
             #region Dominio Para ViewModel
@@ -34,7 +35,8 @@ namespace ControlFinWeb.App.AutoMapper
                 .AfterMap((src, dest) =>{dest.GastoVM = AutoMapperConfig<Gasto, GastoVM>.Mapear(src.Gasto); }); //Outro Exemplo: dest.GastoVM = new MapperConfiguration(cfg => cfg.CreateMap<Gasto, GastoVM>()).CreateMapper().Map<GastoVM>(src.Gasto);
             CreateMap<Pessoa, PessoaVM>()
                 .AfterMap((src, dest) => { dest.PessoaRendasVM = new MapperConfiguration(cfg => cfg.CreateMap<PessoaRendas, PessoaRendasVM>().AfterMap((src, dest) => { dest.TipoRendaVM = AutoMapperConfig<Renda, RendaVM>.Mapear(src.TipoRenda); })).CreateMapper().Map<List<PessoaRendasVM>>(src.PessoaRendas); });
-           
+            CreateMap<Banco, BancoVM>()
+                .AfterMap((src, dest) => { dest.PessoaRefBancoVM = AutoMapperConfig<Pessoa, PessoaVM>.Mapear(src.PessoaRefBanco); }); ;
             #endregion
         }
 

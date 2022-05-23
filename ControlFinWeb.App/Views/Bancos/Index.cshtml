@@ -1,0 +1,116 @@
+﻿@model IEnumerable<ControlFinWeb.App.ViewModels.BancoVM>
+
+@{
+    ViewData["Title"] = "Bancos";
+}
+
+<div class="row">
+    <div class="input-group mb-3">
+        <div class="input-group-prepend">
+            <button class="btn btn-dark novo" data-id="0"><i class="badge-info bi-plus-lg"></i></button>
+        </div>
+        <span class="input-group-text fw-bold">Lista de bancos</span>
+    </div>
+</div>
+<table id="tabela" class="table table-striped table-hover">
+    <thead>
+        <tr>
+            <th>Nome</th>
+            <th>Tipo de Conta</th>
+            <th>Pessoa</th>
+            <th>Situação</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Nome)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.TipoContaBanco)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.PessoaRefBancoVM.Nome)
+
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Situacao)
+                </td>
+                <td align="right">
+                    <button class="btn btn-primary modal-trigger editar" data-id="@item.Id"><i class="bi bi-pencil-square"></i></button>
+                    <a class="btn btn-danger modal-trigger" onclick="ExibirModalExcluir(@item.Id)"><i class="bi bi-x-square"></i></a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<div id="modal" class="modal fade" role="dialog"></div>
+
+<!--Modal Excluir-->
+<div class="modal fade modal-excluir" id="modal-excluir" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-danger">
+                <h5 class="modal-title text-white">Confirma exclusão do registro?</h5>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-outline-danger btnConfirmar">Confirmar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts
+{
+    <script>
+        $(document).ready(function () {
+            $('#tabela').DataTable({
+                "language": {
+                    "url": "//cdn.datatables.net/plug-ins/1.11.5/i18n/pt-BR.json"
+                }
+            });
+        });
+
+        $(document).ready(function () {
+            $(".modal-excluir").modal();
+        });
+
+        function ExibirModalExcluir(id) {
+            $("#modal-excluir").modal("show");
+            $(".btnConfirmar").on("click", function () {
+                $.ajax({
+                    method: "POST",
+                    url: "/bancos/Deletar",
+                    data: { id: id },
+                    success: function () {
+                        location.reload();
+                    }
+                });
+            })
+        }
+
+        $(function () {
+            $(".novo").click(function () {
+                var id = $(this).attr("data-id");
+                $("#modal").load("Editar?id=" + id, function () {
+                    $(".modal-title").html("NOVO REGISTRO");
+                    $("#modal").modal("show");
+                })
+            });
+
+            $(".editar").click(function () {
+                var id = $(this).attr("data-id");
+                $("#modal").load("Editar?id=" + id, function () {
+                    $(".modal-title").html("ALTERANDO REGISTRO");
+                    $("#modal").modal("show");
+                })
+            });
+        })
+    </script>
+}
+
