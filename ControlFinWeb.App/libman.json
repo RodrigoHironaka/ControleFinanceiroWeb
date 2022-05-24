@@ -39,6 +39,10 @@
         "globalize.js",
         "globalize.min.js"
       ]
+    },
+    {
+      "library": "jquery.maskedinput@1.4.1",
+      "destination": "wwwroot/lib/jquery.maskedinput/"
     }
   ]
 }

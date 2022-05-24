@@ -5,6 +5,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Include="Utilitarios\Validacoes\CustomValidacoes.js" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\ControlFinWeb.Dominio\ControlFinWeb.Dominio.csproj" />
     <ProjectReference Include="..\ControlFinWeb.Repositorio\ControlFinWeb.Repositorio.csproj" />
     <ProjectReference Include="..\Utils\Utils.csproj" />

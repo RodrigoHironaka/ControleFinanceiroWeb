@@ -19,6 +19,7 @@ namespace ControlFinWeb.App.ViewModels
         public String Nome { get; set; }
 
         [DisplayName("Limite da Fatura")]
+        [Range(1, Int64.MaxValue, ErrorMessage = "Valor precisa ser maior que zero!")]
         public Decimal LimiteFatura { get; set; }
 
         [Required(ErrorMessage = "Campo Obrigatório")]
@@ -26,7 +27,7 @@ namespace ControlFinWeb.App.ViewModels
         public Int32 DiaVencimento { get; set; }
 
         [DisplayName("Vencimento do Cartão")]
-        
+        [DataBrasil(ErrorMessage = "Data inválida", DataRequerida = false)]
         public DateTime VencimentoCartao { get; set; }
 
         [DisplayName("Situação")]
