@@ -31,6 +31,14 @@
     {
       "library": "jquery-maskmoney@3.0.2",
       "destination": "wwwroot/lib/jquery-maskmoney/"
+    },
+    {
+      "library": "globalize@1.7.0",
+      "destination": "wwwroot/lib/globalize/",
+      "files": [
+        "globalize.js",
+        "globalize.min.js"
+      ]
     }
   ]
 }

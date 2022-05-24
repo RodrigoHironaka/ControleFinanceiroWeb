@@ -17,12 +17,12 @@ namespace ControlFinWeb.App.ViewModels
         [Required(ErrorMessage = "Campo Obrigatório")]
         public String Nome { get; set; }
         [DisplayName("Tipo de Conta")]
-        public virtual TipoCartao TipoContaBanco { get; set; }
+        public TipoCartao TipoContaBanco { get; set; }
 
         [DisplayName("Situação")]
         public Situacao Situacao { get; set; }
 
-        [Range(1, Int64.MaxValue, ErrorMessage = "Informe um Gasto")]
+        [Range(1, Int64.MaxValue, ErrorMessage = "Informe uma Pessoa")]
         public Int64 PessoaId { get; set; }
 
         public PessoaVM PessoaRefBancoVM { get; set; }
