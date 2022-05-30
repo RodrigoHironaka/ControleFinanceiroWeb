@@ -16,13 +16,19 @@ namespace ControlFinWeb.Repositorio.Mapeamentos
             });
             
             Property(x => x.Nome);
-            Property(x => x.DataHoraExtra);
+            Property(x => x.HorasTrabalhoManha);
+            Property(x => x.HorasTrabalhoTarde);
+            Property(x => x.HorasTrabalhoNoite);
+            Property(x => x.Data);
             Property(x => x.HoraInicioManha);
             Property(x => x.HoraFinalManha);
+            Property(x => x.TotalManha);
             Property(x => x.HoraInicioTarde);
             Property(x => x.HoraFinalTarde);
+            Property(x => x.TotalTarde);
             Property(x => x.HoraInicioNoite);
             Property(x => x.HoraFinalNoite);
+            Property(x => x.TotalNoite);
             Property(x => x.DataGeracao);
             Property(x => x.DataAlteracao);
             ManyToOne(x => x.Pessoa, m => m.Column("Pessoa"));

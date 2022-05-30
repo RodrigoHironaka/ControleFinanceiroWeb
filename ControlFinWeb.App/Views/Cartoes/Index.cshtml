@@ -12,7 +12,7 @@
         <span class="input-group-text fw-bold">Lista de cartões</span>
     </div>
 </div>
-<table class="table">
+<table class="table" id="tabela">
     <thead>
         <tr>
             <th>Nome</th>
@@ -30,7 +30,7 @@
                     @Html.DisplayFor(modelItem => item.Nome)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.VencimentoCartao)
+                    @Html.Raw(item.VencimentoCartao.ToString("MM/yyyy"))
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.Situacao)
