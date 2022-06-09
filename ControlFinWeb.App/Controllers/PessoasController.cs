@@ -44,7 +44,7 @@ namespace ControlFinWeb.App.Controllers
                 pessoa = Repositorio.ObterPorId(Id);
                 pessoaVM = Mapper.Map<PessoaVM>(pessoa);
             }
-            ViewBag.TipoRendaId = new SelectList(new RepositorioRenda(NHibernateHelper.ObterSessao()).ObterPorParametros(x => x.Situacao == Situacao.Ativo), "Id", "Nome", Id);
+            pessoaVM.Rendas = new SelectList(new RepositorioRenda(NHibernateHelper.ObterSessao()).ObterPorParametros(x => x.Situacao == Situacao.Ativo), "Id", "Nome", Id);
             return View(pessoaVM);
         }
 
@@ -71,7 +71,7 @@ namespace ControlFinWeb.App.Controllers
                 }
                 return RedirectToAction("Index");
             }
-            ViewBag.TipoRendaId = new SelectList(new RepositorioRenda(NHibernateHelper.ObterSessao()).ObterPorParametros(x => x.Situacao == Situacao.Ativo), "Id", "Nome", pessoaVM.Id);
+            pessoaVM.Rendas = new SelectList(new RepositorioRenda(NHibernateHelper.ObterSessao()).ObterPorParametros(x => x.Situacao == Situacao.Ativo), "Id", "Nome", pessoaVM.Id);
             return PartialView(pessoaVM);
         }
 

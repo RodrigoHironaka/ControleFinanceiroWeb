@@ -36,7 +36,7 @@
                                     <a class="dropdown-item" asp-action="Index" asp-controller="SubGastos">SubGastos</a>
                                     <a class="dropdown-item" asp-action="Index" asp-controller="Bancos">Bancos</a>
                                     <a class="dropdown-item" asp-action="Index" asp-controller="Cartoes">Cartões</a>
-                                    <a class="dropdown-item" href="#">Horas Extra</a>
+                                    <a class="dropdown-item" asp-action="Index" asp-controller="HorasExtras">Horas Extra</a>
                                 </div>
                             </li>
                             <li class="nav-item">
@@ -69,7 +69,7 @@
             </nav>
         </header>
     }
-    <div class="container">
+    <div class="container-fluid">
         <main role="main" class="pb-3">
             @RenderBody()
         </main>

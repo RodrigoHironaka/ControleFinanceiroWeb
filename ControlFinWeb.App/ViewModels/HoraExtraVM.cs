@@ -14,61 +14,74 @@ namespace ControlFinWeb.App.ViewModels
 
         [DisplayName("Descrição")]
         [StringLength(255, ErrorMessage = "Limite máximo de 255 caracteres.")]
-        [Required(ErrorMessage = "Campo Obrigatório")]
         public String Nome { get; set; }
 
         [Range(1, Int64.MaxValue, ErrorMessage = "Informe uma Pessoa")]
         public Int64 PessoaId { get; set; }
         public PessoaVM PessoaVM { get; set; }
 
-        [DisplayName("Hora Padrão Manhã")]
+        [DisplayName("Manhã")]
+        [Required(ErrorMessage = "Campo Obrigatório")]
+        //[Range(typeof(TimeSpan), "00:01", "23:59", ErrorMessage = "Campo não pode ser Zero!")]
         public TimeSpan HorasTrabalhoManha { get; set; }
 
-        [DisplayName("Hora Padrão Tarde")]
+        [DisplayName("Tarde")]
+        [Required(ErrorMessage = "Campo Obrigatório")]
         public TimeSpan HorasTrabalhoTarde { get; set; }
 
-        [DisplayName("Hora Padrão Noite")]
+        [DisplayName("Noite")]
+        [Required(ErrorMessage = "Campo Obrigatório")]
         public TimeSpan HorasTrabalhoNoite { get; set; }
+
+        //[Required(ErrorMessage = "Campo Obrigatório")]
+        [Range(typeof(DateTime), "01/01/1980", "31/12/3000", ErrorMessage = "Data Inválida!")]
         public DateTime Data { get; set; }
 
-        [DisplayName("Início Manhã")]
+        [DisplayName("I.Manhã")]
         public TimeSpan HoraInicioManha { get; set; }
 
-        [DisplayName("Final Manhã")]
+        [DisplayName("F.Manhã")]
         public TimeSpan HoraFinalManha { get; set; }
 
-        [DisplayName("Total Manhã")]
-        public TimeSpan TotalManha { get; set; }
-
-        [DisplayName("Início Tarde")]
+        [DisplayName("I.Tarde")]
         public TimeSpan HoraInicioTarde { get; set; }
 
-        [DisplayName("Final Tarde")]
+        [DisplayName("F.Tarde")]
         public TimeSpan HoraFinalTarde { get; set; }
 
-        [DisplayName("Início Noite")]
+        [DisplayName("I.Noite")]
         public TimeSpan HoraInicioNoite { get; set; }
 
-        [DisplayName("Final Noite")]
+        [DisplayName("F.Noite")]
         public TimeSpan HoraFinalNoite { get; set; }
 
-        [DisplayName("Total Tarde")]
-        public TimeSpan TotalTarde { get; set; }
+        
+        [DisplayName("T.Manhã")]
+        public TimeSpan TotalManha
+        {
+            get { return HoraFinalManha - HoraInicioManha; }
+        }
 
-        [DisplayName("Total Manhã")]
-        public TimeSpan TotalNoite { get; set; }
+        [DisplayName("T.Tarde")]
+        public TimeSpan TotalTarde
+        {
+            get { return HoraFinalTarde - HoraInicioTarde; }
+        }
+
+        [DisplayName("Total Noite")]
+        public TimeSpan TotalNoite 
+        { 
+            get { return HoraFinalNoite - HoraInicioNoite; }
+        }
 
         [DisplayName("Total horas do dia")]
         public TimeSpan HorasTrabalhoDia
         {
-            get
-            {
-                return HorasTrabalhoManha + HorasTrabalhoTarde + HorasTrabalhoNoite;
-            }
+            get { return HorasTrabalhoManha + HorasTrabalhoTarde + HorasTrabalhoNoite; }
         }
 
-        [DisplayName("Total Dia")]
-        public TimeSpan HoraFinalDia 
+        [DisplayName("T.Dia")]
+        public TimeSpan HoraFinalDia
         {
             get
             {
@@ -78,7 +91,6 @@ namespace ControlFinWeb.App.ViewModels
                     return TotalManha + TotalTarde + TotalNoite - HorasTrabalhoTarde;
                 else if (TotalNoite == TimeSpan.Zero)
                     return TotalManha + TotalTarde + TotalNoite - HorasTrabalhoNoite;
-
                 else
                     return TotalManha + TotalTarde + TotalNoite - HorasTrabalhoDia;
 

@@ -1,4 +1,5 @@
 ﻿using ControlFinWeb.Dominio.ObjetoValor;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -6,6 +7,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
+
 
 namespace ControlFinWeb.App.ViewModels
 {
@@ -27,6 +29,8 @@ namespace ControlFinWeb.App.ViewModels
         public Situacao Situacao { get; set; }
 
         public IList<PessoaRendasVM> PessoaRendasVM { get; set; }
+
+        public SelectList Rendas { get; set; }
 
         #region Campos Apenas para digitar valores e add a lista PessaRendasVM
         [DisplayName("R.Bruta")]

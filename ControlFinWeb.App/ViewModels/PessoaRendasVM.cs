@@ -11,6 +11,7 @@ namespace ControlFinWeb.App.ViewModels
         public Decimal RendaLiquida { get; set; }
         public Int64 TipoRendaId { get; set; }
         public RendaVM TipoRendaVM { get; set; }
+        public bool Visivel { get; set; }
         public override string ToString()
         {
             return string.Format("{0} - Renda Bruta: {1} - Renda Liquida: {2}", TipoRendaVM.Nome, RendaBruta.ToString("N2"), RendaLiquida.ToString("N2"));
