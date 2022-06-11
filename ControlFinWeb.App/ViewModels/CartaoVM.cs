@@ -11,6 +11,11 @@ namespace ControlFinWeb.App.ViewModels
 {
     public class CartaoVM
     {
+        public CartaoVM()
+        {
+            if (VencimentoCartao == DateTime.MinValue)
+                VencimentoCartao = DateTime.Now;
+        }
         public Int64 Id { get; set; }
 
         [DisplayName("Nome")]

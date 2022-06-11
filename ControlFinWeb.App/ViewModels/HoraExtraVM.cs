@@ -96,5 +96,17 @@ namespace ControlFinWeb.App.ViewModels
 
             }
         }
+
+        [DisplayName("Extra")]
+        public String HorasExtras
+        {
+            get 
+            {
+                if(HoraFinalDia > HorasTrabalhoDia)
+                    return String.Format("+{0:hh\\:mm}",HorasTrabalhoDia.Subtract(HoraFinalDia)); 
+                
+                return String.Format("-{0:hh\\:mm}",HorasTrabalhoDia.Subtract(HoraFinalDia));
+            }
+        }
     }
 }

@@ -27,50 +27,54 @@
             <th>F.Noite</th>
             <th>T.Noite</th>
             <th>T.Dia</th>
+            <th>Extra</th>
             <th></th>
         </tr>
     </thead>
     <tbody>
         @foreach (var item in Model)
         {
-            <tr>
-                <td>
-                    @Html.Raw(item.Data.ToShortDateString())
-                </td>
-                <td>
-                    @Html.Raw(item.HoraInicioManha.ToString("hh\\:mm"))
-                </td>
-                <td>
-                    @Html.Raw(item.HoraFinalManha.ToString("hh\\:mm"))
-                </td>
-                <td class="fw-bold">
-                    @Html.Raw(item.TotalManha.ToString("hh\\:mm"))
-                </td>
-                <td>
-                    @Html.Raw(item.HoraInicioTarde.ToString("hh\\:mm"))
-                </td>
-                <td>
-                    @Html.Raw(item.HoraFinalTarde.ToString("hh\\:mm"))
-                </td>
-                <td class="fw-bold">
-                    @Html.Raw(item.TotalTarde.ToString("hh\\:mm"))
-                </td>
-                <td>
-                    @Html.Raw(item.HoraInicioNoite.ToString("hh\\:mm"))
-                </td>
-                <td>
-                    @Html.Raw(item.HoraFinalNoite.ToString("hh\\:mm"))
-                <td class="fw-bold">
-                    @Html.Raw(item.TotalNoite.ToString("hh\\:mm"))
-                </td>
-                <th class="fw-bold">
-                    @Html.Raw(item.HoraFinalDia.ToString("hh\\:mm"))
-                </th>
-                <td align="right">
-                    <button class="btn btn-primary modal-trigger editar" data-id="@item.Id"><i class="bi bi-pencil-square"></i></button>
-                    <a class="btn btn-danger modal-trigger" onclick="ExibirModalExcluir(@item.Id)"><i class="bi bi-x-square"></i></a>
-                </td>
-            </tr>
+        <tr>
+            <td>
+                @Html.Raw(item.Data.ToShortDateString())
+            </td>
+            <td>
+                @Html.Raw(item.HoraInicioManha.ToString("hh\\:mm"))
+            </td>
+            <td>
+                @Html.Raw(item.HoraFinalManha.ToString("hh\\:mm"))
+            </td>
+            <td class="fw-bold">
+                @Html.Raw(item.TotalManha.ToString("hh\\:mm"))
+            </td>
+            <td>
+                @Html.Raw(item.HoraInicioTarde.ToString("hh\\:mm"))
+            </td>
+            <td>
+                @Html.Raw(item.HoraFinalTarde.ToString("hh\\:mm"))
+            </td>
+            <td class="fw-bold">
+                @Html.Raw(item.TotalTarde.ToString("hh\\:mm"))
+            </td>
+            <td>
+                @Html.Raw(item.HoraInicioNoite.ToString("hh\\:mm"))
+            </td>
+            <td>
+                @Html.Raw(item.HoraFinalNoite.ToString("hh\\:mm"))
+            <td class="fw-bold">
+                @Html.Raw(item.TotalNoite.ToString("hh\\:mm"))
+            </td>
+            <th class="fw-bold">
+                @Html.Raw(item.HoraFinalDia.ToString("hh\\:mm"))
+            </th>
+            <th class="fw-bold">
+                @Html.Raw(item.HorasExtras)
+            </th>
+            <td align="right">
+                <button class="btn btn-primary modal-trigger editar" data-id="@item.Id"><i class="bi bi-pencil-square"></i></button>
+                <a class="btn btn-danger modal-trigger" onclick="ExibirModalExcluir(@item.Id)"><i class="bi bi-x-square"></i></a>
+            </td>
+        </tr>
         }
     </tbody>
 </table>
@@ -80,7 +84,7 @@
 
 <!--Modal Excluir-->
 <div class="modal fade modal-excluir" id="modal-excluir" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header bg-danger">
                 <h5 class="modal-title text-white">Confirma exclusão do registro?</h5>
