@@ -23,21 +23,21 @@ namespace CFP.DTO.Cofres
             return v.ToList();
         }
 
-        public IList<BancoFinanceiroDTO> ToList(System.Linq.Expressions.Expression<Func<BancoFinanceiro, bool>> predicado, ISession session)
+        public IList<BancoFinanceiroDTO> ToList(System.Linq.Expressions.Expression<Func<ContaBancaria, bool>> predicado, ISession session)
         {
             var v = Query(predicado, session);
             return v.ToList();
         }
 
-        public BancoFinanceiroDTO Load(System.Linq.Expressions.Expression<Func<BancoFinanceiro, bool>> predicado, ISession session)
+        public BancoFinanceiroDTO Load(System.Linq.Expressions.Expression<Func<ContaBancaria, bool>> predicado, ISession session)
         {
             var v = Query(predicado, session);
             return v.SingleOrDefault();
         }
 
-        private static IQueryable<BancoFinanceiroDTO> Query(System.Linq.Expressions.Expression<Func<BancoFinanceiro, bool>> predicado, ISession session)
+        private static IQueryable<BancoFinanceiroDTO> Query(System.Linq.Expressions.Expression<Func<ContaBancaria, bool>> predicado, ISession session)
         {
-            var query = session.Query<BancoFinanceiro>();
+            var query = session.Query<ContaBancaria>();
             if (predicado != null)
                 query = query.Where(predicado);
 

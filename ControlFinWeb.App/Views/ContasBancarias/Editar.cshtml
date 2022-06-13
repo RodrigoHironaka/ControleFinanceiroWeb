@@ -1,0 +1,135 @@
+﻿@model ControlFinWeb.App.ViewModels.ContaBancariaVM
+@using ControlFinWeb.Dominio.ObjetoValor;
+
+@{
+    ViewData["Title"] = "Contas Bancárias";
+}
+
+
+<div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title"></h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="javascript:window.location.reload()"></button>
+        </div>
+        <div class="modal-body">
+            <form asp-action="Editar">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input asp-for="Id" type="hidden" />
+                <input asp-for="Codigo" type="hidden" />
+                <div class="form-group">
+                    <label asp-for="Nome" class="control-label"></label>
+                    <textarea asp-for="Nome" class="form-control" rows="2"></textarea>
+                    <span asp-validation-for="Nome" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="BancoId" class="control-label"></label>
+                    <select class="form-select" asp-for="BancoId" asp-items="ViewBag.BancoId">
+                        <option value="0">---Selecione um item---</option>
+                    </select>
+                    <span asp-validation-for="BancoId" class="text-danger"></span>
+                </div>
+                <div class="row">
+                    <div class="col-4">
+                        <label asp-for="Valor" class="control-label"></label>
+                        <input asp-for="Valor" class="form-control" />
+                        <span asp-validation-for="Valor" class="text-danger"></span>
+                    </div>
+                    <div class="col-4">
+                        <label asp-for="TransacaoBancaria" class="control-label"></label>
+                        <select class="form-select" asp-for="TransacaoBancaria" asp-items="Html.GetEnumSelectList<TransacaoBancaria>()"></select>
+                        <span asp-validation-for="TransacaoBancaria" class="text-danger"></span>
+                    </div>
+                    <div class="col-4">
+                        <label asp-for="Situacao" class="control-label"></label>
+                        <select class="form-select" asp-for="Situacao" asp-items="Html.GetEnumSelectList<EntradaSaida>()"></select>
+                        <span asp-validation-for="Situacao" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <br />
+                <button type="submit" class="w-100 btn btn-success btnConfirmar">Salvar</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script type="text/javascript">
+        $(function () {
+            $("#Valor").maskMoney({ thousands: '.', decimal: ',', allowZero: true });
+        });
+    </script>
+}
+
+
+
+@*<h1>Editar</h1>
+
+    <h4>ContaBancariaVM</h4>
+    <hr />
+    <div class="row">
+        <div class="col-md-4">
+            <form asp-action="Editar">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="form-group">
+                    <label asp-for="Id" class="control-label"></label>
+                    <input asp-for="Id" class="form-control" />
+                    <span asp-validation-for="Id" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Codigo" class="control-label"></label>
+                    <input asp-for="Codigo" class="form-control" />
+                    <span asp-validation-for="Codigo" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Valor" class="control-label"></label>
+                    <input asp-for="Valor" class="form-control" />
+                    <span asp-validation-for="Valor" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Nome" class="control-label"></label>
+                    <input asp-for="Nome" class="form-control" />
+                    <span asp-validation-for="Nome" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="TransacaoBancaria" class="control-label"></label>
+                    <input asp-for="TransacaoBancaria" class="form-control" />
+                    <span asp-validation-for="TransacaoBancaria" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Situacao" class="control-label"></label>
+                    <input asp-for="Situacao" class="form-control" />
+                    <span asp-validation-for="Situacao" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="BancoId" class="control-label"></label>
+                    <input asp-for="BancoId" class="form-control" />
+                    <span asp-validation-for="BancoId" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="CaixaId" class="control-label"></label>
+                    <input asp-for="CaixaId" class="form-control" />
+                    <span asp-validation-for="CaixaId" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="DescricaoComCodigo" class="control-label"></label>
+                    <input asp-for="DescricaoComCodigo" class="form-control" />
+                    <span asp-validation-for="DescricaoComCodigo" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <input type="submit" value="Save" class="btn btn-primary" />
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div>
+        <a asp-action="Index">Back to List</a>
+    </div>
+
+    @section Scripts {
+        @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    }*@

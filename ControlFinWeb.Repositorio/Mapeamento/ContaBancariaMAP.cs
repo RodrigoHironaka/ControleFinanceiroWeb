@@ -6,11 +6,11 @@ using NHibernate.Type;
 
 namespace ControlFinWeb.Repositorio.Mapeamentos
 {
-    public class BancoFinanceiroMAP : ClassMapping<BancoFinanceiro>
+    public class ContaBancariaMAP : ClassMapping<ContaBancaria>
     {
-        public BancoFinanceiroMAP()
+        public ContaBancariaMAP()
         {
-            Table("BancosFinanceiro");
+            Table("contasBancarias");
             Id(x => x.Id, m =>
             {
                 m.Generator(Generators.HighLow, g => g.Params(new { max_lo = 0 }));

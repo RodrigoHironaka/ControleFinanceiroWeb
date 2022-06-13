@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
+using Utils.Extensions.Enums;
 
 namespace ControlFinWeb.App.ViewModels
 {
@@ -16,6 +17,7 @@ namespace ControlFinWeb.App.ViewModels
         [StringLength(70, ErrorMessage = "Limite máximo de 70 caracteres.")]
         [Required(ErrorMessage = "Campo Obrigatório")]
         public String Nome { get; set; }
+
         [DisplayName("Tipo de Conta")]
         public TipoCartao TipoContaBanco { get; set; }
 
@@ -27,9 +29,14 @@ namespace ControlFinWeb.App.ViewModels
         public Int64 PessoaId { get; set; }
         public PessoaVM PessoaRefBancoVM { get; set; }
 
+        public String NomeETipo
+        {
+            get { return String.Format("{0} ({1})", Nome, TipoContaBanco.GetDisplayName()); }
+        }
+
         public override string ToString()
         {
-            return String.Format("{0} {1} - {2}", Nome, TipoContaBanco, PessoaRefBancoVM);
+            return String.Format("{0} ({1}) - {2}", Nome, TipoContaBanco, PessoaRefBancoVM);
         }
     }
 }

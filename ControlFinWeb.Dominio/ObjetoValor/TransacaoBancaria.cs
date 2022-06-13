@@ -8,7 +8,6 @@ namespace ControlFinWeb.Dominio.ObjetoValor
 {
     public enum TransacaoBancaria
     {
-        Transferência,
         Depósito,
         Saque,
         Pix,
