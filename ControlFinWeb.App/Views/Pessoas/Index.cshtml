@@ -4,54 +4,56 @@
     ViewData["Title"] = "Pessoas";
 }
 
-<div class="row">
-    <div class="input-group mb-3">
-        <div class="input-group-prepend">
-            <button class="btn btn-dark novo" data-id="0"><i class="bi bi-plus-lg"></i></button>
+<div style="margin-left: 200px; margin-right: 200px;">
+    <div class="row">
+        <div class="input-group mb-3">
+            <div class="input-group-prepend">
+                <button class="btn btn-dark novo" data-id="0"><i class="bi bi-plus-lg"></i></button>
+            </div>
+            <span class="input-group-text fw-bold">Lista de Pessoas</span>
         </div>
-        <span class="input-group-text fw-bold">Lista de Pessoas</span>
     </div>
-</div>
 
-<table id="tabela" class="table table-striped table-hover">
-    <thead>
-        <tr>
-            <th>Nome</th>
-            <th>Total Renda Bruta</th>
-            <th>Total Renda Líquida</th>
-            <th>Situação</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Nome)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.TotalRendaBruta)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.TotalRendaLiquida)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Situacao)
-            </td>
-            <td align="right">
-                <button class="btn btn-primary modal-trigger editar" data-id="@item.Id"><i class="bi bi-pencil-square"></i></button>
-                <a class="btn btn-danger modal-trigger" onclick="ExibirModalExcluir(@item.Id)"><i class="bi bi-x-square"></i></a>
-            </td>
-        </tr>
-        }
-    </tbody>
-</table>
-<div id="modal" class="modal fade" role="dialog"></div>
+    <table id="tabela" class="table table-bordered table-striped table-hover">
+        <thead>
+            <tr>
+                <th>Nome</th>
+                <th>Total Renda Bruta</th>
+                <th>Total Renda Líquida</th>
+                <th>Situação</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Nome)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.TotalRendaBruta)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.TotalRendaLiquida)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Situacao)
+                    </td>
+                    <td align="center">
+                        <button class="btn btn-primary modal-trigger editar" data-id="@item.Id"><i class="bi bi-pencil-square"></i></button>
+                        <a class="btn btn-danger modal-trigger" onclick="ExibirModalExcluir(@item.Id)"><i class="bi bi-x-square"></i></a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+<div id="modal" class="modal fade" role="dialog" data-bs-backdrop="static" data-bs-keyboard="false"></div>
 
 <!--Modal Excluir-->
 <div class="modal fade modal-excluir" id="modal-excluir" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header bg-danger">
                 <h5 class="modal-title text-white">Confirma exclusão do registro?</h5>

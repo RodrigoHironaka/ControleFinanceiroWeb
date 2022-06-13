@@ -23,8 +23,8 @@ namespace ControlFinWeb.App.ViewModels
         public Situacao Situacao { get; set; }
 
         [Range(1, Int64.MaxValue, ErrorMessage = "Informe uma Pessoa")]
+        [DisplayName("Pessoa")]
         public Int64 PessoaId { get; set; }
-
         public PessoaVM PessoaRefBancoVM { get; set; }
 
         public override string ToString()

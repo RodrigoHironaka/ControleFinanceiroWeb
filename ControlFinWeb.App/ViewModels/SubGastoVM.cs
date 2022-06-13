@@ -24,6 +24,7 @@ namespace ControlFinWeb.App.ViewModels
         public Situacao Situacao { get; set; }
 
         [Range(1, Int64.MaxValue, ErrorMessage = "Informe um Gasto")]
+        [DisplayName("Gasto")]
         public Int64 GastoId { get; set; }
 
         public GastoVM GastoVM { get; set; }

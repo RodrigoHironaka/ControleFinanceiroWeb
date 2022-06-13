@@ -13,7 +13,7 @@
         <span class="input-group-text fw-bold">Lista Hora Extras</span>
     </div>
 </div>
-<table class="table tabela" id="tabela">
+<table id="tabela" class="table table-bordered table-striped table-hover">
     <thead>
         <tr>
             <th>Data</th>
@@ -70,7 +70,7 @@
             <th class="fw-bold">
                 @Html.Raw(item.HorasExtras)
             </th>
-            <td align="right">
+            <td align="center">
                 <button class="btn btn-primary modal-trigger editar" data-id="@item.Id"><i class="bi bi-pencil-square"></i></button>
                 <a class="btn btn-danger modal-trigger" onclick="ExibirModalExcluir(@item.Id)"><i class="bi bi-x-square"></i></a>
             </td>
@@ -80,7 +80,7 @@
 </table>
 
 
-<div id="modal" class="modal fade" role="dialog"></div>
+<div id="modal" class="modal fade" role="dialog" data-bs-backdrop="static" data-bs-keyboard="false"></div>
 
 <!--Modal Excluir-->
 <div class="modal fade modal-excluir" id="modal-excluir" tabindex="-1" aria-hidden="true">
