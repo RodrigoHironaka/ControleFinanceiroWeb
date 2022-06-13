@@ -11,11 +11,11 @@ namespace ControlFinWeb.Dominio.ObjetoValor
     public enum TipoCartao
     {
         [Display(Name = "Conta Corrente")]
-        CC, //ContaCorrente
+        ContaCorrente, 
         [Display(Name = "Conta Poupança")]
-        CP, //ContaPoupança
+        ContaPoupanca, 
         [Display(Name = "Conta Salário")]
-        CS, //ContaSalario
+        ContaSalario, 
         Ticket,
         [Display(Name = "Vale Transporte")]
         ValeTransporte,

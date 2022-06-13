@@ -17,7 +17,6 @@
         <thead>
             <tr>
                 <th>Nome</th>
-                <th>Tipo de Conta</th>
                 <th>Pessoa</th>
                 <th>Situação</th>
                 <th></th>
@@ -28,10 +27,7 @@
             {
                 <tr>
                     <td>
-                        @Html.DisplayFor(modelItem => item.Nome)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.TipoContaBanco)
+                        @Html.DisplayFor(modelItem => item.NomeETipo)
                     </td>
                     <td>
                         @Html.DisplayFor(modelItem => item.PessoaRefBancoVM.Nome)
