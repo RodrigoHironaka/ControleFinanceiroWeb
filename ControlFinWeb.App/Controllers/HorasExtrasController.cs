@@ -29,11 +29,12 @@ namespace ControlFinWeb.App.Controllers
 
         HoraExtra horaExtra = new HoraExtra();
         HoraExtraVM horaExtraVM = new HoraExtraVM();
+        List<HoraExtraVM> horasExtrasVM = new List<HoraExtraVM>();
 
         public IActionResult Index()
         {
             IEnumerable<HoraExtra> horasExtras = Repositorio.ObterTodos();
-            List<HoraExtraVM> horasExtrasVM = Mapper.Map<List<HoraExtraVM>>(horasExtras);
+            horasExtrasVM = Mapper.Map<List<HoraExtraVM>>(horasExtras);
             return View(horasExtrasVM);
         }
 
@@ -44,7 +45,14 @@ namespace ControlFinWeb.App.Controllers
                 horaExtra = Repositorio.ObterPorId(Id);
                 horaExtraVM = Mapper.Map<HoraExtraVM>(horaExtra);
             }
-
+            else
+            {
+                var ultimoRegistro = Repositorio.ObterTodos().LastOrDefault();
+                horaExtraVM.HorasTrabalhoManha = ultimoRegistro != null ? ultimoRegistro.HorasTrabalhoManha : TimeSpan.Zero;
+                horaExtraVM.HorasTrabalhoTarde = ultimoRegistro != null ? ultimoRegistro.HorasTrabalhoTarde : TimeSpan.Zero;
+                horaExtraVM.HorasTrabalhoNoite = ultimoRegistro != null ? ultimoRegistro.HorasTrabalhoNoite : TimeSpan.Zero;
+            }
+           
             ViewBag.PessoaId = new SelectList(new RepositorioPessoa(NHibernateHelper.ObterSessao()).ObterPorParametros(x => x.Situacao == Situacao.Ativo), "Id", "Nome", Id);
             return View(horaExtraVM);
         }

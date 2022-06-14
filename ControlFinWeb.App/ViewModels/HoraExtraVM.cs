@@ -55,7 +55,7 @@ namespace ControlFinWeb.App.ViewModels
         [DisplayName("F.Noite")]
         public TimeSpan HoraFinalNoite { get; set; }
 
-        
+
         [DisplayName("T.Manhã")]
         public TimeSpan TotalManha
         {
@@ -69,8 +69,8 @@ namespace ControlFinWeb.App.ViewModels
         }
 
         [DisplayName("Total Noite")]
-        public TimeSpan TotalNoite 
-        { 
+        public TimeSpan TotalNoite
+        {
             get { return HoraFinalNoite - HoraInicioNoite; }
         }
 
@@ -100,12 +100,14 @@ namespace ControlFinWeb.App.ViewModels
         [DisplayName("Extra")]
         public String HorasExtras
         {
-            get 
+            get
             {
-                if(HoraFinalDia > HorasTrabalhoDia)
-                    return String.Format("+{0:hh\\:mm}",HorasTrabalhoDia.Subtract(HoraFinalDia)); 
-                
-                return String.Format("-{0:hh\\:mm}",HorasTrabalhoDia.Subtract(HoraFinalDia));
+                if (HoraFinalDia < HorasTrabalhoDia)
+                    return String.Format("-{0:hh\\:mm}", HorasTrabalhoDia.Subtract(HoraFinalDia));
+                else if (HoraFinalDia > HorasTrabalhoDia)
+                    return String.Format("+{0:hh\\:mm}", HorasTrabalhoDia.Subtract(HoraFinalDia));
+
+                return String.Format("{0:hh\\:mm}", HorasTrabalhoDia.Subtract(HoraFinalDia));
             }
         }
     }

@@ -15,6 +15,8 @@ namespace ControlFinWeb.App.ViewModels
         [DisplayName("Código")]
         public Int64 Codigo { get; set; }
 
+        public DateTime DataGeracao { get; set; }
+
         public Decimal Valor { get; set; }
 
         [DisplayName("Descrição")]
