@@ -12,7 +12,7 @@
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="javascript:window.location.reload()"></button>
         </div>
         <div class="modal-body">
-            <form asp-action="Editar">
+            <form asp-action="Editar" id="FrmPessoa">
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                 <input asp-for="Id" type="hidden" />
                 <div class="form-group">
@@ -64,49 +64,49 @@
                             <tbody>
                                 @for (int i = 0; i < Model.PessoaRendasVM.Count; i++)
                                 {
-                                <tr>
-                                    <td>
-                                        @*<input asp-for="PessoaRendasVM[i].Id" type="hidden" />*@
-                                        <input asp-for="PessoaRendasVM[i].TipoRendaId" type="hidden" />
-                                        @*<input asp-for="PessoaRendasVM[i].TipoRendaVM.Nome" type="hidden" />*@
-                                        <span>@Model.PessoaRendasVM[i].TipoRendaVM.Id - @Model.PessoaRendasVM[i].TipoRendaVM.Nome</span>
-                                    </td>
-                                    <td align="right">
-                                        <input asp-for="PessoaRendasVM[i].RendaBruta" type="hidden" />
-                                        <span>@Model.PessoaRendasVM[i].RendaBruta.ToString("n2")</span>
-                                    </td>
-                                    <td align="right">
-                                        <input asp-for="PessoaRendasVM[i].RendaLiquida" type="hidden" />
-                                        <span>@Model.PessoaRendasVM[i].RendaLiquida.ToString("n2")</span>
-                                    </td>
-                                    <td>
-                                        <input asp-for="PessoaRendasVM[i].Visivel" type="hidden" />
+                                    <tr>
+                                        <td>
+                                            @*<input asp-for="PessoaRendasVM[i].Id" type="hidden" />*@
+                                            <span>@Model.PessoaRendasVM[i].TipoRendaVM.Id - @Model.PessoaRendasVM[i].TipoRendaVM.Nome</span>
+                                            <input asp-for="PessoaRendasVM[i].TipoRendaId" type="hidden" />
+                                            @*<input asp-for="PessoaRendasVM[i].TipoRendaVM.Nome" type="hidden" />*@
+                                        </td>
+                                        <td align="right">
+                                            <input asp-for="PessoaRendasVM[i].RendaBruta" type="hidden" />
+                                            <span>@Model.PessoaRendasVM[i].RendaBruta.ToString("n2")</span>
+                                        </td>
+                                        <td align="right">
+                                            <input asp-for="PessoaRendasVM[i].RendaLiquida" type="hidden" />
+                                            <span>@Model.PessoaRendasVM[i].RendaLiquida.ToString("n2")</span>
+                                        </td>
+                                        <!--<td>
+                                            <input asp-for="PessoaRendasVM[i].Visivel" type="hidden" />-->
                                         @*<span>@Model.PessoaRendasVM[i].Visivel</span>*@
-                                    </td>
-                                    <td align="right">
-                                        <button type="button" class="btn btn-danger btn-sm removerRenda"><i class="bi bi-dash"></i></button>
-                                    </td>
-                                </tr>
+                                        <!--</td>-->
+                                        <td align="right">
+                                            <button type="button" class="btn btn-danger btn-sm removerRenda"><i class="bi bi-dash"></i></button>
+                                        </td>
+                                    </tr>
                                 }
                             </tbody>
                             @*<tfoot>
-                                <tr>
-                                    <th> Totais</th>
-                                    <td align="right">
-                                        <span>@Model.TotalRendaBruta</span>
-                                    </td>
-                                    <td align="right">
-                                        <span>@Model.TotalRendaLiquida</span>
-                                    </td>
-                                    <td></td>
-                                </tr>
-                           
-                            </tfoot>*@
+                                    <tr>
+                                        <th> Totais</th>
+                                        <td align="right">
+                                            <span>@Model.TotalRendaBruta</span>
+                                        </td>
+                                        <td align="right">
+                                            <span>@Model.TotalRendaLiquida</span>
+                                        </td>
+                                        <td></td>
+                                    </tr>
+
+                                </tfoot>*@
                         </table>
                     </div>
                 </div>
                 <br />
-                <button type="submit" class="w-100 btn btn-success">Salvar</button>
+                <button type="button" onclick="Salvar()" class="w-100 btn btn-success">Salvar</button>
             </form>
         </div>
     </div>
@@ -115,26 +115,41 @@
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 
-<script type="text/javascript">
+    <script type="text/javascript">
     $(function () {
         $("#RendaBruta, #RendaLiquida").maskMoney({ thousands: '.', decimal: ',', allowZero: true });
 
         var countRenda = @Model.PessoaRendasVM.Count;
         var $rendas = $("#rendas");
         $(".addRenda").on("click", function () {
+
             var rendaId = $("#TipoRendaId").val();
             var nomeRenda = $('#TipoRendaId').find(":selected").text();
             var rendaBruta = $("#RendaBruta").val();
             var rendaLiquida = $("#RendaLiquida").val();
+            if (rendaId <= 0) {
+                $("[data-valmsg-for=TipoRendaId]").html('Selecione uma Renda');
+                return;
+            }
+            if (parseFloat(rendaBruta) <= 0) {
+                $("[data-valmsg-for=RendaBruta]").html('Valor precisa ser maior que zero!');
+                return;
+            }
 
-            var tdRenda = `<td> ${rendaId} <input type="hidden" name="PessoaRendasVM[${countRenda}].TipoRendaId" value=${rendaId} /> - ${nomeRenda} <input type="hidden"/> </td>`;
+            if (parseFloat(rendaLiquida) <= 0) {
+                rendaLiquida = rendaBruta;
+            }
+
+            $("[data-valmsg-for=TipoRendaId]").html('');
+            $("[data-valmsg-for=RendaBruta]").html('');
+
+            var tdRenda = `<td> <span>${rendaId} - ${nomeRenda}</span> <input type="hidden" name="PessoaRendasVM[${countRenda}].TipoRendaId" value=${rendaId} />  </td>`;
             var tdRendaBruta = `<td align="right"> ${rendaBruta} <input type="hidden" name="PessoaRendasVM[${countRenda}].RendaBruta" value=${rendaBruta} /> </td>`;
             var tdRendaLiquida = `<td align="right"> ${rendaLiquida} <input type="hidden" name="PessoaRendasVM[${countRenda}].RendaLiquida" value=${rendaLiquida} /> </td>`;
-            var tdVisivel = `<td><input type="hidden" name="PessoaRendasVM[${countRenda}].Visivel" value=true /> <span> 2 </span></td>`;
             var tdRemover = `<td align="right"> <button type="button" class="btn btn-danger btn-sm removerRenda"><i class="bi bi-dash"></i></button> </td>`;
 
-            var tr = `<tr>${tdRenda}${tdRendaBruta}${tdRendaLiquida}${tdVisivel}${tdRemover}</tr>`;
-            
+            var tr = `<tr>${tdRenda}${tdRendaBruta}${tdRendaLiquida}${tdRemover}</tr>`;
+
             $rendas.find('tbody').append(tr);
             countRenda++;
 
@@ -143,48 +158,33 @@
             $("#RendaLiquida").val('0,00');
         })
 
-        $('#tabela').on("click", "removerRenda", function () {
-            var index = $(this).val();
-            console.log(index);
-            //$(this).closest('tr').hide();
-            //$(this).closest('tr').data("PessoaRendasVM['${index}'].Visivel").val(false);
-        })
-
-        //$("#PessoaRendasVM[2].Id").on("click", function () {
-        //    var index = $(this).val();
-        //    alert(index);
-        //    //$(this).closest('tr').hide();
-        //    //$(this).closest('tr').data("PessoaRendasVM['${index}'].Visivel").val(false);
-        //})
-
-        //$(".excluirRenda").on("click", function () {
-        //    $(this).closest('tr').remove();
-        //})
-
-        //$(".excluirRenda").on("click", function () {
-        //    var renda = $(this).parent().parent();
-        //    renda.remove();
-        //})
-
-
-        //$(".excluirRenda").on("click", function (id) {
-        //    var renda = $(this).parent().parent();
-        //    renda.remove();
-
-        //    //var valores = document.querySelectorAll("table tr td span");
-        //    //for (i = 0; i < valores.length; i++) {
-               
-               
-        //    //    alert(valores[i].innerHTML);
-        //    //}
-        //})
+        $('#rendas').on("click", ".removerRenda", function () {
+            $(this).parent().parent().remove();
+            countRenda = 0;
+            $("#rendas tbody").children().each(function (i, tr) {
+                $(tr).children().eq(0).find('input').attr('name', `PessoaRendasVM[${countRenda}].TipoRendaId`);
+                $(tr).children().eq(1).find('input').attr('name', `PessoaRendasVM[${countRenda}].RendaBruta`);
+                $(tr).children().eq(2).find('input').attr('name', `PessoaRendasVM[${countRenda}].RendaLiquida`);
+                countRenda++;
+            });
+        });
     });
 
-    //function ExcluiRenda(index) {
-    //    alert(index);
-    //    $(this).closest('tr').hide();
-    //    $(this).closest('tr').data("PessoaRendasVM['${index}'].Visivel").val(false);
-    //}
-</script>
+    function Salvar() {
+        var dados = $("#FrmPessoa").serialize();
+        $.ajax({
+            url: '/Pessoas/Editar',
+            method: 'POST',
+            data: dados,
+            success: function (retorno) {
+                if (retorno == "") {
+                    location.reload();
+                } 
+                else
+                    $("#modal").html(retorno);
+            }
+        })
+    }
+    </script>
 }
 

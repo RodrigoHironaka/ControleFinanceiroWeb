@@ -69,10 +69,10 @@ namespace ControlFinWeb.App.Controllers
                     pessoa.PessoaRendas.ForEach(x => x.Pessoa = pessoa);
                     Repositorio.Salvar(pessoa);
                 }
-                return RedirectToAction("Index");
+                return new EmptyResult();
             }
             pessoaVM.Rendas = new SelectList(new RepositorioRenda(NHibernateHelper.ObterSessao()).ObterPorParametros(x => x.Situacao == Situacao.Ativo), "Id", "Nome", pessoaVM.Id);
-            return PartialView(pessoaVM);
+            return View(pessoaVM);
         }
 
 
