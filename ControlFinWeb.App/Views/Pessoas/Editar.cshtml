@@ -66,10 +66,8 @@
                                 {
                                     <tr>
                                         <td>
-                                            @*<input asp-for="PessoaRendasVM[i].Id" type="hidden" />*@
                                             <span>@Model.PessoaRendasVM[i].TipoRendaVM.Id - @Model.PessoaRendasVM[i].TipoRendaVM.Nome</span>
                                             <input asp-for="PessoaRendasVM[i].TipoRendaId" type="hidden" />
-                                            @*<input asp-for="PessoaRendasVM[i].TipoRendaVM.Nome" type="hidden" />*@
                                         </td>
                                         <td align="right">
                                             <input asp-for="PessoaRendasVM[i].RendaBruta" type="hidden" />
@@ -79,10 +77,6 @@
                                             <input asp-for="PessoaRendasVM[i].RendaLiquida" type="hidden" />
                                             <span>@Model.PessoaRendasVM[i].RendaLiquida.ToString("n2")</span>
                                         </td>
-                                        <!--<td>
-                                            <input asp-for="PessoaRendasVM[i].Visivel" type="hidden" />-->
-                                        @*<span>@Model.PessoaRendasVM[i].Visivel</span>*@
-                                        <!--</td>-->
                                         <td align="right">
                                             <button type="button" class="btn btn-danger btn-sm removerRenda"><i class="bi bi-dash"></i></button>
                                         </td>
@@ -179,11 +173,11 @@
             success: function (retorno) {
                 if (retorno == "") {
                     location.reload();
-                } 
+                }
                 else
                     $("#modal").html(retorno);
             }
-        })
+        });
     }
     </script>
 }

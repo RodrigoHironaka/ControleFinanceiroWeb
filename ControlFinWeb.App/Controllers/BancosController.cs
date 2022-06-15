@@ -41,7 +41,7 @@ namespace ControlFinWeb.App.Controllers
                 bancoVM = Mapper.Map<BancoVM>(banco);
             }
 
-            ViewBag.PessoaId = new SelectList(new RepositorioPessoa(NHibernateHelper.ObterSessao()).ObterPorParametros(x => x.Situacao == Situacao.Ativo), "Id", "Nome", Id);
+            ViewBag.Pessoas = new SelectList(new RepositorioPessoa(NHibernateHelper.ObterSessao()).ObterPorParametros(x => x.Situacao == Situacao.Ativo), "Id", "Nome", Id);
             return View(bancoVM);
         }
 
@@ -65,9 +65,9 @@ namespace ControlFinWeb.App.Controllers
                     Repositorio.Salvar(banco);
                 }
 
-                return RedirectToAction("Index");
+                return new EmptyResult();
             }
-            ViewBag.PessoaId = new SelectList(new RepositorioPessoa(NHibernateHelper.ObterSessao()).ObterPorParametros(x => x.Situacao == Situacao.Ativo), "Id", "Nome", bancoVM.Id);
+            ViewBag.Pessoas = new SelectList(new RepositorioPessoa(NHibernateHelper.ObterSessao()).ObterPorParametros(x => x.Situacao == Situacao.Ativo), "Id", "Nome", bancoVM.Id);
             return View(bancoVM);
         }
 

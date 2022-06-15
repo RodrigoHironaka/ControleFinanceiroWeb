@@ -1,4 +1,5 @@
 ﻿using ControlFinWeb.Dominio.ObjetoValor;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -26,7 +27,8 @@ namespace ControlFinWeb.App.ViewModels
 
         [Range(1, Int64.MaxValue, ErrorMessage = "Informe uma Pessoa")]
         [DisplayName("Pessoa")]
-        public Int64 PessoaId { get; set; }
+        public Int64 PessoaRefBancoId { get; set; }
+        public SelectList Pessoas { get; set; }
         public PessoaVM PessoaRefBancoVM { get; set; }
 
         public String NomeETipo

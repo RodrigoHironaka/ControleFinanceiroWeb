@@ -28,7 +28,7 @@ namespace ControlFinWeb.App.AutoMapper
                 .CreateMapper().Map<List<PessoaRendas>>(src.PessoaRendasVM);
             });
             CreateMap<BancoVM, Banco>()
-                 .AfterMap((src, dest) => { dest.PessoaRefBanco = new Pessoa { Id = src.PessoaId }; });
+                 .AfterMap((src, dest) => { dest.PessoaRefBanco = new Pessoa { Id = src.PessoaRefBancoId }; });
             CreateMap<CartaoVM, Cartao>()
                 .AfterMap((src, dest) => { dest.Banco = new Banco { Id = src.BancoId }; });
             CreateMap<HoraExtraVM, HoraExtra>()
