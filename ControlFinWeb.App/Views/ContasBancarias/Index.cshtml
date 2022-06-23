@@ -12,7 +12,7 @@
         <span class="input-group-text fw-bold">Registros Bancários</span>
     </div>
 </div>
-<table id="tabela" class="table table-bordered table-striped table-hover">
+<table id="tabela" class="table table-bordered table-hover" style="width:100%">
     <thead>
         <tr>
             <th>Data</th>
@@ -21,38 +21,36 @@
             <th>Valor</th>
             <th>Banco</th>
             <th>Descrição</th>
-
             <th></th>
         </tr>
     </thead>
     <tbody>
         @foreach (var item in Model)
         {
-        <tr>
-            <td>
-                @Html.Raw(item.DataGeracao.ToShortDateString())
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Situacao)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.TransacaoBancaria)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Valor)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.BancoVM.NomeETipo)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.DescricaoComCodigo)
-            </td>
-
-            <td align="center">
-                <button class="btn btn-primary modal-trigger editar" data-id="@item.Id"><i class="bi bi-pencil-square"></i></button>
-                <a class="btn btn-danger modal-trigger" onclick="ExibirModalExcluir(@item.Id)"><i class="bi bi-x-square"></i></a>
-            </td>
-        </tr>
+            <tr>
+                <td>
+                    @Html.Raw(item.DataGeracao.ToShortDateString())
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Situacao)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.TransacaoBancaria)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Valor)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.BancoVM.NomeETipo)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.DescricaoComCodigo)
+                </td>
+                <td align="center">
+                    <button class="btn btn-primary modal-trigger editar" data-id="@item.Id"><i class="bi bi-pencil-square"></i></button>
+                    <a class="btn btn-danger modal-trigger" onclick="ExibirModalExcluir(@item.Id)"><i class="bi bi-x-square"></i></a>
+                </td>
+            </tr>
         }
     </tbody>
 </table>
@@ -79,10 +77,43 @@
 {
     <script>
         $(document).ready(function () {
-            $('#tabela').DataTable({
-                "language": {
-                    "url": "//cdn.datatables.net/plug-ins/1.11.5/i18n/pt-BR.json"
+            var collapsedGroups = {};
+
+            var table = $('#tabela').DataTable({
+                order: [[4, 'asc']],
+                rowGroup: {
+                    // Uses the 'row group' plugin
+                    dataSrc: 4,
+                    startRender: function (rows, group) {
+                        var collapsed = !!collapsedGroups[group];
+
+                        rows.nodes().each(function (r) {
+                            r.style.display = collapsed ? 'none' : '';
+                        });
+
+                        // Add category name to the <tr>. NOTE: Hardcoded colspan
+                        return $('<tr/>')
+                            .append('<td class="group-start" style="background-color: #ddd !important; font-weight:bold;" colspan="7" >'
+                                + group + ' Qtd Registros: [' + rows.count() + ']</td>')
+                            .attr('data-name', group)
+                            .toggleClass('collapsed', collapsed);
+                    }
+                },
+                language: {
+                    url: "//cdn.datatables.net/plug-ins/1.11.5/i18n/pt-BR.json"
                 }
+            });
+
+            $('#tabela tbody tr.group-start').each(function () {
+                var name = $(this).data('name');
+                collapsedGroups[name] = !collapsedGroups[name];
+            });
+            table.draw(false);
+
+            $('#tabela tbody').on('click', 'tr.group-start', function () {
+                var name = $(this).data('name');
+                collapsedGroups[name] = !collapsedGroups[name];
+                table.draw(false);
             });
         });
 

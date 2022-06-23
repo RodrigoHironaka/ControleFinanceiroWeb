@@ -13,6 +13,8 @@
             <span class="input-group-text fw-bold">Lista de bancos</span>
         </div>
     </div>
+
+    <div id="mensagem" role="alert"></div>
     <table id="tabela" class="table table-bordered table-striped table-hover">
         <thead>
             <tr>
@@ -86,6 +88,10 @@
                     data: { id: id },
                     success: function () {
                         location.reload();
+                    },
+                    error: function () {
+                        $("#modal-excluir").modal("hide");
+                        $("#mensagem").addClass('alert alert-danger').html("<strong>Erro!</strong> Não é possível excluir, por favor inative o registro!").delay(10000).fadeOut(400);
                     }
                 });
             })

@@ -57,17 +57,20 @@
                 method: 'POST',
                 data: dados,
                 success: function (retorno) {
-                    if (retorno == "")
+                    if (retorno == "") {
                         location.reload();
+                        //$("#modal").modal('hide');
+                        //$("#mensagem").addClass('alert alert-success').html("<strong>Sucesso!</strong> Item salvo no banco de dados!").delay(10000).fadeOut(400);
+                    }
                     else {
                         $("#modal").html(retorno);
                         if ($("#id").val() > 0)
-                            $(".modal-title").html("alterando registro");
+                            $(".modal-title").html("ALTERANDO REGISTRO");
                         else
-                            $(".modal-title").html("novo registro");
-                    }
-                        
+                            $(".modal-title").html("NOVO REGISTRO");
+                    } 
                 }
+
             });
         }
     </script>
