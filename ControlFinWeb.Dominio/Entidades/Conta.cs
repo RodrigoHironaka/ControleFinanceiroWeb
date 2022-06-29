@@ -20,7 +20,7 @@ namespace ControlFinWeb.Dominio.Entidades
         public virtual SituacaoConta Situacao { get; set; }
         public virtual DateTime? DataEmissao { get; set; }
         
-        public virtual Int64? NumeroDocumento { get; set; }
+        public virtual String NumeroDocumento { get; set; }
         public virtual SubGasto SubGasto { get; set; }
         public virtual FormaPagamento FormaCompra { get; set; }
         public virtual FaturaCartaoCredito FaturaCartaoCredito { get; set; }

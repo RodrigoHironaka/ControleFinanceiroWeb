@@ -36,7 +36,7 @@
         {
         <tr>
             <td>
-                @Html.Raw(item.Data.ToShortDateString())
+                @Html.Raw(item.Data.Value.Date.ToShortDateString())
             </td>
             <td>
                 @Html.Raw(item.HoraInicioManha.ToString("hh\\:mm"))

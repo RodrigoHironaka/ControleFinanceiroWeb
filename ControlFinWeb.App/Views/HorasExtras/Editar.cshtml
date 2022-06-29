@@ -13,7 +13,7 @@
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="javascript:window.location.reload()"></button>
         </div>
         <div class="modal-body">
-            <form asp-action="Editar">
+            <form asp-action="Editar" id="FrmHoraExtra">
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                 <input asp-for="Id" type="hidden" />
                 <div class="card">
@@ -22,23 +22,23 @@
                         <div class="row">
                             <div class="col-4">
                                 <label asp-for="HorasTrabalhoManha" class="control-label"></label>
-                                <input asp-for="HorasTrabalhoManha" class="form-control" type="time"/>
+                                <input asp-for="HorasTrabalhoManha" class="form-control" type="time" />
                                 <span asp-validation-for="HorasTrabalhoManha" class="text-danger"></span>
                             </div>
                             <div class="col-4">
                                 <label asp-for="HorasTrabalhoTarde" class="control-label"></label>
-                                <input asp-for="HorasTrabalhoTarde" class="form-control" type="time"/>
+                                <input asp-for="HorasTrabalhoTarde" class="form-control" type="time" />
                                 <span asp-validation-for="HorasTrabalhoTarde" class="text-danger"></span>
                             </div>
                             <div class="col-4">
                                 <label asp-for="HorasTrabalhoNoite" class="control-label"></label>
-                                <input asp-for="HorasTrabalhoNoite" class="form-control" type="time"/>
+                                <input asp-for="HorasTrabalhoNoite" class="form-control" type="time" />
                                 <span asp-validation-for="HorasTrabalhoNoite" class="text-danger"></span>
                             </div>
                         </div>
                     </div>
                 </div>
-               
+
                 <div class="card">
                     <div class="card-body">
                         <div class="row">
@@ -69,7 +69,7 @@
 
                             <div class="col-md-2">
                                 <label asp-for="HoraInicioTarde" class="control-label"></label>
-                                <input asp-for="HoraInicioTarde" class="form-control" type="time"/>
+                                <input asp-for="HoraInicioTarde" class="form-control" type="time" />
                                 <span asp-validation-for="HoraInicioTarde" class="text-danger"></span>
                             </div>
                             <div class="col-md-2">
@@ -79,12 +79,12 @@
                             </div>
                             <div class="col-2">
                                 <label asp-for="HoraInicioNoite" class="control-label"></label>
-                                <input asp-for="HoraInicioNoite" class="form-control" type="time"/>
+                                <input asp-for="HoraInicioNoite" class="form-control" type="time" />
                                 <span asp-validation-for="HoraInicioNoite" class="text-danger"></span>
                             </div>
                             <div class="col-2">
                                 <label asp-for="HoraFinalNoite" class="control-label"></label>
-                                <input asp-for="HoraFinalNoite" class="form-control" type="time"/>
+                                <input asp-for="HoraFinalNoite" class="form-control" type="time" />
                                 <span asp-validation-for="HoraFinalNoite" class="text-danger"></span>
                             </div>
                         </div>
@@ -98,7 +98,7 @@
                     </div>
                 </div>
                 <br />
-                <button type="submit" class="w-100 btn btn-success btnConfirmar">Salvar</button>
+                <button type="button" onclick="Salvar()" class="w-100 btn btn-success btnConfirmar">Salvar</button>
             </form>
         </div>
     </div>
@@ -106,4 +106,26 @@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        function Salvar() {
+            var dados = $("#FrmHoraExtra").serialize();
+            $.ajax({
+                url: '/HorasExtras/Editar',
+                method: 'POST',
+                data: dados,
+                success: function (retorno) {
+                    if (retorno == "")
+                        location.reload();
+                    else {
+                        $("#modal").html(retorno);
+                        if ($("#id").val() > 0)
+                            $(".modal-title").html("ALTERANDO REGISTRO");
+                        else
+                            $(".modal-title").html("NOVO REGISTRO");
+                    }
+                }
+
+            });
+        }
+    </script>
 }

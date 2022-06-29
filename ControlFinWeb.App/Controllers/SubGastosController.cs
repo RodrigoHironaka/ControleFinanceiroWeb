@@ -64,8 +64,8 @@ namespace ControlFinWeb.App.Controllers
                     subGasto.UsuarioCriacao = Configuracao.Usuario;
                     Repositorio.Salvar(subGasto);
                 }
-               
-                return RedirectToAction("Index");
+
+                return new EmptyResult();
             }
             ViewBag.GastoId = new SelectList(new RepositorioGasto(NHibernateHelper.ObterSessao()).ObterPorParametros(x => x.Situacao == Situacao.Ativo), "Id", "Nome", subGastoVM.GastoId);
             return View(subGastoVM);

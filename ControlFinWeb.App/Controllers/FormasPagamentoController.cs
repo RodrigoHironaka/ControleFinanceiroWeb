@@ -62,7 +62,7 @@ namespace ControlFinWeb.App.Controllers
                     formaPagamento.UsuarioCriacao = Configuracao.Usuario;
                     Repositorio.Salvar(formaPagamento);
                 }
-                return RedirectToAction("Index");
+                return new EmptyResult();
             }
             return View(formaPagamentoVM);
         }

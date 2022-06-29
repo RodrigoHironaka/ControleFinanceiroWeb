@@ -15,7 +15,7 @@ namespace ControlFinWeb.Dominio.Entidades
         }
         public virtual DateTime MesAnoReferencia { get; set; }
         public virtual SituacaoFatura SituacaoFatura { get; set; }
-        public virtual FormaPagamento Cartao { get; set; }
+        public virtual Cartao Cartao { get; set; }
         public virtual IList<FaturaCartaoCreditoItens> FaturaItens { get; set; }
 
         public virtual string DescricaoCompleta

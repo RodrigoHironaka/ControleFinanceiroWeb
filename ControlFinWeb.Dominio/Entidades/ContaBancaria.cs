@@ -8,6 +8,7 @@ namespace ControlFinWeb.Dominio.Entidades
     {
         public virtual Int64 Codigo { get; set; }
         public virtual Decimal Valor { get; set; }
+        public virtual DateTime? DataRegistro { get; set; }
         public virtual TransacaoBancaria TransacaoBancaria{ get; set; }
         public virtual EntradaSaida Situacao { get; set; }
         public virtual Caixa Caixa { get; set; }

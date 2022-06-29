@@ -1,0 +1,143 @@
+﻿@model ControlFinWeb.App.ViewModels.ContaVM
+@using ControlFinWeb.Dominio.ObjetoValor;
+@using ControlFinWeb.Dominio.Entidades;
+
+@{
+    ViewData["Title"] = "Contas";
+}
+
+<div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title"></h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="javascript:window.location.reload()"></button>
+        </div>
+        <div class="modal-body">
+            <!-- #region Tabs -->
+            <nav id="navContas">
+                <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                    <button class="nav-link active" id="nav-Geral-tab" data-bs-toggle="tab" data-bs-target="#nav-Geral" type="button" role="tab" aria-controls="nav-Geral" aria-selected="true">Geral</button>
+                    <button class="nav-link" id="nav-Parcelas-tab" data-bs-toggle="tab" data-bs-target="#nav-Parcelas" type="button" role="tab" aria-controls="nav-Parcelas" aria-selected="false">Parcelas</button>
+                    <button class="nav-link" id="nav-Arquivos-tab" data-bs-toggle="tab" data-bs-target="#nav-Arquivos" type="button" role="tab" aria-controls="nav-Arquivos" aria-selected="false">Arquivos</button>
+                </div>
+            </nav>
+            <div class="tab-content" id="nav-tabContent">
+                <div class="tab-pane fade show active" id="nav-Geral" role="tabpanel" aria-labelledby="nav-Geral-tab">
+                    <form asp-action="Editar" id="FrmConta">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <input asp-for="Id" type="hidden" />
+                        <div class="row">
+                            <div class="col-md-3">
+                                <label asp-for="Codigo" class="control-label"></label>
+                                <input asp-for="Codigo" class="form-control" readonly />
+                                <span asp-validation-for="Codigo" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-3">
+                                <label asp-for="DataEmissao" class="control-label"></label>
+                                <input asp-for="DataEmissao" class="form-control" type="date" />
+                                <span asp-validation-for="DataEmissao" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-3">
+                                <label asp-for="TipoConta" class="control-label"></label>
+                                <select class="form-select" asp-for="TipoConta" asp-items="Html.GetEnumSelectList<TipoConta>()"></select>
+                                <span asp-validation-for="TipoConta" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-3">
+                                <label asp-for="TipoPeriodo" class="control-label"></label>
+                                <select class="form-select" asp-for="TipoPeriodo" asp-items="Html.GetEnumSelectList<PeriodoConta>()"></select>
+                                <span asp-validation-for="TipoPeriodo" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <label asp-for="Nome" class="control-label"></label>
+                                <input asp-for="Nome" class="form-control" />
+                                <span asp-validation-for="Nome" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label asp-for="SubGastoId" class="control-label"></label>
+                                <select class="form-select" asp-for="SubGastoId" asp-items="ViewBag.SubGastoId">
+                                    <option value="0">---Selecione um item---</option>
+                                </select>
+                                <span asp-validation-for="SubGastoId" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="PessoaId" class="control-label"></label>
+                                <select class="form-select" asp-for="PessoaId" asp-items="ViewBag.PessoaId">
+                                    <option value="0">---Selecione um item---</option>
+                                </select>
+                                <span asp-validation-for="PessoaId" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-8">
+                                <label asp-for="NumeroDocumento" class="control-label"></label>
+                                <input asp-for="NumeroDocumento" class="form-control" />
+                                <span asp-validation-for="NumeroDocumento" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-4">
+                                <label asp-for="Situacao" class="control-label"></label>
+                                <input asp-for="Situacao" class="form-control" readonly />
+                                <span asp-validation-for="Situacao" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <label asp-for="Observacao" class="control-label"></label>
+                                <textarea asp-for="Observacao" class="form-control" rows="2"></textarea>
+                                <span asp-validation-for="Observacao" class="text-danger"></span>
+                            </div>
+
+                        </div>
+                        <br />
+                        <button type="button" onclick="Salvar()" class="w-100 btn btn-success btnConfirmar">Salvar</button>
+                    </form>
+                </div>
+                <div class="tab-pane fade" id="nav-Parcelas" role="tabpanel" aria-labelledby="nav-Parcelas-tab">
+                    <div class="card">
+                        <div class="card-body">
+                            Tables com parcelas
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="nav-Arquivos" role="tabpanel" aria-labelledby="nav-Arquivos-tab">
+                    <div class="card">
+                        <div class="card-body">
+                            Arquivos (imagens, documentos, videos, etc)
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- #endregion -->
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script type="text/javascript">
+        function Salvar() {
+            var dados = $("#FrmConta").serialize();
+            $.ajax({
+                url: '/Contas/Editar',
+                method: 'POST',
+                data: dados,
+                success: function (retorno) {
+                    if (retorno == "")
+                        location.reload();
+                    else {
+                        $("#modal").html(retorno);
+                        if ($("#id").val() > 0)
+                            $(".modal-title").html("ALTERANDO REGISTRO");
+                        else
+                            $(".modal-title").html("NOVO REGISTRO");
+                    }
+                }
+
+            });
+        }
+    </script>
+}

@@ -8,7 +8,7 @@ namespace ControlFinWeb.Dominio.Entidades
         public virtual TimeSpan HorasTrabalhoManha { get; set; }
         public virtual TimeSpan HorasTrabalhoTarde { get; set; }
         public virtual TimeSpan HorasTrabalhoNoite { get; set; }
-        public virtual DateTime Data { get; set; }
+        public virtual DateTime? Data { get; set; }
         public virtual TimeSpan HoraInicioManha { get; set; }
         public virtual TimeSpan HoraFinalManha { get; set; }
         public virtual TimeSpan HoraInicioTarde { get; set; }

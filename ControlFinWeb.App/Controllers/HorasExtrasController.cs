@@ -77,7 +77,7 @@ namespace ControlFinWeb.App.Controllers
                     Repositorio.Salvar(horaExtra);
                 }
 
-                return RedirectToAction("Index");
+                return new EmptyResult();
             }
             ViewBag.PessoaId = new SelectList(new RepositorioPessoa(NHibernateHelper.ObterSessao()).ObterPorParametros(x => x.Situacao == Situacao.Ativo), "Id", "Nome", horaExtraVM.Id);
            

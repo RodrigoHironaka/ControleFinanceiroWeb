@@ -13,7 +13,7 @@
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="javascript:window.location.reload()"></button>
         </div>
         <div class="modal-body">
-            <form asp-action="Editar">
+            <form asp-action="Editar" id="FrmCartao">
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                 <input asp-for="Id" type="hidden" />
                 <div class="form-group">
@@ -51,7 +51,7 @@
                     <span asp-validation-for="Situacao" class="text-danger"></span>
                 </div>
                 <br />
-                <button type="submit" class="w-100 btn btn-success btnConfirmar">Salvar</button>
+                <button type="button" onclick="Salvar()" class="w-100 btn btn-success btnConfirmar">Salvar</button>
             </form>
         </div>
     </div>
@@ -63,6 +63,27 @@
     <script type="text/javascript">
         $(function () {
             $("#LimiteFatura").maskMoney({ thousands: '.', decimal: ',', allowZero: true });
-         });
+        });
+
+        function Salvar() {
+            var dados = $("#FrmCartao").serialize();
+            $.ajax({
+                url: '/Cartoes/Editar',
+                method: 'POST',
+                data: dados,
+                success: function (retorno) {
+                    if (retorno == "")
+                        location.reload();
+                    else {
+                        $("#modal").html(retorno);
+                        if ($("#id").val() > 0)
+                            $(".modal-title").html("ALTERANDO REGISTRO");
+                        else
+                            $(".modal-title").html("NOVO REGISTRO");
+                    }
+                }
+
+            });
+        }
     </script>
 }

@@ -17,7 +17,7 @@ namespace ControlFinWeb.DTO.Contas
         public Decimal ValorReajustado { get; set; }
         public DateTime? DataVencimento { get; set; }
         public String FormaCompra { get; set; }
-        public Int64 NumeroDocumento { get; set; }
+        public String NumeroDocumento { get; set; }
         public String PessoaNome { get; set; }
         public String SituacaoParcelas { get; set; }
 
@@ -56,7 +56,7 @@ namespace ControlFinWeb.DTO.Contas
                 CodigoConta = x.Conta.Codigo,
                 NomeConta = x.Conta.Nome,
                 FormaCompra = x.Conta.FormaCompra.Nome,
-                NumeroDocumento = x.Conta.NumeroDocumento != null ? (long)x.Conta.NumeroDocumento : 0,
+                NumeroDocumento = x.Conta.NumeroDocumento,
                 PessoaNome = x.Conta.Pessoa != null ? x.Conta.Pessoa.Nome : null
             };
             return consulta;

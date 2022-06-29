@@ -29,7 +29,7 @@
         {
             <tr>
                 <td>
-                    @Html.Raw(item.DataGeracao.ToShortDateString())
+                    @Html.Raw(item.DataRegistro.Value.Date.ToShortDateString())
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.Situacao)

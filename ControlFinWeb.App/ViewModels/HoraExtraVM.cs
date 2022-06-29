@@ -33,9 +33,9 @@ namespace ControlFinWeb.App.ViewModels
         [Required(ErrorMessage = "Campo Obrigatório")]
         public TimeSpan HorasTrabalhoNoite { get; set; }
 
-        //[Required(ErrorMessage = "Campo Obrigatório")]
-        [Range(typeof(DateTime), "01/01/1980", "31/12/3000", ErrorMessage = "Data Inválida!")]
-        public DateTime Data { get; set; }
+        [Range(typeof(DateTime), "01/01/1980", "31/12/5000", ErrorMessage = "Data Inválida!")]
+        [Required(ErrorMessage = "Campo Obrigatório")]
+        public DateTime? Data { get; set; }
 
         [DisplayName("I.Manhã")]
         public TimeSpan HoraInicioManha { get; set; }

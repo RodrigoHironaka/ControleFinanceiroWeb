@@ -32,8 +32,9 @@ namespace ControlFinWeb.App.ViewModels
         public Int32 DiaVencimento { get; set; }
 
         [DisplayName("Vencimento do Cartão")]
-        [DataBrasil(ErrorMessage = "Data inválida", DataRequerida = false)]
-        public DateTime VencimentoCartao { get; set; }
+        [Range(typeof(DateTime), "01/01/1980", "31/12/5000", ErrorMessage = "Data Inválida!")]
+        [Required(ErrorMessage = "Campo Obrigatório")]
+        public DateTime? VencimentoCartao { get; set; }
 
         [DisplayName("Situação")]
         public Situacao Situacao { get; set; }

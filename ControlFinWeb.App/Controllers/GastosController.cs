@@ -63,7 +63,7 @@ namespace ControlFinWeb.App.Controllers
                     gasto.UsuarioCriacao = Configuracao.Usuario;
                     Repositorio.Salvar(gasto);
                 }
-                return RedirectToAction("Index");
+                return new EmptyResult();
             }
             return View(gastoVM);
         }

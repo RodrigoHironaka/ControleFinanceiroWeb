@@ -5,15 +5,14 @@
     ViewData["Title"] = "Contas Bancárias";
 }
 
-
-<div class="modal-dialog modal-dialog-centered">
+<div class="modal-dialog modal-lg modal-dialog-centered">
     <div class="modal-content">
         <div class="modal-header">
             <h5 class="modal-title"></h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="javascript:window.location.reload()"></button>
         </div>
         <div class="modal-body">
-            <form asp-action="Editar">
+            <form asp-action="Editar" id="FrmContaBancaria">
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                 <input asp-for="Id" type="hidden" />
                 <input asp-for="Codigo" type="hidden" />
@@ -30,17 +29,22 @@
                     <span asp-validation-for="BancoId" class="text-danger"></span>
                 </div>
                 <div class="row">
-                    <div class="col-4">
+                    <div class="col-md-3">
+                        <label asp-for="DataRegistro" class="control-label"></label>
+                        <input asp-for="DataRegistro" class="form-control" type="date"/>
+                        <span asp-validation-for="DataRegistro" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-3">
                         <label asp-for="Valor" class="control-label"></label>
                         <input asp-for="Valor" class="form-control" />
                         <span asp-validation-for="Valor" class="text-danger"></span>
                     </div>
-                    <div class="col-4">
+                    <div class="col-md-3">
                         <label asp-for="TransacaoBancaria" class="control-label"></label>
                         <select class="form-select" asp-for="TransacaoBancaria" asp-items="Html.GetEnumSelectList<TransacaoBancaria>()"></select>
                         <span asp-validation-for="TransacaoBancaria" class="text-danger"></span>
                     </div>
-                    <div class="col-4">
+                    <div class="col-md-3">
                         <label asp-for="Situacao" class="control-label"></label>
                         <select class="form-select" asp-for="Situacao" asp-items="Html.GetEnumSelectList<EntradaSaida>()"></select>
                         <span asp-validation-for="Situacao" class="text-danger"></span>
@@ -48,7 +52,7 @@
                 </div>
 
                 <br />
-                <button type="submit" class="w-100 btn btn-success btnConfirmar">Salvar</button>
+                <button type="button" onclick="Salvar()" class="w-100 btn btn-success btnConfirmar">Salvar</button>
             </form>
         </div>
     </div>
@@ -61,6 +65,27 @@
         $(function () {
             $("#Valor").maskMoney({ thousands: '.', decimal: ',', allowZero: true });
         });
+
+        function Salvar() {
+            var dados = $("#FrmContaBancaria").serialize();
+            $.ajax({
+                url: '/ContasBancarias/Editar',
+                method: 'POST',
+                data: dados,
+                success: function (retorno) {
+                    if (retorno == "") 
+                        location.reload();
+                    else {
+                        $("#modal").html(retorno);
+                        if ($("#id").val() > 0)
+                            $(".modal-title").html("ALTERANDO REGISTRO");
+                        else
+                            $(".modal-title").html("NOVO REGISTRO");
+                    }
+                }
+
+            });
+        }
     </script>
 }
 

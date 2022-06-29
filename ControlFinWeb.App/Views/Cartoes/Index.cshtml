@@ -31,7 +31,7 @@
                         @Html.DisplayFor(modelItem => item.Nome)
                     </td>
                     <td>
-                        @Html.Raw(item.VencimentoCartao.ToString("MM/yyyy"))
+                        @Html.Raw(item.VencimentoCartao.Value.Date.ToString("MM/yyyy"))
                     </td>
                     <td>
                         @Html.DisplayFor(modelItem => item.Situacao)

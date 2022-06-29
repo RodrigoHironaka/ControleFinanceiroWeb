@@ -26,8 +26,17 @@ namespace ControlFinWeb.App.ViewModels
         [Range(1, Int64.MaxValue, ErrorMessage = "Informe um Gasto")]
         [DisplayName("Gasto")]
         public Int64 GastoId { get; set; }
-
         public GastoVM GastoVM { get; set; }
 
+        public String DescricaoCompleta
+        {
+            get 
+            {
+                if (GastoVM != null)
+                    return String.Format("{0}/{1}", GastoVM.Nome, Nome);
+                else
+                    return Nome;
+            }
+        }
     }
 }

@@ -18,6 +18,7 @@ namespace ControlFinWeb.Repositorio.Mapeamentos
             Property(x => x.Codigo);
             Property(x => x.Nome, m => m.Length(200));
             Property(x => x.Valor);
+            Property(x => x.DataRegistro);
             Property(x => x.Situacao, m => m.Type<EnumType<EntradaSaida>>());
             Property(x => x.TransacaoBancaria, m => m.Type<EnumType<TransacaoBancaria>>());
             Property(x => x.DataGeracao);

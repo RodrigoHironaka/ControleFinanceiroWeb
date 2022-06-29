@@ -66,7 +66,7 @@ namespace ControlFinWeb.App.Controllers
                     Repositorio.Salvar(cartao);
                 }
 
-                return RedirectToAction("Index");
+                return new EmptyResult();
             }
             ViewBag.BancoId = new SelectList(new RepositorioBanco(NHibernateHelper.ObterSessao()).ObterPorParametros(x => x.Situacao == Situacao.Ativo), "Id", "Nome", cartaoVM.Id);
             return View(cartaoVM);

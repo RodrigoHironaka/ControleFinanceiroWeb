@@ -63,7 +63,7 @@ namespace ControlFinWeb.App.Controllers
                     renda.UsuarioCriacao = Configuracao.Usuario;
                     Repositorio.Salvar(renda);
                 }
-                return RedirectToAction("Index");
+                return new EmptyResult();
             }
             return View(rendaVM);
         }

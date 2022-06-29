@@ -19,6 +19,11 @@ namespace ControlFinWeb.App.ViewModels
 
         public Decimal Valor { get; set; }
 
+        [DisplayName("Data")]
+        [Range(typeof(DateTime), "01/01/1980", "31/12/5000", ErrorMessage = "Data Inválida!")]
+        [Required(ErrorMessage = "Campo Obrigatório")]
+        public DateTime? DataRegistro { get; set; }
+
         [DisplayName("Descrição")]
         [StringLength(200, ErrorMessage = "Limite máximo de 200 caracteres.")]
         [Required(ErrorMessage = "Campo Obrigatório")]
