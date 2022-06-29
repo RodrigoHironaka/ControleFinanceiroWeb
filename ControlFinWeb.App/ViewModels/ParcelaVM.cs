@@ -12,7 +12,7 @@ namespace ControlFinWeb.App.ViewModels
         public Int64 Id { get; set; }
 
         [DisplayName("Nº Parcela")]
-        public Int32 NumeroParcela { get; set; }
+        public String NumeroParcela { get; set; }
 
         [DisplayName("Valor da Parcela")]
         public Decimal ValorParcela { get; set; }

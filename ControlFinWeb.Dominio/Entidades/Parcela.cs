@@ -12,7 +12,7 @@ namespace ControlFinWeb.Dominio.Entidades
             SituacaoParcela = SituacaoParcela.Pendente;
         }
         public virtual Int64 Id { get; set; }
-        public virtual Int32 NumeroParcela { get; set; }
+        public virtual String NumeroParcela { get; set; }
         public virtual Decimal ValorParcela { get; set; }
         public virtual DateTime? DataVencimento { get; set; }
         public virtual DateTime? DataPagamento { get; set; }
