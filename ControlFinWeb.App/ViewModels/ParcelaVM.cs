@@ -9,6 +9,10 @@ namespace ControlFinWeb.App.ViewModels
 {
     public class ParcelaVM
     {
+        public ParcelaVM()
+        {
+            SituacaoParcela = SituacaoParcela.Pendente;
+        }
         public Int64 Id { get; set; }
 
         [DisplayName("Nº Parcela")]
@@ -27,7 +31,7 @@ namespace ControlFinWeb.App.ViewModels
         public Decimal JurosPorcentual { get; set; }
 
         [DisplayName("Juros(R$)")]
-        public Decimal JurosValor { get; set; }
+        public Decimal? JurosValor { get; set; }
 
         [DisplayName("Desconto(%)")]
         public Decimal DescontoPorcentual { get; set; }

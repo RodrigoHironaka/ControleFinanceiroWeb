@@ -43,6 +43,17 @@
     {
       "library": "jquery.maskedinput@1.4.1",
       "destination": "wwwroot/lib/jquery.maskedinput/"
+    },
+    {
+      "library": "bootstrap-multiselect@1.1.1",
+      "destination": "wwwroot/lib/bootstrap-multiselect/"
+    },
+    {
+      "library": "popper.js@2.11.5",
+      "destination": "wwwroot/lib/bootstrap/popper.js/",
+      "files": [
+        "umd/popper.min.js"
+      ]
     }
   ]
 }

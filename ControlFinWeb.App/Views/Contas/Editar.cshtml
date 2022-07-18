@@ -14,16 +14,17 @@
         </div>
         <div class="modal-body">
             <!-- #region Tabs -->
-            <nav id="navContas">
-                <div class="nav nav-tabs" id="nav-tab" role="tablist">
-                    <button class="nav-link active" id="nav-Geral-tab" data-bs-toggle="tab" data-bs-target="#nav-Geral" type="button" role="tab" aria-controls="nav-Geral" aria-selected="true">Geral</button>
-                    <button class="nav-link" id="nav-Parcelas-tab" data-bs-toggle="tab" data-bs-target="#nav-Parcelas" type="button" role="tab" aria-controls="nav-Parcelas" aria-selected="false">Parcelas</button>
-                    <button class="nav-link" id="nav-Arquivos-tab" data-bs-toggle="tab" data-bs-target="#nav-Arquivos" type="button" role="tab" aria-controls="nav-Arquivos" aria-selected="false">Arquivos</button>
-                </div>
-            </nav>
-            <div class="tab-content" id="nav-tabContent">
-                <div class="tab-pane fade show active" id="nav-Geral" role="tabpanel" aria-labelledby="nav-Geral-tab">
-                    <form asp-action="Editar" id="FrmConta">
+            <form asp-action="Editar" id="FrmConta">
+                <nav id="navContas">
+                    <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                        <button class="nav-link active" id="nav-Geral-tab" data-bs-toggle="tab" data-bs-target="#nav-Geral" type="button" role="tab" aria-controls="nav-Geral" aria-selected="true">Geral</button>
+                        <button class="nav-link" id="nav-Parcelas-tab" data-bs-toggle="tab" data-bs-target="#nav-Parcelas" type="button" role="tab" aria-controls="nav-Parcelas" aria-selected="false">Parcelas</button>
+                        <button class="nav-link" id="nav-Arquivos-tab" data-bs-toggle="tab" data-bs-target="#nav-Arquivos" type="button" role="tab" aria-controls="nav-Arquivos" aria-selected="false">Arquivos</button>
+                    </div>
+                </nav>
+                <div class="tab-content" id="nav-tabContent">
+                    <div class="tab-pane fade show active" id="nav-Geral" role="tabpanel" aria-labelledby="nav-Geral-tab">
+
                         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                         <input asp-for="Id" type="hidden" />
                         <div class="row">
@@ -91,84 +92,208 @@
                             </div>
 
                         </div>
-                        <br />
-                        <button type="button" onclick="Salvar()" class="w-100 btn btn-success btnConfirmar">Salvar</button>
-                    </form>
-                </div>
-                <div class="tab-pane fade" id="nav-Parcelas" role="tabpanel" aria-labelledby="nav-Parcelas-tab">
-                    <div class="card">
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col">
-                                    <button type="button" class="w-100 btn btn-dark">Adicionar</button>
+
+                    </div>
+                    <div class="tab-pane fade" id="nav-Parcelas" role="tabpanel" aria-labelledby="nav-Parcelas-tab">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="row border-1">
+                                    <div class="col-2">
+                                        <label asp-for="Valor" class="control-label"></label>
+                                        <input asp-for="Valor" class="form-control" style="text-align:right" />
+                                        <span asp-validation-for="Valor" class="text-danger"></span>
+                                    </div>
+                                    <div class="col-2">
+                                        <label asp-for="Qtd" class="control-label"></label>
+                                        <input asp-for="Qtd" class="form-control" type="number" style="text-align:right" />
+                                        <span asp-validation-for="Qtd" class="text-danger"></span>
+                                    </div>
+                                    <div class="col-3">
+                                        <label asp-for="PrimeiroVencimento" class="control-label"></label>
+                                        <input asp-for="PrimeiroVencimento" class="form-control" type="date" style="text-align:right" />
+                                        <span asp-validation-for="PrimeiroVencimento" class="text-danger"></span>
+                                    </div>
+                                    <div class="col-2">
+                                        <br />
+                                        <button type="button" class="btn btn-dark gerarParcelas" width="100%">Gerar</button>
+                                    </div>
+                                    <div class="col-3">
+                                        <div class="dropdown" style="text-align: right;">
+                                            <br />
+                                            <button class="btn btn-dark dropdown-toggle" type="button" id="opcoes" data-bs-toggle="dropdown" aria-expanded="false">
+                                                <i class="bi bi-gear-fill"></i> Opções Gerais
+                                            </button>
+                                            <ul class="dropdown-menu" aria-labelledby="opcoes">
+                                                <li><a class="dropdown-item" href="#"><i class="bi bi-cash-stack"></i> Pagar</a></li>
+                                                <li><a class="dropdown-item" href="#"><i class="bi bi-x-square"></i> Cancelar</a></li>
+                                                <li><a class="dropdown-item" href="#"><i class="bi bi-trash"></i> Excluir</a></li>
+                                            </ul>
+                                        </div>
+                                    </div>
                                 </div>
+                                <div class="row">
+                                  @*  Filtro por situacao dropdown com combobox*@
+                                </div>
+                            </div>
+                            <table class="table table-bordered table-striped table-hover" id="tabelaParcelas">
+                                <thead>
+                                    <tr>
+                                        <th scope="col" width="5%"><input class="form-check-input" id="checkAll" type="checkbox"></th>
+                                        <th style="text-align:right">Número</th>
+                                        <th style="text-align:right">V. Parcela</th>
+                                        <th style="text-align:right">V. Aberto</th>
+                                        <th style="text-align:right">Vencimento</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @for (var i = 0; i < Model.ParcelasVM.Count; i++)
+                                    {
+                                        <tr>
+                                            <td scope="row"><input class="form-check-input check" id="check" type="checkbox"></td>
+                                            <td align="right">
+                                                <span>@Model.ParcelasVM[i].NumeroParcela</span>
+                                                <input asp-for="ParcelasVM[i].NumeroParcela" type="hidden" />
+                                            </td>
+                                            <td align="right">
+                                                <span>@Model.ParcelasVM[i].ValorParcela.ToString("n2")</span>
+                                                <input asp-for="ParcelasVM[i].ValorParcela" type="hidden" />
+                                            </td>
+                                            <td align="right">
+                                                <span>@Model.ParcelasVM[i].ValorAberto.ToString("n2")</span>
+                                                <input asp-for="ParcelasVM[i].ValorAberto" type="hidden" />
+                                            </td>
+                                            <td align="right">
+                                                <span>@Model.ParcelasVM[i].DataVencimento.Value.ToShortDateString()</span>
+                                                <input asp-for="ParcelasVM[i].DataVencimento" type="hidden" />
+                                            </td>
+                                            <td align="center">
+                                                <button type="button" class="btn btn-primary btn-sm editarParcela"><i class="bi bi-pencil-square"></i></button>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="nav-Arquivos" role="tabpanel" aria-labelledby="nav-Arquivos-tab">
+                        <div class="card">
+                            <div class="card-body">
+                                Arquivos (imagens, documentos, videos, etc)
                             </div>
                         </div>
                     </div>
-                    <table class="table table-bordered table-striped table-hover" id="tabelaParcelas">
-                        <thead>
-                            <tr>
-                                <th>Situação</th>
-                                <th>Número</th>
-                                <th>V. Parcela</th>
-                                <th>V. Aberto</th>
-                                <th>Vencimento</th>
-                                <th>Situação</th>
-                                <th></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>teste</td>
-                                <td>teste</td>
-                                <td>teste</td>
-                                <td>teste</td>
-                                <td>teste</td>
-                                <td>teste</td>
-                                <td>
-                                    <div class="btn-group">
-                                        <button type="button" class="btn btn-danger">Action</button>
-                                        <button type="button" class="btn btn-danger dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="true">
-                                            <span class="visually-hidden">Toggle Dropdown</span>
-                                        </button>
-                                        <ul class="dropdown-menu">
-                                            <li><a class="dropdown-item" href="#">Action</a></li>
-                                            <li><a class="dropdown-item" href="#">Another action</a></li>
-                                            <li><a class="dropdown-item" href="#">Something else here</a></li>
-                                            <li><hr class="dropdown-divider"></li>
-                                            <li><a class="dropdown-item" href="#">Separated link</a></li>
-                                        </ul>
-                                    </div>
-                                </td>
-                            </tr>
+                    <!-- #endregion -->
+                </div>
+                <br />
+                <button type="button" onclick="Salvar()" class="w-100 btn btn-success btnConfirmar">Salvar</button>
 
-                        </tbody>
-                    </table>
-                </div>
-                <div class="tab-pane fade" id="nav-Arquivos" role="tabpanel" aria-labelledby="nav-Arquivos-tab">
-                    <div class="card">
-                        <div class="card-body">
-                            Arquivos (imagens, documentos, videos, etc)
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <!-- #endregion -->
+            </form>
         </div>
     </div>
 </div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 
     <script type="text/javascript">
+        $(function() {
+            $("#Valor").maskMoney({ thousands: '.', decimal: ',', allowZero: true });
+
+            //Gerar Parcelas
+            var countParcelas = @Model.ParcelasVM.Count;
+            var $Parcelas = $("#tabelaParcelas");
+
+            $(".gerarParcelas").on("click", function() {
+
+                var valorTotal = parseFloat($("#Valor").val().replace(",", "."));
+                var qtd = parseInt($("#Qtd").val());
+                var primeiroVencimento = $("#PrimeiroVencimento").val();
+
+                var valorParcela = parseFloat(valorTotal / qtd).toFixed(2);
+                var diferencaValor = (valorTotal - (valorParcela * qtd)).toFixed(2);
+                var convertParcela = valorParcela.toString().replace(".", ",");
+
+                if (valorTotal <= 0) {
+                    $("[data-valmsg-for=Valor]").html('Campo Obrigatório');
+                    return;
+                }
+
+                if (qtd <= 0 || qtd.toString() == "") {
+                    $("[data-valmsg-for=Qtd]").html('Campo Obrigatório');
+                    return;
+                }
+
+                if (primeiroVencimento == "") {
+                    $("[data-valmsg-for=PrimeiroVencimento]").html('Campo Obrigatório');
+                    return;
+                }
+
+                $("[data-valmsg-for=Valor]").html('');
+                $("[data-valmsg-for=Qtd]").html('');
+                $("[data-valmsg-for=PrimeiroVencimento]").html('');
+
+                for (i = 1; i <= qtd; i++) {
+                    var venc = new Date(primeiroVencimento + " " + "00:00:00")
+                    if (i > 1) {
+                        venc.setMonth(venc.getMonth() + i - 1);
+                    }
+                    venc = venc.toLocaleDateString('pt-BR');
+
+                    var numeroParcela = i + '/' + qtd;
+                    var tdCheck = `<td scope="row"><input class="form-check-input check" id="check" type="checkbox"></td>`;
+                    var tdNumero = `<td align="right"> ${numeroParcela} <input type="hidden" name="ParcelasVM[${countParcelas}].NumeroParcela" value=${numeroParcela} /> </td>`;
+                    if (diferencaValor != 0) {
+                        var valPar = parseFloat(parseFloat(valorParcela) + parseFloat(diferencaValor)).toString().replace(".", ",");
+                        var tdValorParcela = `<td align="right"> ${valPar} <input type="hidden" name="ParcelasVM[${countParcelas}].ValorParcela" value=${valPar} /> </td>`;
+                        var tdValorAberto = `<td align="right"> ${valPar} <input type="hidden" name="ParcelasVM[${countParcelas}].ValorAberto" value=${valPar} /> </td>`;
+                        diferencaValor = 0;
+                    }
+                    else {
+                        var tdValorParcela = `<td align="right"> ${convertParcela} <input type="hidden" name="ParcelasVM[${countParcelas}].ValorParcela" value=${convertParcela} /> </td>`;
+                        var tdValorAberto = `<td align="right"> ${convertParcela} <input type="hidden" name="ParcelasVM[${countParcelas}].ValorAberto" value=${convertParcela} /> </td>`;
+                    }
+                    var tdVencimento = `<td align="right"> ${venc} <input type="hidden" name="ParcelasVM[${countParcelas}].DataVencimento" value=${venc} /></td>`;
+                    var tdEditar = `<td align="center"> <button type="button" class="btn btn-primary btn-sm editarParcela"><i class="bi bi-pencil-square"></i></button> </td>`;
+
+                    var tr = `<tr>${tdCheck}${tdNumero}${tdValorParcela}${tdValorAberto}${tdVencimento}${tdEditar}</tr>`;
+
+                    $Parcelas.find('tbody').append(tr);
+                    countParcelas++;
+                }
+
+                $("#Valor").val('0,00');
+                $("#Qtd").val('0');
+                $("#PrimeiroVencimento").val(null);
+
+            });
+        });
+
+        //CheckAll
+        $('#checkAll').change(function() {
+            $('.check').prop('checked', this.checked);
+        });
+
+        $('.check').change(function() {
+            if ($('.check:checked').length == $('.check').length) {
+                $('#checkAll').prop('checked', true);
+            }
+            else {
+                $('#checkAll').prop('checked', false);
+            }
+        });
+
+        //Salvar
         function Salvar() {
             var dados = $("#FrmConta").serialize();
+            console.log(dados);
             $.ajax({
                 url: '/Contas/Editar',
                 method: 'POST',
                 data: dados,
-                success: function (retorno) {
+                success: function(retorno) {
                     if (retorno == "")
                         location.reload();
                     else {
@@ -182,5 +307,6 @@
 
             });
         }
+
     </script>
 }

@@ -137,7 +137,7 @@
             $("[data-valmsg-for=TipoRendaId]").html('');
             $("[data-valmsg-for=RendaBruta]").html('');
 
-            var tdRenda = `<td> <span>${rendaId} - ${nomeRenda}</span> <input type="hidden" name="PessoaRendasVM[${countRenda}].TipoRendaId" value=${rendaId} />  </td>`;
+            var tdRenda = `<td> <span>${rendaId} - ${nomeRenda}</span> <input type="hidden" name="PessoaRendasVM[${countRenda}].TipoRendaId" value=${rendaId} /> </td>`;
             var tdRendaBruta = `<td align="right"> ${rendaBruta} <input type="hidden" name="PessoaRendasVM[${countRenda}].RendaBruta" value=${rendaBruta} /> </td>`;
             var tdRendaLiquida = `<td align="right"> ${rendaLiquida} <input type="hidden" name="PessoaRendasVM[${countRenda}].RendaLiquida" value=${rendaLiquida} /> </td>`;
             var tdRemover = `<td align="right"> <button type="button" class="btn btn-danger btn-sm removerRenda"><i class="bi bi-dash"></i></button> </td>`;

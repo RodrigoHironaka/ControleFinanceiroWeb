@@ -19,49 +19,33 @@ namespace ControlFinWeb.Dominio.Entidades
         public virtual PeriodoConta TipoPeriodo { get; set; }
         public virtual SituacaoConta Situacao { get; set; }
         public virtual DateTime? DataEmissao { get; set; }
-        
         public virtual String NumeroDocumento { get; set; }
         public virtual SubGasto SubGasto { get; set; }
         public virtual FormaPagamento FormaCompra { get; set; }
         public virtual FaturaCartaoCredito FaturaCartaoCredito { get; set; }
         public virtual Pessoa Pessoa { get; set; }
-        public virtual string Observacao { get; set; }
+        public virtual String Observacao { get; set; }
         public virtual IList<Parcela> Parcelas { get; set; }
         public virtual IList<Arquivo> Arquivos { get; set; }
 
-        public override string ToString()
-        {
-            return String.Format("{0} - {1}", Codigo, Nome);
-        }
 
-        public virtual Decimal? ValorTotalGeral 
-        {
-            get
-            {
-                return Parcelas.Select(x => x.ValorParcela).Sum();
-            }
-        }
+        //public virtual Decimal? ValorTotalConta { get; set; }
+        //public virtual Int64? QtdTotalParcelas { get; set; }
 
-        public virtual Decimal? ValorTotalAberto
-        {
-            get
-            {
-                return Parcelas.Select(x => x.ValorAberto).Sum();
-            }
-        }
-        public virtual Int64? QtdTotalParcelas 
-        {
-            get
-            {
-                return Parcelas.Count();
-            }
-        }
-        public virtual Int64? QtdTotalParcelasEmAberto
-        {
-            get
-            {
-                return Parcelas.Where(x => x.ValorAberto > 0).Count();
-            }
-        }
+        //public virtual Decimal? ValorTotalAberto
+        //{
+        //    get
+        //    {
+        //        return Parcelas.Select(x => x.ValorAberto).Sum();
+        //    }
+        //}
+
+        //public virtual Int64? QtdTotalParcelasEmAberto
+        //{
+        //    get
+        //    {
+        //        return Parcelas.Where(x => x.ValorAberto > 0).Count();
+        //    }
+        //}
     }
 }

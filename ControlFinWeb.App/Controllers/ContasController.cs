@@ -65,6 +65,7 @@ namespace ControlFinWeb.App.Controllers
                 else
                 {
                     conta = Mapper.Map(contaVM, conta);
+                    conta.Codigo = Repositorio.RetornaUltimoCodigo() + 1;
                     conta.UsuarioCriacao = Configuracao.Usuario;
                     conta.Parcelas.ForEach(x => x.Conta = conta);
                     conta.Arquivos.ForEach(x => x.Conta = conta);
@@ -72,6 +73,7 @@ namespace ControlFinWeb.App.Controllers
                 }
                 return new EmptyResult();
             }
+
             ViewBag.PessoaId = new SelectList(new RepositorioPessoa(NHibernateHelper.ObterSessao()).ObterPorParametros(x => x.Situacao == Situacao.Ativo), "Id", "Nome", contaVM.Id);
             ViewBag.SubGastoId = new SelectList(new RepositorioSubGasto(NHibernateHelper.ObterSessao()).ObterPorParametros(x => x.Situacao == Situacao.Ativo), "Id", "DescricaoCompleta", contaVM.Id);
             return View(contaVM);

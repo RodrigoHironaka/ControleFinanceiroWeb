@@ -12,7 +12,7 @@ namespace ControlFinWeb.DTO.Contas
         public String TipoConta { get; set; }
         public Int64 CodigoConta { get; set; }
         public String NomeConta { get; set; }
-        public Int32 NumeroParcela { get; set; }
+        public String NumeroParcela { get; set; }
         public Decimal ValorParcela { get; set; }
         public Decimal ValorReajustado { get; set; }
         public DateTime? DataVencimento { get; set; }

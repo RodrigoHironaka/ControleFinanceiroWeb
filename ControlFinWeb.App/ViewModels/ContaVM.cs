@@ -10,6 +10,11 @@ namespace ControlFinWeb.App.ViewModels
 {
     public class ContaVM
     {
+        public ContaVM()
+        {
+            ParcelasVM = new List<ParcelaVM>();
+            ArquivosVM = new List<ArquivoVM>();
+        }
         public Int64 Id { get; set; }
 
         [DisplayName("Código")]
@@ -40,6 +45,8 @@ namespace ControlFinWeb.App.ViewModels
         [DisplayName("Observação")]
         public String Observacao { get; set; }
 
+        #region Campos vinculados a outras classes
+
         [DisplayName("Gasto")]
         [Range(1, Int64.MaxValue, ErrorMessage = "Informe um Gasto")]
         public Int64 SubGastoId { get; set; }
@@ -53,17 +60,34 @@ namespace ControlFinWeb.App.ViewModels
         public Int64 PessoaId { get; set; }
         public PessoaVM PessoaVM { get; set; }
 
+        #endregion
+
         public IList<ParcelaVM> ParcelasVM { get; set; }
         public IList<ArquivoVM> ArquivosVM { get; set; }
 
-        public Decimal? ValorTotalGeral
+        #region Calculados
+
+        [DisplayName("Valor Total Conta")]
+        public Decimal? ValorTotalConta
         {
             get
             {
                 return ParcelasVM.Select(x => x.ValorParcela).Sum();
             }
+            
         }
 
+        [DisplayName("Qtd Total Parcelas")]
+        public Int64? QtdTotalParcelas
+        {
+            get
+            {
+                return ParcelasVM.Count();
+            }
+            
+        }
+
+        [DisplayName("Valor Total em Aberto")]
         public Decimal? ValorTotalAberto
         {
             get
@@ -71,13 +95,8 @@ namespace ControlFinWeb.App.ViewModels
                 return ParcelasVM.Select(x => x.ValorAberto).Sum();
             }
         }
-        public Int64? QtdTotalParcelas
-        {
-            get
-            {
-                return ParcelasVM.Count();
-            }
-        }
+
+        [DisplayName("Qtd Total em Aberto")]
         public Int64? QtdTotalParcelasEmAberto
         {
             get
@@ -85,5 +104,17 @@ namespace ControlFinWeb.App.ViewModels
                 return ParcelasVM.Where(x => x.ValorAberto > 0).Count();
             }
         }
+        #endregion
+
+        #region Campos Gerar Parcelas
+
+        [DisplayName("Valor")]
+        public Decimal Valor { get; set; }
+
+        public Int32 Qtd { get; set; }
+
+        [DisplayName("1º Vencimento")]
+        public DateTime? PrimeiroVencimento { get; set; }
+        #endregion
     }
 }

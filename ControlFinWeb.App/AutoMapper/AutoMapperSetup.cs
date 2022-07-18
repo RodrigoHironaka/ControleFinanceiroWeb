@@ -39,28 +39,29 @@ namespace ControlFinWeb.App.AutoMapper
               .AfterMap((src, dest) =>
               {
                   dest.SubGasto = new SubGasto { Id = src.SubGastoId };
-                  dest.FaturaCartaoCredito = new FaturaCartaoCredito { Id = src.FaturaCartaoCreditoId };
-                  dest.Pessoa = new Pessoa { Id = src.PessoaId };
+                  dest.FaturaCartaoCredito = src.FaturaCartaoCreditoId > 0 ? new FaturaCartaoCredito { Id = src.FaturaCartaoCreditoId } : null;
+                  dest.Pessoa = src.PessoaId > 0 ? new Pessoa { Id = src.PessoaId} : null;
 
                   dest.Parcelas = new MapperConfiguration(cfg => cfg.CreateMap<ParcelaVM, Parcela>()
                  .AfterMap((src, dest) =>
                  {
-                     dest.FormaPagamento = new FormaPagamento { Id = src.FormaPagamentoId };
-                     dest.Conta = new Conta { Id = src.ContaId };
+                     dest.FormaPagamento = src.FormaPagamentoId > 0 ? new FormaPagamento { Id = src.FormaPagamentoId } : null;
                  }))
                  .CreateMapper().Map<List<Parcela>>(src.ParcelasVM);
 
-                  dest.Arquivos = new MapperConfiguration(cfg => cfg.CreateMap<ArquivoVM, Arquivo>()
+                 dest.Arquivos = new MapperConfiguration(cfg => cfg.CreateMap<ArquivoVM, Arquivo>()
                 .AfterMap((src, dest) =>
                 {
-                    dest.FaturaCartaoCredito = new FaturaCartaoCredito { Id = src.FaturaCartaoCreditoId };
-                    dest.Conta = new Conta { Id = src.ContaId };
+                    dest.FaturaCartaoCredito = src.FaturaCartaoCreditoId > 0 ? new FaturaCartaoCredito { Id = src.FaturaCartaoCreditoId } : null;
+                    //dest.Conta = new Conta { Id = src.ContaId };
                 }))
                 .CreateMapper().Map<List<Arquivo>>(src.ArquivosVM);
               });
 
             #endregion
 
+//-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+           
             #region Dominio Para ViewModel
             CreateMap<FormaPagamento, FormaPagamentoVM>();
             CreateMap<Gasto, GastoVM>();
@@ -69,7 +70,8 @@ namespace ControlFinWeb.App.AutoMapper
                 .AfterMap((src, dest) =>
                 {
                     dest.GastoVM = AutoMapperConfig<Gasto, GastoVM>.Mapear(src.Gasto);
-                }); //Outro Exemplo: dest.GastoVM = new MapperConfiguration(cfg => cfg.CreateMap<Gasto, GastoVM>()).CreateMapper().Map<GastoVM>(src.Gasto);
+                    //Outro Exemplo: dest.GastoVM = new MapperConfiguration(cfg => cfg.CreateMap<Gasto, GastoVM>()).CreateMapper().Map<GastoVM>(src.Gasto);
+                }); 
             CreateMap<Pessoa, PessoaVM>()
                 .AfterMap((src, dest) =>
                 {
@@ -95,6 +97,7 @@ namespace ControlFinWeb.App.AutoMapper
              .AfterMap((src, dest) =>
              {
                  dest.SubGastoVM = AutoMapperConfig<SubGasto, SubGastoVM>.Mapear(src.SubGasto);
+                 dest.SubGastoVM.GastoVM = AutoMapperConfig<Gasto, GastoVM>.Mapear(src.SubGasto.Gasto);
                  dest.FaturaCartaoCreditoVM = AutoMapperConfig<FaturaCartaoCredito, FaturaCartaoCreditoVM>.Mapear(src.FaturaCartaoCredito);
                  dest.PessoaVM = AutoMapperConfig<Pessoa, PessoaVM>.Mapear(src.Pessoa);
 
