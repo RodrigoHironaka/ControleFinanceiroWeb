@@ -21,7 +21,7 @@
                 <th>Nome</th>
                 <th>Emissão</th>
                 <th>Gasto</th>
-                <th>Nº Parcelas</th>
+                <th>Qtd Parcelas</th>
                 <th>V.Total</th>
                 <th>Situação</th>
                 <th></th>
@@ -68,7 +68,11 @@
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header bg-danger">
-                <h5 class="modal-title text-white">Confirma exclusão do registro?</h5>
+                <h5 class="modal-title text-white">Excluir</h5>
+            </div>
+            <div class="modal-body">
+                ATENÇÃO: Caso haja parcelas diferentes de pendentes a conta será cancelada em vez de excluída!!!
+                Confirma exclusão do registro mesmo assim?
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
@@ -126,107 +130,3 @@
         })
     </script>
 }
-
-
-
-@*@model IEnumerable<ControlFinWeb.App.ViewModels.ContaVM>
-
-    @{
-        ViewData["Title"] = "Index";
-    }
-
-    <h1>Index</h1>
-
-    <p>
-        <a asp-action="Create">Create New</a>
-    </p>
-    <table class="table">
-        <thead>
-            <tr>
-                <th>
-                    @Html.DisplayNameFor(model => model.Id)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Código)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.NumeroDocumento)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Nome)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.TipoConta)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.TipoPeriodo)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Situacao)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.DataEmissao)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Observacao)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.SubGastoId)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.FaturaCartaoCreditoId)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.PessoaId)
-                </th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-    @foreach (var item in Model) {
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Id)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Código)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.NumeroDocumento)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Nome)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.TipoConta)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.TipoPeriodo)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Situacao)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.DataEmissao)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Observacao)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.SubGastoId)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.FaturaCartaoCreditoId)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.PessoaId)
-                </td>
-                <td>
-                    @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
-                    @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
-                    @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
-                </td>
-            </tr>
-    }
-        </tbody>
-    </table>*@

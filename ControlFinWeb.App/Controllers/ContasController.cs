@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace ControlFinWeb.App.Controllers
 {
@@ -84,8 +85,20 @@ namespace ControlFinWeb.App.Controllers
         public JsonResult Deletar(int id)
         {
             var conta = Repositorio.ObterPorId(id);
-            Repositorio.Excluir(conta);
-            return Json(conta.Nome + "excluído com sucesso");
+            var parcelasDifPendente = conta.Parcelas.Where(x => x.SituacaoParcela != SituacaoParcela.Pendente).Count();
+            if (conta.Parcelas.Where(x => x.SituacaoParcela != SituacaoParcela.Pendente).Count() > 0)
+            {
+                conta.Situacao = SituacaoConta.Cancelado;
+                conta.Observacao = "Houve uma tentativa de exclusão, mas havia parcelas que não estavam com situação pendente, neste caso a conta é cancelada!";
+                Repositorio.Alterar(conta);
+                return Json(conta.Nome + "cancelado com sucesso");
+            }
+            else
+            {
+                Repositorio.Excluir(conta);
+                return Json(conta.Nome + "excluído com sucesso");
+            }
+            
         }
     }
 }

@@ -68,6 +68,7 @@
                                         <td>
                                             <span>@Model.PessoaRendasVM[i].TipoRendaVM.Id - @Model.PessoaRendasVM[i].TipoRendaVM.Nome</span>
                                             <input asp-for="PessoaRendasVM[i].TipoRendaId" type="hidden" />
+                                            <input asp-for="PessoaRendasVM[i].Id" type="hidden" />
                                         </td>
                                         <td align="right">
                                             <input asp-for="PessoaRendasVM[i].RendaBruta" type="hidden" />
@@ -119,18 +120,18 @@
 
             var rendaId = $("#TipoRendaId").val();
             var nomeRenda = $('#TipoRendaId').find(":selected").text();
-            var rendaBruta = $("#RendaBruta").val();
-            var rendaLiquida = $("#RendaLiquida").val();
+            var rendaBruta = $("#RendaBruta").val().replace(",",".");
+            var rendaLiquida = $("#RendaLiquida").val().replace(",",".");
             if (rendaId <= 0) {
                 $("[data-valmsg-for=TipoRendaId]").html('Selecione uma Renda');
                 return;
             }
-            if (parseFloat(rendaBruta) <= 0) {
+            if (parseFloat(rendaBruta) <= 0.00) {
                 $("[data-valmsg-for=RendaBruta]").html('Valor precisa ser maior que zero!');
                 return;
             }
 
-            if (parseFloat(rendaLiquida) <= 0) {
+            if (parseFloat(rendaLiquida) <= 0.00) {
                 rendaLiquida = rendaBruta;
             }
 

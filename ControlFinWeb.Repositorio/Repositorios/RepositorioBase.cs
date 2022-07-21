@@ -149,6 +149,19 @@ namespace ControlFinWeb.Repositorio.Repositorios
             }
         }
 
+        public Int64 RetornaUltimoCampo(String campo) //retorna ultimo campo da Tabela
+        {
+            var criterio = Session.CreateCriteria<T>().SetProjection(Projections.Max(campo));
+            try
+            {
+                return criterio.UniqueResult<Int64>();
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
         public T ObterPorCodigo(Int64 cod)
         {
             var criterio = Session.CreateCriteria<T>();

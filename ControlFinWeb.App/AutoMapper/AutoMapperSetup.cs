@@ -107,6 +107,8 @@ namespace ControlFinWeb.App.AutoMapper
                   dest.ParcelasVM = new MapperConfiguration(cfg => cfg.CreateMap<Parcela, ParcelaVM>().AfterMap((src, dest) =>
                   {
                       dest.FormaPagamentoVM = AutoMapperConfig<FormaPagamento, FormaPagamentoVM>.Mapear(src.FormaPagamento);
+                      //dest.ContaVM = AutoMapperConfig<Conta, ContaVM>.Mapear(src.Conta);
+                      //dest.ContaId = dest.ContaVM.Id;
 
                   }))
                   .CreateMapper().Map<List<ParcelaVM>>(src.Parcelas);

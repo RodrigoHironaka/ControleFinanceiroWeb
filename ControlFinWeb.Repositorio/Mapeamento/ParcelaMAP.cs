@@ -16,7 +16,8 @@ namespace ControlFinWeb.Repositorio.Mapeamentos
                 m.Generator(Generators.HighLow, g => g.Params(new { max_lo = 0 }));
                 
             });
-            Property(x => x.NumeroParcela, m => m.Length(10));
+            Property(x => x.Numero);
+            Property(x => x.ParcelaDe, m => m.Length(10));
             Property(x => x.ValorParcela);
             Property(x => x.DataVencimento);
             Property(x => x.DataPagamento);

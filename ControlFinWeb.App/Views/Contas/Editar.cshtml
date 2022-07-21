@@ -139,7 +139,7 @@
                                 <thead>
                                     <tr>
                                         <th scope="col" width="5%"><input class="form-check-input" id="checkAll" type="checkbox"></th>
-                                        <th style="text-align:right">Número</th>
+                                        <th style="text-align:right">Parcela</th>
                                         <th style="text-align:right">V. Parcela</th>
                                         <th style="text-align:right">V. Aberto</th>
                                         <th style="text-align:right">Vencimento</th>
@@ -152,8 +152,10 @@
                                         <tr>
                                             <td scope="row"><input class="form-check-input check" id="check" type="checkbox"></td>
                                             <td align="right">
-                                                <span>@Model.ParcelasVM[i].NumeroParcela</span>
-                                                <input asp-for="ParcelasVM[i].NumeroParcela" type="hidden" />
+                                                <span>@Model.ParcelasVM[i].ParcelaDe</span>
+                                                <input asp-for="ParcelasVM[i].ParcelaDe" type="hidden" />
+                                                <input asp-for="ParcelasVM[i].Numero" type="hidden"  />
+                                                <input asp-for="ParcelasVM[i].Id" id="IdParcela" type="hidden" />
                                             </td>
                                             <td align="right">
                                                 <span>@Model.ParcelasVM[i].ValorParcela.ToString("n2")</span>
@@ -200,7 +202,7 @@
 
     <script type="text/javascript">
         $(function() {
-            $("#Valor").maskMoney({ thousands: '.', decimal: ',', allowZero: true });
+            $("#Valor").maskMoney({ thousands: '', decimal: ',', allowZero: true });
 
             //Gerar Parcelas
             var countParcelas = @Model.ParcelasVM.Count;
@@ -208,13 +210,13 @@
 
             $(".gerarParcelas").on("click", function() {
 
-                var valorTotal = parseFloat($("#Valor").val().replace(",", "."));
+                var valorTotal = parseFloat($("#Valor").val().replace(",","."));
                 var qtd = parseInt($("#Qtd").val());
                 var primeiroVencimento = $("#PrimeiroVencimento").val();
 
                 var valorParcela = parseFloat(valorTotal / qtd).toFixed(2);
                 var diferencaValor = (valorTotal - (valorParcela * qtd)).toFixed(2);
-                var convertParcela = valorParcela.toString().replace(".", ",");
+                var convertParcela = valorParcela.toString().replace(".",",");
 
                 if (valorTotal <= 0) {
                     $("[data-valmsg-for=Valor]").html('Campo Obrigatório');
@@ -236,17 +238,20 @@
                 $("[data-valmsg-for=PrimeiroVencimento]").html('');
 
                 for (i = 1; i <= qtd; i++) {
+                    var numero = countParcelas + 1;
                     var venc = new Date(primeiroVencimento + " " + "00:00:00")
                     if (i > 1) {
                         venc.setMonth(venc.getMonth() + i - 1);
                     }
                     venc = venc.toLocaleDateString('pt-BR');
 
-                    var numeroParcela = i + '/' + qtd;
+                    var parcela = i + '/' + qtd;
                     var tdCheck = `<td scope="row"><input class="form-check-input check" id="check" type="checkbox"></td>`;
-                    var tdNumero = `<td align="right"> ${numeroParcela} <input type="hidden" name="ParcelasVM[${countParcelas}].NumeroParcela" value=${numeroParcela} /> </td>`;
+                    var tdParcela = `<td align="right"> ${parcela} <input type="hidden" name="ParcelasVM[${countParcelas}].ParcelaDe" value=${parcela} />
+                    <input type="hidden" name="ParcelasVM[${countParcelas}].Numero" value=${numero} /></td>`;
+                    
                     if (diferencaValor != 0) {
-                        var valPar = parseFloat(parseFloat(valorParcela) + parseFloat(diferencaValor)).toString().replace(".", ",");
+                        var valPar = parseFloat(parseFloat(valorParcela) + parseFloat(diferencaValor)).toFixed(2).toString().replace(".", ",");
                         var tdValorParcela = `<td align="right"> ${valPar} <input type="hidden" name="ParcelasVM[${countParcelas}].ValorParcela" value=${valPar} /> </td>`;
                         var tdValorAberto = `<td align="right"> ${valPar} <input type="hidden" name="ParcelasVM[${countParcelas}].ValorAberto" value=${valPar} /> </td>`;
                         diferencaValor = 0;
@@ -258,7 +263,7 @@
                     var tdVencimento = `<td align="right"> ${venc} <input type="hidden" name="ParcelasVM[${countParcelas}].DataVencimento" value=${venc} /></td>`;
                     var tdEditar = `<td align="center"> <button type="button" class="btn btn-primary btn-sm editarParcela"><i class="bi bi-pencil-square"></i></button> </td>`;
 
-                    var tr = `<tr>${tdCheck}${tdNumero}${tdValorParcela}${tdValorAberto}${tdVencimento}${tdEditar}</tr>`;
+                    var tr = `<tr>${tdCheck}${tdParcela}${tdValorParcela}${tdValorAberto}${tdVencimento}${tdEditar}</tr>`;
 
                     $Parcelas.find('tbody').append(tr);
                     countParcelas++;
