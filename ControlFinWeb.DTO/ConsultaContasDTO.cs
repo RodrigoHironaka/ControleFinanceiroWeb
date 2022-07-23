@@ -12,7 +12,8 @@ namespace ControlFinWeb.DTO.Contas
         public String TipoConta { get; set; }
         public Int64 CodigoConta { get; set; }
         public String NomeConta { get; set; }
-        public String NumeroParcela { get; set; }
+        public Int64 Numero { get; set; }
+        public String ParcelaDe { get; set; }
         public Decimal ValorParcela { get; set; }
         public Decimal ValorReajustado { get; set; }
         public DateTime? DataVencimento { get; set; }
@@ -47,7 +48,8 @@ namespace ControlFinWeb.DTO.Contas
 
             var consulta = from x in query select new ConsultaContasDTO
             {
-                NumeroParcela = x.NumeroParcela,
+                Numero = x.Numero,
+                ParcelaDe = x.ParcelaDe,
                 ValorParcela = x.ValorParcela,
                 ValorReajustado = x.ValorReajustado,
                 DataVencimento = x.DataVencimento,
@@ -66,8 +68,5 @@ namespace ControlFinWeb.DTO.Contas
         {
             return string.Format("{0} - {1}", CodigoConta, NomeConta);
         }
-
-
-
     }
 }
