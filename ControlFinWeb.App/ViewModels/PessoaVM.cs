@@ -42,6 +42,8 @@ namespace ControlFinWeb.App.ViewModels
         [DisplayName("Renda")]
         public Int64 TipoRendaId { get; set; }
         public RendaVM TipoRendaVM { get; set; }
+
+        public String JsonRendas { get; set; }
         #endregion
 
         #region Totalizadores

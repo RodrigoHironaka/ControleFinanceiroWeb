@@ -9,8 +9,10 @@ using LinqKit;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace ControlFinWeb.App.Controllers
 {
@@ -26,8 +28,6 @@ namespace ControlFinWeb.App.Controllers
 
         Pessoa pessoa = new Pessoa();
         PessoaVM pessoaVM = new PessoaVM();
-        PessoaRendas pessoaRendas = new PessoaRendas();
-        PessoaRendasVM pessoaRendasVM = new PessoaRendasVM();
 
         public IActionResult Index()
         {
@@ -43,7 +43,9 @@ namespace ControlFinWeb.App.Controllers
             {
                 pessoa = Repositorio.ObterPorId(Id);
                 pessoaVM = Mapper.Map<PessoaVM>(pessoa);
+                pessoaVM.JsonRendas = JsonConvert.SerializeObject(pessoaVM.PessoaRendasVM);
             }
+
             pessoaVM.Rendas = new SelectList(new RepositorioRenda(NHibernateHelper.ObterSessao()).ObterPorParametros(x => x.Situacao == Situacao.Ativo), "Id", "Nome", Id);
             return View(pessoaVM);
         }
@@ -56,14 +58,16 @@ namespace ControlFinWeb.App.Controllers
             {
                 if (pessoaVM.Id > 0)
                 {
+                    pessoaVM.PessoaRendasVM = JsonConvert.DeserializeObject<IList<PessoaRendasVM>>(pessoaVM.JsonRendas);
                     pessoa = Repositorio.ObterPorId(pessoaVM.Id);
-                    pessoa = Mapper.Map(pessoaVM, pessoa);
+                    pessoa = Mapper.Map<Pessoa>(pessoaVM);  
                     pessoa.UsuarioAlteracao = Configuracao.Usuario;
                     pessoa.PessoaRendas.ForEach(x => x.Pessoa = pessoa);
                     Repositorio.Alterar(pessoa);
                 }
                 else
                 {
+                    pessoaVM.PessoaRendasVM = JsonConvert.DeserializeObject<IList<PessoaRendasVM>>(pessoaVM.JsonRendas);
                     pessoa = Mapper.Map(pessoaVM, pessoa);
                     pessoa.UsuarioCriacao = Configuracao.Usuario;
                     pessoa.PessoaRendas.ForEach(x => x.Pessoa = pessoa);

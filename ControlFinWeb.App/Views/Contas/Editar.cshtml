@@ -126,8 +126,7 @@
                                                 </button>
                                                 <ul class="dropdown-menu" aria-labelledby="opcoes">
                                                     <li><a class="dropdown-item" href="#"><i class="bi bi-cash-stack"></i> Pagar</a></li>
-                                                    <li><a class="dropdown-item" href="#"><i class="bi bi-x-square"></i> Cancelar</a></li>
-                                                    <li><a class="dropdown-item" href="#"><i class="bi bi-trash"></i> Excluir</a></li>
+                                                    <li><a class="dropdown-item removerParcelas" ><i class="bi bi-trash"></i> Excluir</a></li>
                                                 </ul>
                                             </div>
                                         </div>
@@ -320,6 +319,17 @@
             if (sit != "Aberto") {
                 $('#fsAgrupar').prop('disabled', true);
             }
+        });
+
+        $('#tabelasParcelas').on("click", ".removerParcelas", function () {
+            $(this).parent().parent().remove();
+            countParcelas = 0;
+            $("#tabelasParcelas tbody").children().each(function (i, tr) {
+                $(tr).children().eq(0).find('input').attr('name', `ParcelaVM[${countParcelas}].TipoRendaId`);
+                $(tr).children().eq(1).find('input').attr('name', `ParcelaVM[${countParcelas}].RendaBruta`);
+                $(tr).children().eq(2).find('input').attr('name', `ParcelaVM[${countParcelas}].RendaLiquida`);
+                countRenda++;
+            });
         });
     </script>
 }

@@ -49,8 +49,11 @@
                             </div>
                             <div class="col-2">
                                 <br />
-                                <button type="button" class="btn btn-dark addRenda"><i class="badge-info bi-plus-lg"></i></button>
+                                <button type="button" class="btn btn-dark" onclick="AddRenda()"><i class="badge-info bi-plus-lg"></i></button>
                             </div>
+                        </div>
+                        <div class="row">
+                            <textarea asp-for="JsonRendas" id="txtJsonRendas" class="form-control" rows="4"></textarea>
                         </div>
                         <table class="table" id="rendas">
                             <thead>
@@ -61,67 +64,116 @@
                                     <th></th>
                                 </tr>
                             </thead>
-                            <tbody>
-                                @for (int i = 0; i < Model.PessoaRendasVM.Count; i++)
+                            <tbody id="tbodyRendas">
+                                @* @for (int i = 0; i < Model.PessoaRendasVM.Count; i++)
                                 {
-                                    <tr>
-                                        <td>
-                                            <span>@Model.PessoaRendasVM[i].TipoRendaVM.Id - @Model.PessoaRendasVM[i].TipoRendaVM.Nome</span>
-                                            <input asp-for="PessoaRendasVM[i].TipoRendaId" type="hidden" />
-                                            <input asp-for="PessoaRendasVM[i].Id" type="hidden" />
-                                        </td>
-                                        <td align="right">
-                                            <input asp-for="PessoaRendasVM[i].RendaBruta" type="hidden" />
-                                            <span>@Model.PessoaRendasVM[i].RendaBruta.ToString("n2")</span>
-                                        </td>
-                                        <td align="right">
-                                            <input asp-for="PessoaRendasVM[i].RendaLiquida" type="hidden" />
-                                            <span>@Model.PessoaRendasVM[i].RendaLiquida.ToString("n2")</span>
-                                        </td>
-                                        <td align="right">
-                                            <button type="button" class="btn btn-danger btn-sm removerRenda"><i class="bi bi-dash"></i></button>
-                                        </td>
-                                    </tr>
-                                }
+                                <tr>
+                                <input asp-for="PessoaRendasVM[i].Id" type="hidden" />
+                                <td>
+                                <span>@Model.PessoaRendasVM[i].TipoRendaVM.Id - @Model.PessoaRendasVM[i].TipoRendaVM.Nome</span>
+                                <input asp-for="PessoaRendasVM[i].TipoRendaId" type="hidden" />
+                                </td>
+                                <td align="right">
+                                <input asp-for="PessoaRendasVM[i].RendaBruta" type="hidden" />
+                                <span>@Model.PessoaRendasVM[i].RendaBruta.ToString("n2")</span>
+                                </td>
+                                <td align="right">
+                                <input asp-for="PessoaRendasVM[i].RendaLiquida" type="hidden" />
+                                <span>@Model.PessoaRendasVM[i].RendaLiquida.ToString("n2")</span>
+                                </td>
+                                <td align="right">
+                                <button type="button" class="btn btn-danger btn-sm removerRenda"><i class="bi bi-dash"></i></button>
+                                </td>
+                                </tr>
+                                }*@
                             </tbody>
                             @*<tfoot>
-                                    <tr>
-                                        <th> Totais</th>
-                                        <td align="right">
-                                            <span>@Model.TotalRendaBruta</span>
-                                        </td>
-                                        <td align="right">
-                                            <span>@Model.TotalRendaLiquida</span>
-                                        </td>
-                                        <td></td>
-                                    </tr>
+                            <tr>
+                            <th> Totais</th>
+                            <td align="right">
+                            <span>@Model.TotalRendaBruta</span>
+                            </td>
+                            <td align="right">
+                            <span>@Model.TotalRendaLiquida</span>
+                            </td>
+                            <td></td>
+                            </tr>
 
-                                </tfoot>*@
+                            </tfoot>*@
                         </table>
                     </div>
                 </div>
                 <br />
                 <button type="button" onclick="Salvar()" class="w-100 btn btn-success">Salvar</button>
+
+
             </form>
         </div>
     </div>
 </div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 
     <script type="text/javascript">
-    $(function () {
-        $("#RendaBruta, #RendaLiquida").maskMoney({ thousands: '.', decimal: ',', allowZero: true });
+        var Items = new Object();
+        Items.Rendas = new Array();
+        var tbodyRendas = document.getElementById("tbodyRendas");
 
-        var countRenda = @Model.PessoaRendasVM.Count;
-        var $rendas = $("#rendas");
-        $(".addRenda").on("click", function () {
+        function FixaDuasCasasDecimais(num) {
+            return parseFloat(Math.round(num * 100) / 100).toFixed(2);
+        }
 
+        $(function() {
+            $("#RendaBruta, #RendaLiquida").maskMoney({ thousands: '', decimal: ',', allowZero: true });
+
+            $(document).ready(function() {
+                var id = parseInt($("#Id").val());
+                var jsonRendas = $("#txtJsonRendas").val().toString();
+
+                if (id > 0 && jsonRendas != "") {
+                    var k = 0;
+                    Items.Rendas = JSON.parse(jsonRendas);
+                    $.each(Items.Rendas, function(i, item) {
+                        var linha = "<tr id='" + item.Id + "'>" +
+                            "<td>" + item.TipoRendaVM.Nome + "</td>" +
+                            "<td align='right'>" + FixaDuasCasasDecimais(item.RendaBruta).replace(".", ",") + "</td>" +
+                            "<td align='right'>" + FixaDuasCasasDecimais(item.RendaLiquida).replace(".", ",") + "</td>" +
+                            "<td align='right'><div class='RemoverRenda'><button type='button' class='btn btn-danger btn-sm'><i class='bi bi-dash'></i></button></div></td>" +
+                            "</tr>";
+                        tbodyRendas.innerHTML += linha;
+                    });
+                }
+            });
+
+            $(document).on('click', '.RemoverRenda button', function(event) {
+                var index = $(this).closest('tr').index();
+                var remove = Items.Rendas.splice(parseInt(index), 1);
+                delete remove;
+
+                 document.getElementById("txtJsonRendas").value = JSON.stringify(Items.Rendas);
+                 
+                 // AQUI PRECISO REMOVER OS DADOS DO TBODY
+                 $('#tbodyRendas').empty();
+                 $.each(Items.Rendas, function(i, item) {
+                        var linha = "<tr id='" + item.Id + "'>" +
+                            "<td>" + item.TipoRendaVM.Nome + "</td>" +
+                            "<td align='right'>" + FixaDuasCasasDecimais(item.RendaBruta).replace(".", ",") + "</td>" +
+                            "<td align='right'>" + FixaDuasCasasDecimais(item.RendaLiquida).replace(".", ",") + "</td>" +
+                            "<td align='right'><div class='RemoverRenda'><button type='button' class='btn btn-danger btn-sm'><i class='bi bi-dash'></i></button></div></td>" +
+                            "</tr>";
+                        tbodyRendas.innerHTML += linha;
+                    });
+            });
+        });
+
+        function AddRenda() {
             var rendaId = $("#TipoRendaId").val();
             var nomeRenda = $('#TipoRendaId').find(":selected").text();
-            var rendaBruta = $("#RendaBruta").val().replace(",",".");
-            var rendaLiquida = $("#RendaLiquida").val().replace(",",".");
+            var rendaBruta = $("#RendaBruta").val().replace(",", ".");
+            var rendaLiquida = $("#RendaLiquida").val().replace(",", ".");
             if (rendaId <= 0) {
                 $("[data-valmsg-for=TipoRendaId]").html('Selecione uma Renda');
                 return;
@@ -135,51 +187,49 @@
                 rendaLiquida = rendaBruta;
             }
 
-            $("[data-valmsg-for=TipoRendaId]").html('');
-            $("[data-valmsg-for=RendaBruta]").html('');
+            Items.Rendas.push({
+                "Id": 0,
+                "RendaBruta": rendaBruta,
+                "RendaLiquida": rendaLiquida,
+                "TipoRendaId": rendaId,
+                "TipoRendaVM": null
+            });
 
-            var tdRenda = `<td> <span>${rendaId} - ${nomeRenda}</span> <input type="hidden" name="PessoaRendasVM[${countRenda}].TipoRendaId" value=${rendaId} /> </td>`;
-            var tdRendaBruta = `<td align="right"> ${rendaBruta} <input type="hidden" name="PessoaRendasVM[${countRenda}].RendaBruta" value=${rendaBruta} /> </td>`;
-            var tdRendaLiquida = `<td align="right"> ${rendaLiquida} <input type="hidden" name="PessoaRendasVM[${countRenda}].RendaLiquida" value=${rendaLiquida} /> </td>`;
-            var tdRemover = `<td align="right"> <button type="button" class="btn btn-danger btn-sm removerRenda"><i class="bi bi-dash"></i></button> </td>`;
+            document.getElementById("txtJsonRendas").value = JSON.stringify(Items.Rendas);
 
-            var tr = `<tr>${tdRenda}${tdRendaBruta}${tdRendaLiquida}${tdRemover}</tr>`;
-
-            $rendas.find('tbody').append(tr);
-            countRenda++;
+            var linha = "<tr id='" + rendaId.value + "'>" +
+                "<td>" + nomeRenda + "</td>" +
+                "<td align='right'>" + FixaDuasCasasDecimais(rendaBruta).replace(".", ",") + "</td>" +
+                "<td align='right'>" + FixaDuasCasasDecimais(rendaLiquida).replace(".", ",") + "</td>" +
+                "<td align='right'><div class='RemoverRenda'><button type='button' class='btn btn-danger btn-sm'><i class='bi bi-dash'></i></button></div></td>" +
+                "</tr>";
+            tbodyRendas.innerHTML += linha;
 
             $("#TipoRendaId").val(0);
             $("#RendaBruta").val('0,00');
             $("#RendaLiquida").val('0,00');
-        })
 
-        $('#rendas').on("click", ".removerRenda", function () {
-            $(this).parent().parent().remove();
-            countRenda = 0;
-            $("#rendas tbody").children().each(function (i, tr) {
-                $(tr).children().eq(0).find('input').attr('name', `PessoaRendasVM[${countRenda}].TipoRendaId`);
-                $(tr).children().eq(1).find('input').attr('name', `PessoaRendasVM[${countRenda}].RendaBruta`);
-                $(tr).children().eq(2).find('input').attr('name', `PessoaRendasVM[${countRenda}].RendaLiquida`);
-                countRenda++;
-            });
-        });
-    });
+            $("[data-valmsg-for=TipoRendaId]").html('');
+            $("[data-valmsg-for=RendaBruta]").html('');
+            $("[data-valmsg-for=RendaLiquida]").html('');
+        }
 
-    function Salvar() {
-        var dados = $("#FrmPessoa").serialize();
-        $.ajax({
-            url: '/Pessoas/Editar',
-            method: 'POST',
-            data: dados,
-            success: function (retorno) {
-                if (retorno == "") {
-                    location.reload();
+        
+        function Salvar() {
+            var dados = $("#FrmPessoa").serialize();
+            $.ajax({
+                url: '/Pessoas/Editar',
+                method: 'POST',
+                data: dados,
+                success: function(retorno) {
+                    if (retorno == "") {
+                        location.reload();
+                    }
+                    else
+                        $("#modal").html(retorno);
                 }
-                else
-                    $("#modal").html(retorno);
-            }
-        });
-    }
+            });
+        }
     </script>
 }
 

@@ -10,5 +10,6 @@ namespace ControlFinWeb.Dominio.Entidades
         public virtual Decimal RendaLiquida { get; set; }
         public virtual Renda TipoRenda { get; set; }
         public virtual Pessoa Pessoa { get; set; }
+    
     }
 }

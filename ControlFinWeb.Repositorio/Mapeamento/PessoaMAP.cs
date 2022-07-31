@@ -25,7 +25,7 @@ namespace ControlFinWeb.Repositorio.Mapeamentos
 
             Bag(x => x.PessoaRendas, m =>
             {
-                m.Cascade(Cascade.All);
+                m.Cascade(Cascade.All | Cascade.DeleteOrphans);
                 m.Key(k => k.Column("Pessoa"));
                 m.Inverse(true);
             }, map => map.OneToMany(a => a.Class(typeof(PessoaRendas))));
