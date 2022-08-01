@@ -5,7 +5,7 @@
     ViewData["Title"] = "Pessoas";
 }
 
-<div class="modal-dialog modal-dialog-centered">
+<div class="modal-dialog modal-lg modal-dialog-centered">
     <div class="modal-content">
         <div class="modal-header">
             <h5 class="modal-title"></h5>
@@ -13,100 +13,84 @@
         </div>
         <div class="modal-body">
             <form asp-action="Editar" id="FrmPessoa">
-                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                <input asp-for="Id" type="hidden" />
-                <div class="form-group">
-                    <label asp-for="Nome" class="control-label"></label>
-                    <input asp-for="Nome" class="form-control" />
-                    <span asp-validation-for="Nome" class="text-danger"></span>
-                </div>
-                <div class="form-group">
-                    <label asp-for="Situacao" class="control-label"></label>
-                    <select class="form-select" asp-for="Situacao" asp-items="Html.GetEnumSelectList<Situacao>()"></select>
-                    <span asp-validation-for="Situacao" class="text-danger"></span>
-                </div>
-                <br />
-                <div class="card">
-                    <div class="card-header">Suas Rendas</div>
-                    <div class="card-body">
-                        <div class="row-cols-md-5">
-                            <label asp-for="TipoRendaId" class="control-label"></label>
-                            <select class="form-select" asp-for="TipoRendaId" asp-items="@Model.Rendas">
-                                <option value="0">---Selecione---</option>
-                            </select>
-                            <span asp-validation-for="TipoRendaId" class="text-danger"></span>
+                <fieldset id="fsAgrupar">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <input asp-for="Id" type="hidden" />
+                    <div class="row">
+                        <div class="col-md-8">
+                            <label asp-for="Nome" class="control-label"></label>
+                            <input asp-for="Nome" class="form-control" />
+                            <span asp-validation-for="Nome" class="text-danger"></span>
                         </div>
-                        <div class="row">
-                            <div class="col-5">
-                                <label asp-for="RendaBruta" class="control-label"></label>
-                                <input asp-for="RendaBruta" class="form-control" style="text-align:right" />
-                                <span asp-validation-for="RendaBruta" class="text-danger"></span>
-                            </div>
-                            <div class="col-5">
-                                <label asp-for="RendaLiquida" class="control-label"></label>
-                                <input asp-for="RendaLiquida" class="form-control" style="text-align:right" />
-                                <span asp-validation-for="RendaLiquida" class="text-danger"></span>
-                            </div>
-                            <div class="col-2">
-                                <br />
-                                <button type="button" class="btn btn-dark" onclick="AddRenda()"><i class="badge-info bi-plus-lg"></i></button>
-                            </div>
+                        <div class="col-md-4">
+                            <label asp-for="Situacao" class="control-label"></label>
+                            <select class="form-select" asp-for="Situacao" asp-items="Html.GetEnumSelectList<Situacao>()"></select>
+                            <span asp-validation-for="Situacao" class="text-danger"></span>
                         </div>
-                        <div class="row">
-                            <textarea asp-for="JsonRendas" id="txtJsonRendas" class="form-control" rows="4"></textarea>
-                        </div>
-                        <table class="table" id="rendas">
-                            <thead>
-                                <tr>
-                                    <th>Renda</th>
-                                    <th style="text-align:right">R.Bruta</th>
-                                    <th style="text-align:right">R.Líquida</th>
-                                    <th></th>
-                                </tr>
-                            </thead>
-                            <tbody id="tbodyRendas">
-                                @* @for (int i = 0; i < Model.PessoaRendasVM.Count; i++)
-                                {
-                                <tr>
-                                <input asp-for="PessoaRendasVM[i].Id" type="hidden" />
-                                <td>
-                                <span>@Model.PessoaRendasVM[i].TipoRendaVM.Id - @Model.PessoaRendasVM[i].TipoRendaVM.Nome</span>
-                                <input asp-for="PessoaRendasVM[i].TipoRendaId" type="hidden" />
-                                </td>
-                                <td align="right">
-                                <input asp-for="PessoaRendasVM[i].RendaBruta" type="hidden" />
-                                <span>@Model.PessoaRendasVM[i].RendaBruta.ToString("n2")</span>
-                                </td>
-                                <td align="right">
-                                <input asp-for="PessoaRendasVM[i].RendaLiquida" type="hidden" />
-                                <span>@Model.PessoaRendasVM[i].RendaLiquida.ToString("n2")</span>
-                                </td>
-                                <td align="right">
-                                <button type="button" class="btn btn-danger btn-sm removerRenda"><i class="bi bi-dash"></i></button>
-                                </td>
-                                </tr>
-                                }*@
-                            </tbody>
-                            @*<tfoot>
-                            <tr>
-                            <th> Totais</th>
-                            <td align="right">
-                            <span>@Model.TotalRendaBruta</span>
-                            </td>
-                            <td align="right">
-                            <span>@Model.TotalRendaLiquida</span>
-                            </td>
-                            <td></td>
-                            </tr>
-
-                            </tfoot>*@
-                        </table>
                     </div>
-                </div>
-                <br />
-                <button type="button" onclick="Salvar()" class="w-100 btn btn-success">Salvar</button>
+                    <br />
+                    <div class="card">
+                        <div class="card-header">Suas Rendas</div>
+                        <div class="card-body">
 
+                            <div class="row">
+                                <div class="col-md-5">
+                                    <label asp-for="TipoRendaId" class="control-label"></label>
+                                    <select class="form-select" asp-for="TipoRendaId" asp-items="@Model.Rendas">
+                                        <option value="0">---Selecione---</option>
+                                    </select>
+                                    <span asp-validation-for="TipoRendaId" class="text-danger"></span>
+                                </div>
+                                <div class="col-md-3">
+                                    <label asp-for="RendaBruta" class="control-label"></label>
+                                    <input asp-for="RendaBruta" class="form-control" style="text-align:right" />
+                                    <span asp-validation-for="RendaBruta" class="text-danger"></span>
+                                </div>
+                                <div class="col-md-3">
+                                    <label asp-for="RendaLiquida" class="control-label"></label>
+                                    <input asp-for="RendaLiquida" class="form-control" style="text-align:right" />
+                                    <span asp-validation-for="RendaLiquida" class="text-danger"></span>
+                                </div>
+                                <div class="col-md-1">
+                                    <br />
+                                    <button type="button" class="btn btn-dark" onclick="AddRenda()"><i class="badge-info bi-plus-lg"></i></button>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <textarea asp-for="JsonRendas" id="txtJsonRendas" class="form-control" rows="1" style="display:none;"></textarea>
+                            </div>
+                            <br />
+                            <table class="table table-bordered table-striped table-hover" id="rendas">
+                                <thead>
+                                    <tr>
+                                        <th>Renda</th>
+                                        <th style="text-align:right">R.Bruta</th>
+                                        <th style="text-align:right">R.Líquida</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tbodyRendas">
+                                </tbody>
+                                @*<tfoot>
+                                <tr>
+                                <th> Totais</th>
+                                <td align="right">
+                                <span>@Model.TotalRendaBruta</span>
+                                </td>
+                                <td align="right">
+                                <span>@Model.TotalRendaLiquida</span>
+                                </td>
+                                <td></td>
+                                </tr>
 
+                                </tfoot>*@
+                            </table>
+                        </div>
+                    </div>
+                    <br />
+                    <button type="button" onclick="Salvar()" class="w-100 btn btn-success">Salvar</button>
+
+                </fieldset>
             </form>
         </div>
     </div>
@@ -132,19 +116,17 @@
             $(document).ready(function() {
                 var id = parseInt($("#Id").val());
                 var jsonRendas = $("#txtJsonRendas").val().toString();
+                var sit = parseInt($("#Situacao").val());
 
                 if (id > 0 && jsonRendas != "") {
                     var k = 0;
                     Items.Rendas = JSON.parse(jsonRendas);
-                    $.each(Items.Rendas, function(i, item) {
-                        var linha = "<tr id='" + item.Id + "'>" +
-                            "<td>" + item.TipoRendaVM.Nome + "</td>" +
-                            "<td align='right'>" + FixaDuasCasasDecimais(item.RendaBruta).replace(".", ",") + "</td>" +
-                            "<td align='right'>" + FixaDuasCasasDecimais(item.RendaLiquida).replace(".", ",") + "</td>" +
-                            "<td align='right'><div class='RemoverRenda'><button type='button' class='btn btn-danger btn-sm'><i class='bi bi-dash'></i></button></div></td>" +
-                            "</tr>";
-                        tbodyRendas.innerHTML += linha;
-                    });
+                    PreencherTable();
+                }
+
+                //0 = Ativo | 1 = Inativo
+                if (sit == 1) {
+                    $('#fsAgrupar').prop('disabled', true);
                 }
             });
 
@@ -153,19 +135,11 @@
                 var remove = Items.Rendas.splice(parseInt(index), 1);
                 delete remove;
 
-                 document.getElementById("txtJsonRendas").value = JSON.stringify(Items.Rendas);
-                 
-                 // AQUI PRECISO REMOVER OS DADOS DO TBODY
-                 $('#tbodyRendas').empty();
-                 $.each(Items.Rendas, function(i, item) {
-                        var linha = "<tr id='" + item.Id + "'>" +
-                            "<td>" + item.TipoRendaVM.Nome + "</td>" +
-                            "<td align='right'>" + FixaDuasCasasDecimais(item.RendaBruta).replace(".", ",") + "</td>" +
-                            "<td align='right'>" + FixaDuasCasasDecimais(item.RendaLiquida).replace(".", ",") + "</td>" +
-                            "<td align='right'><div class='RemoverRenda'><button type='button' class='btn btn-danger btn-sm'><i class='bi bi-dash'></i></button></div></td>" +
-                            "</tr>";
-                        tbodyRendas.innerHTML += linha;
-                    });
+                document.getElementById("txtJsonRendas").value = JSON.stringify(Items.Rendas);
+
+                // AQUI PRECISO REMOVER OS DADOS DO TBODY
+                $('#tbodyRendas').empty();
+                PreencherTable();
             });
         });
 
@@ -192,18 +166,16 @@
                 "RendaBruta": rendaBruta,
                 "RendaLiquida": rendaLiquida,
                 "TipoRendaId": rendaId,
-                "TipoRendaVM": null
+                "TipoRendaVM": {
+                    "Id": rendaId,
+                    "Nome": nomeRenda
+                }
             });
 
             document.getElementById("txtJsonRendas").value = JSON.stringify(Items.Rendas);
 
-            var linha = "<tr id='" + rendaId.value + "'>" +
-                "<td>" + nomeRenda + "</td>" +
-                "<td align='right'>" + FixaDuasCasasDecimais(rendaBruta).replace(".", ",") + "</td>" +
-                "<td align='right'>" + FixaDuasCasasDecimais(rendaLiquida).replace(".", ",") + "</td>" +
-                "<td align='right'><div class='RemoverRenda'><button type='button' class='btn btn-danger btn-sm'><i class='bi bi-dash'></i></button></div></td>" +
-                "</tr>";
-            tbodyRendas.innerHTML += linha;
+            $('#tbodyRendas').empty();
+            PreencherTable();
 
             $("#TipoRendaId").val(0);
             $("#RendaBruta").val('0,00');
@@ -214,7 +186,7 @@
             $("[data-valmsg-for=RendaLiquida]").html('');
         }
 
-        
+
         function Salvar() {
             var dados = $("#FrmPessoa").serialize();
             $.ajax({
@@ -228,6 +200,18 @@
                     else
                         $("#modal").html(retorno);
                 }
+            });
+        }
+
+        function PreencherTable() {
+            $.each(Items.Rendas, function(i, item) {
+                var linha = "<tr id='" + item.Id + "'>" +
+                    "<td>" + item.TipoRendaVM.Nome + "</td>" +
+                    "<td align='right'>" + FixaDuasCasasDecimais(item.RendaBruta).replace(".", ",") + "</td>" +
+                    "<td align='right'>" + FixaDuasCasasDecimais(item.RendaLiquida).replace(".", ",") + "</td>" +
+                    "<td align='right'><div class='RemoverRenda'><button type='button' class='btn btn-danger btn-sm'><i class='bi bi-dash'></i></button></div></td>" +
+                    "</tr>";
+                tbodyRendas.innerHTML += linha;
             });
         }
     </script>
