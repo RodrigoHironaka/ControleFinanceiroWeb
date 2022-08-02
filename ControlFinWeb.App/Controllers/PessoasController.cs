@@ -60,7 +60,7 @@ namespace ControlFinWeb.App.Controllers
                 {
                     pessoaVM.PessoaRendasVM = JsonConvert.DeserializeObject<IList<PessoaRendasVM>>(pessoaVM.JsonRendas);
                     pessoa = Repositorio.ObterPorId(pessoaVM.Id);
-                    pessoa = Mapper.Map<Pessoa>(pessoaVM);  
+                    pessoa = Mapper.Map<Pessoa>(pessoaVM);
                     pessoa.UsuarioAlteracao = Configuracao.Usuario;
                     pessoa.PessoaRendas.ForEach(x => x.Pessoa = pessoa);
                     Repositorio.Alterar(pessoa);
@@ -83,9 +83,16 @@ namespace ControlFinWeb.App.Controllers
         [HttpPost]
         public JsonResult Deletar(int id)
         {
-            var pessoa = Repositorio.ObterPorId(id);
-            Repositorio.Excluir(pessoa);
-            return Json(pessoa.Nome + "excluído com sucesso");
+            try
+            {
+                var pessoa = Repositorio.ObterPorId(id);
+                Repositorio.Excluir(pessoa);
+                return Json(pessoa.Nome + "excluído com sucesso");
+            }
+            catch
+            {
+                throw;
+            }
         }
     }
 }
