@@ -91,7 +91,9 @@
                                     <textarea asp-for="Observacao" class="form-control" rows="2"></textarea>
                                     <span asp-validation-for="Observacao" class="text-danger"></span>
                                 </div>
+
                             </div>
+
                         </div>
                         <div class="tab-pane fade" id="nav-Parcelas" role="tabpanel" aria-labelledby="nav-Parcelas-tab">
                             <div class="card">
@@ -124,7 +126,7 @@
                                                 </button>
                                                 <ul class="dropdown-menu" aria-labelledby="opcoes">
                                                     <li><a class="dropdown-item" href="#"><i class="bi bi-cash-stack"></i> Pagar</a></li>
-                                                    <li><a class="dropdown-item removerParcelas"><i class="bi bi-trash"></i> Excluir</a></li>
+                                                    <li><a class="dropdown-item removerParcelas" ><i class="bi bi-trash"></i> Excluir</a></li>
                                                 </ul>
                                             </div>
                                         </div>
@@ -202,6 +204,76 @@
         $(function() {
             $("#Valor").maskMoney({ thousands: '', decimal: ',', allowZero: true });
 
+            //Gerar Parcelas
+            var countParcelas = @Model.ParcelasVM.Count;
+            var $Parcelas = $("#tabelaParcelas");
+
+            $(".gerarParcelas").on("click", function() {
+
+                var valorTotal = parseFloat($("#Valor").val().replace(",", "."));
+                var qtd = parseInt($("#Qtd").val());
+                var primeiroVencimento = $("#PrimeiroVencimento").val();
+
+                var valorParcela = parseFloat(valorTotal / qtd).toFixed(2);
+                var diferencaValor = (valorTotal - (valorParcela * qtd)).toFixed(2);
+                var convertParcela = valorParcela.toString().replace(".", ",");
+
+                if (valorTotal <= 0) {
+                    $("[data-valmsg-for=Valor]").html('Campo Obrigatório');
+                    return;
+                }
+
+                if (qtd <= 0 || qtd.toString() == "") {
+                    $("[data-valmsg-for=Qtd]").html('Campo Obrigatório');
+                    return;
+                }
+
+                if (primeiroVencimento == "") {
+                    $("[data-valmsg-for=PrimeiroVencimento]").html('Campo Obrigatório');
+                    return;
+                }
+
+                $("[data-valmsg-for=Valor]").html('');
+                $("[data-valmsg-for=Qtd]").html('');
+                $("[data-valmsg-for=PrimeiroVencimento]").html('');
+
+                for (i = 1; i <= qtd; i++) {
+                    var numero = countParcelas + 1;
+                    var venc = new Date(primeiroVencimento + " " + "00:00:00")
+                    if (i > 1) {
+                        venc.setMonth(venc.getMonth() + i - 1);
+                    }
+                    venc = venc.toLocaleDateString('pt-BR');
+
+                    var parcela = i + '/' + qtd;
+                    var tdCheck = `<td scope="row"><input class="form-check-input check" id="check" type="checkbox"></td>`;
+                    var tdParcela = `<td align="right"> ${parcela} <input type="hidden" name="ParcelasVM[${countParcelas}].ParcelaDe" value=${parcela} />
+                                            <input type="hidden" name="ParcelasVM[${countParcelas}].Numero" value=${numero} /></td>`;
+
+                    if (diferencaValor != 0) {
+                        var valPar = parseFloat(parseFloat(valorParcela) + parseFloat(diferencaValor)).toFixed(2).toString().replace(".", ",");
+                        var tdValorParcela = `<td align="right"> ${valPar} <input type="hidden" name="ParcelasVM[${countParcelas}].ValorParcela" value=${valPar} /> </td>`;
+                        var tdValorAberto = `<td align="right"> ${valPar} <input type="hidden" name="ParcelasVM[${countParcelas}].ValorAberto" value=${valPar} /> </td>`;
+                        diferencaValor = 0;
+                    }
+                    else {
+                        var tdValorParcela = `<td align="right"> ${convertParcela} <input type="hidden" name="ParcelasVM[${countParcelas}].ValorParcela" value=${convertParcela} /> </td>`;
+                        var tdValorAberto = `<td align="right"> ${convertParcela} <input type="hidden" name="ParcelasVM[${countParcelas}].ValorAberto" value=${convertParcela} /> </td>`;
+                    }
+                    var tdVencimento = `<td align="right"> ${venc} <input type="hidden" name="ParcelasVM[${countParcelas}].DataVencimento" value=${venc} /></td>`;
+                    var tdEditar = `<td align="center"> <button type="button" class="btn btn-primary btn-sm editarParcela"><i class="bi bi-pencil-square"></i></button> </td>`;
+
+                    var tr = `<tr>${tdCheck}${tdParcela}${tdValorParcela}${tdValorAberto}${tdVencimento}${tdEditar}</tr>`;
+
+                    $Parcelas.find('tbody').append(tr);
+                    countParcelas++;
+                }
+
+                $("#Valor").val('0,00');
+                $("#Qtd").val('0');
+                $("#PrimeiroVencimento").val(null);
+
+            });
         });
 
         //CheckAll
@@ -249,6 +321,15 @@
             }
         });
 
-
+        $('#tabelasParcelas').on("click", ".removerParcelas", function () {
+            $(this).parent().parent().remove();
+            countParcelas = 0;
+            $("#tabelasParcelas tbody").children().each(function (i, tr) {
+                $(tr).children().eq(0).find('input').attr('name', `ParcelaVM[${countParcelas}].TipoRendaId`);
+                $(tr).children().eq(1).find('input').attr('name', `ParcelaVM[${countParcelas}].RendaBruta`);
+                $(tr).children().eq(2).find('input').attr('name', `ParcelaVM[${countParcelas}].RendaLiquida`);
+                countRenda++;
+            });
+        });
     </script>
 }

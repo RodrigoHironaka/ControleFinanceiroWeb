@@ -71,19 +71,18 @@
                                 </thead>
                                 <tbody id="tbodyRendas">
                                 </tbody>
-                                @*<tfoot>
-                                <tr>
-                                <th> Totais</th>
-                                <td align="right">
-                                <span>@Model.TotalRendaBruta</span>
-                                </td>
-                                <td align="right">
-                                <span>@Model.TotalRendaLiquida</span>
-                                </td>
-                                <td></td>
-                                </tr>
+                                <tfoot id="tfootRendas">
+                                    @* <tr>
+                                    <th> Totais</th>
+                                    <td align="right">
+                                    </td>
+                                    @* <td align="right">
 
-                                </tfoot>*@
+                                    </td>
+                                    <td></td>
+                                    </tr>*@
+
+                                </tfoot>
                             </table>
                         </div>
                     </div>
@@ -141,6 +140,15 @@
                 $('#tbodyRendas').empty();
                 PreencherTable();
             });
+
+            //var total = 0;
+            //$(document).ready(function() {
+            //    $('table tbody tr').each(function() {
+            //        total += parseFloat(this.children[1].innerHTML);
+            //    });
+            //    $('table tfoot td').text('Total: ' + total);
+            //    console.log(total);
+            //});
         });
 
         function AddRenda() {
@@ -186,7 +194,6 @@
             $("[data-valmsg-for=RendaLiquida]").html('');
         }
 
-
         function Salvar() {
             var dados = $("#FrmPessoa").serialize();
             $.ajax({
@@ -204,6 +211,9 @@
         }
 
         function PreencherTable() {
+            var totalRendaBruta = 0;
+            var totalRendaLiquida = 0;
+            
             $.each(Items.Rendas, function(i, item) {
                 var linha = "<tr id='" + item.Id + "'>" +
                     "<td>" + item.TipoRendaVM.Nome + "</td>" +
@@ -212,7 +222,19 @@
                     "<td align='right'><div class='RemoverRenda'><button type='button' class='btn btn-danger btn-sm'><i class='bi bi-dash'></i></button></div></td>" +
                     "</tr>";
                 tbodyRendas.innerHTML += linha;
+
+                totalRendaBruta += parseFloat(item.RendaBruta);
+                totalRendaLiquida += parseFloat(item.RendaLiquida);
+
             });
+
+            $('#tfootRendas').empty();
+            var rodape = "<tr style='font-weight: bold;'>" +
+                "<td>Totais</td>" +
+                "<td align='right'>" + FixaDuasCasasDecimais(totalRendaBruta).replace(".", ",") + "</td>" +
+                "<td align='right'>" + FixaDuasCasasDecimais(totalRendaLiquida).replace(".", ",") + "</td>" +
+                "</tr>";
+            tfootRendas.innerHTML += rodape;
         }
 
     </script>
