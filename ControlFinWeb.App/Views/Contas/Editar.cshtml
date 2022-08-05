@@ -96,29 +96,17 @@
                         <div class="tab-pane fade" id="nav-Parcelas" role="tabpanel" aria-labelledby="nav-Parcelas-tab">
                             <div class="card">
                                 <div class="card-body">
-                                    <div class="row border-1">
-                                        <div class="col-2">
-                                            <label asp-for="Valor" class="control-label"></label>
-                                            <input asp-for="Valor" class="form-control" style="text-align:right" />
-                                            <span asp-validation-for="Valor" class="text-danger"></span>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <select class="form-select">
+                                                <option value="0">---Filtro Situação---</option>
+                                            </select>
                                         </div>
-                                        <div class="col-2">
-                                            <label asp-for="Qtd" class="control-label"></label>
-                                            <input asp-for="Qtd" class="form-control" type="number" style="text-align:right" />
-                                            <span asp-validation-for="Qtd" class="text-danger"></span>
+                                        <div class="col-md-3">
+                                            <button type="button" class="w-100 btn btn-dark" onclick="ExibirModalGerarParcelas()" width="100%">Gerar Parcelas</button>
                                         </div>
-                                        <div class="col-3">
-                                            <label asp-for="PrimeiroVencimento" class="control-label"></label>
-                                            <input asp-for="PrimeiroVencimento" class="form-control" type="date" style="text-align:right" />
-                                            <span asp-validation-for="PrimeiroVencimento" class="text-danger"></span>
-                                        </div>
-                                        <div class="col-2">
-                                            <br />
-                                            <button type="button" class="btn btn-dark gerarParcelas" width="100%">Gerar</button>
-                                        </div>
-                                        <div class="col-3">
+                                        <div class="col-md-3">
                                             <div class="dropdown" style="text-align: right;">
-                                                <br />
                                                 <button class="btn btn-dark dropdown-toggle" type="button" id="opcoes" data-bs-toggle="dropdown" aria-expanded="false">
                                                     <i class="bi bi-gear-fill"></i> Opções Gerais
                                                 </button>
@@ -130,68 +118,75 @@
                                         </div>
                                     </div>
                                     <div class="row">
-                                        @*  Filtro por situacao dropdown com combobox*@
+                                        <textarea asp-for="JsonParcelas" id="txtJsonParcelas" class="form-control" rows="4"></textarea>
+                                    </div>
+                                    <table class="table table-bordered table-striped table-hover" id="tabelaParcelas">
+                                        <thead>
+                                            <tr>
+                                                <th scope="col" width="5%"><input class="form-check-input" id="checkAll" type="checkbox"></th>
+                                                <th style="text-align:right">Parcela</th>
+                                                <th style="text-align:right">V. Parcela</th>
+                                                <th style="text-align:right">V. Aberto</th>
+                                                <th style="text-align:right">Vencimento</th>
+                                                <th></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id=tbodyParcelas>
+                                        </tbody>
+                                        <tfoot id=tfootParcelas>
+                                        </tfoot>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="tab-pane fade" id="nav-Arquivos" role="tabpanel" aria-labelledby="nav-Arquivos-tab">
+                                <div class="card">
+                                    <div class="card-body">
+                                        Arquivos (imagens, documentos, videos, etc)
                                     </div>
                                 </div>
-                                <table class="table table-bordered table-striped table-hover" id="tabelaParcelas">
-                                    <thead>
-                                        <tr>
-                                            <th scope="col" width="5%"><input class="form-check-input" id="checkAll" type="checkbox"></th>
-                                            <th style="text-align:right">Parcela</th>
-                                            <th style="text-align:right">V. Parcela</th>
-                                            <th style="text-align:right">V. Aberto</th>
-                                            <th style="text-align:right">Vencimento</th>
-                                            <th></th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @for (var i = 0; i < Model.ParcelasVM.Count; i++)
-                                        {
-                                            <tr>
-                                                <td scope="row"><input class="form-check-input check" id="check" type="checkbox"></td>
-                                                <td align="right">
-                                                    <span>@Model.ParcelasVM[i].ParcelaDe</span>
-                                                    <input asp-for="ParcelasVM[i].ParcelaDe" type="hidden" />
-                                                    <input asp-for="ParcelasVM[i].Numero" type="hidden" />
-                                                    <input asp-for="ParcelasVM[i].Id" id="IdParcela" type="hidden" />
-                                                </td>
-                                                <td align="right">
-                                                    <span>@Model.ParcelasVM[i].ValorParcela.ToString("n2")</span>
-                                                    <input asp-for="ParcelasVM[i].ValorParcela" type="hidden" />
-                                                </td>
-                                                <td align="right">
-                                                    <span>@Model.ParcelasVM[i].ValorAberto.ToString("n2")</span>
-                                                    <input asp-for="ParcelasVM[i].ValorAberto" type="hidden" />
-                                                </td>
-                                                <td align="right">
-                                                    <span>@Model.ParcelasVM[i].DataVencimento.Value.ToShortDateString()</span>
-                                                    <input asp-for="ParcelasVM[i].DataVencimento" type="hidden" />
-                                                </td>
-                                                <td align="center">
-                                                    <button type="button" class="btn btn-primary btn-sm editarParcela"><i class="bi bi-pencil-square"></i></button>
-                                                </td>
-                                            </tr>
-                                        }
-                                    </tbody>
-                                </table>
                             </div>
+                            <!-- #endregion -->
                         </div>
-                        <div class="tab-pane fade" id="nav-Arquivos" role="tabpanel" aria-labelledby="nav-Arquivos-tab">
-                            <div class="card">
-                                <div class="card-body">
-                                    Arquivos (imagens, documentos, videos, etc)
-                                </div>
-                            </div>
-                        </div>
-                        <!-- #endregion -->
-                    </div>
-                    <br />
-                    <button type="button" onclick="Salvar()" class="w-100 btn btn-success btnConfirmar">Salvar</button>
+                        <br />
+                        <button type="button" onclick="Salvar()" class="w-100 btn btn-success btnConfirmar">Salvar</button>
                 </fieldset>
             </form>
         </div>
     </div>
 </div>
+
+<!--Modal Gerar Parcelas-->
+<div class="modal fade modal-gerarParcelas" id="modal-gerarParcelas" tabindex="-1" aria-hidden="true" role="dialog" data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal-dialog modal-sm modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="text-black">GERAR PARCELAS</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label asp-for="Valor" class="control-label"></label>
+                    <input asp-for="Valor" class="form-control" style="text-align:right" />
+                    <span asp-validation-for="Valor" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Qtd" class="control-label"></label>
+                    <input asp-for="Qtd" class="form-control" type="number" style="text-align:right" />
+                    <span asp-validation-for="Qtd" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="PrimeiroVencimento" class="control-label"></label>
+                    <input asp-for="PrimeiroVencimento" class="form-control" type="date" style="text-align:right" />
+                    <span asp-validation-for="PrimeiroVencimento" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="w-100 btn btn-outline-success btnConfirmar">Confirmar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 @section Scripts {
     @{
@@ -203,6 +198,136 @@
             $("#Valor").maskMoney({ thousands: '', decimal: ',', allowZero: true });
 
         });
+
+        function FixaDuasCasasDecimais(num) {
+            return parseFloat(Math.round(num * 100) / 100).toFixed(2);
+        }
+
+        function ExibirModalGerarParcelas() {
+            $("#modal-gerarParcelas").modal("show");
+            $(".btnConfirmar").on("click", function() {
+                GerarParcela();
+                $("#modal-gerarParcelas").modal("hide");
+            });
+        }
+
+        var Items = new Object();
+        Items.Parcelas = new Array();
+        var tbodyParcelas = document.getElementById("tbodyParcelas");
+        var tfootParcelas = document.getElementById("tfootParcelas");
+
+        function GerarParcela() {
+            var valorTotal = parseFloat($("#Valor").val().replace(",", "."));
+            var qtd = parseInt($("#Qtd").val());
+            var primeiroVencimento = $("#PrimeiroVencimento").val();
+
+            var valorParcela = parseFloat(valorTotal / qtd).toFixed(2);
+            var diferencaValor = (valorTotal - (valorParcela * qtd)).toFixed(2);
+            var convertParcela = valorParcela.toString().replace(".", ",");
+
+            if (valorTotal <= 0) {
+                $("[data-valmsg-for=Valor]").html('Campo Obrigatório');
+                return;
+            }
+
+            if (qtd <= 0 || qtd.toString() == "") {
+                $("[data-valmsg-for=Qtd]").html('Campo Obrigatório');
+                return;
+            }
+
+            if (primeiroVencimento == "") {
+                $("[data-valmsg-for=PrimeiroVencimento]").html('Campo Obrigatório');
+                return;
+            }
+
+            $("[data-valmsg-for=Valor]").html('');
+            $("[data-valmsg-for=Qtd]").html('');
+            $("[data-valmsg-for=PrimeiroVencimento]").html('');
+
+            for (i = 1; i <= qtd; i++) {
+                var venc = new Date(primeiroVencimento + " " + "00:00:00")
+                if (i > 1) {
+                    venc.setMonth(venc.getMonth() + i - 1);
+                }
+                venc = venc.toLocaleDateString('pt-BR');
+                var parcela = i + '/' + qtd;
+                var valorNovaParcela = 0;
+
+                if (diferencaValor != 0) {
+                    valorNovaParcela = parseFloat(parseFloat(valorParcela) + parseFloat(diferencaValor)).toFixed(2);
+                    diferencaValor = 0;
+                } else {
+                    valorNovaParcela = valorParcela;
+                }
+
+                Items.Parcelas.push({
+                    "Id": 0,
+                    "Numero": i,
+                    "ParcelaDe": parcela,
+                    "ValorParcela": valorNovaParcela,
+                    "ValorReajustado": valorNovaParcela,
+                    "ValorAberto": valorNovaParcela,
+                    "DataVencimento": venc,
+                });
+            }
+
+            document.getElementById("txtJsonParcelas").value = JSON.stringify(Items.Parcelas);
+
+            $('#tbodyParcelas').empty();
+            PreencherTableParcelas();
+
+            $("#Valor").val('0,00');
+            $("#Qtd").val('0');
+            $("#PrimeiroVencimento").val(null);
+        }
+
+        function PreencherTableParcelas() {
+            var totalValorReajustado = 0;
+            var totalValorAberto = 0;
+            var totalRegistro = 0;
+
+            $.each(Items.Parcelas, function(i, item) {
+                console.log(dataFormatada);
+                var linha = "<tr>" +
+                    "<td scope='row'><input class='form-check-input check' id='check' type='checkbox'></td>" +
+                    "<td align='right'>" + item.ParcelaDe + "</td>" +
+                    "<td align='right'>" + FixaDuasCasasDecimais(item.ValorReajustado).replace(".", ",") + "</td>" +
+                    "<td align='right'>" + FixaDuasCasasDecimais(item.ValorAberto).replace(".", ",") + "</td>" +
+                    "<td align='right'>" +item.DataVencimento + "</td>" +
+                    "<td align='center'> <button type='button' class='btn btn-primary btn-sm editarParcela'><i class='bi bi-pencil-square'></i></button></td>" +
+                    "</tr>";
+                tbodyParcelas.innerHTML += linha;
+
+                totalValorReajustado += parseFloat(item.ValorReajustado);
+                totalValorAberto += parseFloat(item.ValorAberto);
+                totalRegistro++;
+
+            });
+
+            $('#tfootParcelas').empty();
+            var rodape = "<tr style='font-weight: bold;'>" +
+                "<td>" + totalRegistro + "</td>" +
+                "<td>Totais</td>" +
+                "<td align='right'>" + FixaDuasCasasDecimais(totalValorReajustado).replace(".", ",") + "</td>" +
+                "<td align='right'>" + FixaDuasCasasDecimais(totalValorAberto).replace(".", ",") + "</td>" +
+                "</tr>";
+            tfootParcelas.innerHTML += rodape;
+        }
+
+        //function dataFormatada(dataRecebida) {
+        //    var data = new Date(dataRecebida);
+        //    var dia = data.getDate();
+        //    if (dia.toString().length == 1) {
+        //        dia = "0" + dia;
+        //    }
+        //    var mes = data.getMonth() + 1;
+        //    if (mes.toString().length == 1) {
+        //        mes = "0" + mes;
+        //    }
+        //    var ano = data.getFullYear();
+
+        //    return dia + "/" + mes + "/" + ano;
+        //}
 
         //CheckAll
         $('#checkAll').change(function() {
@@ -243,9 +368,18 @@
 
         //Desabilita inputs se situacao for diferente de Aberto
         $(document).ready(function() {
+            $(".modal-gerarParcelas").modal();
+
             var sit = $("#Situacao").val().toString();
             if (sit != "Aberto") {
                 $('#fsAgrupar').prop('disabled', true);
+            }
+
+            var id = parseInt($("#Id").val());
+            var jsonParcelas = $("#txtJsonParcelas").val().toString();
+            if (id > 0 && jsonParcelas != "") {
+                Items.Parcelas = JSON.parse(jsonParcelas);
+                PreencherTableParcelas();
             }
         });
 

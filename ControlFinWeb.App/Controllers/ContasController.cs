@@ -9,6 +9,7 @@ using LinqKit;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -43,6 +44,17 @@ namespace ControlFinWeb.App.Controllers
                 conta = Repositorio.ObterPorId(Id);
                 contaVM = Mapper.Map<ContaVM>(conta);
             }
+            contaVM.JsonParcelas = JsonConvert.SerializeObject(contaVM.ParcelasVM.Select(x => new
+            {
+                Id = x.Id,
+                Numero = x.Numero,
+                ParcelaDe = x.ParcelaDe,
+                ValorParcela = x.ValorParcela,
+                ValorReajustado = x.ValorReajustado,
+                ValorAberto = x.ValorAberto,
+                DataVencimento = x.DataVencimento.Value,
+
+            }));
             ViewBag.PessoaId = new SelectList(new RepositorioPessoa(NHibernateHelper.ObterSessao()).ObterPorParametros(x => x.Situacao == Situacao.Ativo), "Id", "Nome", Id);
             ViewBag.SubGastoId = new SelectList(new RepositorioSubGasto(NHibernateHelper.ObterSessao()).ObterPorParametros(x => x.Situacao == Situacao.Ativo), "Id", "DescricaoCompleta", Id);
             return View(contaVM);
@@ -56,8 +68,9 @@ namespace ControlFinWeb.App.Controllers
             {
                 if (contaVM.Id > 0)
                 {
+                    contaVM.ParcelasVM = JsonConvert.DeserializeObject<IList<ParcelaVM>>(contaVM.JsonParcelas);
                     conta = Repositorio.ObterPorId(contaVM.Id);
-                    conta = Mapper.Map(contaVM, conta);
+                    conta = Mapper.Map<Conta>(contaVM);
                     conta.UsuarioAlteracao = Configuracao.Usuario;
                     conta.Parcelas.ForEach(x => x.Conta = conta);
                     conta.Arquivos.ForEach(x => x.Conta = conta);
@@ -65,6 +78,7 @@ namespace ControlFinWeb.App.Controllers
                 }
                 else
                 {
+                    contaVM.ParcelasVM = JsonConvert.DeserializeObject<IList<ParcelaVM>>(contaVM.JsonParcelas);
                     conta = Mapper.Map(contaVM, conta);
                     conta.Codigo = Repositorio.RetornaUltimoCodigo() + 1;
                     conta.UsuarioCriacao = Configuracao.Usuario;

@@ -62,6 +62,7 @@ namespace ControlFinWeb.App.ViewModels
 
         #endregion
 
+        public String JsonParcelas { get; set; }
         public IList<ParcelaVM> ParcelasVM { get; set; }
         public IList<ArquivoVM> ArquivosVM { get; set; }
 
