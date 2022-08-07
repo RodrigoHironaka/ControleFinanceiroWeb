@@ -44,17 +44,7 @@ namespace ControlFinWeb.App.Controllers
                 conta = Repositorio.ObterPorId(Id);
                 contaVM = Mapper.Map<ContaVM>(conta);
             }
-            contaVM.JsonParcelas = JsonConvert.SerializeObject(contaVM.ParcelasVM.Select(x => new
-            {
-                Id = x.Id,
-                Numero = x.Numero,
-                ParcelaDe = x.ParcelaDe,
-                ValorParcela = x.ValorParcela,
-                ValorReajustado = x.ValorReajustado,
-                ValorAberto = x.ValorAberto,
-                DataVencimento = x.DataVencimento.Value,
-
-            }));
+            contaVM.JsonParcelas = JsonConvert.SerializeObject(contaVM.ParcelasVM);
             ViewBag.PessoaId = new SelectList(new RepositorioPessoa(NHibernateHelper.ObterSessao()).ObterPorParametros(x => x.Situacao == Situacao.Ativo), "Id", "Nome", Id);
             ViewBag.SubGastoId = new SelectList(new RepositorioSubGasto(NHibernateHelper.ObterSessao()).ObterPorParametros(x => x.Situacao == Situacao.Ativo), "Id", "DescricaoCompleta", Id);
             return View(contaVM);

@@ -112,43 +112,48 @@
                                                 </button>
                                                 <ul class="dropdown-menu" aria-labelledby="opcoes">
                                                     <li><a class="dropdown-item" href="#"><i class="bi bi-cash-stack"></i> Pagar</a></li>
-                                                    <li><a class="dropdown-item removerParcelas"><i class="bi bi-trash"></i> Excluir</a></li>
+                                                    <li><a class="dropdown-item" onclick=" RemoverParcelas()"><i class="bi bi-trash"></i> Excluir</a></li>
                                                 </ul>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="row">
-                                        <textarea asp-for="JsonParcelas" id="txtJsonParcelas" class="form-control" rows="4"></textarea>
+                                        <textarea asp-for="JsonParcelas" id="txtJsonParcelas" class="form-control" rows="1" style="display:none;"></textarea>
                                     </div>
-                                    <table class="table table-bordered table-striped table-hover" id="tabelaParcelas">
-                                        <thead>
-                                            <tr>
-                                                <th scope="col" width="5%"><input class="form-check-input" id="checkAll" type="checkbox"></th>
-                                                <th style="text-align:right">Parcela</th>
-                                                <th style="text-align:right">V. Parcela</th>
-                                                <th style="text-align:right">V. Aberto</th>
-                                                <th style="text-align:right">Vencimento</th>
-                                                <th></th>
-                                            </tr>
-                                        </thead>
-                                        <tbody id=tbodyParcelas>
-                                        </tbody>
-                                        <tfoot id=tfootParcelas>
-                                        </tfoot>
-                                    </table>
-                                </div>
-                            </div>
-                            <div class="tab-pane fade" id="nav-Arquivos" role="tabpanel" aria-labelledby="nav-Arquivos-tab">
-                                <div class="card">
-                                    <div class="card-body">
-                                        Arquivos (imagens, documentos, videos, etc)
+                                    <br />
+                                    <div style="height:280px; width:735px; overflow-x:auto">
+                                        @*Para definir a barra de rolagem só na tabela precis definir altura e largura e deixar o overflow automatico para aparecer quando necessario*@
+                                        <table class="table table-bordered table-striped table-hover" id="tabelaParcelas">
+                                            <thead>
+                                                <tr>
+                                                    <th scope="col" width="5%"><input class="form-check-input" id="checkAll" type="checkbox"></th>
+                                                    <th style="text-align:right">Parcela</th>
+                                                    <th style="text-align:right">V. Parcela</th>
+                                                    <th style="text-align:right">V. Aberto</th>
+                                                    <th style="text-align:right">Vencimento</th>
+                                                    <th></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id=tbodyParcelas>
+                                            </tbody>
+                                            <tfoot id=tfootParcelas>
+                                            </tfoot>
+                                        </table>
                                     </div>
                                 </div>
                             </div>
-                            <!-- #endregion -->
                         </div>
-                        <br />
-                        <button type="button" onclick="Salvar()" class="w-100 btn btn-success btnConfirmar">Salvar</button>
+                        <div class="tab-pane fade" id="nav-Arquivos" role="tabpanel" aria-labelledby="nav-Arquivos-tab">
+                            <div class="card">
+                                <div class="card-body">
+                                    Arquivos (imagens, documentos, videos, etc)
+                                </div>
+                            </div>
+                        </div>
+                        <!-- #endregion -->
+                    </div>
+                    <br />
+                    <button type="button" onclick="Salvar()" class="w-100 btn btn-success btnConfirmar">Salvar</button>
                 </fieldset>
             </form>
         </div>
@@ -206,8 +211,9 @@
         function ExibirModalGerarParcelas() {
             $("#modal-gerarParcelas").modal("show");
             $(".btnConfirmar").on("click", function() {
-                GerarParcela();
-                $("#modal-gerarParcelas").modal("hide");
+                if (GerarParcela()) {
+                    $("#modal-gerarParcelas").modal("hide");
+                }
             });
         }
 
@@ -227,17 +233,17 @@
 
             if (valorTotal <= 0) {
                 $("[data-valmsg-for=Valor]").html('Campo Obrigatório');
-                return;
+                return false;
             }
 
             if (qtd <= 0 || qtd.toString() == "") {
                 $("[data-valmsg-for=Qtd]").html('Campo Obrigatório');
-                return;
+                return false;
             }
 
             if (primeiroVencimento == "") {
                 $("[data-valmsg-for=PrimeiroVencimento]").html('Campo Obrigatório');
-                return;
+                return false;
             }
 
             $("[data-valmsg-for=Valor]").html('');
@@ -249,7 +255,6 @@
                 if (i > 1) {
                     venc.setMonth(venc.getMonth() + i - 1);
                 }
-                venc = venc.toLocaleDateString('pt-BR');
                 var parcela = i + '/' + qtd;
                 var valorNovaParcela = 0;
 
@@ -262,7 +267,7 @@
 
                 Items.Parcelas.push({
                     "Id": 0,
-                    "Numero": i,
+                    "Numero": Items.Parcelas.length + 1,
                     "ParcelaDe": parcela,
                     "ValorParcela": valorNovaParcela,
                     "ValorReajustado": valorNovaParcela,
@@ -279,6 +284,8 @@
             $("#Valor").val('0,00');
             $("#Qtd").val('0');
             $("#PrimeiroVencimento").val(null);
+
+            return true;
         }
 
         function PreencherTableParcelas() {
@@ -287,13 +294,19 @@
             var totalRegistro = 0;
 
             $.each(Items.Parcelas, function(i, item) {
-                console.log(dataFormatada);
+                if (item.DataVencimento != null) {
+                    var data = new Date(item.DataVencimento);
+                    data = data.toLocaleDateString("pt-BR").substring(0, 10);
+                } else {
+                    var data = "";
+                }
+
                 var linha = "<tr>" +
-                    "<td scope='row'><input class='form-check-input check' id='check' type='checkbox'></td>" +
+                    "<td scope='row'><input class='form-check-input check' id='check' type='checkbox' onclick='ClickCheckItem()'></td>" +
                     "<td align='right'>" + item.ParcelaDe + "</td>" +
                     "<td align='right'>" + FixaDuasCasasDecimais(item.ValorReajustado).replace(".", ",") + "</td>" +
                     "<td align='right'>" + FixaDuasCasasDecimais(item.ValorAberto).replace(".", ",") + "</td>" +
-                    "<td align='right'>" +item.DataVencimento + "</td>" +
+                    "<td align='right'>" + data + "</td>" +
                     "<td align='center'> <button type='button' class='btn btn-primary btn-sm editarParcela'><i class='bi bi-pencil-square'></i></button></td>" +
                     "</tr>";
                 tbodyParcelas.innerHTML += linha;
@@ -310,38 +323,27 @@
                 "<td>Totais</td>" +
                 "<td align='right'>" + FixaDuasCasasDecimais(totalValorReajustado).replace(".", ",") + "</td>" +
                 "<td align='right'>" + FixaDuasCasasDecimais(totalValorAberto).replace(".", ",") + "</td>" +
+                "<td></td>" +
                 "</tr>";
             tfootParcelas.innerHTML += rodape;
+            $('#checkAll').prop('checked', false);
         }
-
-        //function dataFormatada(dataRecebida) {
-        //    var data = new Date(dataRecebida);
-        //    var dia = data.getDate();
-        //    if (dia.toString().length == 1) {
-        //        dia = "0" + dia;
-        //    }
-        //    var mes = data.getMonth() + 1;
-        //    if (mes.toString().length == 1) {
-        //        mes = "0" + mes;
-        //    }
-        //    var ano = data.getFullYear();
-
-        //    return dia + "/" + mes + "/" + ano;
-        //}
 
         //CheckAll
         $('#checkAll').change(function() {
             $('.check').prop('checked', this.checked);
         });
 
-        $('.check').change(function() {
-            if ($('.check:checked').length == $('.check').length) {
-                $('#checkAll').prop('checked', true);
-            }
-            else {
-                $('#checkAll').prop('checked', false);
-            }
-        });
+        function ClickCheckItem() {
+            $('.check').change(function() {
+                if ($('.check:checked').length == $('.check').length) {
+                    $('#checkAll').prop('checked', true);
+                }
+                else {
+                    $('#checkAll').prop('checked', false);
+                }
+            });
+        }
 
         //Salvar
         function Salvar() {
@@ -366,7 +368,7 @@
             });
         }
 
-        //Desabilita inputs se situacao for diferente de Aberto
+        //Desabilita inputs se situacao for diferente de Aberto e carrega parcelas
         $(document).ready(function() {
             $(".modal-gerarParcelas").modal();
 
@@ -383,6 +385,21 @@
             }
         });
 
+        function RemoverParcelas() {
+            //$('table > tbody  > tr').each(function(index, tr) {
+            //    console.log(index);
+            //    console.log(tr);
+            //});
+            //$('#tabelaParcelas tr').each(function(index, tr) {
+            //    $(tr).find('td').each(function(index, td) {
+            //        console.log(td)
+            //        console.log(index)
+            //    });
+            //});
+            //            $(tr).find('td').each (function (index, td) {
+            //  console.log(td)
+            //});
 
+        }
     </script>
 }
