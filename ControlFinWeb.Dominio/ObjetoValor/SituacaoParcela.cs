@@ -9,9 +9,9 @@ namespace ControlFinWeb.Dominio.ObjetoValor
     public enum SituacaoParcela
     {
         Pendente,
+        PendenteParcial,
         Atrasado,
         Pago,
-        Parcial,
         Cancelado
     }
 }

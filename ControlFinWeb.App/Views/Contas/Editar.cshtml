@@ -273,6 +273,7 @@
                     "ValorReajustado": valorNovaParcela,
                     "ValorAberto": valorNovaParcela,
                     "DataVencimento": venc,
+                    "SituacaoParcela": 0
                 });
             }
 
@@ -301,13 +302,23 @@
                     var data = "";
                 }
 
+                var corSituacaoParcela = "";
+                if (item.SituacaoParcela == 2) { //Atrasado
+                    corSituacaoParcela = 'background-color:#fdc433;';
+                } else if (item.SituacaoParcela == 3) { //Pago
+                    corSituacaoParcela = 'background-color:#03a113;';
+                } else if (item.SituacaoParcela == 4) { //Cancelado
+                    corSituacaoParcela = 'background-color:#fa2e2a;';
+                }
+
                 var linha = "<tr>" +
-                    "<td scope='row'><input class='form-check-input check' id='check' type='checkbox' onclick='ClickCheckItem()'></td>" +
+                    "<td scope='row'style=" + corSituacaoParcela + "><input class='form-check-input check' id='check' type='checkbox' onclick='ClickCheckItem()'></td>" +
+                    "<td align='right' style='display:none'>" + item.Id + "</td>" +
                     "<td align='right'>" + item.ParcelaDe + "</td>" +
                     "<td align='right'>" + FixaDuasCasasDecimais(item.ValorReajustado).replace(".", ",") + "</td>" +
                     "<td align='right'>" + FixaDuasCasasDecimais(item.ValorAberto).replace(".", ",") + "</td>" +
                     "<td align='right'>" + data + "</td>" +
-                    "<td align='center'> <button type='button' class='btn btn-primary btn-sm editarParcela'><i class='bi bi-pencil-square'></i></button></td>" +
+                    "<td align='center'> <button type='button' class='btn btn-primary btn-sm' onclick='EditarParcela()'><i class='bi bi-pencil-square'></i></button></td>" +
                     "</tr>";
                 tbodyParcelas.innerHTML += linha;
 
@@ -368,6 +379,11 @@
             });
         }
 
+        //Editar Parcela
+        function EditarParcela() {
+            console.log("Teste");
+        }
+
         //Desabilita inputs se situacao for diferente de Aberto e carrega parcelas
         $(document).ready(function() {
             $(".modal-gerarParcelas").modal();
@@ -386,20 +402,25 @@
         });
 
         function RemoverParcelas() {
-            //$('table > tbody  > tr').each(function(index, tr) {
-            //    console.log(index);
-            //    console.log(tr);
-            //});
-            //$('#tabelaParcelas tr').each(function(index, tr) {
-            //    $(tr).find('td').each(function(index, td) {
-            //        console.log(td)
-            //        console.log(index)
-            //    });
-            //});
-            //            $(tr).find('td').each (function (index, td) {
-            //  console.log(td)
-            //});
+            var checkAll = document.getElementById("checkAll");
+            if (checkAll.checked) {
+                Items.Parcelas = [];
+            } else {
+                var trs = $("input:checked").closest("tr"); //pega no tr os elementos que estão checados
+                var indexes = $.map(trs, function(tr) { return $(tr).index(); }); //faça um array contendo os índices desses elementos tr
+                for (var i = 0; i < indexes.length; i++) {
+                    if (i > 0) {
+                        var remove = Items.Parcelas.splice(parseInt(indexes[i] - i), 1);
+                    } else {
+                        var remove = Items.Parcelas.splice(parseInt(indexes[i]), 1);
+                    }
+                    delete remove;
+                }
+            }
 
+            document.getElementById("txtJsonParcelas").value = JSON.stringify(Items.Parcelas);
+            $('#tbodyParcelas').empty();
+            PreencherTableParcelas();
         }
     </script>
 }
