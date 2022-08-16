@@ -96,6 +96,7 @@
                         <div class="tab-pane fade" id="nav-Parcelas" role="tabpanel" aria-labelledby="nav-Parcelas-tab">
                             <div class="card">
                                 <div class="card-body">
+                                    <div id="alertParcelas" role="alert" style="display:none;"></div>
                                     <div class="row">
                                         <div class="col-md-6">
                                             <select class="form-select">
@@ -122,7 +123,7 @@
                                     </div>
                                     <br />
                                     <div style="height:280px; width:735px; overflow-x:auto">
-                                        @*Para definir a barra de rolagem só na tabela precis definir altura e largura e deixar o overflow automatico para aparecer quando necessario*@
+                                        @*Para definir a barra de rolagem só na tabela precisa definir altura e largura e deixar o overflow automatico para aparecer quando necessario*@
                                         <table class="table table-bordered table-striped table-hover" id="tabelaParcelas">
                                             <thead>
                                                 <tr>
@@ -153,12 +154,13 @@
                         <!-- #endregion -->
                     </div>
                     <br />
-                    <button type="button" onclick="Salvar()" class="w-100 btn btn-success btnConfirmar">Salvar</button>
+                    <button type="button" onclick="Salvar()" class="w-100 btn btn-success">Salvar</button>
                 </fieldset>
             </form>
         </div>
     </div>
 </div>
+
 
 <!--Modal Gerar Parcelas-->
 <div class="modal fade modal-gerarParcelas" id="modal-gerarParcelas" tabindex="-1" aria-hidden="true" role="dialog" data-bs-backdrop="static" data-bs-keyboard="false">
@@ -192,6 +194,108 @@
     </div>
 </div>
 
+<!--Modal Editar Parcelas-->
+<div class="modal fade modal-editarParcelas" id="modal-editarParcelas" tabindex="-1" aria-hidden="true" role="dialog" data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="text-black">EDITAR PARCELAS</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <label class="control-label">Nº</label>
+                            <input class="form-control" id="Numero" style="text-align:right" readonly />
+                            <span class="text-danger"></span>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="control-label">Parcela</label>
+                            <input class="form-control" id="ParcelaDe" style="text-align:right" readonly />
+                            <span class="text-danger"></span>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="control-label">Situação</label>
+                            <input class="form-control" id="SituacaoParcela" readonly />
+                            <span class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <label class="control-label">Valor Parcela</label>
+                            <input class="form-control" id="ValorParcela" onblur="AtualizarValorReajustadoEAberto()" style="text-align:right"/>
+                            <span class="text-danger" id="msgValorParcela"></span>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="control-label">Valor Reajustado</label>
+                            <input class="form-control" id="ValorReajustado" style="text-align:right" readonly />
+                            <span class="text-danger"></span>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="control-label">Valor Aberto</label>
+                            <input class="form-control" id="ValorAberto" style="text-align:right" readonly />
+                            <span class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label class="control-label">Juros (%)</label>
+                            <input class="form-control" id="JurosPorcentual" style="text-align:right" />
+                            <span class="text-danger"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="control-label">Juros (R$)</label>
+                            <input class="form-control" id="JurosValor" onblur="AtualizarValorReajustadoEAberto()" style="text-align:right" />
+                            <span class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label class="control-label">Desc (%)</label>
+                            <input class="form-control" id="DescontoPorcentual" style="text-align:right" />
+                            <span class="text-danger"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="control-label">Desc (R$)</label>
+                            <input class="form-control" id="DescontoValor" onblur="AtualizarValorReajustadoEAberto()" style="text-align:right" />
+                            <span class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label class="control-label">Data Vencimento</label>
+                            <input class="form-control" id="DataVencimento" type="date" style="text-align:right" />
+                            <span class="text-danger" id="msgDataVencimento"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="control-label">Data Pagamento</label>
+                            <input class="form-control" id="DataPagamento" type="date" style="text-align:right" />
+                            <span class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label class="control-label">Forma Pagamento</label>
+                            <select class="form-select" id="FormaPagamentoId" asp-items="ViewBag.FormaPagamentoId">
+                                <option value="0">---Selecione um item---</option>
+                            </select>
+                            <span class="text-danger"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="control-label"> Valor Pago</label>
+                            <input class="form-control" id="ValorPago" onblur="AtualizarValorReajustadoEAberto()" style="text-align:right" />
+                            <span class="text-danger"></span>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="w-100 btn btn-outline-success btnConfirmarParcela">Confirmar</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 @section Scripts {
     @{
@@ -200,7 +304,7 @@
 
     <script type="text/javascript">
         $(function() {
-            $("#Valor").maskMoney({ thousands: '', decimal: ',', allowZero: true });
+            $("#Valor, #ValorParcela, #JurosPorcentual, #JurosValor, #DescontoPorcentual, #DescontoValor, #ValorPago ").maskMoney({ thousands: '', decimal: ',', allowZero: true });
 
         });
 
@@ -270,10 +374,21 @@
                     "Numero": Items.Parcelas.length + 1,
                     "ParcelaDe": parcela,
                     "ValorParcela": valorNovaParcela,
-                    "ValorReajustado": valorNovaParcela,
-                    "ValorAberto": valorNovaParcela,
                     "DataVencimento": venc,
-                    "SituacaoParcela": 0
+                    "DataPagamento": null,
+                    "JurosPorcentual": 0,
+                    "JurosValor": 0,
+                    "DescontoPorcentual": 0,
+                    "DescontoValor": 0,
+                    "ValorReajustado": valorNovaParcela,
+                    "ValorPago": 0,
+                    "ValorAberto": valorNovaParcela,
+                    "Observacao": null,
+                    "SituacaoParcela": 0,
+                    "FormaPagamentoId": 0,
+                    "FormaPagamentoVM": null,
+                    "ContaId": 0,
+                    "ContaVM": null
                 });
             }
 
@@ -303,7 +418,9 @@
                 }
 
                 var corSituacaoParcela = "";
-                if (item.SituacaoParcela == 2) { //Atrasado
+                if (item.SituacaoParcela == 1) { //PendenteParcial
+                    corSituacaoParcela = 'background-color:#b6d0fa;';
+                } else if (item.SituacaoParcela == 2) { //Atrasado
                     corSituacaoParcela = 'background-color:#fdc433;';
                 } else if (item.SituacaoParcela == 3) { //Pago
                     corSituacaoParcela = 'background-color:#03a113;';
@@ -318,7 +435,7 @@
                     "<td align='right'>" + FixaDuasCasasDecimais(item.ValorReajustado).replace(".", ",") + "</td>" +
                     "<td align='right'>" + FixaDuasCasasDecimais(item.ValorAberto).replace(".", ",") + "</td>" +
                     "<td align='right'>" + data + "</td>" +
-                    "<td align='center'> <button type='button' class='btn btn-primary btn-sm' onclick='EditarParcela()'><i class='bi bi-pencil-square'></i></button></td>" +
+                    "<td align='center'> <button type='button' class='btn btn-primary btn-sm EditarParcela' onclick='EditarParcela(this)'><i class='bi bi-pencil-square'></i></button></td>" +
                     "</tr>";
                 tbodyParcelas.innerHTML += linha;
 
@@ -359,7 +476,6 @@
         //Salvar
         function Salvar() {
             var dados = $("#FrmConta").serialize();
-            console.log(dados);
             $.ajax({
                 url: '/Contas/Editar',
                 method: 'POST',
@@ -378,10 +494,132 @@
 
             });
         }
-
         //Editar Parcela
-        function EditarParcela() {
-            console.log("Teste");
+        function EditarParcela(element) {
+            //----pega index da linha da tabela pelo click do botao que esta na mesma linha----
+            LimpaCamposEditarParcela();
+            var parcelaEditar = new Object();
+            var index = $(element).closest("tr").index(); //(Jquery) //var index = element.parentNode.parentNode.rowIndex -1;  (Javascript)
+            $.each(Items.Parcelas, function(i, value) {
+                if (i == index) {
+                    parcelaEditar = value;
+                    return false;//break do each
+                }
+            });
+            $("#modal-editarParcelas").modal("show");
+            //preenche campos
+            var situacao = "";
+            if (parcelaEditar.SituacaoParcela == parseInt(0)) {
+                situacao = "Pendente";
+            }
+            else if (parcelaEditar.SituacaoParcela == parseInt(1)) {
+                situacao = "Pendente Parcial";
+            }
+            else if (parcelaEditar.SituacaoParcela == parseInt(2)) {
+                situacao = "Atrasado";
+            }
+            else if (parcelaEditar.SituacaoParcela == parseInt(3)) {
+                situacao = "Pago";
+            }
+            else {
+                situacao = "Cancelado";
+            }
+
+            $("#Numero").val(parcelaEditar.Numero);
+            $("#ParcelaDe").val(parcelaEditar.ParcelaDe);
+            $("#SituacaoParcela").val(situacao);
+            $("#ValorParcela").val(FixaDuasCasasDecimais(parcelaEditar.ValorParcela).replace(".", ","));
+            $("#ValorReajustado").val(FixaDuasCasasDecimais(parcelaEditar.ValorReajustado).replace(".", ","));
+            $("#ValorAberto").val(FixaDuasCasasDecimais(parcelaEditar.ValorAberto).replace(".", ","));
+            $("#JurosPorcentual").val(FixaDuasCasasDecimais(parcelaEditar.JurosPorcentual).replace(".", ","));
+            $("#JurosValor").val(FixaDuasCasasDecimais(parcelaEditar.JurosValor).replace(".", ","));
+            $("#DescontoPorcentual").val(FixaDuasCasasDecimais(parcelaEditar.DescontoPorcentual).replace(".", ","));
+            $("#DescontoValor").val(FixaDuasCasasDecimais(parcelaEditar.DescontoValor).replace(".", ","));
+            $("#ValorPago").val(FixaDuasCasasDecimais(parcelaEditar.ValorPago).replace(".", ","));
+            $("#DataVencimento").val(parcelaEditar.DataVencimento.substring(0, 10));
+            if (parcelaEditar.DataPagamento != null) {
+                $("#DataPagamento").val(parcelaEditar.DataPagamento.substring(0, 10));
+            }
+            $("#FormaPagamentoId").val(parcelaEditar.FormaPagamentoId);
+
+            //atualizando item no json
+            $(".btnConfirmarParcela").click(function() {
+                AtualizarValorReajustadoEAberto();
+                var valorParcela = parseFloat($("#ValorParcela").val().replace(",", "."));
+                var valorReajustado = parseFloat($("#ValorReajustado").val().replace(",", "."));
+                var valorAberto = parseFloat($("#ValorAberto").val().replace(",", "."));
+                var valorPago = parseFloat($("#ValorPago").val().replace(",", "."));
+                var jurosPorc = parseFloat($("#JurosPorcentual").val().replace(",", "."));
+                var jurosValor = parseFloat($("#JurosValor").val().replace(",", "."));
+                var descontoPorc = parseFloat($("#DescontoPorcentual").val().replace(",", "."));
+                var descontoValor = parseFloat($("#DescontoValor").val().replace(",", "."));
+                if ($("#DataVencimento").val() != "") {
+                    var dataVencimento = new Date($("#DataVencimento").val() + " " + "00:00:00");
+                } else {
+                    var dataVencimento = null;
+                }
+                if ($("#DataPagamento").val() != "") {
+                    var dataPagamento = new Date($("#DataPagamento").val() + " " + "00:00:00");
+                } else {
+                    var dataPagamento = null;
+                }
+
+                var formaPagId = $("#FormaPagamentoId").val()
+
+
+                if (valorParcela == 0.00) {
+                    $("#msgValorParcela").text("Campo Obrigatório");
+                    return false;
+                } else {
+                    $("#msgValorParcela").text("");
+                }
+
+                if (dataVencimento == null) {
+                    $("#msgDataVencimento").text("Campo Obrigatório");
+                    return false;
+                } else {
+                    $("#msgDataVencimento").text("");
+                }
+
+                Items.Parcelas[index].ValorParcela = FixaDuasCasasDecimais(valorParcela);
+                Items.Parcelas[index].ValorReajustado = FixaDuasCasasDecimais(valorReajustado);
+                Items.Parcelas[index].ValorAberto = FixaDuasCasasDecimais(valorAberto);
+                Items.Parcelas[index].ValorPago = FixaDuasCasasDecimais(valorPago);
+                Items.Parcelas[index].JurosPorcentual = FixaDuasCasasDecimais(jurosPorc);
+                Items.Parcelas[index].JurosValor = FixaDuasCasasDecimais(jurosValor);
+                Items.Parcelas[index].DescontoPorcentual = FixaDuasCasasDecimais(descontoPorc);
+                Items.Parcelas[index].DescontoValor = FixaDuasCasasDecimais(descontoValor);
+                Items.Parcelas[index].DataVencimento = dataVencimento.toISOString().slice(0, 19);
+                Items.Parcelas[index].DataPagamento = dataPagamento != null ? dataPagamento.toISOString().slice(0, 19) : null;
+
+                if (Items.Parcelas[index].FormaPagamentoId != formaPagId) {
+                    Items.Parcelas[index].FormaPagamentoId = formaPagId;
+                    Items.Parcelas[index].FormaPagamentoVM = null;
+                }
+
+                $("#modal-editarParcelas").modal("hide");
+
+                document.getElementById("txtJsonParcelas").value = JSON.stringify(Items.Parcelas);
+                $('#tbodyParcelas').empty();
+                PreencherTableParcelas();
+            });
+        }
+
+        function LimpaCamposEditarParcela() {
+            $("#Numero").val('');
+            $("#ParcelaDe").val('');
+            $("#SituacaoParcela").val('');
+            $("#ValorParcela").val('');
+            $("#ValorReajustado").val('');
+            $("#ValorAberto").val('');
+            $("#JurosPorcentual").val('');
+            $("#JurosValor").val('');
+            $("#DescontoPorcentual").val('');
+            $("#DescontoValor").val('');
+            $("#ValorPago").val('');
+            $("#DataVencimento").val(null);
+            $("#DataPagamento").val(null);
+            $("#FormaPagamentoId").val(0);
         }
 
         //Desabilita inputs se situacao for diferente de Aberto e carrega parcelas
@@ -408,7 +646,17 @@
             } else {
                 var trs = $("input:checked").closest("tr"); //pega no tr os elementos que estão checados
                 var indexes = $.map(trs, function(tr) { return $(tr).index(); }); //faça um array contendo os índices desses elementos tr
+
+                //verificando se todas as parcelas selecionadas sao pendentes
                 for (var i = 0; i < indexes.length; i++) {
+                    if (Items.Parcelas[indexes[i]].SituacaoParcela > 0) {
+                        $("#alertParcelas").addClass("alert alert-danger").css('display', 'block').html('Por favor selecione apenas parcelas pendentes para excluir!');
+                        return false;
+                    }
+                }
+                //se todoas as parcelas passarem na verificacao acima, elas serem removidas
+                for (var i = 0; i < indexes.length; i++) {
+                    $("#alertParcelas").css('display', 'none');
                     if (i > 0) {
                         var remove = Items.Parcelas.splice(parseInt(indexes[i] - i), 1);
                     } else {
@@ -421,6 +669,20 @@
             document.getElementById("txtJsonParcelas").value = JSON.stringify(Items.Parcelas);
             $('#tbodyParcelas').empty();
             PreencherTableParcelas();
+        }
+
+        function AtualizarValorReajustadoEAberto() {
+            var valorParcela = parseFloat($("#ValorParcela").val().replace(",", "."));
+            var jurosValor = parseFloat($("#JurosValor").val().replace(",", "."));
+            var descontoValor = parseFloat($("#DescontoValor").val().replace(",", "."));
+            var valorPago = parseFloat($("#ValorPago").val().replace(",", "."));
+
+            var valorReajustado = (valorParcela + jurosValor) - descontoValor;
+            var valorAberto = ((valorParcela + jurosValor) - descontoValor) - valorPago;
+
+            $("#ValorReajustado").val(FixaDuasCasasDecimais(valorReajustado).replace(".", ","));
+            $("#ValorAberto").val(FixaDuasCasasDecimais(valorAberto).replace(".", ","));
+
         }
     </script>
 }

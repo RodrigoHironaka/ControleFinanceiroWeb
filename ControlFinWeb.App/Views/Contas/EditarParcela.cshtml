@@ -1,0 +1,114 @@
+﻿@model ControlFinWeb.App.ViewModels.ParcelaVM
+
+@{
+    ViewData["Title"] = "EditarParcela";
+}
+
+<div class="modal fade modal-editarParcelas" id="modal-editarParcelas" tabindex="-1" aria-hidden="true" role="dialog" data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="text-black">EDITAR PARCELAS</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form>
+
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <input asp-for="Id" type="hidden" />
+                    <div class="row">
+                        <div class="col-md-4">
+                            <label asp-for="Numero" class="control-label"></label>
+                            <input asp-for="Numero" class="form-control" />
+                            <span asp-validation-for="Numero" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-4">
+                            <label asp-for="ParcelaDe" class="control-label"></label>
+                            <input asp-for="ParcelaDe" class="form-control" />
+                            <span asp-validation-for="ParcelaDe" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-4">
+                            <label asp-for="SituacaoParcela" class="control-label"></label>
+                            <input asp-for="SituacaoParcela" class="form-control" />
+                            <span asp-validation-for="SituacaoParcela" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <label asp-for="ValorParcela" class="control-label"></label>
+                            <input asp-for="ValorParcela" class="form-control" />
+                            <span asp-validation-for="ValorParcela" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-4">
+                            <label asp-for="ValorReajustado" class="control-label"></label>
+                            <input asp-for="ValorReajustado" class="form-control" />
+                            <span asp-validation-for="ValorReajustado" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-4">
+                            <label asp-for="ValorAberto" class="control-label"></label>
+                            <input asp-for="ValorAberto" class="form-control" />
+                            <span asp-validation-for="ValorAberto" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label asp-for="JurosPorcentual" class="control-label"></label>
+                            <input asp-for="JurosPorcentual" class="form-control" />
+                            <span asp-validation-for="JurosPorcentual" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="JurosValor" class="control-label"></label>
+                            <input asp-for="JurosValor" class="form-control" />
+                            <span asp-validation-for="JurosValor" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label asp-for="DescontoPorcentual" class="control-label"></label>
+                            <input asp-for="DescontoPorcentual" class="form-control" />
+                            <span asp-validation-for="DescontoPorcentual" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="DescontoValor" class="control-label"></label>
+                            <input asp-for="DescontoValor" class="form-control" />
+                            <span asp-validation-for="DescontoValor" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label asp-for="DataVencimento" class="control-label"></label>
+                            <input asp-for="DataVencimento" class="form-control" />
+                            <span asp-validation-for="DataVencimento" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="DataPagamento" class="control-label"></label>
+                            <input asp-for="DataPagamento" class="form-control" />
+                            <span asp-validation-for="DataPagamento" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label asp-for="FormaPagamentoId" class="control-label">Forma Pagamento</label>
+                            <select asp-for="FormaPagamentoId" class="form-select" id="FormaPagamentoId" asp-items="ViewBag.FormaPagamentoId">
+                                <option value="0">---Selecione um item---</option>
+                            </select>
+                            <span asp-validation-for="FormaPagamentoId" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="ValorPago" class="control-label"></label>
+                            <input asp-for="ValorPago" class="form-control" />
+                            <span asp-validation-for="ValorPago" class="text-danger"></span>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="w-100 btn btn-outline-success btnConfirmarParcela">Confirmar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
