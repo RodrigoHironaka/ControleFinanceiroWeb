@@ -5,7 +5,7 @@
     ViewData["Title"] = "Contas";
 }
 
-<div style="margin-left: 100px; margin-right: 100px;">
+<div >
     <div class="row">
         <div class="input-group mb-3">
             <div class="input-group-prepend">
@@ -18,13 +18,14 @@
         <thead>
             <tr>
 
-                <th>Tipo</th>
-                <th>Nome</th>
-                <th>Emissão</th>
-                <th>Gasto</th>
-                <th>Qtd Parcelas</th>
-                <th>V.Total</th>
-                <th>Situação</th>
+                <th style="text-align:center">Tipo</th>
+                <th style="text-align:center">Emissão</th>
+                <th>Descrição</th>
+                <th style="text-align:right">Qtd</th>
+                <th style="text-align:right">Total</th>
+               @* <th style="text-align:right">Total Reajustado</th>*@
+                <th style="text-align:right">Total Aberto</th>
+                <th style="text-align:right">Situação</th>
                 <th></th>
             </tr>
         </thead>
@@ -32,25 +33,26 @@
             @foreach (var item in Model)
             {
                 <tr>
-                    <td>
+                    <td style="text-align:center">
                         @Html.DisplayFor(modelItem => item.TipoConta)
+                    </td>
+                     <td style="text-align:center">
+                        @Html.Raw(item.DataEmissao.Value.ToShortDateString())
                     </td>
                     <td>
                         @Html.DisplayFor(modelItem => item.Nome)
                     </td>
-                    <td>
-                        @Html.Raw(item.DataEmissao.Value.ToShortDateString())
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.SubGastoVM.DescricaoCompleta)
-                    </td>
-                    <td>
+                    <td style="text-align:right">
                         @Html.DisplayFor(modelItem => item.QtdTotalParcelas)
                     </td>
-                    <td>
+                    <td style="text-align:right">
                         @Html.DisplayFor(modelItem => item.ValorTotalConta)
                     </td>
-                    <td>
+                    
+                    <td style="text-align:right">
+                        @Html.DisplayFor(modelItem => item.ValorTotalAberto)
+                    </td>
+                    <td style="text-align:right">
                         @Html.DisplayFor(modelItem => item.Situacao)
                     </td>
                     <td align="center">

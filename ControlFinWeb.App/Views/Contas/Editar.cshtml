@@ -130,6 +130,7 @@
                                                     <th scope="col" width="5%"><input class="form-check-input" id="checkAll" type="checkbox"></th>
                                                     <th style="text-align:right">Parcela</th>
                                                     <th style="text-align:right">V. Parcela</th>
+                                                     <th style="text-align:right">V. Reajustado</th>
                                                     <th style="text-align:right">V. Aberto</th>
                                                     <th style="text-align:right">Vencimento</th>
                                                     <th></th>
@@ -202,97 +203,99 @@
                 <h5 class="text-black">EDITAR PARCELAS</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body">
-                <form>
-                    <div class="row">
-                        <div class="col-md-4">
-                            <label class="control-label">Nº</label>
-                            <input class="form-control" id="Numero" style="text-align:right" readonly />
-                            <span class="text-danger"></span>
+            <fieldset id=fsEditarParcela>
+                <div class="modal-body">
+                    <form>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <label class="control-label">Nº</label>
+                                <input class="form-control" id="Numero" style="text-align:right" readonly />
+                                <span class="text-danger"></span>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="control-label">Parcela</label>
+                                <input class="form-control" id="ParcelaDe" style="text-align:right" readonly />
+                                <span class="text-danger"></span>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="control-label">Situação</label>
+                                <input class="form-control" id="SituacaoParcela" readonly />
+                                <span class="text-danger"></span>
+                            </div>
                         </div>
-                        <div class="col-md-4">
-                            <label class="control-label">Parcela</label>
-                            <input class="form-control" id="ParcelaDe" style="text-align:right" readonly />
-                            <span class="text-danger"></span>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <label class="control-label">Valor Parcela</label>
+                                <input class="form-control" id="ValorParcela" onblur="AtualizarValorReajustadoEAberto()" style="text-align:right" />
+                                <span class="text-danger" id="msgValorParcela"></span>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="control-label">Valor Reajustado</label>
+                                <input class="form-control" id="ValorReajustado" style="text-align:right" readonly />
+                                <span class="text-danger"></span>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="control-label">Valor Aberto</label>
+                                <input class="form-control" id="ValorAberto" style="text-align:right" readonly />
+                                <span class="text-danger"></span>
+                            </div>
                         </div>
-                        <div class="col-md-4">
-                            <label class="control-label">Situação</label>
-                            <input class="form-control" id="SituacaoParcela" readonly />
-                            <span class="text-danger"></span>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label class="control-label">Juros (%)</label>
+                                <input class="form-control" id="JurosPorcentual" onblur="JurosPorcentagemParaValor(this.value)" style="text-align:right" />
+                                <span class="text-danger"></span>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="control-label">Juros (R$)</label>
+                                <input class="form-control" id="JurosValor" onblur="AtualizarValorReajustadoEAberto()" style="text-align:right" />
+                                <span class="text-danger"></span>
+                            </div>
                         </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-4">
-                            <label class="control-label">Valor Parcela</label>
-                            <input class="form-control" id="ValorParcela" onblur="AtualizarValorReajustadoEAberto()" style="text-align:right"/>
-                            <span class="text-danger" id="msgValorParcela"></span>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label class="control-label">Desc (%)</label>
+                                <input class="form-control" id="DescontoPorcentual" onblur="DescontoPorcentagemParaValor(this.value)" style="text-align:right" />
+                                <span class="text-danger"></span>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="control-label">Desc (R$)</label>
+                                <input class="form-control" id="DescontoValor" onblur="AtualizarValorReajustadoEAberto()" style="text-align:right" />
+                                <span class="text-danger"></span>
+                            </div>
                         </div>
-                        <div class="col-md-4">
-                            <label class="control-label">Valor Reajustado</label>
-                            <input class="form-control" id="ValorReajustado" style="text-align:right" readonly />
-                            <span class="text-danger"></span>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label class="control-label">Data Vencimento</label>
+                                <input class="form-control" id="DataVencimento" type="date" style="text-align:right" />
+                                <span class="text-danger" id="msgDataVencimento"></span>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="control-label">Data Pagamento</label>
+                                <input class="form-control" id="DataPagamento" type="date" style="text-align:right" />
+                                <span class="text-danger"></span>
+                            </div>
                         </div>
-                        <div class="col-md-4">
-                            <label class="control-label">Valor Aberto</label>
-                            <input class="form-control" id="ValorAberto" style="text-align:right" readonly />
-                            <span class="text-danger"></span>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label class="control-label">Forma Pagamento</label>
+                                <select class="form-select" id="FormaPagamentoId" asp-items="ViewBag.FormaPagamentoId">
+                                    <option value="0">---Selecione um item---</option>
+                                </select>
+                                <span class="text-danger"></span>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="control-label"> Valor Pago</label>
+                                <input class="form-control" id="ValorPago" onblur="AtualizarValorReajustadoEAberto()" style="text-align:right" />
+                                <span class="text-danger"></span>
+                            </div>
                         </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <label class="control-label">Juros (%)</label>
-                            <input class="form-control" id="JurosPorcentual" style="text-align:right" />
-                            <span class="text-danger"></span>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="control-label">Juros (R$)</label>
-                            <input class="form-control" id="JurosValor" onblur="AtualizarValorReajustadoEAberto()" style="text-align:right" />
-                            <span class="text-danger"></span>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <label class="control-label">Desc (%)</label>
-                            <input class="form-control" id="DescontoPorcentual" style="text-align:right" />
-                            <span class="text-danger"></span>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="control-label">Desc (R$)</label>
-                            <input class="form-control" id="DescontoValor" onblur="AtualizarValorReajustadoEAberto()" style="text-align:right" />
-                            <span class="text-danger"></span>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <label class="control-label">Data Vencimento</label>
-                            <input class="form-control" id="DataVencimento" type="date" style="text-align:right" />
-                            <span class="text-danger" id="msgDataVencimento"></span>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="control-label">Data Pagamento</label>
-                            <input class="form-control" id="DataPagamento" type="date" style="text-align:right" />
-                            <span class="text-danger"></span>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <label class="control-label">Forma Pagamento</label>
-                            <select class="form-select" id="FormaPagamentoId" asp-items="ViewBag.FormaPagamentoId">
-                                <option value="0">---Selecione um item---</option>
-                            </select>
-                            <span class="text-danger"></span>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="control-label"> Valor Pago</label>
-                            <input class="form-control" id="ValorPago" onblur="AtualizarValorReajustadoEAberto()" style="text-align:right" />
-                            <span class="text-danger"></span>
-                        </div>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="w-100 btn btn-outline-success btnConfirmarParcela">Confirmar</button>
-            </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="w-100 btn btn-outline-success btnConfirmarParcela">Confirmar</button>
+                </div>
+            </fieldset>
         </div>
     </div>
 </div>
@@ -305,7 +308,6 @@
     <script type="text/javascript">
         $(function() {
             $("#Valor, #ValorParcela, #JurosPorcentual, #JurosValor, #DescontoPorcentual, #DescontoValor, #ValorPago ").maskMoney({ thousands: '', decimal: ',', allowZero: true });
-
         });
 
         function FixaDuasCasasDecimais(num) {
@@ -405,6 +407,7 @@
         }
 
         function PreencherTableParcelas() {
+            var totalValorParcela = 0;
             var totalValorReajustado = 0;
             var totalValorAberto = 0;
             var totalRegistro = 0;
@@ -432,13 +435,15 @@
                     "<td scope='row'style=" + corSituacaoParcela + "><input class='form-check-input check' id='check' type='checkbox' onclick='ClickCheckItem()'></td>" +
                     "<td align='right' style='display:none'>" + item.Id + "</td>" +
                     "<td align='right'>" + item.ParcelaDe + "</td>" +
-                    "<td align='right'>" + FixaDuasCasasDecimais(item.ValorReajustado).replace(".", ",") + "</td>" +
+                    "<td align='right'>" + FixaDuasCasasDecimais(item.ValorParcela).replace(".", ",") + "</td>" +
+                     "<td align='right'>" + FixaDuasCasasDecimais(item.ValorReajustado).replace(".", ",") + "</td>" +
                     "<td align='right'>" + FixaDuasCasasDecimais(item.ValorAberto).replace(".", ",") + "</td>" +
                     "<td align='right'>" + data + "</td>" +
                     "<td align='center'> <button type='button' class='btn btn-primary btn-sm EditarParcela' onclick='EditarParcela(this)'><i class='bi bi-pencil-square'></i></button></td>" +
                     "</tr>";
                 tbodyParcelas.innerHTML += linha;
 
+                totalValorParcela += parseFloat(item.ValorParcela);
                 totalValorReajustado += parseFloat(item.ValorReajustado);
                 totalValorAberto += parseFloat(item.ValorAberto);
                 totalRegistro++;
@@ -449,6 +454,7 @@
             var rodape = "<tr style='font-weight: bold;'>" +
                 "<td>" + totalRegistro + "</td>" +
                 "<td>Totais</td>" +
+                "<td align='right'>" + FixaDuasCasasDecimais(totalValorParcela).replace(".", ",") + "</td>" +
                 "<td align='right'>" + FixaDuasCasasDecimais(totalValorReajustado).replace(".", ",") + "</td>" +
                 "<td align='right'>" + FixaDuasCasasDecimais(totalValorAberto).replace(".", ",") + "</td>" +
                 "<td></td>" +
@@ -507,22 +513,27 @@
                 }
             });
             $("#modal-editarParcelas").modal("show");
-            //preenche campos
+            //Preenche campos
             var situacao = "";
             if (parcelaEditar.SituacaoParcela == parseInt(0)) {
                 situacao = "Pendente";
+                $("#fsEditarParcela").prop("disabled", false);
             }
             else if (parcelaEditar.SituacaoParcela == parseInt(1)) {
                 situacao = "Pendente Parcial";
+                $("#fsEditarParcela").prop("disabled", false);
             }
             else if (parcelaEditar.SituacaoParcela == parseInt(2)) {
                 situacao = "Atrasado";
+                $("#fsEditarParcela").prop("disabled", false);
             }
             else if (parcelaEditar.SituacaoParcela == parseInt(3)) {
                 situacao = "Pago";
+                $("#fsEditarParcela").prop("disabled", true);
             }
             else {
                 situacao = "Cancelado";
+                $('#fsEditarParcela').prop('disabled', true);
             }
 
             $("#Numero").val(parcelaEditar.Numero);
@@ -553,6 +564,7 @@
                 var jurosValor = parseFloat($("#JurosValor").val().replace(",", "."));
                 var descontoPorc = parseFloat($("#DescontoPorcentual").val().replace(",", "."));
                 var descontoValor = parseFloat($("#DescontoValor").val().replace(",", "."));
+                var formaPagId = $("#FormaPagamentoId").val()
                 if ($("#DataVencimento").val() != "") {
                     var dataVencimento = new Date($("#DataVencimento").val() + " " + "00:00:00");
                 } else {
@@ -563,9 +575,6 @@
                 } else {
                     var dataPagamento = null;
                 }
-
-                var formaPagId = $("#FormaPagamentoId").val()
-
 
                 if (valorParcela == 0.00) {
                     $("#msgValorParcela").text("Campo Obrigatório");
@@ -679,10 +688,32 @@
 
             var valorReajustado = (valorParcela + jurosValor) - descontoValor;
             var valorAberto = ((valorParcela + jurosValor) - descontoValor) - valorPago;
-
+            
             $("#ValorReajustado").val(FixaDuasCasasDecimais(valorReajustado).replace(".", ","));
             $("#ValorAberto").val(FixaDuasCasasDecimais(valorAberto).replace(".", ","));
+            $("#JurosPorcentual").val(FixaDuasCasasDecimais(ValorParaPorcentagem(jurosValor)).replace(".", ","));
+            $("#DescontoPorcentual").val(FixaDuasCasasDecimais(ValorParaPorcentagem(descontoValor)).replace(".", ","));
+        }
 
+        //Calculando Valor de Porcentagem e vice versa
+        function JurosPorcentagemParaValor(valorPorcentagem) {
+            $("#JurosValor").val(FixaDuasCasasDecimais(PorcentagemParaValor(valorPorcentagem)).replace(".", ","));
+        }
+
+        function DescontoPorcentagemParaValor(valorPorcentagem) {
+            $("#DescontoValor").val(FixaDuasCasasDecimais(PorcentagemParaValor(valorPorcentagem)).replace(".", ","));
+        }
+
+        function PorcentagemParaValor(valorPorcentagem) {
+            var valorParcela = parseFloat($("#ValorParcela").val().replace(",", "."));
+            var porcentagem = parseFloat(valorPorcentagem.replace(",", "."));
+            return (valorParcela * porcentagem) / 100;
+        }
+
+        function ValorParaPorcentagem(valorDinheiro) {
+            var valorParcela = parseFloat($("#ValorParcela").val().replace(",", "."));
+            var valor = parseFloat(valorDinheiro);
+            return (valor * 100) / valorParcela;
         }
     </script>
 }
