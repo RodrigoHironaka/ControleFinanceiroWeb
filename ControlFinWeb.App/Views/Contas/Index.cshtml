@@ -22,8 +22,8 @@
                 <th style="text-align:center">Emissão</th>
                 <th>Descrição</th>
                 <th style="text-align:right">Qtd</th>
-                <th style="text-align:right">Total</th>
-               @* <th style="text-align:right">Total Reajustado</th>*@
+                <th style="text-align:right">Total Parcelas</th>
+               <th style="text-align:right">Total Reajustado</th>
                 <th style="text-align:right">Total Aberto</th>
                 <th style="text-align:right">Situação</th>
                 <th></th>
@@ -48,7 +48,9 @@
                     <td style="text-align:right">
                         @Html.DisplayFor(modelItem => item.ValorTotalConta)
                     </td>
-                    
+                    <td style="text-align:right">
+                        @Html.DisplayFor(modelItem => item.ValorTotalReajustado)
+                    </td>
                     <td style="text-align:right">
                         @Html.DisplayFor(modelItem => item.ValorTotalAberto)
                     </td>

@@ -98,10 +98,11 @@
                                 <div class="card-body">
                                     <div id="alertParcelas" role="alert" style="display:none;"></div>
                                     <div class="row">
-                                        <div class="col-md-6">
-                                            <select class="form-select">
-                                                <option value="0">---Filtro Situação---</option>
-                                            </select>
+                                        <div class="col-md-5">
+                                            <select id="filtroParcelas" asp-items="Html.GetEnumSelectList<SituacaoParcela>()" multiple="multiple"></select>
+                                        </div>
+                                        <div class="col-md-1">
+                                            <button type="button" class="w-100 btn btn-dark" onclick="FiltroSituacao()" width="100%"><i class="bi bi-funnel"></i></button>
                                         </div>
                                         <div class="col-md-3">
                                             <button type="button" class="w-100 btn btn-dark" onclick="ExibirModalGerarParcelas()" width="100%">Gerar Parcelas</button>
@@ -130,7 +131,7 @@
                                                     <th scope="col" width="5%"><input class="form-check-input" id="checkAll" type="checkbox"></th>
                                                     <th style="text-align:right">Parcela</th>
                                                     <th style="text-align:right">V. Parcela</th>
-                                                     <th style="text-align:right">V. Reajustado</th>
+                                                    <th style="text-align:right">V. Reajustado</th>
                                                     <th style="text-align:right">V. Aberto</th>
                                                     <th style="text-align:right">Vencimento</th>
                                                     <th></th>
@@ -325,6 +326,7 @@
 
         var Items = new Object();
         Items.Parcelas = new Array();
+        var parcelasFiltradas = new Array();
         var tbodyParcelas = document.getElementById("tbodyParcelas");
         var tfootParcelas = document.getElementById("tfootParcelas");
 
@@ -373,10 +375,10 @@
 
                 Items.Parcelas.push({
                     "Id": 0,
-                    "Numero": Items.Parcelas.length + 1,
+                    "Numero": Items.Parcelas[Items.Parcelas.length - 1].Numero + 1,
                     "ParcelaDe": parcela,
                     "ValorParcela": valorNovaParcela,
-                    "DataVencimento": venc,
+                    "DataVencimento": venc.toISOString().slice(0, 19),
                     "DataPagamento": null,
                     "JurosPorcentual": 0,
                     "JurosValor": 0,
@@ -396,8 +398,7 @@
 
             document.getElementById("txtJsonParcelas").value = JSON.stringify(Items.Parcelas);
 
-            $('#tbodyParcelas').empty();
-            PreencherTableParcelas();
+            FiltroSituacaoPendentes();
 
             $("#Valor").val('0,00');
             $("#Qtd").val('0');
@@ -406,13 +407,15 @@
             return true;
         }
 
-        function PreencherTableParcelas() {
+        function PreencherTableParcelas(parcelas) {
+            $("#tbodyParcelas").empty();
+
             var totalValorParcela = 0;
             var totalValorReajustado = 0;
             var totalValorAberto = 0;
             var totalRegistro = 0;
 
-            $.each(Items.Parcelas, function(i, item) {
+            $.each(parcelas, function(i, item) {
                 if (item.DataVencimento != null) {
                     var data = new Date(item.DataVencimento);
                     data = data.toLocaleDateString("pt-BR").substring(0, 10);
@@ -434,9 +437,9 @@
                 var linha = "<tr>" +
                     "<td scope='row'style=" + corSituacaoParcela + "><input class='form-check-input check' id='check' type='checkbox' onclick='ClickCheckItem()'></td>" +
                     "<td align='right' style='display:none'>" + item.Id + "</td>" +
-                    "<td align='right'>" + item.ParcelaDe + "</td>" +
+                    "<td align='right' class='numeroParcela'>" + item.Numero + "</td>" +
                     "<td align='right'>" + FixaDuasCasasDecimais(item.ValorParcela).replace(".", ",") + "</td>" +
-                     "<td align='right'>" + FixaDuasCasasDecimais(item.ValorReajustado).replace(".", ",") + "</td>" +
+                    "<td align='right'>" + FixaDuasCasasDecimais(item.ValorReajustado).replace(".", ",") + "</td>" +
                     "<td align='right'>" + FixaDuasCasasDecimais(item.ValorAberto).replace(".", ",") + "</td>" +
                     "<td align='right'>" + data + "</td>" +
                     "<td align='center'> <button type='button' class='btn btn-primary btn-sm EditarParcela' onclick='EditarParcela(this)'><i class='bi bi-pencil-square'></i></button></td>" +
@@ -505,112 +508,120 @@
             //----pega index da linha da tabela pelo click do botao que esta na mesma linha----
             LimpaCamposEditarParcela();
             var parcelaEditar = new Object();
-            var index = $(element).closest("tr").index(); //(Jquery) //var index = element.parentNode.parentNode.rowIndex -1;  (Javascript)
+            var numero = $(element).closest('tr').find('.numeroParcela').text().trim();
+
+            //var index = $(element).closest("tr").index(); //(Jquery)
+            // //var index = element.parentNode.parentNode.rowIndex -1;  (Javascript)
             $.each(Items.Parcelas, function(i, value) {
-                if (i == index) {
+                if (value.Numero == numero) {
                     parcelaEditar = value;
+                    //------------------------------------------------------------------
+                    console.log(parcelaEditar);
+                    $("#modal-editarParcelas").modal("show");
+                    //Preenche campos
+                    var situacao = "";
+                    if (parcelaEditar.SituacaoParcela == parseInt(0)) {
+                        situacao = "Pendente";
+                        $("#fsEditarParcela").prop("disabled", false);
+                    }
+                    else if (parcelaEditar.SituacaoParcela == parseInt(1)) {
+                        situacao = "Pendente Parcial";
+                        $("#fsEditarParcela").prop("disabled", false);
+                    }
+                    else if (parcelaEditar.SituacaoParcela == parseInt(2)) {
+                        situacao = "Atrasado";
+                        $("#fsEditarParcela").prop("disabled", false);
+                    }
+                    else if (parcelaEditar.SituacaoParcela == parseInt(3)) {
+                        situacao = "Pago";
+                        $("#fsEditarParcela").prop("disabled", true);
+                    }
+                    else {
+                        situacao = "Cancelado";
+                        $('#fsEditarParcela').prop('disabled', true);
+                    }
+
+                    $("#Numero").val(parcelaEditar.Numero);
+                    $("#ParcelaDe").val(parcelaEditar.ParcelaDe);
+                    $("#SituacaoParcela").val(situacao);
+                    $("#ValorParcela").val(FixaDuasCasasDecimais(parcelaEditar.ValorParcela).replace(".", ","));
+                    $("#ValorReajustado").val(FixaDuasCasasDecimais(parcelaEditar.ValorReajustado).replace(".", ","));
+                    $("#ValorAberto").val(FixaDuasCasasDecimais(parcelaEditar.ValorAberto).replace(".", ","));
+                    $("#JurosPorcentual").val(FixaDuasCasasDecimais(parcelaEditar.JurosPorcentual).replace(".", ","));
+                    $("#JurosValor").val(FixaDuasCasasDecimais(parcelaEditar.JurosValor).replace(".", ","));
+                    $("#DescontoPorcentual").val(FixaDuasCasasDecimais(parcelaEditar.DescontoPorcentual).replace(".", ","));
+                    $("#DescontoValor").val(FixaDuasCasasDecimais(parcelaEditar.DescontoValor).replace(".", ","));
+                    $("#ValorPago").val(FixaDuasCasasDecimais(parcelaEditar.ValorPago).replace(".", ","));
+                    if (parcelaEditar.DataVencimento != null) {
+                        $("#DataVencimento").val(parcelaEditar.DataVencimento.substring(0, 10));
+                    }
+                    if (parcelaEditar.DataPagamento != null) {
+                        $("#DataPagamento").val(parcelaEditar.DataPagamento.substring(0, 10));
+                    }
+                    $("#FormaPagamentoId").val(parcelaEditar.FormaPagamentoId);
+
+                    //atualizando item no json
+                    $(".btnConfirmarParcela").click(function() {
+                        AtualizarValorReajustadoEAberto();
+                        var valorParcela = parseFloat($("#ValorParcela").val().replace(",", "."));
+                        var valorReajustado = parseFloat($("#ValorReajustado").val().replace(",", "."));
+                        var valorAberto = parseFloat($("#ValorAberto").val().replace(",", "."));
+                        var valorPago = parseFloat($("#ValorPago").val().replace(",", "."));
+                        var jurosPorc = parseFloat($("#JurosPorcentual").val().replace(",", "."));
+                        var jurosValor = parseFloat($("#JurosValor").val().replace(",", "."));
+                        var descontoPorc = parseFloat($("#DescontoPorcentual").val().replace(",", "."));
+                        var descontoValor = parseFloat($("#DescontoValor").val().replace(",", "."));
+                        var formaPagId = $("#FormaPagamentoId").val()
+                        if ($("#DataVencimento").val() != "") {
+                            var dataVencimento = new Date($("#DataVencimento").val() + " " + "00:00:00");
+                        } else {
+                            var dataVencimento = null;
+                        }
+                        if ($("#DataPagamento").val() != "") {
+                            var dataPagamento = new Date($("#DataPagamento").val() + " " + "00:00:00");
+                        } else {
+                            var dataPagamento = null;
+                        }
+
+                        if (valorParcela == 0.00) {
+                            $("#msgValorParcela").text("Campo Obrigatório");
+                            return false;
+                        } else {
+                            $("#msgValorParcela").text("");
+                        }
+
+                        if (dataVencimento == null) {
+                            $("#msgDataVencimento").text("Campo Obrigatório");
+                            return false;
+                        } else {
+                            $("#msgDataVencimento").text("");
+                        }
+
+                        Items.Parcelas[i].ValorParcela = FixaDuasCasasDecimais(valorParcela);
+                        Items.Parcelas[i].ValorReajustado = FixaDuasCasasDecimais(valorReajustado);
+                        Items.Parcelas[i].ValorAberto = FixaDuasCasasDecimais(valorAberto);
+                        Items.Parcelas[i].ValorPago = FixaDuasCasasDecimais(valorPago);
+                        Items.Parcelas[i].JurosPorcentual = FixaDuasCasasDecimais(jurosPorc);
+                        Items.Parcelas[i].JurosValor = FixaDuasCasasDecimais(jurosValor);
+                        Items.Parcelas[i].DescontoPorcentual = FixaDuasCasasDecimais(descontoPorc);
+                        Items.Parcelas[i].DescontoValor = FixaDuasCasasDecimais(descontoValor);
+                        Items.Parcelas[i].DataVencimento = dataVencimento.toISOString().slice(0, 19);
+                        Items.Parcelas[i].DataPagamento = dataPagamento != null ? dataPagamento.toISOString().slice(0, 19) : null;
+
+                        if (Items.Parcelas[i].FormaPagamentoId != formaPagId) {
+                            Items.Parcelas[i].FormaPagamentoId = formaPagId;
+                            Items.Parcelas[i].FormaPagamentoVM = null;
+                        }
+
+                        $("#modal-editarParcelas").modal("hide");
+
+                        document.getElementById("txtJsonParcelas").value = JSON.stringify(Items.Parcelas);
+
+                        FiltroSituacaoPendentes();
+                    });
+                    //------------------------------------------------------------------
                     return false;//break do each
                 }
-            });
-            $("#modal-editarParcelas").modal("show");
-            //Preenche campos
-            var situacao = "";
-            if (parcelaEditar.SituacaoParcela == parseInt(0)) {
-                situacao = "Pendente";
-                $("#fsEditarParcela").prop("disabled", false);
-            }
-            else if (parcelaEditar.SituacaoParcela == parseInt(1)) {
-                situacao = "Pendente Parcial";
-                $("#fsEditarParcela").prop("disabled", false);
-            }
-            else if (parcelaEditar.SituacaoParcela == parseInt(2)) {
-                situacao = "Atrasado";
-                $("#fsEditarParcela").prop("disabled", false);
-            }
-            else if (parcelaEditar.SituacaoParcela == parseInt(3)) {
-                situacao = "Pago";
-                $("#fsEditarParcela").prop("disabled", true);
-            }
-            else {
-                situacao = "Cancelado";
-                $('#fsEditarParcela').prop('disabled', true);
-            }
-
-            $("#Numero").val(parcelaEditar.Numero);
-            $("#ParcelaDe").val(parcelaEditar.ParcelaDe);
-            $("#SituacaoParcela").val(situacao);
-            $("#ValorParcela").val(FixaDuasCasasDecimais(parcelaEditar.ValorParcela).replace(".", ","));
-            $("#ValorReajustado").val(FixaDuasCasasDecimais(parcelaEditar.ValorReajustado).replace(".", ","));
-            $("#ValorAberto").val(FixaDuasCasasDecimais(parcelaEditar.ValorAberto).replace(".", ","));
-            $("#JurosPorcentual").val(FixaDuasCasasDecimais(parcelaEditar.JurosPorcentual).replace(".", ","));
-            $("#JurosValor").val(FixaDuasCasasDecimais(parcelaEditar.JurosValor).replace(".", ","));
-            $("#DescontoPorcentual").val(FixaDuasCasasDecimais(parcelaEditar.DescontoPorcentual).replace(".", ","));
-            $("#DescontoValor").val(FixaDuasCasasDecimais(parcelaEditar.DescontoValor).replace(".", ","));
-            $("#ValorPago").val(FixaDuasCasasDecimais(parcelaEditar.ValorPago).replace(".", ","));
-            $("#DataVencimento").val(parcelaEditar.DataVencimento.substring(0, 10));
-            if (parcelaEditar.DataPagamento != null) {
-                $("#DataPagamento").val(parcelaEditar.DataPagamento.substring(0, 10));
-            }
-            $("#FormaPagamentoId").val(parcelaEditar.FormaPagamentoId);
-
-            //atualizando item no json
-            $(".btnConfirmarParcela").click(function() {
-                AtualizarValorReajustadoEAberto();
-                var valorParcela = parseFloat($("#ValorParcela").val().replace(",", "."));
-                var valorReajustado = parseFloat($("#ValorReajustado").val().replace(",", "."));
-                var valorAberto = parseFloat($("#ValorAberto").val().replace(",", "."));
-                var valorPago = parseFloat($("#ValorPago").val().replace(",", "."));
-                var jurosPorc = parseFloat($("#JurosPorcentual").val().replace(",", "."));
-                var jurosValor = parseFloat($("#JurosValor").val().replace(",", "."));
-                var descontoPorc = parseFloat($("#DescontoPorcentual").val().replace(",", "."));
-                var descontoValor = parseFloat($("#DescontoValor").val().replace(",", "."));
-                var formaPagId = $("#FormaPagamentoId").val()
-                if ($("#DataVencimento").val() != "") {
-                    var dataVencimento = new Date($("#DataVencimento").val() + " " + "00:00:00");
-                } else {
-                    var dataVencimento = null;
-                }
-                if ($("#DataPagamento").val() != "") {
-                    var dataPagamento = new Date($("#DataPagamento").val() + " " + "00:00:00");
-                } else {
-                    var dataPagamento = null;
-                }
-
-                if (valorParcela == 0.00) {
-                    $("#msgValorParcela").text("Campo Obrigatório");
-                    return false;
-                } else {
-                    $("#msgValorParcela").text("");
-                }
-
-                if (dataVencimento == null) {
-                    $("#msgDataVencimento").text("Campo Obrigatório");
-                    return false;
-                } else {
-                    $("#msgDataVencimento").text("");
-                }
-
-                Items.Parcelas[index].ValorParcela = FixaDuasCasasDecimais(valorParcela);
-                Items.Parcelas[index].ValorReajustado = FixaDuasCasasDecimais(valorReajustado);
-                Items.Parcelas[index].ValorAberto = FixaDuasCasasDecimais(valorAberto);
-                Items.Parcelas[index].ValorPago = FixaDuasCasasDecimais(valorPago);
-                Items.Parcelas[index].JurosPorcentual = FixaDuasCasasDecimais(jurosPorc);
-                Items.Parcelas[index].JurosValor = FixaDuasCasasDecimais(jurosValor);
-                Items.Parcelas[index].DescontoPorcentual = FixaDuasCasasDecimais(descontoPorc);
-                Items.Parcelas[index].DescontoValor = FixaDuasCasasDecimais(descontoValor);
-                Items.Parcelas[index].DataVencimento = dataVencimento.toISOString().slice(0, 19);
-                Items.Parcelas[index].DataPagamento = dataPagamento != null ? dataPagamento.toISOString().slice(0, 19) : null;
-
-                if (Items.Parcelas[index].FormaPagamentoId != formaPagId) {
-                    Items.Parcelas[index].FormaPagamentoId = formaPagId;
-                    Items.Parcelas[index].FormaPagamentoVM = null;
-                }
-
-                $("#modal-editarParcelas").modal("hide");
-
-                document.getElementById("txtJsonParcelas").value = JSON.stringify(Items.Parcelas);
-                $('#tbodyParcelas').empty();
-                PreencherTableParcelas();
             });
         }
 
@@ -644,40 +655,52 @@
             var jsonParcelas = $("#txtJsonParcelas").val().toString();
             if (id > 0 && jsonParcelas != "") {
                 Items.Parcelas = JSON.parse(jsonParcelas);
-                PreencherTableParcelas();
+                FiltroSituacaoPendentes();
             }
+
+
+            $('#filtroParcelas').multiselect({
+                buttonClass: 'form-select',
+                templates: {
+                    button: '<button type="button" class="multiselect dropdown-toggle" data-bs-toggle="dropdown"><span class="multiselect-selected-text"></span></button>',
+                },
+                buttonWidth: '300',
+                includeSelectAllOption: true,
+                selectAllText: 'Selecionar Todos',
+                allSelectedText: 'Todos',
+                nonSelectedText: 'Filtro Situação',
+                nSelectedText: 'selecionado(s)',
+                //enableFiltering: true,
+                //enableCaseInsensitiveFiltering: true,
+                //filterPlaceholder: 'Pesquisa',
+            });
         });
 
         function RemoverParcelas() {
-            var checkAll = document.getElementById("checkAll");
-            if (checkAll.checked) {
-                Items.Parcelas = [];
-            } else {
-                var trs = $("input:checked").closest("tr"); //pega no tr os elementos que estão checados
-                var indexes = $.map(trs, function(tr) { return $(tr).index(); }); //faça um array contendo os índices desses elementos tr
+            var trs = $("tbody input:checked").closest("tr"); //pega no tr os elementos que estão checados
+            var numerosParcelaRemover = $.map(trs, function(tr) { return $(tr).find('.numeroParcela').text().trim(); });
+            var parcelasAtualizadas = new Array();
+           
+            //verificando se todas as parcelas selecionadas sao pendentes, pendentesParcial ou atrasadas
+            $.each(numerosParcelaRemover, function(i, value) {
+                var parcelaVerificar = Items.Parcelas.find(x => x.Numero == value);
+                if (parcelaVerificar.SituacaoParcela > 2) {
+                    $("#alertParcelas").addClass("alert alert-danger").css('display', 'block').html('Não é possível excluir parcelas pagas ou canceladas! Por favor verifique as parcelas selecionadas.');
+                    parcelasAtualizadas = [];
+                    return false;
+                }else{
+                    parcelasAtualizadas = Items.Parcelas.filter(function(obj) {
+                        return obj.Numero != value;
+                    });
+                }
+            });
 
-                //verificando se todas as parcelas selecionadas sao pendentes
-                for (var i = 0; i < indexes.length; i++) {
-                    if (Items.Parcelas[indexes[i]].SituacaoParcela > 0) {
-                        $("#alertParcelas").addClass("alert alert-danger").css('display', 'block').html('Por favor selecione apenas parcelas pendentes para excluir!');
-                        return false;
-                    }
-                }
-                //se todoas as parcelas passarem na verificacao acima, elas serem removidas
-                for (var i = 0; i < indexes.length; i++) {
-                    $("#alertParcelas").css('display', 'none');
-                    if (i > 0) {
-                        var remove = Items.Parcelas.splice(parseInt(indexes[i] - i), 1);
-                    } else {
-                        var remove = Items.Parcelas.splice(parseInt(indexes[i]), 1);
-                    }
-                    delete remove;
-                }
+            if(parcelasAtualizadas.length > 0){
+                Items.Parcelas = parcelasAtualizadas;
             }
-
+           
             document.getElementById("txtJsonParcelas").value = JSON.stringify(Items.Parcelas);
-            $('#tbodyParcelas').empty();
-            PreencherTableParcelas();
+            FiltroSituacao();
         }
 
         function AtualizarValorReajustadoEAberto() {
@@ -688,7 +711,7 @@
 
             var valorReajustado = (valorParcela + jurosValor) - descontoValor;
             var valorAberto = ((valorParcela + jurosValor) - descontoValor) - valorPago;
-            
+
             $("#ValorReajustado").val(FixaDuasCasasDecimais(valorReajustado).replace(".", ","));
             $("#ValorAberto").val(FixaDuasCasasDecimais(valorAberto).replace(".", ","));
             $("#JurosPorcentual").val(FixaDuasCasasDecimais(ValorParaPorcentagem(jurosValor)).replace(".", ","));
@@ -715,5 +738,32 @@
             var valor = parseFloat(valorDinheiro);
             return (valor * 100) / valorParcela;
         }
+
+        function FiltroSituacao() {
+            parcelasFiltradas = [];
+            var filtro = $("#filtroParcelas").val();
+
+            $.each(filtro, function(i, value) {
+                parcelasFiltradas = parcelasFiltradas.concat(Items.Parcelas.filter(function(obj) {
+                    return obj.SituacaoParcela == parseInt(value);
+                }));
+            });
+
+            PreencherTableParcelas(parcelasFiltradas);
+        }
+
+        function FiltroSituacaoPendentes() {
+            parcelasFiltradas = [];
+            var filtro = ['0', '1', '2'];
+
+            $.each(filtro, function(i, value) {
+                parcelasFiltradas = parcelasFiltradas.concat(Items.Parcelas.filter(function(obj) {
+                    return obj.SituacaoParcela == parseInt(value);
+                }));
+            });
+
+            PreencherTableParcelas(parcelasFiltradas);
+        }
+
     </script>
 }

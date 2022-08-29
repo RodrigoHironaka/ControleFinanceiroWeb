@@ -97,6 +97,15 @@ namespace ControlFinWeb.App.ViewModels
             }
         }
 
+        [DisplayName("Valor Total Reajustado")]
+        public Decimal? ValorTotalReajustado
+        {
+            get
+            {
+                return ParcelasVM.Select(x => x.ValorReajustado).Sum();
+            }
+        }
+
         [DisplayName("Qtd Total em Aberto")]
         public Int64? QtdTotalParcelasEmAberto
         {
