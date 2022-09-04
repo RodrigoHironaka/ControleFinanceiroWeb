@@ -57,11 +57,19 @@ namespace ControlFinWeb.App.AutoMapper
                 }))
                 .CreateMapper().Map<List<Arquivo>>(src.ArquivosVM);
               });
-
+            CreateMap<FaturaCartaoCreditoVM, FaturaCartaoCredito>()
+                .AfterMap((src, dest) => { dest.Cartao = new Cartao { Id = src.CartaoId }; });
+            CreateMap<FaturaCartaoCreditoItensVM, FaturaCartaoCreditoItens>()
+                .AfterMap((src, dest) => 
+                { 
+                    dest.SubGasto = new SubGasto { Id = src.SubGastoId };
+                    dest.Pessoa = src.PessoaId > 0 ? new Pessoa { Id = src.PessoaId } : null;
+                    dest.CartaoCredito = new FaturaCartaoCredito { Id = src.CartaoCreditoId };
+                });
             #endregion
 
-//-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-           
+            //-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
             #region Dominio Para ViewModel
             CreateMap<FormaPagamento, FormaPagamentoVM>();
             CreateMap<Gasto, GastoVM>();
@@ -120,6 +128,15 @@ namespace ControlFinWeb.App.AutoMapper
                   .CreateMapper().Map<List<ArquivoVM>>(src.Arquivos);
 
               });
+            CreateMap<FaturaCartaoCredito, FaturaCartaoCreditoVM>()
+                .AfterMap((src, dest) => { dest.CartaoVM = AutoMapperConfig<Cartao, CartaoVM>.Mapear(src.Cartao); });
+            CreateMap<FaturaCartaoCreditoItens, FaturaCartaoCreditoItensVM>()
+                .AfterMap((src, dest) => 
+                { 
+                    dest.SubGastoVM = AutoMapperConfig<SubGasto, SubGastoVM>.Mapear(src.SubGasto);
+                    dest.PessoaVM = AutoMapperConfig<Pessoa, PessoaVM>.Mapear(src.Pessoa);
+                    dest.CartaoCreditoVM = AutoMapperConfig<FaturaCartaoCredito, FaturaCartaoCreditoVM>.Mapear(src.CartaoCredito);
+                });
             #endregion
         }
 

@@ -1,0 +1,143 @@
+﻿@model IEnumerable<ControlFinWeb.App.ViewModels.FaturaCartaoCreditoItensVM>
+
+@{
+    ViewData["Title"] = "Itens da Fatura";
+    
+}
+
+<div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title">ADICIONAR ITENS A FATURA</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="javascript:window.location.reload()"></button>
+        </div>
+        <div class="modal-body">
+            <div class="row">
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <button class="btn btn-dark novoItem" data-id="0"><i class="bi bi-plus-lg"></i></button>
+                    </div>
+                    <span class="input-group-text fw-bold">Itens da fatura</span>
+                    <input id="idCartao" class="form-control" style="display: none" />
+                </div>
+            </div>
+            <div id="mensagem" role="alert"></div>
+            <table id="tabelaItensFatura" class="table table-bordered table-striped table-hover tabelaItensFatura">
+                <thead>
+                    <tr>
+                        <th>Nome</th>
+                        <th>Valor</th>
+                        <th>Data da Compra</th>
+                        <th>Gasto</th>
+                        <th>Pessoa referenciada</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Nome)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Valor)
+                            </td>
+                            <td style="text-align:center">
+                                @Html.Raw(item.DataCompra.Value.ToShortDateString())
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.SubGastoVM.DescricaoCompleta)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.PessoaVM.Nome)
+                            </td>
+                            <td align="center">
+                                <button class="btn btn-primary modal-trigger editar" data-id="@item.Id"><i class="bi bi-pencil-square"></i></button>
+                                <a class="btn btn-danger modal-trigger" onclick="ExibirModalExcluir(@item.Id)"><i class="bi bi-x-square"></i></a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div id="modalItem" class="modal fade" role="dialog" data-bs-backdrop="static" data-bs-keyboard="false"></div>
+
+<!--Modal Excluir-->
+<div class="modal fade modal-excluir" id="modal-excluir" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-danger">
+                <h5 class="modal-title text-white">Exluir?</h5>
+            </div>
+            <div class="modal-body">
+               @* <p>ATENÇÃO: Caso haja itens na fatura, ela será cancelada em vez de excluída!!!</p>*@
+                <p>Deseja realmente remover o item?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-outline-danger btnConfirmar">Confirmar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts
+    {
+    <script>
+        //$(document).ready(function () {
+        //    $('#tabela').DataTable({
+        //        "language": {
+        //            "url": "//cdn.datatables.net/plug-ins/1.11.5/i18n/pt-BR.json"
+        //        }
+        //    });
+        //});
+
+        $(document).ready(function() {
+            $(".modal-excluir").modal();
+        });
+
+        function ExibirModalExcluir(id) {
+            var idCartao = $("#idCartao").val();
+            $("#modal-excluir").modal("show");
+            $(".btnConfirmar").on("click", function() {
+                $.ajax({
+                    method: "POST",
+                    url: "/FaturasCartaoCreditoItens/Deletar",
+                    data: { id: id },
+                    success: function() {
+                        $("#modal").load("/FaturasCartaoCreditoItens/Index?id=" + idCartao);
+                        $("#modal-excluir").modal("hide");
+                    },
+                    error: function() {
+                        $("#modal-excluir").modal("hide");
+                        $("#mensagem").addClass('alert alert-danger').html("<strong>Erro!</strong> Não é possível excluir, por favor inative o registro!").delay(10000).fadeOut(400);
+                    }
+                });
+            })
+        }
+
+        $(function() {
+            $(".novoItem").click(function() {
+                var id = $(this).attr("data-id");
+                var idCartao = $("#idCartao").val();
+                $("#modalItem").load("/FaturasCartaoCreditoItens/Editar?id=" + id, function() {
+                    $(".modal-title").html("NOVO ITEM");
+                    $("#CartaoCreditoId").val(idCartao);
+                    $("#modalItem").modal("show");
+                })
+            });
+
+            $(".editar").click(function() {
+                var id = $(this).attr("data-id");
+                $("#modalItem").load("/FaturasCartaoCreditoItens/Editar?id=" + id, function() {
+                    $(".modal-title").html("ALTERANDO ITEM");
+                    $("#modalItem").modal("show");
+                })
+            });
+        })
+    </script>
+}

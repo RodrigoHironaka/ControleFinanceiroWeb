@@ -1,0 +1,103 @@
+﻿@model ControlFinWeb.App.ViewModels.FaturaCartaoCreditoItensVM
+
+@{
+    ViewData["Title"] = "Itens da fatura";
+}
+
+<div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title"></h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <form asp-action="Editar" id="FrmCartaoItens">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input asp-for="Id" type="hidden" />
+                <input asp-for="CartaoCreditoId" type="hidden" />
+
+                <div class="form-group">
+                    <label asp-for="Nome" class="control-label"></label>
+                    <input asp-for="Nome" class="form-control" />
+                    <span asp-validation-for="Nome" class="text-danger"></span>
+                </div>
+                <div class="row">
+                    <div class="col-md-4">
+                        <label asp-for="Valor" class="control-label"></label>
+                        <input asp-for="Valor" class="form-control" style="text-align:right" />
+                        <span asp-validation-for="Valor" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-4">
+                        <label asp-for="NumeroParcelas" class="control-label"></label>
+                        <input asp-for="NumeroParcelas" class="form-control" type="number" style="text-align:right" />
+                        <span asp-validation-for="NumeroParcelas" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-4">
+                        <label asp-for="DataCompra" class="control-label"></label>
+                        <input asp-for="DataCompra" class="form-control" type="date" style="text-align:right" />
+                        <span asp-validation-for="DataCompra" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <label asp-for="SubGastoId" class="control-label"></label>
+                        <select class="form-select" asp-for="SubGastoId" asp-items="ViewBag.SubGastos">
+                            <option value="0">---Selecione um item---</option>
+                        </select>
+                        <span asp-validation-for="SubGastoId" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6">
+                        <label asp-for="PessoaId" class="control-label"></label>
+                        <select class="form-select" asp-for="PessoaId" asp-items="ViewBag.Pessoas">
+                            <option value="0">---Selecione um item---</option>
+                        </select>
+                        <span asp-validation-for="PessoaId" class="text-danger"></span>
+                    </div>
+                </div>
+
+
+                <br />
+                <button type="button" onclick="Salvar()" class="w-100 btn btn-success btnConfirmar">Salvar</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script type="text/javascript">
+        $(function() {
+            $("#Valor").maskMoney({ thousands: '', decimal: ',', allowZero: true });
+        });
+
+        function Salvar() {
+            var idCartao = $("#CartaoCreditoId").val();
+            var dados = $("#FrmCartaoItens").serialize();
+            $.ajax({
+                url: '/FaturasCartaoCreditoItens/Editar',
+                method: 'POST',
+                data: dados,
+                success: function(retorno) {
+                    if (retorno == "") {
+                        $("#modal").load("/FaturasCartaoCreditoItens/Index?id=" + idCartao);
+                        $("#modalItem").modal("hide");
+                    }
+                    else {
+                        $("#modalItem").html(retorno);
+                        if ($("#id").val() > 0)
+                            $(".modal-title").html("ALTERANDO ITEM");
+                        else
+                            $(".modal-title").html("NOVO ITEM");
+                    }
+                }
+
+            });
+        }
+
+       
+
+    </script>
+}

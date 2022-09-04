@@ -25,7 +25,7 @@
                 <fieldset id="fsAgrupar">
                     <div class="tab-content" id="nav-tabContent">
                         <div class="tab-pane fade show active" id="nav-Geral" role="tabpanel" aria-labelledby="nav-Geral-tab">
-
+                            <br />
                             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                             <input asp-for="Id" type="hidden" />
                             <div class="row">
@@ -94,55 +94,53 @@
                             </div>
                         </div>
                         <div class="tab-pane fade" id="nav-Parcelas" role="tabpanel" aria-labelledby="nav-Parcelas-tab">
-                            <div class="card">
-                                <div class="card-body">
-                                    <div id="alertParcelas" role="alert" style="display:none;"></div>
-                                    <div class="row">
-                                        <div class="col-md-5">
-                                            <select id="filtroParcelas" asp-items="Html.GetEnumSelectList<SituacaoParcela>()" multiple="multiple"></select>
-                                        </div>
-                                        <div class="col-md-1">
-                                            <button type="button" class="w-100 btn btn-dark" onclick="FiltroSituacao()" width="100%"><i class="bi bi-funnel"></i></button>
-                                        </div>
-                                        <div class="col-md-3">
-                                            <button type="button" class="w-100 btn btn-dark" onclick="ExibirModalGerarParcelas()" width="100%">Gerar Parcelas</button>
-                                        </div>
-                                        <div class="col-md-3">
-                                            <div class="dropdown" style="text-align: right;">
-                                                <button class="btn btn-dark dropdown-toggle" type="button" id="opcoes" data-bs-toggle="dropdown" aria-expanded="false">
-                                                    <i class="bi bi-gear-fill"></i> Opções Gerais
-                                                </button>
-                                                <ul class="dropdown-menu" aria-labelledby="opcoes">
-                                                    <li><a class="dropdown-item" href="#"><i class="bi bi-cash-stack"></i> Pagar</a></li>
-                                                    <li><a class="dropdown-item" onclick=" RemoverParcelas()"><i class="bi bi-trash"></i> Excluir</a></li>
-                                                </ul>
-                                            </div>
-                                        </div>
+                            <br />
+                            <div id="alertParcelas" role="alert" style="display:none;"></div>
+                            <div class="row">
+                                <div class="col-md-5">
+                                    <select id="filtroParcelas" asp-items="Html.GetEnumSelectList<SituacaoParcela>()" multiple="multiple"></select>
+                                </div>
+                                <div class="col-md-1">
+                                    <button type="button" class="w-100 btn btn-dark" onclick="FiltroSituacao()" width="100%"><i class="bi bi-funnel"></i></button>
+                                </div>
+                                <div class="col-md-3">
+                                    <button type="button" class="w-100 btn btn-dark" onclick="ExibirModalGerarParcelas()" width="100%">Gerar Parcelas</button>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="dropdown" style="text-align: right;">
+                                        <button class="btn btn-dark dropdown-toggle" type="button" id="opcoes" data-bs-toggle="dropdown" aria-expanded="false">
+                                            <i class="bi bi-gear-fill"></i> Opções Gerais
+                                        </button>
+                                        <ul class="dropdown-menu" aria-labelledby="opcoes">
+                                            <li><a class="dropdown-item" href="#"><i class="bi bi-cash-stack"></i> Pagar</a></li>
+                                            <li><a class="dropdown-item" onclick=" RemoverParcelas()"><i class="bi bi-trash"></i> Excluir</a></li>
+                                        </ul>
                                     </div>
-                                    <div class="row">
-                                        <textarea asp-for="JsonParcelas" id="txtJsonParcelas" class="form-control" rows="1" style="display:none;"></textarea>
-                                    </div>
-                                    <br />
-                                    <div style="height:280px; width:735px; overflow-x:auto">
-                                        @*Para definir a barra de rolagem só na tabela precisa definir altura e largura e deixar o overflow automatico para aparecer quando necessario*@
-                                        <table class="table table-bordered table-striped table-hover" id="tabelaParcelas">
-                                            <thead>
-                                                <tr>
-                                                    <th scope="col" width="5%"><input class="form-check-input" id="checkAll" type="checkbox"></th>
-                                                    <th style="text-align:right">Parcela</th>
-                                                    <th style="text-align:right">V. Parcela</th>
-                                                    <th style="text-align:right">V. Reajustado</th>
-                                                    <th style="text-align:right">V. Aberto</th>
-                                                    <th style="text-align:right">Vencimento</th>
-                                                    <th></th>
-                                                </tr>
-                                            </thead>
-                                            <tbody id=tbodyParcelas>
-                                            </tbody>
-                                            <tfoot id=tfootParcelas>
-                                            </tfoot>
-                                        </table>
-                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <textarea asp-for="JsonParcelas" id="txtJsonParcelas" class="form-control" rows="1" style="display:none;"></textarea>
+                            </div>
+                            <div class="mt-3">
+                                <div style="height:300px; width:765px; overflow-x:auto">
+                                    @*Para definir a barra de rolagem só na tabela precisa definir altura e largura e deixar o overflow automatico para aparecer quando necessario*@
+                                    <table class="table table-bordered table-striped table-hover" id="tabelaParcelas">
+                                        <thead>
+                                            <tr>
+                                                <th scope="col" width="5%"><input class="form-check-input" id="checkAll" type="checkbox"></th>
+                                                <th scope="col" width="2%" style="text-align:right">Parcela</th>
+                                                <th style="text-align:right">V. Parcela</th>
+                                                <th style="text-align:right">V. Reajustado</th>
+                                                <th style="text-align:right">V. Aberto</th>
+                                                <th style="text-align:right">Vencimento</th>
+                                                <th scope="col" width="5%"></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id=tbodyParcelas>
+                                        </tbody>
+                                        <tfoot id=tfootParcelas>
+                                        </tfoot>
+                                    </table>
                                 </div>
                             </div>
                         </div>
@@ -162,7 +160,6 @@
         </div>
     </div>
 </div>
-
 
 <!--Modal Gerar Parcelas-->
 <div class="modal fade modal-gerarParcelas" id="modal-gerarParcelas" tabindex="-1" aria-hidden="true" role="dialog" data-bs-backdrop="static" data-bs-keyboard="false">
@@ -680,7 +677,7 @@
             var trs = $("tbody input:checked").closest("tr"); //pega no tr os elementos que estão checados
             var numerosParcelaRemover = $.map(trs, function(tr) { return $(tr).find('.numeroParcela').text().trim(); });
             var parcelasAtualizadas = new Array();
-           
+
             //verificando se todas as parcelas selecionadas sao pendentes, pendentesParcial ou atrasadas
             $.each(numerosParcelaRemover, function(i, value) {
                 var parcelaVerificar = Items.Parcelas.find(x => x.Numero == value);
@@ -688,17 +685,17 @@
                     $("#alertParcelas").addClass("alert alert-danger").css('display', 'block').html('Não é possível excluir parcelas pagas ou canceladas! Por favor verifique as parcelas selecionadas.');
                     parcelasAtualizadas = [];
                     return false;
-                }else{
+                } else {
                     parcelasAtualizadas = Items.Parcelas.filter(function(obj) {
                         return obj.Numero != value;
                     });
                 }
             });
 
-            if(parcelasAtualizadas.length > 0){
+            if (parcelasAtualizadas.length > 0) {
                 Items.Parcelas = parcelasAtualizadas;
             }
-           
+
             document.getElementById("txtJsonParcelas").value = JSON.stringify(Items.Parcelas);
             FiltroSituacao();
         }

@@ -9,6 +9,7 @@ namespace ControlFinWeb.Dominio.ObjetoValor
     public enum SituacaoFatura
     {
         Fechada,
-        Aberta
+        Aberta,
+        Cancelada
     }
 }

@@ -15,7 +15,7 @@ namespace ControlFinWeb.Repositorio.Mapeamentos
             {
                 m.Generator(Generators.HighLow, g => g.Params(new { max_lo = 0 }));
             });
-            Property(x => x.Nome, m => m.Length(300));
+            Property(x => x.Nome, m => m.Length(500));
             Property(x => x.MesAnoReferencia);
             Property(x => x.DataGeracao);
             Property(x => x.DataAlteracao);

@@ -36,10 +36,8 @@ namespace ControlFinWeb.Repositorio.Repositorios
                 }
                 catch (Exception ex)
                 {
-                    
                     trans.Rollback();
                     throw new Exception(ex.ToString());
-
                 }
             }
         }
