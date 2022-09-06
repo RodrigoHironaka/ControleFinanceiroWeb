@@ -21,6 +21,7 @@ namespace ControlFinWeb.App.Controllers
         Parcela parcela = new Parcela();
         ParcelaVM parcelaVM = new ParcelaVM();
 
+
        
     }
 }

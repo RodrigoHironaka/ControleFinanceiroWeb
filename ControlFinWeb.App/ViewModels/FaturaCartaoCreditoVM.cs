@@ -17,8 +17,7 @@ namespace ControlFinWeb.App.ViewModels
         public Int64 Id { get; set; }
 
         [DisplayName("Observação")]
-        [StringLength(100, ErrorMessage = "Limite máximo de 500 caracteres.")]
-        [Required(ErrorMessage = "Campo Obrigatório")]
+        [StringLength(500, ErrorMessage = "Limite máximo de 500 caracteres.")]
         public String Nome { get; set; }
 
         [DisplayName("Mês e Ano de Referência")]

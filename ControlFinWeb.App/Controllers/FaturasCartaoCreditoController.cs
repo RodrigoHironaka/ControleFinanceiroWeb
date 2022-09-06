@@ -11,16 +11,19 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace ControlFinWeb.App.Controllers
 {
     public class FaturasCartaoCreditoController : Controller
     {
         private readonly RepositorioFaturaCartaoCredito Repositorio;
+        private readonly RepositorioParcela RepositorioParcela;
         private readonly IMapper Mapper;
-        public FaturasCartaoCreditoController(RepositorioFaturaCartaoCredito repositorio, IMapper mapper)
+        public FaturasCartaoCreditoController(RepositorioFaturaCartaoCredito repositorio, RepositorioParcela repositorioParcela, IMapper mapper)
         {
             Repositorio = repositorio;
+            RepositorioParcela = repositorioParcela;
             Mapper = mapper;
         }
 
@@ -64,7 +67,7 @@ namespace ControlFinWeb.App.Controllers
                 {
                     faturaCartaoCredito = Mapper.Map(faturaCartaoCreditoVM, faturaCartaoCredito);
                     faturaCartaoCredito.UsuarioCriacao = Configuracao.Usuario;
-                    Repositorio.Salvar(faturaCartaoCredito);
+                    Repositorio.SalvarEGerarNovaParcela(faturaCartaoCredito);
                 }
                 return new EmptyResult();
             }
@@ -77,7 +80,7 @@ namespace ControlFinWeb.App.Controllers
         public JsonResult Deletar(int id)
         {
             var fatura = Repositorio.ObterPorId(id);
-            if(fatura != null && fatura.FaturaItens.Count > 0)
+            if (fatura != null && fatura.FaturaItens.Count > 0)
             {
                 fatura.SituacaoFatura = SituacaoFatura.Cancelada;
                 fatura.Nome = "Houve uma tentativa de exclusão, mas havia itens na fatura, neste caso a conta é cancelada!";
@@ -90,8 +93,8 @@ namespace ControlFinWeb.App.Controllers
                 Repositorio.Excluir(faturaCartaoCredito);
                 return Json(faturaCartaoCredito.DescricaoCompleta + "excluído com sucesso");
             }
-                
-           
+
+
         }
     }
 }
