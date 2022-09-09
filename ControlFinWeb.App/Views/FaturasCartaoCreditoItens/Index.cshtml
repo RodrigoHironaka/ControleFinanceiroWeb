@@ -21,7 +21,7 @@
                     <input id="idCartao" class="form-control" style="display: none" />
                 </div>
             </div>
-            <div id="mensagem" role="alert"></div>
+            <div id="mensagemItem" role="alert"></div>
             <table id="tabelaItensFatura" class="table table-bordered table-striped table-hover tabelaItensFatura">
                 <thead>
                     <tr>
@@ -109,12 +109,14 @@
                     url: "/FaturasCartaoCreditoItens/Deletar",
                     data: { id: id },
                     success: function() {
-                        $("#modal").load("/FaturasCartaoCreditoItens/Index?id=" + idCartao);
+                        $("#modal").load("/FaturasCartaoCreditoItens/Index?id=" + idCartao, function() {
+                            $("#idCartao").val(idCartao);
+                        });
                         $("#modal-excluir").modal("hide");
                     },
                     error: function() {
                         $("#modal-excluir").modal("hide");
-                        $("#mensagem").addClass('alert alert-danger').html("<strong>Erro!</strong> Não é possível excluir, por favor inative o registro!").delay(10000).fadeOut(400);
+                        $("#mensagemItem").addClass('alert alert-danger').html("<strong>Erro!</strong> Não foi possível excluir o registro, entre em contato com o suporte técnico!").delay(30000).fadeOut(400);
                     }
                 });
             })

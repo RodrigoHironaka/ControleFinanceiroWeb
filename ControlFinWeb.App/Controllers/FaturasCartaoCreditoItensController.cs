@@ -16,10 +16,14 @@ namespace ControlFinWeb.App.Controllers
     public class FaturasCartaoCreditoItensController : Controller
     {
         private readonly RepositorioFaturaCartaoCreditoItens Repositorio;
+        private readonly RepositorioFaturaCartaoCredito RepositorioFaturaCartaoCredito;
+        private readonly RepositorioParcela RepositorioParcela;
         private readonly IMapper Mapper;
-        public FaturasCartaoCreditoItensController(RepositorioFaturaCartaoCreditoItens repositorio, IMapper mapper)
+        public FaturasCartaoCreditoItensController(RepositorioFaturaCartaoCreditoItens repositorio, RepositorioFaturaCartaoCredito repositorioFaturaCartaoCredito, RepositorioParcela repositorioParcela, IMapper mapper)
         {
             Repositorio = repositorio;
+            RepositorioFaturaCartaoCredito = repositorioFaturaCartaoCredito;
+            RepositorioParcela = repositorioParcela;
             Mapper = mapper;
         }
 
@@ -56,16 +60,14 @@ namespace ControlFinWeb.App.Controllers
                 if (faturaCartaoCreditoItensVM.Id > 0)
                 {
                     faturaCartaoCreditoItens = Repositorio.ObterPorId(faturaCartaoCreditoItensVM.Id);
-                    faturaCartaoCreditoItens = Mapper.Map(faturaCartaoCreditoItensVM, faturaCartaoCreditoItens);
                     faturaCartaoCreditoItens.UsuarioAlteracao = Configuracao.Usuario;
-                    Repositorio.Alterar(faturaCartaoCreditoItens);
                 }
                 else
-                {
-                    faturaCartaoCreditoItens = Mapper.Map(faturaCartaoCreditoItensVM, faturaCartaoCreditoItens);
                     faturaCartaoCreditoItens.UsuarioCriacao = Configuracao.Usuario;
-                    Repositorio.Salvar(faturaCartaoCreditoItens);
-                }
+
+                faturaCartaoCreditoItens = Mapper.Map(faturaCartaoCreditoItensVM, faturaCartaoCreditoItens);
+                faturaCartaoCreditoItens.CartaoCredito = RepositorioFaturaCartaoCredito.ObterPorId(faturaCartaoCreditoItens.CartaoCredito.Id);
+                Repositorio.SalvarAlterarFaturaItemEAlterarParcela(faturaCartaoCreditoItens);
                 return new EmptyResult();
             }
             ViewBag.Pessoas = new SelectList(new RepositorioPessoa(NHibernateHelper.ObterSessao()).ObterPorParametros(x => x.Situacao == Situacao.Ativo), "Id", "Nome", faturaCartaoCreditoItensVM.Id);
@@ -75,11 +77,10 @@ namespace ControlFinWeb.App.Controllers
 
 
         [HttpPost]
-        public JsonResult Deletar(int id)
+        public JsonResult Deletar(Int64 id)
         {
-            var faturaCartaoCreditoItem = Repositorio.ObterPorId(id);
-            Repositorio.Excluir(faturaCartaoCreditoItem);
-            return Json(faturaCartaoCreditoItem.Nome + "excluído com sucesso");
+            Repositorio.ExcluirItemFaturaEAlterarParcela(id);
+            return Json("Excluído com sucesso");
         }
     }
 }

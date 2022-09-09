@@ -14,7 +14,7 @@
             <form asp-action="Editar" id="FrmCartaoItens">
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                 <input asp-for="Id" type="hidden" />
-                <input asp-for="CartaoCreditoId" type="hidden" />
+                <input asp-for="CartaoCreditoId" style="display: none"/>
 
                 <div class="form-group">
                     <label asp-for="Nome" class="control-label"></label>
@@ -82,7 +82,9 @@
                 data: dados,
                 success: function(retorno) {
                     if (retorno == "") {
-                        $("#modal").load("/FaturasCartaoCreditoItens/Index?id=" + idCartao);
+                        $("#modal").load("/FaturasCartaoCreditoItens/Index?id=" + idCartao, function() {
+                            $("#idCartao").val(idCartao);
+                        });
                         $("#modalItem").modal("hide");
                     }
                     else {

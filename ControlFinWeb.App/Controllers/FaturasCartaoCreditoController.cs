@@ -79,22 +79,8 @@ namespace ControlFinWeb.App.Controllers
         [HttpPost]
         public JsonResult Deletar(int id)
         {
-            var fatura = Repositorio.ObterPorId(id);
-            if (fatura != null && fatura.FaturaItens.Count > 0)
-            {
-                fatura.SituacaoFatura = SituacaoFatura.Cancelada;
-                fatura.Nome = "Houve uma tentativa de exclusão, mas havia itens na fatura, neste caso a conta é cancelada!";
-                Repositorio.Alterar(fatura);
-                return Json(fatura.DescricaoCompleta + "cancelado com sucesso");
-            }
-            else
-            {
-                var faturaCartaoCredito = Repositorio.ObterPorId(id);
-                Repositorio.Excluir(faturaCartaoCredito);
-                return Json(faturaCartaoCredito.DescricaoCompleta + "excluído com sucesso");
-            }
-
-
+            Repositorio.ExcluirOuCancelarFaturaEParcela(id);
+            return Json(faturaCartaoCredito.DescricaoCompleta + "excluído com sucesso");
         }
     }
 }

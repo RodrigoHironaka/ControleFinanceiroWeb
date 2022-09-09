@@ -30,6 +30,8 @@ namespace ControlFinWeb.App.ViewModels
         [Required(ErrorMessage = "Campo Obrigatório")]
         public DateTime? DataCompra { get; set; }
 
+        public IList<FaturaCartaoCreditoItensVM> FaturaItensVM { get; set; }
+
         #region Campos vinculados a outras classes
         [DisplayName("Gasto")]
         [Range(1, Int64.MaxValue, ErrorMessage = "Informe um Gasto")]
