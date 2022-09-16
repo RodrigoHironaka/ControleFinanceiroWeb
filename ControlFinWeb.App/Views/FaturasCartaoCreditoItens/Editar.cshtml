@@ -7,14 +7,14 @@
 <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
         <div class="modal-header">
-            <h5 class="modal-title"></h5>
+            <h5 class="modal-title tituloItem"></h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
             <form asp-action="Editar" id="FrmCartaoItens">
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                 <input asp-for="Id" type="hidden" />
-                <input asp-for="CartaoCreditoId" style="display: none"/>
+                <input asp-for="CartaoCreditoId" style="display: none" />
 
                 <div class="form-group">
                     <label asp-for="Nome" class="control-label"></label>
@@ -28,10 +28,11 @@
                         <span asp-validation-for="Valor" class="text-danger"></span>
                     </div>
                     <div class="col-md-4">
-                        <label asp-for="NumeroParcelas" class="control-label"></label>
+                        <label asp-for="NumeroParcelas" class="control-label"></label> <input asp-for="Replicar" class="form-check-input" type="checkbox" /> <label asp-for="Replicar" class="control-label"></label>
                         <input asp-for="NumeroParcelas" class="form-control" type="number" style="text-align:right" />
                         <span asp-validation-for="NumeroParcelas" class="text-danger"></span>
                     </div>
+                  
                     <div class="col-md-4">
                         <label asp-for="DataCompra" class="control-label"></label>
                         <input asp-for="DataCompra" class="form-control" type="date" style="text-align:right" />
@@ -90,13 +91,14 @@
                     else {
                         $("#modalItem").html(retorno);
                         if ($("#id").val() > 0)
-                            $(".modal-title").html("ALTERANDO ITEM");
+                            $(".tituloItem").html("ALTERANDO ITEM");
                         else
-                            $(".modal-title").html("NOVO ITEM");
+                            $(".tituloItem").html("ADICIONAR NOVO ITEM");
                     }
                 }
 
             });
         }
+
     </script>
 }

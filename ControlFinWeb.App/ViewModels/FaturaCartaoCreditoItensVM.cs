@@ -21,7 +21,7 @@ namespace ControlFinWeb.App.ViewModels
         [Required(ErrorMessage = "Campo Obrigatório")]
         public Decimal Valor { get; set; }
 
-        [DisplayName("Qtd")]
+        [DisplayName("Qtd - ")]
         [Required(ErrorMessage = "Campo Obrigatório")]
         public String NumeroParcelas { get; set; }
 
@@ -29,6 +29,9 @@ namespace ControlFinWeb.App.ViewModels
         [Range(typeof(DateTime), "01/01/1980", "31/12/5000", ErrorMessage = "Data Inválida!")]
         [Required(ErrorMessage = "Campo Obrigatório")]
         public DateTime? DataCompra { get; set; }
+
+        [DisplayName("Replicar?")]
+        public Boolean Replicar { get; set; }
 
         public IList<FaturaCartaoCreditoItensVM> FaturaItensVM { get; set; }
 

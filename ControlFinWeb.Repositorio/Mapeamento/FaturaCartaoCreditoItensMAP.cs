@@ -15,7 +15,6 @@ namespace ControlFinWeb.Repositorio.Mapeamentos
             });
 
             Property(x => x.Nome, m => m.Length(100));
-            Property(x => x.NumeroParcelas, m => m.Length(30));
             Property(x => x.DataCompra);
             Property(x => x.Valor);
             Property(x => x.DataGeracao);

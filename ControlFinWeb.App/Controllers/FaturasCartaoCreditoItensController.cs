@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace ControlFinWeb.App.Controllers
 {
@@ -67,14 +68,13 @@ namespace ControlFinWeb.App.Controllers
 
                 faturaCartaoCreditoItens = Mapper.Map(faturaCartaoCreditoItensVM, faturaCartaoCreditoItens);
                 faturaCartaoCreditoItens.CartaoCredito = RepositorioFaturaCartaoCredito.ObterPorId(faturaCartaoCreditoItens.CartaoCredito.Id);
-                Repositorio.SalvarAlterarFaturaItemEAlterarParcela(faturaCartaoCreditoItens);
+                Repositorio.SalvarAlterarFaturaItemEAlterarParcela(faturaCartaoCreditoItens, faturaCartaoCreditoItensVM.NumeroParcelas, faturaCartaoCreditoItensVM.Replicar);
                 return new EmptyResult();
             }
             ViewBag.Pessoas = new SelectList(new RepositorioPessoa(NHibernateHelper.ObterSessao()).ObterPorParametros(x => x.Situacao == Situacao.Ativo), "Id", "Nome", faturaCartaoCreditoItensVM.Id);
             ViewBag.Subgastos = new SelectList(new RepositorioSubGasto(NHibernateHelper.ObterSessao()).ObterPorParametros(x => x.Situacao == Situacao.Ativo), "Id", "DescricaoCompleta", faturaCartaoCreditoItensVM.Id);
             return View(faturaCartaoCreditoItensVM);
         }
-
 
         [HttpPost]
         public JsonResult Deletar(Int64 id)

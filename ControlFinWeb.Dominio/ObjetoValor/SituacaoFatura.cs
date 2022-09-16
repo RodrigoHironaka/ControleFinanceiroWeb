@@ -10,6 +10,7 @@ namespace ControlFinWeb.Dominio.ObjetoValor
     {
         Fechada,
         Aberta,
-        Cancelada
+        Cancelada,
+        Paga
     }
 }

@@ -44,21 +44,5 @@ namespace ControlFinWeb.Repositorio.Repositorios
                 AlterarLote(existeParcela);
             }
         }
-
-        public void ExcluirOuCancelarParcelaFatura(FaturaCartaoCredito faturaCartaoCredito, bool cancelar = false)
-        {
-            var existeParcela = ObterPorParametros(x => x.FaturaCartaoCredito.Id.Equals(faturaCartaoCredito.Id)).FirstOrDefault();
-
-            if (existeParcela != null)
-            {
-                if (cancelar)
-                {
-                    existeParcela.SituacaoParcela = SituacaoParcela.Cancelado;
-                    AlterarLote(existeParcela);
-                }
-                else
-                    ExcluirLote(existeParcela);
-            }
-        }
     }
 }

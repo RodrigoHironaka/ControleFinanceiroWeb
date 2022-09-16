@@ -75,7 +75,6 @@ namespace ControlFinWeb.App.Controllers
             return View(faturaCartaoCreditoVM);
         }
 
-
         [HttpPost]
         public JsonResult Deletar(int id)
         {

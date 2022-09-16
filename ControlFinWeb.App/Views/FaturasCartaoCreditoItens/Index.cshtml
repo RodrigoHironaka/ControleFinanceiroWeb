@@ -22,7 +22,7 @@
                 </div>
             </div>
             <div id="mensagemItem" role="alert"></div>
-            <table id="tabelaItensFatura" class="table table-bordered table-striped table-hover tabelaItensFatura">
+            <table id="tabelaItensFatura" class="table table-bordered table-striped table-hover tabelaItensFatura" style="font-size: 14px;">
                 <thead>
                     <tr>
                         <th>Nome</th>
@@ -53,8 +53,8 @@
                                 @Html.DisplayFor(modelItem => item.PessoaVM.Nome)
                             </td>
                             <td align="center">
-                                <button class="btn btn-primary modal-trigger editar" data-id="@item.Id"><i class="bi bi-pencil-square"></i></button>
-                                <a class="btn btn-danger modal-trigger" onclick="ExibirModalExcluir(@item.Id)"><i class="bi bi-x-square"></i></a>
+                                <button class="btn btn-sm btn-primary modal-trigger editar" data-id="@item.Id"><i class="bi bi-pencil-square"></i></button>
+                                <button class="btn btn-sm btn-danger modal-trigger" onclick="ExibirModalExcluir(@item.Id)"><i class="bi bi-x-square"></i></button>
                             </td>
                         </tr>
                     }
@@ -127,7 +127,7 @@
                 var id = $(this).attr("data-id");
                 var idCartao = $("#idCartao").val();
                 $("#modalItem").load("/FaturasCartaoCreditoItens/Editar?id=" + id, function() {
-                    $(".modal-title").html("NOVO ITEM");
+                    $(".tituloItem").html("ADICIONAR NOVO ITEM");
                     $("#CartaoCreditoId").val(idCartao);
                     $("#modalItem").modal("show");
                 })
@@ -136,7 +136,7 @@
             $(".editar").click(function() {
                 var id = $(this).attr("data-id");
                 $("#modalItem").load("/FaturasCartaoCreditoItens/Editar?id=" + id, function() {
-                    $(".modal-title").html("ALTERANDO ITEM");
+                    $(".tituloItem").html("ALTERANDO ITEM");
                     $("#modalItem").modal("show");
                 })
             });

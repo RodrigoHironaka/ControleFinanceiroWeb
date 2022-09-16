@@ -18,10 +18,11 @@
     <table id="tabela" class="table table-bordered table-striped table-hover">
         <thead>
             <tr>
+                <th width="50">Mês/Ano</th>
                 <th>Descrição</th>
-                <th>Valor</th>
-                <th>Situação</th>
-                <th></th>
+                <th width="100">Valor</th>
+                <th width="70">Situação</th>
+                <th width="150"></th>
             </tr>
         </thead>
         <tbody>
@@ -29,16 +30,19 @@
             {
                 <tr>
                     <td>
-                        @Html.DisplayFor(modelItem => item.DescricaoCompleta)
+                        @Convert.ToDateTime(item.MesAnoReferencia).ToString("MM/yyyy")
                     </td>
                     <td>
+                        @Html.DisplayFor(modelItem => item.CartaoVM.Nome)
+                    </td>
+                    <td align="right">
                         @Html.DisplayFor(modelItem => item.ValorFatura)
 
                     </td>
                     <td>
                         @Html.DisplayFor(modelItem => item.SituacaoFatura)
                     </td>
-                    <td align="center">
+                    <td>
                         <button class="btn btn-dark modal-trigger addItens" data-id="@item.Id"><i class="bi bi-file-earmark-plus"></i></button>
                         <button class="btn btn-primary modal-trigger editar" data-id="@item.Id"><i class="bi bi-pencil-square"></i></button>
                         <button class="btn btn-danger modal-trigger" onclick="ExibirModalExcluir(@item.Id)"><i class="bi bi-x-square"></i></button>
@@ -58,7 +62,7 @@
                 <h5 class="modal-title text-white">Exluir?</h5>
             </div>
             <div class="modal-body">
-                <p>ATENÇÃO: Caso haja itens na fatura, ela será cancelada em vez de excluída!!!</p>
+                <p>ATENÇÃO: Ao excluir essa fatura todos os itens adicionados serão excluídos também!</p>
                 <p>Deseja continuar mesmo assim?</p>
             </div>
             <div class="modal-footer">
@@ -70,31 +74,36 @@
 </div>
 
 @section Scripts
-{
+    {
     <script>
-        $(document).ready(function () {
+        $(document).ready(function() {
             $('#tabela').DataTable({
                 "language": {
                     "url": "//cdn.datatables.net/plug-ins/1.11.5/i18n/pt-BR.json"
-                }
+                },
+                columnDefs: [
+                    { className: "dt-right", targets: [2, 3] },
+                    { className: "dt-center", targets: [0, 4] }
+                ],
+                         order: [[1, 'asc']],
             });
         });
 
-        $(document).ready(function () {
+        $(document).ready(function() {
             $(".modal-excluir").modal();
         });
 
         function ExibirModalExcluir(id) {
             $("#modal-excluir").modal("show");
-            $(".btnConfirmar").on("click", function () {
+            $(".btnConfirmar").on("click", function() {
                 $.ajax({
                     method: "POST",
                     url: "/FaturasCartaoCredito/Deletar",
                     data: { id: id },
-                    success: function () {
+                    success: function() {
                         location.reload();
                     },
-                    error: function () {
+                    error: function() {
                         $("#modal-excluir").modal("hide");
                         $("#mensagem").addClass('alert alert-danger').html("<strong>Erro!</strong> Não é possível excluir, entre em contato com o suporte técnico!").delay(30000).fadeOut(400);
                     }
@@ -102,26 +111,26 @@
             })
         }
 
-        $(function () {
-            $(".novo").click(function () {
+        $(function() {
+            $(".novo").click(function() {
                 var id = $(this).attr("data-id");
-                $("#modal").load("Editar?id=" + id, function () {
+                $("#modal").load("Editar?id=" + id, function() {
                     $(".modal-title").html("NOVO REGISTRO");
                     $("#modal").modal("show");
                 })
             });
 
-            $(".editar").click(function () {
+            $(".editar").click(function() {
                 var id = $(this).attr("data-id");
-                $("#modal").load("Editar?id=" + id, function () {
+                $("#modal").load("Editar?id=" + id, function() {
                     $(".modal-title").html("ALTERANDO REGISTRO");
                     $("#modal").modal("show");
                 })
             });
 
-            $(".addItens").click(function () {
+            $(".addItens").click(function() {
                 var id = $(this).attr("data-id");
-                $("#modal").load("/FaturasCartaoCreditoItens/Index?id=" + id, function () {
+                $("#modal").load("/FaturasCartaoCreditoItens/Index?id=" + id, function() {
                     $("#idCartao").val(id);
                     $("#modal").modal("show");
                 })

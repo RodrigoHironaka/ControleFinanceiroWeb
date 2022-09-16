@@ -23,7 +23,7 @@ namespace ControlFinWeb.Repositorio.Repositorios
                 try
                 {
                     entidade.DataGeracao = DateTime.Now;
-                    this.Session.Save(entidade);
+                    SalvarLote(entidade);
 
                     var diaVenc = RepositorioCartao.ObterPorId(entidade.Cartao.Id).DiaVencimento;
                     var dataVenc = new DateTime(entidade.MesAnoReferencia.Year, entidade.MesAnoReferencia.AddMonths(1).Month, diaVenc);
@@ -39,6 +39,16 @@ namespace ControlFinWeb.Repositorio.Repositorios
             }
         }
 
+        public void SalvarEGerarNovaParcelaLote(FaturaCartaoCredito entidade)
+        {
+            entidade.DataGeracao = DateTime.Now;
+            SalvarLote(entidade);
+
+            var diaVenc = RepositorioCartao.ObterPorId(entidade.Cartao.Id).DiaVencimento;
+            var dataVenc = new DateTime(entidade.MesAnoReferencia.Year, entidade.MesAnoReferencia.AddMonths(1).Month, diaVenc);
+            RepositorioParcela.AdicionarNovaParcela(0, dataVenc, entidade.UsuarioCriacao, null, entidade);
+        }
+
         public void ExcluirOuCancelarFaturaEParcela(Int64 Id)
         {
             using (var trans = Session.BeginTransaction())
@@ -46,19 +56,12 @@ namespace ControlFinWeb.Repositorio.Repositorios
                 try
                 {
                     var fatura = ObterPorId(Id);
-                    if (fatura != null && fatura.FaturaItens.Count > 0)
-                    {
-                        fatura.SituacaoFatura = SituacaoFatura.Cancelada;
-                        fatura.Nome = "Houve uma tentativa de exclusão, mas havia itens na fatura, neste caso a conta é cancelada!";
-                        AlterarLote(fatura);
-                        RepositorioParcela.ExcluirOuCancelarParcelaFatura(fatura, true);
-                    }
-                    else
-                    {
-                        RepositorioParcela.ExcluirOuCancelarParcelaFatura(fatura);
-                        ExcluirLote(fatura);
-                        
-                    }
+                    var existeParcela = RepositorioParcela.ObterPorParametros(x => x.FaturaCartaoCredito.Id.Equals(fatura.Id)).FirstOrDefault();
+
+                    if (existeParcela != null)
+                        RepositorioParcela.ExcluirLote(existeParcela);
+                    ExcluirLote(fatura);
+
                     trans.Commit();
                 }
                 catch (Exception ex)
