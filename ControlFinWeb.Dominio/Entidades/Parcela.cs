@@ -28,7 +28,7 @@ namespace ControlFinWeb.Dominio.Entidades
         public virtual SituacaoParcela SituacaoParcela { get; set; }
         public virtual FormaPagamento FormaPagamento { get; set; }
         public virtual Conta Conta { get; set; }
-        public virtual FaturaCartaoCredito FaturaCartaoCredito { get; set; }
+        public virtual Fatura Fatura { get; set; }
         public virtual DateTime DataGeracao { get; set; }
         public virtual DateTime? DataAlteracao { get; set; }
         public virtual Usuario UsuarioCriacao { get; set; }

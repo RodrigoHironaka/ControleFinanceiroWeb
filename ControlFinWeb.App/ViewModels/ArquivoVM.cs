@@ -29,8 +29,8 @@ namespace ControlFinWeb.App.ViewModels
         public Int64 ContaId { get; set; }
         public virtual ContaVM ContaVM { get; set; }
 
-        public Int64 FaturaCartaoCreditoId { get; set; }
-        public virtual FaturaCartaoCreditoVM FaturaCartaoCreditoVM { get; set; }
+        public Int64 FaturaId { get; set; }
+        public virtual FaturaVM FaturaVM { get; set; }
         
     }
 }

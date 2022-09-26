@@ -6,11 +6,11 @@ using NHibernate.Type;
 
 namespace ControlFinWeb.Repositorio.Mapeamentos
 {
-    public class FaturaCartaoCreditoMAP : ClassMapping<FaturaCartaoCredito>
+    public class FaturaMAP : ClassMapping<Fatura>
     {
-        public FaturaCartaoCreditoMAP()
+        public FaturaMAP()
         {
-            Table("FaturasCartoesCredito");
+            Table("Faturas");
             Id(x => x.Id, m =>
             {
                 m.Generator(Generators.HighLow, g => g.Params(new { max_lo = 0 }));
@@ -30,7 +30,15 @@ namespace ControlFinWeb.Repositorio.Mapeamentos
                 m.Cascade(Cascade.All);
                 m.Key(k => k.Column("CartaoCredito"));
                 m.Inverse(true);
-            }, map => map.OneToMany(a => a.Class(typeof(FaturaCartaoCreditoItens))));
+            }, map => map.OneToMany(a => a.Class(typeof(FaturaItens))));
+
+            Bag(x => x.Parcelas, m =>
+            {
+                m.Cascade(Cascade.All);
+                m.Key(k => k.Column("ParcelaRefFaturas"));
+                m.Inverse(true);
+            }, map => map.OneToMany(a => a.Class(typeof(Parcela))));
+
         }
     }
 }

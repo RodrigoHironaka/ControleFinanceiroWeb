@@ -39,7 +39,7 @@ namespace ControlFinWeb.App.AutoMapper
               .AfterMap((src, dest) =>
               {
                   dest.SubGasto = new SubGasto { Id = src.SubGastoId };
-                  dest.FaturaCartaoCredito = src.FaturaCartaoCreditoId > 0 ? new FaturaCartaoCredito { Id = src.FaturaCartaoCreditoId } : null;
+                  dest.Fatura = src.FaturaId > 0 ? new Fatura { Id = src.FaturaId } : null;
                   dest.Pessoa = src.PessoaId > 0 ? new Pessoa { Id = src.PessoaId } : null;
 
                   dest.Parcelas = new MapperConfiguration(cfg => cfg.CreateMap<ParcelaVM, Parcela>()
@@ -52,30 +52,30 @@ namespace ControlFinWeb.App.AutoMapper
                   dest.Arquivos = new MapperConfiguration(cfg => cfg.CreateMap<ArquivoVM, Arquivo>()
                  .AfterMap((src, dest) =>
                  {
-                     dest.FaturaCartaoCredito = src.FaturaCartaoCreditoId > 0 ? new FaturaCartaoCredito { Id = src.FaturaCartaoCreditoId } : null;
+                     dest.Fatura = src.FaturaId > 0 ? new Fatura { Id = src.FaturaId } : null;
                      //dest.Conta = new Conta { Id = src.ContaId };
                  }))
                  .CreateMapper().Map<List<Arquivo>>(src.ArquivosVM);
               });
-            CreateMap<FaturaCartaoCreditoVM, FaturaCartaoCredito>()
+            CreateMap<FaturaVM, Fatura>()
                 .AfterMap((src, dest) =>
                 {
                     dest.Cartao = new Cartao { Id = src.CartaoId };
-                    dest.FaturaItens = new MapperConfiguration(cfg => cfg.CreateMap<FaturaCartaoCreditoItensVM, FaturaCartaoCreditoItens>()
+                    dest.FaturaItens = new MapperConfiguration(cfg => cfg.CreateMap<FaturaItensVM, FaturaItens>()
                     .AfterMap((src, dest) =>
                     {
                         dest.SubGasto = new SubGasto { Id = src.SubGastoId };
                         dest.Pessoa = src.PessoaId > 0 ? new Pessoa { Id = src.PessoaId } : null;
-                        dest.CartaoCredito = new FaturaCartaoCredito { Id = src.CartaoCreditoId };
+                        dest.CartaoCredito = new Fatura { Id = src.CartaoCreditoId };
                     }))
-                    .CreateMapper().Map<List<FaturaCartaoCreditoItens>>(src.FaturaItensVM);
+                    .CreateMapper().Map<List<FaturaItens>>(src.FaturaItensVM);
                 });
-            CreateMap<FaturaCartaoCreditoItensVM, FaturaCartaoCreditoItens>()
+            CreateMap<FaturaItensVM, FaturaItens>()
                 .AfterMap((src, dest) =>
                 {
                     dest.SubGasto = new SubGasto { Id = src.SubGastoId };
                     dest.Pessoa = src.PessoaId > 0 ? new Pessoa { Id = src.PessoaId } : null;
-                    dest.CartaoCredito = new FaturaCartaoCredito { Id = src.CartaoCreditoId };
+                    dest.CartaoCredito = new Fatura { Id = src.CartaoCreditoId };
                 });
             #endregion
 
@@ -117,7 +117,7 @@ namespace ControlFinWeb.App.AutoMapper
              {
                  dest.SubGastoVM = AutoMapperConfig<SubGasto, SubGastoVM>.Mapear(src.SubGasto);
                  dest.SubGastoVM.GastoVM = AutoMapperConfig<Gasto, GastoVM>.Mapear(src.SubGasto.Gasto);
-                 dest.FaturaCartaoCreditoVM = AutoMapperConfig<FaturaCartaoCredito, FaturaCartaoCreditoVM>.Mapear(src.FaturaCartaoCredito);
+                 dest.FaturaVM = AutoMapperConfig<Fatura, FaturaVM>.Mapear(src.Fatura);
                  dest.PessoaVM = AutoMapperConfig<Pessoa, PessoaVM>.Mapear(src.Pessoa);
 
              })
@@ -139,28 +139,28 @@ namespace ControlFinWeb.App.AutoMapper
                   .CreateMapper().Map<List<ArquivoVM>>(src.Arquivos);
 
               });
-            CreateMap<FaturaCartaoCredito, FaturaCartaoCreditoVM>()
+            CreateMap<Fatura, FaturaVM>()
                 .AfterMap((src, dest) => 
                 { 
                     dest.CartaoVM = AutoMapperConfig<Cartao, CartaoVM>.Mapear(src.Cartao);
                 })
                  .AfterMap((src, dest) =>
                  {
-                     dest.FaturaItensVM = new MapperConfiguration(cfg => cfg.CreateMap<FaturaCartaoCreditoItens, FaturaCartaoCreditoItensVM>().AfterMap((src, dest) =>
+                     dest.FaturaItensVM = new MapperConfiguration(cfg => cfg.CreateMap<FaturaItens, FaturaItensVM>().AfterMap((src, dest) =>
                      {
                          dest.SubGastoVM = AutoMapperConfig<SubGasto, SubGastoVM>.Mapear(src.SubGasto);
                          dest.PessoaVM = AutoMapperConfig<Pessoa, PessoaVM>.Mapear(src.Pessoa);
 
                      }))
-                     .CreateMapper().Map<List<FaturaCartaoCreditoItensVM>>(src.FaturaItens);
+                     .CreateMapper().Map<List<FaturaItensVM>>(src.FaturaItens);
 
                  });
-            CreateMap<FaturaCartaoCreditoItens, FaturaCartaoCreditoItensVM>()
+            CreateMap<FaturaItens, FaturaItensVM>()
                 .AfterMap((src, dest) =>
                 {
                     dest.SubGastoVM = AutoMapperConfig<SubGasto, SubGastoVM>.Mapear(src.SubGasto);
                     dest.PessoaVM = AutoMapperConfig<Pessoa, PessoaVM>.Mapear(src.Pessoa);
-                    dest.CartaoCreditoVM = AutoMapperConfig<FaturaCartaoCredito, FaturaCartaoCreditoVM>.Mapear(src.CartaoCredito);
+                    dest.CartaoCreditoVM = AutoMapperConfig<Fatura, FaturaVM>.Mapear(src.CartaoCredito);
                 });
             #endregion
         }

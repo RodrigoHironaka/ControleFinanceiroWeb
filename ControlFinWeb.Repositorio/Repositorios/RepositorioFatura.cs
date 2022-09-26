@@ -6,17 +6,17 @@ using System.Linq;
 
 namespace ControlFinWeb.Repositorio.Repositorios
 {
-    public class RepositorioFaturaCartaoCredito : RepositorioBase<FaturaCartaoCredito>
+    public class RepositorioFatura : RepositorioBase<Fatura>
     {
         private readonly RepositorioParcela RepositorioParcela;
         private readonly RepositorioCartao RepositorioCartao;
-        public RepositorioFaturaCartaoCredito(ISession session, RepositorioParcela repositorioParcela, RepositorioCartao repositorioCartao) : base(session)
+        public RepositorioFatura(ISession session, RepositorioParcela repositorioParcela, RepositorioCartao repositorioCartao) : base(session)
         {
             RepositorioParcela = repositorioParcela;
             RepositorioCartao = repositorioCartao;
         }
 
-        public void SalvarEGerarNovaParcela(FaturaCartaoCredito entidade)
+        public void SalvarEGerarNovaParcela(Fatura entidade)
         {
             using (var trans = Session.BeginTransaction())
             {
@@ -39,7 +39,7 @@ namespace ControlFinWeb.Repositorio.Repositorios
             }
         }
 
-        public void SalvarEGerarNovaParcelaLote(FaturaCartaoCredito entidade)
+        public void SalvarEGerarNovaParcelaLote(Fatura entidade)
         {
             entidade.DataGeracao = DateTime.Now;
             SalvarLote(entidade);
@@ -56,7 +56,7 @@ namespace ControlFinWeb.Repositorio.Repositorios
                 try
                 {
                     var fatura = ObterPorId(Id);
-                    var existeParcela = RepositorioParcela.ObterPorParametros(x => x.FaturaCartaoCredito.Id.Equals(fatura.Id)).FirstOrDefault();
+                    var existeParcela = RepositorioParcela.ObterPorParametros(x => x.Fatura.Id.Equals(fatura.Id)).FirstOrDefault();
 
                     if (existeParcela != null)
                         RepositorioParcela.ExcluirLote(existeParcela);

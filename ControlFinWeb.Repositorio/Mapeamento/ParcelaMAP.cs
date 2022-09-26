@@ -34,7 +34,7 @@ namespace ControlFinWeb.Repositorio.Mapeamentos
             Property(x => x.SituacaoParcela, m => m.Type<EnumType<SituacaoParcela>>());
             ManyToOne(x => x.FormaPagamento, m => m.Column("FormaPagamento"));
             ManyToOne(x => x.Conta, m => m.Column("Conta"));
-            ManyToOne(x => x.FaturaCartaoCredito, m => m.Column("FaturaCartaoCredito"));
+            ManyToOne(x => x.Fatura, m => m.Column("Fatura"));
             ManyToOne(x => x.UsuarioCriacao, m => m.Column("UsuarioCriacao"));
             ManyToOne(x => x.UsuarioAlteracao, m => m.Column("UsuarioAlteracao"));
 

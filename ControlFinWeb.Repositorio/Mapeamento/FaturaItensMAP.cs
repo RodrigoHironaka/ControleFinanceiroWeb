@@ -4,11 +4,11 @@ using NHibernate.Mapping.ByCode.Conformist;
 
 namespace ControlFinWeb.Repositorio.Mapeamentos
 {
-    public class FaturaCartaoCreditoItensMAP : ClassMapping<FaturaCartaoCreditoItens>
+    public class FaturaItensMAP : ClassMapping<FaturaItens>
     {
-        public FaturaCartaoCreditoItensMAP()
+        public FaturaItensMAP()
         {
-            Table("FaturasCartoesCreditoItens");
+            Table("FaturasItens");
             Id(x => x.Id, m =>
             {
                 m.Generator(Generators.HighLow, g => g.Params(new { max_lo = 0 }));

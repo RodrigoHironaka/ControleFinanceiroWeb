@@ -5,10 +5,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Include="Utilitarios\Validacoes\CustomValidacoes.js" />
-  </ItemGroup>
-
-  <ItemGroup>
     <None Include="wwwroot\lib\popper\umd\enums.js" />
     <None Include="wwwroot\lib\popper\umd\enums.js.map" />
     <None Include="wwwroot\lib\popper\umd\enums.min.js" />
@@ -37,8 +33,7 @@
     <PackageReference Include="AutoMapper" Version="11.0.1" />
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="11.0.0" />
     <PackageReference Include="bootstrap" Version="5.2.1" />
-    <PackageReference Include="Microsoft.AspNet.Mvc" Version="5.2.9" />
-    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="5.0.2" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
   </ItemGroup>
 
 </Project>

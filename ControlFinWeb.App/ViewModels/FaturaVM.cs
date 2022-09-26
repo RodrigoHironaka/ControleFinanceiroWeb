@@ -8,9 +8,9 @@ using System.Threading.Tasks;
 
 namespace ControlFinWeb.App.ViewModels
 {
-    public class FaturaCartaoCreditoVM
+    public class FaturaVM
     {
-        public FaturaCartaoCreditoVM()
+        public FaturaVM()
         {
             SituacaoFatura = SituacaoFatura.Aberta;
         }
@@ -37,7 +37,7 @@ namespace ControlFinWeb.App.ViewModels
         public CartaoVM CartaoVM { get; set; }
         #endregion
 
-        public IList<FaturaCartaoCreditoItensVM> FaturaItensVM { get; set; }
+        public IList<FaturaItensVM> FaturaItensVM { get; set; }
 
         public string DescricaoCompleta
         {

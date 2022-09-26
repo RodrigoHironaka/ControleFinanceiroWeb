@@ -53,8 +53,8 @@ namespace ControlFinWeb.App.ViewModels
         public SubGastoVM SubGastoVM { get; set; }
 
         [DisplayName("Fatura")]
-        public Int64 FaturaCartaoCreditoId { get; set; }
-        public FaturaCartaoCreditoVM FaturaCartaoCreditoVM { get; set; }
+        public Int64 FaturaId { get; set; }
+        public FaturaVM FaturaVM { get; set; }
 
         [DisplayName("Pessoa")]
         public Int64 PessoaId { get; set; }

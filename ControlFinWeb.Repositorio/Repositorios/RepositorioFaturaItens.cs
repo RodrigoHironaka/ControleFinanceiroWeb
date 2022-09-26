@@ -6,12 +6,12 @@ using System.Linq;
 
 namespace ControlFinWeb.Repositorio.Repositorios
 {
-    public class RepositorioFaturaCartaoCreditoItens : RepositorioBase<FaturaCartaoCreditoItens>
+    public class RepositorioFaturaItens : RepositorioBase<FaturaItens>
     {
         private readonly RepositorioParcela RepositorioParcela;
-        private readonly RepositorioFaturaCartaoCredito RepositorioFaturaCartaoCredito;
+        private readonly RepositorioFatura RepositorioFaturaCartaoCredito;
 
-        public RepositorioFaturaCartaoCreditoItens(RepositorioParcela repositorioParcela, RepositorioFaturaCartaoCredito repositorioFaturaCartaoCredito, ISession session) : base(session)
+        public RepositorioFaturaItens(RepositorioParcela repositorioParcela, RepositorioFatura repositorioFaturaCartaoCredito, ISession session) : base(session)
         {
             RepositorioParcela = repositorioParcela;
             RepositorioFaturaCartaoCredito = repositorioFaturaCartaoCredito;
@@ -44,7 +44,7 @@ namespace ControlFinWeb.Repositorio.Repositorios
         //    }
         //}
 
-        public void SalvarAlterarFaturaItemEAlterarParcela(FaturaCartaoCreditoItens faturaCartaoCreditoItens, String nParcelas, Boolean replicar)
+        public void SalvarAlterarFaturaItemEAlterarParcela(FaturaItens faturaCartaoCreditoItens, String nParcelas, Boolean replicar)
         {
             using (var trans = Session.BeginTransaction())
             {
@@ -81,7 +81,7 @@ namespace ControlFinWeb.Repositorio.Repositorios
                             && x.SituacaoFatura == SituacaoFatura.Aberta
                             && x.MesAnoReferencia == faturaCartaoCreditoItens.CartaoCredito.MesAnoReferencia.AddMonths(i)).FirstOrDefault();
 
-                            var novoItemFatura = new FaturaCartaoCreditoItens()
+                            var novoItemFatura = new FaturaItens()
                             {
                                 Nome = faturaCartaoCreditoItens.Nome,
                                 Valor = valorParcela,
@@ -93,7 +93,7 @@ namespace ControlFinWeb.Repositorio.Repositorios
 
                             if (proximaFatura == null)
                             {
-                                var novaFatura = new FaturaCartaoCredito()
+                                var novaFatura = new Fatura()
                                 {
                                     MesAnoReferencia = faturaCartaoCreditoItens.CartaoCredito.MesAnoReferencia.AddMonths(i),
                                     Cartao = faturaCartaoCreditoItens.CartaoCredito.Cartao,
@@ -142,7 +142,7 @@ namespace ControlFinWeb.Repositorio.Repositorios
             }
         }
 
-        public void SalvarOuAlterar(FaturaCartaoCreditoItens faturaCartaoCreditoItens)
+        public void SalvarOuAlterar(FaturaItens faturaCartaoCreditoItens)
         {
             if (faturaCartaoCreditoItens.Id > 0)
             {

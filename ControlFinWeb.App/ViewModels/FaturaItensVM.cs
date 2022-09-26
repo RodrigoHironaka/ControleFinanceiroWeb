@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace ControlFinWeb.App.ViewModels
 {
-    public class FaturaCartaoCreditoItensVM
+    public class FaturaItensVM
     {
         public Int64 Id { get; set; }
 
@@ -33,7 +33,7 @@ namespace ControlFinWeb.App.ViewModels
         [DisplayName("Replicar?")]
         public Boolean Replicar { get; set; }
 
-        public IList<FaturaCartaoCreditoItensVM> FaturaItensVM { get; set; }
+        public IList<FaturaItensVM> FaturasItensVM { get; set; }
 
         #region Campos vinculados a outras classes
         [DisplayName("Gasto")]
@@ -47,7 +47,7 @@ namespace ControlFinWeb.App.ViewModels
 
         [DisplayName("Fatura")]
         public Int64 CartaoCreditoId { get; set; }
-        public FaturaCartaoCreditoVM CartaoCreditoVM { get; set; }
+        public FaturaVM CartaoCreditoVM { get; set; }
         #endregion
 
 

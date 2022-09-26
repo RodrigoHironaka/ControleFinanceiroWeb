@@ -6,18 +6,19 @@ using System.Linq;
 
 namespace ControlFinWeb.Dominio.Entidades
 {
-    public class FaturaCartaoCredito : Base
+    public class Fatura : Base
     {
-        public FaturaCartaoCredito()
+        public Fatura()
         {
-            FaturaItens = new List<FaturaCartaoCreditoItens>();
+            FaturaItens = new List<FaturaItens>();
             SituacaoFatura = SituacaoFatura.Aberta;
         }
         public virtual DateTime MesAnoReferencia { get; set; }
         public virtual DateTime DataFechamento { get; set; }
         public virtual SituacaoFatura SituacaoFatura { get; set; }
         public virtual Cartao Cartao { get; set; }
-        public virtual IList<FaturaCartaoCreditoItens> FaturaItens { get; set; }
+        public virtual IList<FaturaItens> FaturaItens { get; set; }
+        public virtual IList<Parcela> Parcelas { get; set; }
 
         public virtual string DescricaoCompleta
         {

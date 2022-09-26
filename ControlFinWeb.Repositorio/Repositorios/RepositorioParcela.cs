@@ -11,7 +11,7 @@ namespace ControlFinWeb.Repositorio.Repositorios
     {
         public RepositorioParcela(ISession session) : base(session) { }
 
-        public void AdicionarNovaParcela(Decimal valor, DateTime? dataVencimento, Usuario usuario, Conta conta = null, FaturaCartaoCredito faturaCartaoCredito = null)
+        public void AdicionarNovaParcela(Decimal valor, DateTime? dataVencimento, Usuario usuario, Conta conta = null, Fatura fatura = null)
         {
             var parcelaNova = new Parcela()
             {
@@ -22,7 +22,7 @@ namespace ControlFinWeb.Repositorio.Repositorios
                 ValorAberto = valor,
                 DataVencimento = dataVencimento,
                 Conta = conta,
-                FaturaCartaoCredito = faturaCartaoCredito,
+                Fatura = fatura,
                 SituacaoParcela = SituacaoParcela.Pendente,
                 DataGeracao = DateTime.Now,
                 UsuarioCriacao = usuario,
@@ -30,16 +30,16 @@ namespace ControlFinWeb.Repositorio.Repositorios
             SalvarLote(parcelaNova);
         }
 
-        public void AlterarParcelaFatura(FaturaCartaoCreditoItens faturaCartaoCreditoItens)
+        public void AlterarParcelaFatura(FaturaItens faturaItens)
         {
-            var existeParcela = ObterPorParametros(x => x.FaturaCartaoCredito.Id.Equals(faturaCartaoCreditoItens.CartaoCredito.Id)).FirstOrDefault();
+            var existeParcela = ObterPorParametros(x => x.Fatura.Id.Equals(faturaItens.CartaoCredito.Id)).FirstOrDefault();
 
             if (existeParcela != null)
             {
-                if (faturaCartaoCreditoItens.Id > 0)
-                    existeParcela.ValorParcela = faturaCartaoCreditoItens.CartaoCredito.ValorFatura;
+                if (faturaItens.Id > 0)
+                    existeParcela.ValorParcela = faturaItens.CartaoCredito.ValorFatura;
                 else
-                    existeParcela.ValorParcela = faturaCartaoCreditoItens.CartaoCredito.ValorFatura + faturaCartaoCreditoItens.Valor;
+                    existeParcela.ValorParcela = faturaItens.CartaoCredito.ValorFatura + faturaItens.Valor;
 
                 AlterarLote(existeParcela);
             }
