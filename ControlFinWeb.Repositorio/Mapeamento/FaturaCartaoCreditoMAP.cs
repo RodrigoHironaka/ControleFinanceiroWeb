@@ -17,6 +17,7 @@ namespace ControlFinWeb.Repositorio.Mapeamentos
             });
             Property(x => x.Nome, m => m.Length(500));
             Property(x => x.MesAnoReferencia);
+            Property(x => x.DataFechamento);
             Property(x => x.DataGeracao);
             Property(x => x.DataAlteracao);
             Property(x => x.SituacaoFatura, m => m.Type<EnumType<SituacaoFatura>>());

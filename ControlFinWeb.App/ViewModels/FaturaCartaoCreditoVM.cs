@@ -25,6 +25,9 @@ namespace ControlFinWeb.App.ViewModels
         [Required(ErrorMessage = "Campo Obrigatório")]
         public DateTime MesAnoReferencia { get; set; }
 
+        [DisplayName("Data Fechamento")]
+        public DateTime DataFechamento { get; set; }
+
         public SituacaoFatura SituacaoFatura { get; set; }
 
         #region Campos vinculados a outras classes
@@ -51,7 +54,6 @@ namespace ControlFinWeb.App.ViewModels
         {
             get
             {
-                
                 return (FaturaItensVM != null) ? FaturaItensVM.Select(x => x.Valor).Sum() : 0;
             }
         }

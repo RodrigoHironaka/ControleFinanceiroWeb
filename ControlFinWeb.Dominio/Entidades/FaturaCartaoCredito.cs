@@ -14,6 +14,7 @@ namespace ControlFinWeb.Dominio.Entidades
             SituacaoFatura = SituacaoFatura.Aberta;
         }
         public virtual DateTime MesAnoReferencia { get; set; }
+        public virtual DateTime DataFechamento { get; set; }
         public virtual SituacaoFatura SituacaoFatura { get; set; }
         public virtual Cartao Cartao { get; set; }
         public virtual IList<FaturaCartaoCreditoItens> FaturaItens { get; set; }

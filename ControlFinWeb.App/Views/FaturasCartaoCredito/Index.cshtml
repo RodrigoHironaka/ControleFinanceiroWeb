@@ -1,4 +1,5 @@
-﻿@model IEnumerable<ControlFinWeb.App.ViewModels.FaturaCartaoCreditoVM>
+﻿@using ControlFinWeb.Dominio.ObjetoValor
+@model IEnumerable<ControlFinWeb.App.ViewModels.FaturaCartaoCreditoVM>
 
 @{
     ViewData["Title"] = "Faturas";
@@ -15,14 +16,14 @@
     </div>
 
     <div id="mensagem" role="alert"></div>
-    <table id="tabela" class="table table-bordered table-striped table-hover">
+    <table id="tabela" class="table table-bordered table-striped table-hover table-responsive">
         <thead>
             <tr>
                 <th width="50">Mês/Ano</th>
                 <th>Descrição</th>
                 <th width="100">Valor</th>
                 <th width="70">Situação</th>
-                <th width="150"></th>
+                <th width="180"></th>
             </tr>
         </thead>
         <tbody>
@@ -43,9 +44,26 @@
                         @Html.DisplayFor(modelItem => item.SituacaoFatura)
                     </td>
                     <td>
-                        <button class="btn btn-dark modal-trigger addItens" data-id="@item.Id"><i class="bi bi-file-earmark-plus"></i></button>
-                        <button class="btn btn-primary modal-trigger editar" data-id="@item.Id"><i class="bi bi-pencil-square"></i></button>
-                        <button class="btn btn-danger modal-trigger" onclick="ExibirModalExcluir(@item.Id)"><i class="bi bi-x-square"></i></button>
+                        <div class="dropdown">
+                            <button class="btn btn-dark dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-gear-fill"></i> Opções
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li><a class="btn btn-sm btn-dark addItens dropdown-item" data-id="@item.Id"><i class="bi bi-file-earmark-plus"></i> Adicionar compra</a></li>
+                                @if (item.SituacaoFatura != SituacaoFatura.Aberta)
+                                {
+                                    <li><a class="btn btn-sm btn-dark dropdown-item disabled" onclick="ExibirModalFecharFatura(@item.Id)"><i class="bi bi-file-earmark-check"></i> Fechar Fatura</a></li>
+                                    <li><a class="btn btn-sm btn-dark editar dropdown-item disabled" data-id="@item.Id"> <i class="bi bi-pencil-square"></i> Editar</a></li>
+                                    <li><a class="btn btn-sm btn-danger dropdown-item disabled" onclick="ExibirModalExcluir(@item.Id)"><i class="bi bi-x-square"></i> Excluir</a></li>
+                                }
+                                else
+                                {
+                                    <li><a class="btn btn-sm btn-dark dropdown-item " onclick="ExibirModalFecharFatura(@item.Id)"><i class="bi bi-file-earmark-check"></i> Fechar Fatura</a></li>
+                                    <li><a class="btn btn-sm btn-dark editar dropdown-item " data-id="@item.Id"> <i class="bi bi-pencil-square"></i> Editar</a></li>
+                                    <li><a class="btn btn-sm btn-danger dropdown-item " onclick="ExibirModalExcluir(@item.Id)"><i class="bi bi-x-square"></i> Excluir</a></li>
+                                }
+                            </ul>
+                        </div>
                     </td>
                 </tr>
             }
@@ -73,6 +91,25 @@
     </div>
 </div>
 
+<!--Modal confirmar fechamento fatura-->
+<div class="modal fade modal-fechamentoFatura" id="modal-fechamentoFatura" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-primary">
+                <h5 class="modal-title text-white">Deseja realmente fechar a fatura @Model.First().DescricaoCompleta?</h5>
+            </div>
+            <div class="modal-body">
+                <label class="control-label">Se desejar pode escrever alguma observação</label>
+                <textarea id="obs" class="form-control" rows="2"></textarea>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-outline-primary btnConfirmarFechamento">Confirmar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 @section Scripts
     {
     <script>
@@ -85,7 +122,7 @@
                     { className: "dt-right", targets: [2, 3] },
                     { className: "dt-center", targets: [0, 4] }
                 ],
-                         order: [[1, 'asc']],
+                order: [[1, 'asc']],
             });
         });
 
@@ -109,7 +146,26 @@
                     }
                 });
             })
-        }
+        };
+
+        function ExibirModalFecharFatura(id) {
+            $("#modal-fechamentoFatura").modal("show");
+            $(".btnConfirmarFechamento").on("click", function() {
+                var obs = $("#obs").val().toString();
+                $.ajax({
+                    method: "POST",
+                    url: "/FaturasCartaoCredito/FecharFatura",
+                    data: { obs: obs, id: id },
+                    success: function() {
+                        location.reload();
+                    },
+                    error: function() {
+                        $("#modal-fechamentoFatura").modal("hide");
+                        $("#mensagem").addClass('alert alert-danger').html("<strong>Erro!</strong> Não é possível fechar a fatura, entre em contato com o suporte técnico!").delay(30000).fadeOut(400);
+                    }
+                });
+            })
+        };
 
         $(function() {
             $(".novo").click(function() {

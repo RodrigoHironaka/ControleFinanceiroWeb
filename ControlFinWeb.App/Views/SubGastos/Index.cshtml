@@ -36,8 +36,8 @@
                         @Html.DisplayFor(modelItem => item.Situacao)
                     </td>
                     <td align="center">
-                        <button class="btn btn-primary modal-trigger editar" data-id="@item.Id"><i class="bi bi-pencil-square"></i></button>
-                        <a class="btn btn-danger modal-trigger" onclick="ExibirModalExcluir(@item.Id)"><i class="bi bi-x-square"></i></a>
+                        <button class="btn btn-sm btn-primary modal-trigger editar" data-id="@item.Id"><i class="bi bi-pencil-square"></i></button>
+                        <button class="btn btn-sm btn-danger modal-trigger" onclick="ExibirModalExcluir(@item.Id)"><i class="bi bi-x-square"></i></button>
                     </td>
                 </tr>
             }

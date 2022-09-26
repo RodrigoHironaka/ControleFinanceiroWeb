@@ -9,6 +9,25 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Include="wwwroot\lib\popper\umd\enums.js" />
+    <None Include="wwwroot\lib\popper\umd\enums.js.map" />
+    <None Include="wwwroot\lib\popper\umd\enums.min.js" />
+    <None Include="wwwroot\lib\popper\umd\enums.min.js.map" />
+    <None Include="wwwroot\lib\popper\umd\popper-base.js" />
+    <None Include="wwwroot\lib\popper\umd\popper-base.js.map" />
+    <None Include="wwwroot\lib\popper\umd\popper-base.min.js" />
+    <None Include="wwwroot\lib\popper\umd\popper-base.min.js.map" />
+    <None Include="wwwroot\lib\popper\umd\popper-lite.js" />
+    <None Include="wwwroot\lib\popper\umd\popper-lite.js.map" />
+    <None Include="wwwroot\lib\popper\umd\popper-lite.min.js" />
+    <None Include="wwwroot\lib\popper\umd\popper-lite.min.js.map" />
+    <None Include="wwwroot\lib\popper\umd\popper.js" />
+    <None Include="wwwroot\lib\popper\umd\popper.js.map" />
+    <None Include="wwwroot\lib\popper\umd\popper.min.js" />
+    <None Include="wwwroot\lib\popper\umd\popper.min.js.map" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\ControlFinWeb.Dominio\ControlFinWeb.Dominio.csproj" />
     <ProjectReference Include="..\ControlFinWeb.Repositorio\ControlFinWeb.Repositorio.csproj" />
     <ProjectReference Include="..\Utils\Utils.csproj" />
@@ -17,9 +36,9 @@
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="11.0.1" />
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="11.0.0" />
-    <PackageReference Include="Microsoft.AspNet.Mvc.pt-br" Version="5.2.9" />
+    <PackageReference Include="bootstrap" Version="5.2.1" />
+    <PackageReference Include="Microsoft.AspNet.Mvc" Version="5.2.9" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="5.0.2" />
-    <PackageReference Include="popper.js" Version="1.16.1" />
   </ItemGroup>
 
 </Project>

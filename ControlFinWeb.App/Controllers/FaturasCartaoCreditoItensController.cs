@@ -82,5 +82,15 @@ namespace ControlFinWeb.App.Controllers
             Repositorio.ExcluirItemFaturaEAlterarParcela(id);
             return Json("Excluído com sucesso");
         }
+
+        [HttpGet("SituacaoFatura/{idCartao}")]
+        public String SituacaoFatura(Int64 idCartao)
+        {
+            var fatura = RepositorioFaturaCartaoCredito.ObterPorId(idCartao);
+            if(fatura == null)
+               return String.Empty;
+
+            return fatura.SituacaoFatura.ToString();
+        }
     }
 }

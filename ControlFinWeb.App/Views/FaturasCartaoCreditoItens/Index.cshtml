@@ -2,7 +2,7 @@
 
 @{
     ViewData["Title"] = "Itens da Fatura";
-    
+
 }
 
 <div class="modal-dialog modal-lg modal-dialog-centered">
@@ -12,54 +12,56 @@
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="javascript:window.location.reload()"></button>
         </div>
         <div class="modal-body">
-            <div class="row">
-                <div class="input-group mb-3">
-                    <div class="input-group-prepend">
-                        <button class="btn btn-dark novoItem" data-id="0"><i class="bi bi-plus-lg"></i></button>
+            <fieldset id="fsAgrupar">
+                <div class="row">
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <button class="btn btn-dark novoItem" data-id="0"><i class="bi bi-plus-lg"></i></button>
+                        </div>
+                        <span class="input-group-text fw-bold">Itens da fatura</span>
+                        <input id="idCartao" class="form-control" style="display: none" />
                     </div>
-                    <span class="input-group-text fw-bold">Itens da fatura</span>
-                    <input id="idCartao" class="form-control" style="display: none" />
                 </div>
-            </div>
-            <div id="mensagemItem" role="alert"></div>
-            <table id="tabelaItensFatura" class="table table-bordered table-striped table-hover tabelaItensFatura" style="font-size: 14px;">
-                <thead>
-                    <tr>
-                        <th>Nome</th>
-                        <th>Valor</th>
-                        <th>Data da Compra</th>
-                        <th>Gasto</th>
-                        <th>Pessoa referenciada</th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var item in Model)
-                    {
+                <div id="mensagemItem" role="alert"></div>
+                <table id="tabelaItensFatura" class="table table-bordered table-striped table-hover tabelaItensFatura" style="font-size: 14px;">
+                    <thead>
                         <tr>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.Nome)
-                            </td>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.Valor)
-                            </td>
-                            <td style="text-align:center">
-                                @Html.Raw(item.DataCompra.Value.ToShortDateString())
-                            </td>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.SubGastoVM.DescricaoCompleta)
-                            </td>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.PessoaVM.Nome)
-                            </td>
-                            <td align="center">
-                                <button class="btn btn-sm btn-primary modal-trigger editar" data-id="@item.Id"><i class="bi bi-pencil-square"></i></button>
-                                <button class="btn btn-sm btn-danger modal-trigger" onclick="ExibirModalExcluir(@item.Id)"><i class="bi bi-x-square"></i></button>
-                            </td>
+                            <th>Nome</th>
+                            <th>Valor</th>
+                            <th>Data da Compra</th>
+                            <th>Gasto</th>
+                            <th>Pessoa referenciada</th>
+                            <th></th>
                         </tr>
-                    }
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Nome)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Valor)
+                                </td>
+                                <td style="text-align:center">
+                                    @Html.Raw(item.DataCompra.Value.ToShortDateString())
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.SubGastoVM.DescricaoCompleta)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.PessoaVM.Nome)
+                                </td>
+                                <td align="center">
+                                    <button class="btn btn-sm btn-primary modal-trigger editar" data-id="@item.Id"><i class="bi bi-pencil-square"></i></button>
+                                    <button class="btn btn-sm btn-danger modal-trigger" onclick="ExibirModalExcluir(@item.Id)"><i class="bi bi-x-square"></i></button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </fieldset>
         </div>
     </div>
 </div>
@@ -74,7 +76,7 @@
                 <h5 class="modal-title text-white">Exluir?</h5>
             </div>
             <div class="modal-body">
-               @* <p>ATENÇÃO: Caso haja itens na fatura, ela será cancelada em vez de excluída!!!</p>*@
+                @* <p>ATENÇÃO: Caso haja itens na fatura, ela será cancelada em vez de excluída!!!</p>*@
                 <p>Deseja realmente remover o item?</p>
             </div>
             <div class="modal-footer">
@@ -98,6 +100,7 @@
 
         $(document).ready(function() {
             $(".modal-excluir").modal();
+            SituacaoCompra();
         });
 
         function ExibirModalExcluir(id) {
@@ -141,5 +144,20 @@
                 })
             });
         })
+
+        function SituacaoCompra() {
+            var idCartao = $("#idCartao").val();
+            var url = `/SituacaoFatura/${idCartao}`;
+            var xhr = new XMLHttpRequest(); //xhr = XML http Request
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState == XMLHttpRequest.DONE) {
+                    if (xhr.responseText != "Aberta") {
+                        $('#fsAgrupar').prop('disabled', true);
+                    }
+                }
+            }
+            xhr.open('GET', url, false);
+            xhr.send(null);
+        }
     </script>
 }

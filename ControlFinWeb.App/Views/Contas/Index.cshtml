@@ -58,14 +58,14 @@
                         @Html.DisplayFor(modelItem => item.Situacao)
                     </td>
                     <td align="center">
-                        <button class="btn btn-primary modal-trigger editar" data-id="@item.Id"><i class="bi bi-pencil-square"></i></button>
+                        <button class="btn btn-sm btn-primary modal-trigger editar" data-id="@item.Id"><i class="bi bi-pencil-square"></i></button>
                         @if (item.Situacao != SituacaoConta.Aberto)
                         {
-                            <button class="btn btn-danger modal-trigger" disabled><i class="bi bi-x-square"></i></button>
+                            <button class="btn btn-sm btn-danger modal-trigger" disabled><i class="bi bi-x-square"></i></button>
                         }
                         else
                         {
-                            <button class="btn btn-danger modal-trigger" onclick="ExibirModalExcluir(@item.Id)"><i class="bi bi-x-square"></i></button>
+                            <button class="btn btn-sm btn-danger modal-trigger" onclick="ExibirModalExcluir(@item.Id)"><i class="bi bi-x-square"></i></button>
                         }
                     </td>
                 </tr>

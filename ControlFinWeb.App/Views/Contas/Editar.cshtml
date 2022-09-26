@@ -111,13 +111,14 @@
                                         <button class="btn btn-dark dropdown-toggle" type="button" id="opcoes" data-bs-toggle="dropdown" aria-expanded="false">
                                             <i class="bi bi-gear-fill"></i> Opções Gerais
                                         </button>
-                                        <ul class="dropdown-menu" aria-labelledby="opcoes">
+                                        <ul class="dropdown-menu" id="opcoesMenu" aria-labelledby="opcoes">
                                             <li><a class="dropdown-item" href="#"><i class="bi bi-cash-stack"></i> Pagar</a></li>
                                             <li><a class="dropdown-item" onclick=" RemoverParcelas()"><i class="bi bi-trash"></i> Excluir</a></li>
                                         </ul>
                                     </div>
                                 </div>
                             </div>
+
                             <div class="row">
                                 <textarea asp-for="JsonParcelas" id="txtJsonParcelas" class="form-control" rows="1" style="display:none;"></textarea>
                             </div>
@@ -306,6 +307,42 @@
     <script type="text/javascript">
         $(function() {
             $("#Valor, #ValorParcela, #JurosPorcentual, #JurosValor, #DescontoPorcentual, #DescontoValor, #ValorPago ").maskMoney({ thousands: '', decimal: ',', allowZero: true });
+
+
+            $('#opcoes').on("click", function() {
+                if ($("#opcoesMenu").hasClass("show")) {
+                    $('#opcoes').prop("aria-expanded", false);
+                    $("#opcoesMenu").removeClass("show");
+                } else {
+                    $('#opcoes').prop("aria-expanded", true);
+                    $("#opcoesMenu").addClass("show");
+
+                }
+            });
+
+
+            //$('#filtroSituacao').on('click', function() {
+
+            //    if ($("#containerMenu").hasClass("show")) {
+            //        $('#filtroSituacao').prop("aria-expanded", false);
+            //        $("#containerMenu").removeClass("show");
+            //    } else {
+            //        $('#filtroSituacao').prop("aria-expanded", true);
+            //        $("#containerMenu").addClass("show");
+            //    }
+
+            //});
+
+            //jQuery('body').on('click', '[data-toggle=dropdown]', function() {
+            //    var opened = $(this).parent().hasClass("open");
+            //    if (!opened) {
+            //        $('.btn-group').addClass('open');
+            //        $("button.multiselect").attr('aria-expanded', 'true');
+            //    } else {
+            //        $('.btn-group').removeClass('open');
+            //        $("button.multiselect").attr('aria-expanded', 'false');
+            //    }
+            //});
         });
 
         function FixaDuasCasasDecimais(num) {
@@ -659,7 +696,7 @@
             $('#filtroParcelas').multiselect({
                 buttonClass: 'form-select',
                 templates: {
-                    button: '<button type="button" class="multiselect dropdown-toggle" data-bs-toggle="dropdown"><span class="multiselect-selected-text"></span></button>',
+                    button: '<button type="button" class="multiselect dropdown-toggle" id="filtroSituacao" data-bs-toggle="dropdown" aria-expanded="false"><span class="multiselect-selected-text"></span></button>',
                 },
                 buttonWidth: '300',
                 includeSelectAllOption: true,
@@ -670,7 +707,11 @@
                 //enableFiltering: true,
                 //enableCaseInsensitiveFiltering: true,
                 //filterPlaceholder: 'Pesquisa',
+
             });
+
+
+
         });
 
         function RemoverParcelas() {

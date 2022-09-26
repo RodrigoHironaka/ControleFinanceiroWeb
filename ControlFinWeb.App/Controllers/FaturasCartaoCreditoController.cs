@@ -81,5 +81,24 @@ namespace ControlFinWeb.App.Controllers
             Repositorio.ExcluirOuCancelarFaturaEParcela(id);
             return Json(faturaCartaoCredito.DescricaoCompleta + "excluído com sucesso");
         }
+
+      
+        public IActionResult FecharFatura(String obs, Int64 id = 0)
+        {
+            var fatura = Repositorio.ObterPorId(id);
+            if(fatura != null)
+            {
+                fatura.SituacaoFatura = SituacaoFatura.Fechada;
+                fatura.DataFechamento = DateTime.Now;
+                if (!String.IsNullOrEmpty(obs))
+                    fatura.Nome = obs;
+                Repositorio.Alterar(fatura);
+                
+            }
+
+            return new EmptyResult();
+            //return View(faturaCartaoCreditoVM);
+        }
+        
     }
 }
