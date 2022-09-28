@@ -96,7 +96,7 @@
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header bg-primary">
-                <h5 class="modal-title text-white">Deseja realmente fechar a fatura @Model.First().DescricaoCompleta?</h5>
+                <h5 class="modal-title text-white">Deseja realmente fechar a fatura @*@Model.First().DescricaoCompleta*@?</h5>
             </div>
             <div class="modal-body">
                 <label class="control-label">Se desejar pode escrever alguma observação</label>
@@ -135,7 +135,7 @@
             $(".btnConfirmar").on("click", function() {
                 $.ajax({
                     method: "POST",
-                    url: "/FaturasCartaoCredito/Deletar",
+                    url: "/Faturas/Deletar",
                     data: { id: id },
                     success: function() {
                         location.reload();
@@ -154,7 +154,7 @@
                 var obs = $("#obs").val().toString();
                 $.ajax({
                     method: "POST",
-                    url: "/FaturasCartaoCredito/FecharFatura",
+                    url: "/Faturas/FecharFatura",
                     data: { obs: obs, id: id },
                     success: function() {
                         location.reload();
@@ -186,7 +186,7 @@
 
             $(".addItens").click(function() {
                 var id = $(this).attr("data-id");
-                $("#modal").load("/FaturasCartaoCreditoItens/Index?id=" + id, function() {
+                $("#modal").load("/FaturasItens/Index?id=" + id, function() {
                     $("#idCartao").val(id);
                     $("#modal").modal("show");
                 })

@@ -78,12 +78,12 @@
             var idCartao = $("#CartaoCreditoId").val();
             var dados = $("#FrmCartaoItens").serialize();
             $.ajax({
-                url: '/FaturasCartaoCreditoItens/Editar',
+                url: '/FaturasItens/Editar',
                 method: 'POST',
                 data: dados,
                 success: function(retorno) {
                     if (retorno == "") {
-                        $("#modal").load("/FaturasCartaoCreditoItens/Index?id=" + idCartao, function() {
+                        $("#modal").load("/FaturasItens/Index?id=" + idCartao, function() {
                             $("#idCartao").val(idCartao);
                         });
                         $("#modalItem").modal("hide");

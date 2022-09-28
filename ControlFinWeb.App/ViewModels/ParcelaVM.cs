@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -64,5 +65,29 @@ namespace ControlFinWeb.App.ViewModels
         [DisplayName("Conta")]
         public Int64 ContaId { get; set; }
         public ContaVM ContaVM { get; set; }
+
+        [DisplayName("Fatura")]
+        public Int64 FaturaId { get; set; }
+        public FaturaVM FaturaVM { get; set; }
+
+        #region Campos Gerar Parcelas
+
+        [DisplayName("Valor")]
+        [Required(ErrorMessage = "Campo Obrigatório")]
+        public Decimal ValorDigitado { get; set; }
+
+        [Required(ErrorMessage = "Campo Obrigatório")]
+        public Int32 Qtd { get; set; }
+
+        [DisplayName("1º Vencimento")]
+        [Range(typeof(DateTime), "01/01/1980", "31/12/5000", ErrorMessage = "Data Inválida!")]
+        [Required(ErrorMessage = "Campo Obrigatório")]
+        public DateTime? PrimeiroVencimento { get; set; }
+
+        [DisplayName("Replicar?")]
+        public Boolean Replicar { get; set; }
+
+        public String JsonParcelas { get; set; }
+        #endregion
     }
 }

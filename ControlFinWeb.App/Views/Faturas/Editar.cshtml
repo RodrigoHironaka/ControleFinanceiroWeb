@@ -57,7 +57,7 @@
         function Salvar() {
             var dados = $("#FrmFatura").serialize();
             $.ajax({
-                url: '/FaturasCartaoCredito/Editar',
+                url: '/Faturas/Editar',
                 method: 'POST',
                 data: dados,
                 success: function(retorno) {

@@ -1,0 +1,807 @@
+﻿@model ControlFinWeb.App.ViewModels.ContaVM
+@using ControlFinWeb.Dominio.ObjetoValor;
+@using ControlFinWeb.Dominio.Entidades;
+
+@{
+    ViewData["Title"] = "Contas";
+}
+
+<div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title"></h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="javascript:window.location.reload()"></button>
+        </div>
+        <div class="modal-body">
+            <!-- #region Tabs -->
+            <form asp-action="Editar" id="FrmConta">
+                <nav id="navContas">
+                    <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                        <button class="nav-link active" id="nav-Geral-tab" data-bs-toggle="tab" data-bs-target="#nav-Geral" type="button" role="tab" aria-controls="nav-Geral" aria-selected="true">Geral</button>
+                        <button class="nav-link" id="nav-Parcelas-tab" data-bs-toggle="tab" data-bs-target="#nav-Parcelas" type="button" role="tab" aria-controls="nav-Parcelas" aria-selected="false">Parcelas</button>
+                        <button class="nav-link" id="nav-Arquivos-tab" data-bs-toggle="tab" data-bs-target="#nav-Arquivos" type="button" role="tab" aria-controls="nav-Arquivos" aria-selected="false">Arquivos</button>
+                    </div>
+                </nav>
+                <fieldset id="fsAgrupar">
+                    <div class="tab-content" id="nav-tabContent">
+                        <div class="tab-pane fade show active" id="nav-Geral" role="tabpanel" aria-labelledby="nav-Geral-tab">
+                            <br />
+                            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                            <input asp-for="Id" type="hidden" />
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <label asp-for="Codigo" class="control-label"></label>
+                                    <input asp-for="Codigo" class="form-control" readonly />
+                                    <span asp-validation-for="Codigo" class="text-danger"></span>
+                                </div>
+                                <div class="col-md-3">
+                                    <label asp-for="DataEmissao" class="control-label"></label>
+                                    <input asp-for="DataEmissao" class="form-control" type="date" />
+                                    <span asp-validation-for="DataEmissao" class="text-danger"></span>
+                                </div>
+                                <div class="col-md-3">
+                                    <label asp-for="TipoConta" class="control-label"></label>
+                                    <select class="form-select" asp-for="TipoConta" asp-items="Html.GetEnumSelectList<TipoConta>()"></select>
+                                    <span asp-validation-for="TipoConta" class="text-danger"></span>
+                                </div>
+                                <div class="col-md-3">
+                                    <label asp-for="TipoPeriodo" class="control-label"></label>
+                                    <select class="form-select" asp-for="TipoPeriodo" asp-items="Html.GetEnumSelectList<PeriodoConta>()"></select>
+                                    <span asp-validation-for="TipoPeriodo" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <label asp-for="Nome" class="control-label"></label>
+                                    <input asp-for="Nome" class="form-control" />
+                                    <span asp-validation-for="Nome" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <label asp-for="SubGastoId" class="control-label"></label>
+                                    <select class="form-select" asp-for="SubGastoId" asp-items="ViewBag.SubGastoId">
+                                        <option value="0">---Selecione um item---</option>
+                                    </select>
+                                    <span asp-validation-for="SubGastoId" class="text-danger"></span>
+                                </div>
+                                <div class="col-md-6">
+                                    <label asp-for="PessoaId" class="control-label"></label>
+                                    <select class="form-select" asp-for="PessoaId" asp-items="ViewBag.PessoaId">
+                                        <option value="0">---Selecione um item---</option>
+                                    </select>
+                                    <span asp-validation-for="PessoaId" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <label asp-for="NumeroDocumento" class="control-label"></label>
+                                    <input asp-for="NumeroDocumento" class="form-control" />
+                                    <span asp-validation-for="NumeroDocumento" class="text-danger"></span>
+                                </div>
+                                <div class="col-md-4">
+                                    <label asp-for="Situacao" class="control-label"></label>
+                                    <input asp-for="Situacao" class="form-control" readonly />
+                                    <span asp-validation-for="Situacao" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <label asp-for="Observacao" class="control-label"></label>
+                                    <textarea asp-for="Observacao" class="form-control" rows="2"></textarea>
+                                    <span asp-validation-for="Observacao" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="nav-Parcelas" role="tabpanel" aria-labelledby="nav-Parcelas-tab">
+                            <br />
+                            <div id="alertParcelas" role="alert" style="display:none;"></div>
+                            <div class="row">
+                                <div class="col-md-5">
+                                    <select id="filtroParcelas" asp-items="Html.GetEnumSelectList<SituacaoParcela>()" multiple="multiple"></select>
+                                </div>
+                                <div class="col-md-1">
+                                    <button type="button" class="w-100 btn btn-dark" onclick="FiltroSituacao()" width="100%"><i class="bi bi-funnel"></i></button>
+                                </div>
+                                <div class="col-md-3">
+                                    <button type="button" class="w-100 btn btn-dark" onclick="ExibirModalGerarParcelas()" width="100%">Gerar Parcelas</button>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="dropdown" style="text-align: right;">
+                                        <button class="btn btn-dark dropdown-toggle" type="button" id="opcoes" data-bs-toggle="dropdown" aria-expanded="false">
+                                            <i class="bi bi-gear-fill"></i> Opções Gerais
+                                        </button>
+                                        <ul class="dropdown-menu" id="opcoesMenu" aria-labelledby="opcoes">
+                                            <li><a class="dropdown-item" href="#"><i class="bi bi-cash-stack"></i> Pagar</a></li>
+                                            <li><a class="dropdown-item" onclick=" RemoverParcelas()"><i class="bi bi-trash"></i> Excluir</a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <textarea asp-for="JsonParcelas" id="txtJsonParcelas" class="form-control" rows="1" style="display:none;"></textarea>
+                            </div>
+                            <div class="mt-3">
+                                <div style="height:300px; width:765px; overflow-x:auto">
+                                    @*Para definir a barra de rolagem só na tabela precisa definir altura e largura e deixar o overflow automatico para aparecer quando necessario*@
+                                    <table class="table table-bordered table-striped table-hover" id="tabelaParcelas">
+                                        <thead>
+                                            <tr>
+                                                <th scope="col" width="5%"><input class="form-check-input" id="checkAll" type="checkbox"></th>
+                                                <th scope="col" width="2%" style="text-align:right">Parcela</th>
+                                                <th style="text-align:right">V. Parcela</th>
+                                                <th style="text-align:right">V. Reajustado</th>
+                                                <th style="text-align:right">V. Aberto</th>
+                                                <th style="text-align:right">Vencimento</th>
+                                                <th scope="col" width="5%"></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id=tbodyParcelas>
+                                        </tbody>
+                                        <tfoot id=tfootParcelas>
+                                        </tfoot>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="nav-Arquivos" role="tabpanel" aria-labelledby="nav-Arquivos-tab">
+                            <div class="card">
+                                <div class="card-body">
+                                    Arquivos (imagens, documentos, videos, etc)
+                                </div>
+                            </div>
+                        </div>
+                        <!-- #endregion -->
+                    </div>
+                    <br />
+                    <button type="button" onclick="Salvar()" class="w-100 btn btn-success">Salvar</button>
+                </fieldset>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!--Modal Gerar Parcelas-->
+<div class="modal fade modal-gerarParcelas" id="modal-gerarParcelas" tabindex="-1" aria-hidden="true" role="dialog" data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal-dialog modal-sm modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="text-black">GERAR PARCELAS</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label asp-for="Valor" class="control-label"></label>
+                    <input asp-for="Valor" class="form-control" style="text-align:right" />
+                    <span asp-validation-for="Valor" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Qtd" class="control-label"></label>
+                    <input asp-for="Qtd" class="form-control" type="number" style="text-align:right" />
+                    <span asp-validation-for="Qtd" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="PrimeiroVencimento" class="control-label"></label>
+                    <input asp-for="PrimeiroVencimento" class="form-control" type="date" style="text-align:right" />
+                    <span asp-validation-for="PrimeiroVencimento" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="w-100 btn btn-outline-success btnConfirmar">Confirmar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--Modal Editar Parcelas-->
+<div class="modal fade modal-editarParcelas" id="modal-editarParcelas" tabindex="-1" aria-hidden="true" role="dialog" data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="text-black">EDITAR PARCELAS</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <fieldset id=fsEditarParcela>
+                <div class="modal-body">
+                    <form>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <label class="control-label">Nº</label>
+                                <input class="form-control" id="Numero" style="text-align:right" readonly />
+                                <span class="text-danger"></span>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="control-label">Parcela</label>
+                                <input class="form-control" id="ParcelaDe" style="text-align:right" readonly />
+                                <span class="text-danger"></span>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="control-label">Situação</label>
+                                <input class="form-control" id="SituacaoParcela" readonly />
+                                <span class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <label class="control-label">Valor Parcela</label>
+                                <input class="form-control" id="ValorParcela" onblur="AtualizarValorReajustadoEAberto()" style="text-align:right" />
+                                <span class="text-danger" id="msgValorParcela"></span>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="control-label">Valor Reajustado</label>
+                                <input class="form-control" id="ValorReajustado" style="text-align:right" readonly />
+                                <span class="text-danger"></span>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="control-label">Valor Aberto</label>
+                                <input class="form-control" id="ValorAberto" style="text-align:right" readonly />
+                                <span class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label class="control-label">Juros (%)</label>
+                                <input class="form-control" id="JurosPorcentual" onblur="JurosPorcentagemParaValor(this.value)" style="text-align:right" />
+                                <span class="text-danger"></span>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="control-label">Juros (R$)</label>
+                                <input class="form-control" id="JurosValor" onblur="AtualizarValorReajustadoEAberto()" style="text-align:right" />
+                                <span class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label class="control-label">Desc (%)</label>
+                                <input class="form-control" id="DescontoPorcentual" onblur="DescontoPorcentagemParaValor(this.value)" style="text-align:right" />
+                                <span class="text-danger"></span>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="control-label">Desc (R$)</label>
+                                <input class="form-control" id="DescontoValor" onblur="AtualizarValorReajustadoEAberto()" style="text-align:right" />
+                                <span class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label class="control-label">Data Vencimento</label>
+                                <input class="form-control" id="DataVencimento" type="date" style="text-align:right" />
+                                <span class="text-danger" id="msgDataVencimento"></span>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="control-label">Data Pagamento</label>
+                                <input class="form-control" id="DataPagamento" type="date" style="text-align:right" />
+                                <span class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label class="control-label">Forma Pagamento</label>
+                                <select class="form-select" id="FormaPagamentoId" asp-items="ViewBag.FormaPagamentoId">
+                                    <option value="0">---Selecione um item---</option>
+                                </select>
+                                <span class="text-danger"></span>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="control-label"> Valor Pago</label>
+                                <input class="form-control" id="ValorPago" onblur="AtualizarValorReajustadoEAberto()" style="text-align:right" />
+                                <span class="text-danger"></span>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="w-100 btn btn-outline-success btnConfirmarParcela">Confirmar</button>
+                </div>
+            </fieldset>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script type="text/javascript">
+        $(function() {
+            $("#Valor, #ValorParcela, #JurosPorcentual, #JurosValor, #DescontoPorcentual, #DescontoValor, #ValorPago ").maskMoney({ thousands: '', decimal: ',', allowZero: true });
+
+
+            $('#opcoes').on("click", function() {
+                if ($("#opcoesMenu").hasClass("show")) {
+                    $('#opcoes').prop("aria-expanded", false);
+                    $("#opcoesMenu").removeClass("show");
+                } else {
+                    $('#opcoes').prop("aria-expanded", true);
+                    $("#opcoesMenu").addClass("show");
+
+                }
+            });
+
+
+            //$('#filtroSituacao').on('click', function() {
+
+            //    if ($("#containerMenu").hasClass("show")) {
+            //        $('#filtroSituacao').prop("aria-expanded", false);
+            //        $("#containerMenu").removeClass("show");
+            //    } else {
+            //        $('#filtroSituacao').prop("aria-expanded", true);
+            //        $("#containerMenu").addClass("show");
+            //    }
+
+            //});
+
+            //jQuery('body').on('click', '[data-toggle=dropdown]', function() {
+            //    var opened = $(this).parent().hasClass("open");
+            //    if (!opened) {
+            //        $('.btn-group').addClass('open');
+            //        $("button.multiselect").attr('aria-expanded', 'true');
+            //    } else {
+            //        $('.btn-group').removeClass('open');
+            //        $("button.multiselect").attr('aria-expanded', 'false');
+            //    }
+            //});
+        });
+
+        function FixaDuasCasasDecimais(num) {
+            return parseFloat(Math.round(num * 100) / 100).toFixed(2);
+        }
+
+        function ExibirModalGerarParcelas() {
+            $("#modal-gerarParcelas").modal("show");
+            $(".btnConfirmar").on("click", function() {
+                if (GerarParcela()) {
+                    $("#modal-gerarParcelas").modal("hide");
+                }
+            });
+        }
+
+        var Items = new Object();
+        Items.Parcelas = new Array();
+        var parcelasFiltradas = new Array();
+        var tbodyParcelas = document.getElementById("tbodyParcelas");
+        var tfootParcelas = document.getElementById("tfootParcelas");
+
+        function GerarParcela() {
+            var valorTotal = parseFloat($("#Valor").val().replace(",", "."));
+            var qtd = parseInt($("#Qtd").val());
+            var primeiroVencimento = $("#PrimeiroVencimento").val();
+
+            var valorParcela = parseFloat(valorTotal / qtd).toFixed(2);
+            var diferencaValor = (valorTotal - (valorParcela * qtd)).toFixed(2);
+            var convertParcela = valorParcela.toString().replace(".", ",");
+
+            if (valorTotal <= 0) {
+                $("[data-valmsg-for=Valor]").html('Campo Obrigatório');
+                return false;
+            }
+
+            if (qtd <= 0 || qtd.toString() == "") {
+                $("[data-valmsg-for=Qtd]").html('Campo Obrigatório');
+                return false;
+            }
+
+            if (primeiroVencimento == "") {
+                $("[data-valmsg-for=PrimeiroVencimento]").html('Campo Obrigatório');
+                return false;
+            }
+
+            $("[data-valmsg-for=Valor]").html('');
+            $("[data-valmsg-for=Qtd]").html('');
+            $("[data-valmsg-for=PrimeiroVencimento]").html('');
+
+            for (i = 1; i <= qtd; i++) {
+                var venc = new Date(primeiroVencimento + " " + "00:00:00")
+                if (i > 1) {
+                    venc.setMonth(venc.getMonth() + i - 1);
+                }
+                var parcela = i + '/' + qtd;
+                var valorNovaParcela = 0;
+
+                if (diferencaValor != 0) {
+                    valorNovaParcela = parseFloat(parseFloat(valorParcela) + parseFloat(diferencaValor)).toFixed(2);
+                    diferencaValor = 0;
+                } else {
+                    valorNovaParcela = valorParcela;
+                }
+
+                Items.Parcelas.push({
+                    "Id": 0,
+                    "Numero": Items.Parcelas[Items.Parcelas.length - 1].Numero + 1,
+                    "ParcelaDe": parcela,
+                    "ValorParcela": valorNovaParcela,
+                    "DataVencimento": venc.toISOString().slice(0, 19),
+                    "DataPagamento": null,
+                    "JurosPorcentual": 0,
+                    "JurosValor": 0,
+                    "DescontoPorcentual": 0,
+                    "DescontoValor": 0,
+                    "ValorReajustado": valorNovaParcela,
+                    "ValorPago": 0,
+                    "ValorAberto": valorNovaParcela,
+                    "Observacao": null,
+                    "SituacaoParcela": 0,
+                    "FormaPagamentoId": 0,
+                    "FormaPagamentoVM": null,
+                    "ContaId": 0,
+                    "ContaVM": null
+                });
+            }
+
+            document.getElementById("txtJsonParcelas").value = JSON.stringify(Items.Parcelas);
+
+            FiltroSituacaoPendentes();
+
+            $("#Valor").val('0,00');
+            $("#Qtd").val('0');
+            $("#PrimeiroVencimento").val(null);
+
+            return true;
+        }
+
+        function PreencherTableParcelas(parcelas) {
+            $("#tbodyParcelas").empty();
+
+            var totalValorParcela = 0;
+            var totalValorReajustado = 0;
+            var totalValorAberto = 0;
+            var totalRegistro = 0;
+
+            $.each(parcelas, function(i, item) {
+                if (item.DataVencimento != null) {
+                    var data = new Date(item.DataVencimento);
+                    data = data.toLocaleDateString("pt-BR").substring(0, 10);
+                } else {
+                    var data = "";
+                }
+
+                var corSituacaoParcela = "";
+                if (item.SituacaoParcela == 1) { //PendenteParcial
+                    corSituacaoParcela = 'background-color:#b6d0fa;';
+                } else if (item.SituacaoParcela == 2) { //Atrasado
+                    corSituacaoParcela = 'background-color:#fdc433;';
+                } else if (item.SituacaoParcela == 3) { //Pago
+                    corSituacaoParcela = 'background-color:#03a113;';
+                } else if (item.SituacaoParcela == 4) { //Cancelado
+                    corSituacaoParcela = 'background-color:#fa2e2a;';
+                }
+
+                var linha = "<tr>" +
+                    "<td scope='row'style=" + corSituacaoParcela + "><input class='form-check-input check' id='check' type='checkbox' onclick='ClickCheckItem()'></td>" +
+                    "<td align='right' style='display:none'>" + item.Id + "</td>" +
+                    "<td align='right' class='numeroParcela'>" + item.Numero + "</td>" +
+                    "<td align='right'>" + FixaDuasCasasDecimais(item.ValorParcela).replace(".", ",") + "</td>" +
+                    "<td align='right'>" + FixaDuasCasasDecimais(item.ValorReajustado).replace(".", ",") + "</td>" +
+                    "<td align='right'>" + FixaDuasCasasDecimais(item.ValorAberto).replace(".", ",") + "</td>" +
+                    "<td align='right'>" + data + "</td>" +
+                    "<td align='center'> <button type='button' class='btn btn-primary btn-sm EditarParcela' onclick='EditarParcela(this)'><i class='bi bi-pencil-square'></i></button></td>" +
+                    "</tr>";
+                tbodyParcelas.innerHTML += linha;
+
+                totalValorParcela += parseFloat(item.ValorParcela);
+                totalValorReajustado += parseFloat(item.ValorReajustado);
+                totalValorAberto += parseFloat(item.ValorAberto);
+                totalRegistro++;
+
+            });
+
+            $('#tfootParcelas').empty();
+            var rodape = "<tr style='font-weight: bold;'>" +
+                "<td>" + totalRegistro + "</td>" +
+                "<td>Totais</td>" +
+                "<td align='right'>" + FixaDuasCasasDecimais(totalValorParcela).replace(".", ",") + "</td>" +
+                "<td align='right'>" + FixaDuasCasasDecimais(totalValorReajustado).replace(".", ",") + "</td>" +
+                "<td align='right'>" + FixaDuasCasasDecimais(totalValorAberto).replace(".", ",") + "</td>" +
+                "<td></td>" +
+                "</tr>";
+            tfootParcelas.innerHTML += rodape;
+            $('#checkAll').prop('checked', false);
+        }
+
+        //CheckAll
+        $('#checkAll').change(function() {
+            $('.check').prop('checked', this.checked);
+        });
+
+        function ClickCheckItem() {
+            $('.check').change(function() {
+                if ($('.check:checked').length == $('.check').length) {
+                    $('#checkAll').prop('checked', true);
+                }
+                else {
+                    $('#checkAll').prop('checked', false);
+                }
+            });
+        }
+
+        //Salvar
+        function Salvar() {
+            var dados = $("#FrmConta").serialize();
+            $.ajax({
+                url: '/Contas/Editar',
+                method: 'POST',
+                data: dados,
+                success: function(retorno) {
+                    if (retorno == "")
+                        location.reload();
+                    else {
+                        $("#modal").html(retorno);
+                        if ($("#id").val() > 0)
+                            $(".modal-title").html("ALTERANDO REGISTRO");
+                        else
+                            $(".modal-title").html("NOVO REGISTRO");
+                    }
+                }
+
+            });
+        }
+        //Editar Parcela
+        function EditarParcela(element) {
+            //----pega index da linha da tabela pelo click do botao que esta na mesma linha----
+            LimpaCamposEditarParcela();
+            var parcelaEditar = new Object();
+            var numero = $(element).closest('tr').find('.numeroParcela').text().trim();
+
+            //var index = $(element).closest("tr").index(); //(Jquery)
+            // //var index = element.parentNode.parentNode.rowIndex -1;  (Javascript)
+            $.each(Items.Parcelas, function(i, value) {
+                if (value.Numero == numero) {
+                    parcelaEditar = value;
+                    //------------------------------------------------------------------
+                    console.log(parcelaEditar);
+                    $("#modal-editarParcelas").modal("show");
+                    //Preenche campos
+                    var situacao = "";
+                    if (parcelaEditar.SituacaoParcela == parseInt(0)) {
+                        situacao = "Pendente";
+                        $("#fsEditarParcela").prop("disabled", false);
+                    }
+                    else if (parcelaEditar.SituacaoParcela == parseInt(1)) {
+                        situacao = "Pendente Parcial";
+                        $("#fsEditarParcela").prop("disabled", false);
+                    }
+                    else if (parcelaEditar.SituacaoParcela == parseInt(2)) {
+                        situacao = "Atrasado";
+                        $("#fsEditarParcela").prop("disabled", false);
+                    }
+                    else if (parcelaEditar.SituacaoParcela == parseInt(3)) {
+                        situacao = "Pago";
+                        $("#fsEditarParcela").prop("disabled", true);
+                    }
+                    else {
+                        situacao = "Cancelado";
+                        $('#fsEditarParcela').prop('disabled', true);
+                    }
+
+                    $("#Numero").val(parcelaEditar.Numero);
+                    $("#ParcelaDe").val(parcelaEditar.ParcelaDe);
+                    $("#SituacaoParcela").val(situacao);
+                    $("#ValorParcela").val(FixaDuasCasasDecimais(parcelaEditar.ValorParcela).replace(".", ","));
+                    $("#ValorReajustado").val(FixaDuasCasasDecimais(parcelaEditar.ValorReajustado).replace(".", ","));
+                    $("#ValorAberto").val(FixaDuasCasasDecimais(parcelaEditar.ValorAberto).replace(".", ","));
+                    $("#JurosPorcentual").val(FixaDuasCasasDecimais(parcelaEditar.JurosPorcentual).replace(".", ","));
+                    $("#JurosValor").val(FixaDuasCasasDecimais(parcelaEditar.JurosValor).replace(".", ","));
+                    $("#DescontoPorcentual").val(FixaDuasCasasDecimais(parcelaEditar.DescontoPorcentual).replace(".", ","));
+                    $("#DescontoValor").val(FixaDuasCasasDecimais(parcelaEditar.DescontoValor).replace(".", ","));
+                    $("#ValorPago").val(FixaDuasCasasDecimais(parcelaEditar.ValorPago).replace(".", ","));
+                    if (parcelaEditar.DataVencimento != null) {
+                        $("#DataVencimento").val(parcelaEditar.DataVencimento.substring(0, 10));
+                    }
+                    if (parcelaEditar.DataPagamento != null) {
+                        $("#DataPagamento").val(parcelaEditar.DataPagamento.substring(0, 10));
+                    }
+                    $("#FormaPagamentoId").val(parcelaEditar.FormaPagamentoId);
+
+                    //atualizando item no json
+                    $(".btnConfirmarParcela").click(function() {
+                        AtualizarValorReajustadoEAberto();
+                        var valorParcela = parseFloat($("#ValorParcela").val().replace(",", "."));
+                        var valorReajustado = parseFloat($("#ValorReajustado").val().replace(",", "."));
+                        var valorAberto = parseFloat($("#ValorAberto").val().replace(",", "."));
+                        var valorPago = parseFloat($("#ValorPago").val().replace(",", "."));
+                        var jurosPorc = parseFloat($("#JurosPorcentual").val().replace(",", "."));
+                        var jurosValor = parseFloat($("#JurosValor").val().replace(",", "."));
+                        var descontoPorc = parseFloat($("#DescontoPorcentual").val().replace(",", "."));
+                        var descontoValor = parseFloat($("#DescontoValor").val().replace(",", "."));
+                        var formaPagId = $("#FormaPagamentoId").val()
+                        if ($("#DataVencimento").val() != "") {
+                            var dataVencimento = new Date($("#DataVencimento").val() + " " + "00:00:00");
+                        } else {
+                            var dataVencimento = null;
+                        }
+                        if ($("#DataPagamento").val() != "") {
+                            var dataPagamento = new Date($("#DataPagamento").val() + " " + "00:00:00");
+                        } else {
+                            var dataPagamento = null;
+                        }
+
+                        if (valorParcela == 0.00) {
+                            $("#msgValorParcela").text("Campo Obrigatório");
+                            return false;
+                        } else {
+                            $("#msgValorParcela").text("");
+                        }
+
+                        if (dataVencimento == null) {
+                            $("#msgDataVencimento").text("Campo Obrigatório");
+                            return false;
+                        } else {
+                            $("#msgDataVencimento").text("");
+                        }
+
+                        Items.Parcelas[i].ValorParcela = FixaDuasCasasDecimais(valorParcela);
+                        Items.Parcelas[i].ValorReajustado = FixaDuasCasasDecimais(valorReajustado);
+                        Items.Parcelas[i].ValorAberto = FixaDuasCasasDecimais(valorAberto);
+                        Items.Parcelas[i].ValorPago = FixaDuasCasasDecimais(valorPago);
+                        Items.Parcelas[i].JurosPorcentual = FixaDuasCasasDecimais(jurosPorc);
+                        Items.Parcelas[i].JurosValor = FixaDuasCasasDecimais(jurosValor);
+                        Items.Parcelas[i].DescontoPorcentual = FixaDuasCasasDecimais(descontoPorc);
+                        Items.Parcelas[i].DescontoValor = FixaDuasCasasDecimais(descontoValor);
+                        Items.Parcelas[i].DataVencimento = dataVencimento.toISOString().slice(0, 19);
+                        Items.Parcelas[i].DataPagamento = dataPagamento != null ? dataPagamento.toISOString().slice(0, 19) : null;
+
+                        if (Items.Parcelas[i].FormaPagamentoId != formaPagId) {
+                            Items.Parcelas[i].FormaPagamentoId = formaPagId;
+                            Items.Parcelas[i].FormaPagamentoVM = null;
+                        }
+
+                        $("#modal-editarParcelas").modal("hide");
+
+                        document.getElementById("txtJsonParcelas").value = JSON.stringify(Items.Parcelas);
+
+                        FiltroSituacaoPendentes();
+                    });
+                    //------------------------------------------------------------------
+                    return false;//break do each
+                }
+            });
+        }
+
+        function LimpaCamposEditarParcela() {
+            $("#Numero").val('');
+            $("#ParcelaDe").val('');
+            $("#SituacaoParcela").val('');
+            $("#ValorParcela").val('');
+            $("#ValorReajustado").val('');
+            $("#ValorAberto").val('');
+            $("#JurosPorcentual").val('');
+            $("#JurosValor").val('');
+            $("#DescontoPorcentual").val('');
+            $("#DescontoValor").val('');
+            $("#ValorPago").val('');
+            $("#DataVencimento").val(null);
+            $("#DataPagamento").val(null);
+            $("#FormaPagamentoId").val(0);
+        }
+
+        //Desabilita inputs se situacao for diferente de Aberto e carrega parcelas
+        $(document).ready(function() {
+            $(".modal-gerarParcelas").modal();
+
+            var sit = $("#Situacao").val().toString();
+            if (sit != "Aberto") {
+                $('#fsAgrupar').prop('disabled', true);
+            }
+
+            var id = parseInt($("#Id").val());
+            var jsonParcelas = $("#txtJsonParcelas").val().toString();
+            if (id > 0 && jsonParcelas != "") {
+                Items.Parcelas = JSON.parse(jsonParcelas);
+                FiltroSituacaoPendentes();
+            }
+
+
+            $('#filtroParcelas').multiselect({
+                buttonClass: 'form-select',
+                templates: {
+                    button: '<button type="button" class="multiselect dropdown-toggle" id="filtroSituacao" data-bs-toggle="dropdown" aria-expanded="false"><span class="multiselect-selected-text"></span></button>',
+                },
+                buttonWidth: '300',
+                includeSelectAllOption: true,
+                selectAllText: 'Selecionar Todos',
+                allSelectedText: 'Todos',
+                nonSelectedText: 'Filtro Situação',
+                nSelectedText: 'selecionado(s)',
+                //enableFiltering: true,
+                //enableCaseInsensitiveFiltering: true,
+                //filterPlaceholder: 'Pesquisa',
+
+            });
+
+
+
+        });
+
+        function RemoverParcelas() {
+            var trs = $("tbody input:checked").closest("tr"); //pega no tr os elementos que estão checados
+            var numerosParcelaRemover = $.map(trs, function(tr) { return $(tr).find('.numeroParcela').text().trim(); });
+            var parcelasAtualizadas = new Array();
+
+            //verificando se todas as parcelas selecionadas sao pendentes, pendentesParcial ou atrasadas
+            $.each(numerosParcelaRemover, function(i, value) {
+                var parcelaVerificar = Items.Parcelas.find(x => x.Numero == value);
+                if (parcelaVerificar.SituacaoParcela > 2) {
+                    $("#alertParcelas").addClass("alert alert-danger").css('display', 'block').html('Não é possível excluir parcelas pagas ou canceladas! Por favor verifique as parcelas selecionadas.');
+                    parcelasAtualizadas = [];
+                    return false;
+                } else {
+                    parcelasAtualizadas = Items.Parcelas.filter(function(obj) {
+                        return obj.Numero != value;
+                    });
+                }
+            });
+
+            if (parcelasAtualizadas.length > 0) {
+                Items.Parcelas = parcelasAtualizadas;
+            }
+
+            document.getElementById("txtJsonParcelas").value = JSON.stringify(Items.Parcelas);
+            FiltroSituacao();
+        }
+
+        function AtualizarValorReajustadoEAberto() {
+            var valorParcela = parseFloat($("#ValorParcela").val().replace(",", "."));
+            var jurosValor = parseFloat($("#JurosValor").val().replace(",", "."));
+            var descontoValor = parseFloat($("#DescontoValor").val().replace(",", "."));
+            var valorPago = parseFloat($("#ValorPago").val().replace(",", "."));
+
+            var valorReajustado = (valorParcela + jurosValor) - descontoValor;
+            var valorAberto = ((valorParcela + jurosValor) - descontoValor) - valorPago;
+
+            $("#ValorReajustado").val(FixaDuasCasasDecimais(valorReajustado).replace(".", ","));
+            $("#ValorAberto").val(FixaDuasCasasDecimais(valorAberto).replace(".", ","));
+            $("#JurosPorcentual").val(FixaDuasCasasDecimais(ValorParaPorcentagem(jurosValor)).replace(".", ","));
+            $("#DescontoPorcentual").val(FixaDuasCasasDecimais(ValorParaPorcentagem(descontoValor)).replace(".", ","));
+        }
+
+        //Calculando Valor de Porcentagem e vice versa
+        function JurosPorcentagemParaValor(valorPorcentagem) {
+            $("#JurosValor").val(FixaDuasCasasDecimais(PorcentagemParaValor(valorPorcentagem)).replace(".", ","));
+        }
+
+        function DescontoPorcentagemParaValor(valorPorcentagem) {
+            $("#DescontoValor").val(FixaDuasCasasDecimais(PorcentagemParaValor(valorPorcentagem)).replace(".", ","));
+        }
+
+        function PorcentagemParaValor(valorPorcentagem) {
+            var valorParcela = parseFloat($("#ValorParcela").val().replace(",", "."));
+            var porcentagem = parseFloat(valorPorcentagem.replace(",", "."));
+            return (valorParcela * porcentagem) / 100;
+        }
+
+        function ValorParaPorcentagem(valorDinheiro) {
+            var valorParcela = parseFloat($("#ValorParcela").val().replace(",", "."));
+            var valor = parseFloat(valorDinheiro);
+            return (valor * 100) / valorParcela;
+        }
+
+        function FiltroSituacao() {
+            parcelasFiltradas = [];
+            var filtro = $("#filtroParcelas").val();
+
+            $.each(filtro, function(i, value) {
+                parcelasFiltradas = parcelasFiltradas.concat(Items.Parcelas.filter(function(obj) {
+                    return obj.SituacaoParcela == parseInt(value);
+                }));
+            });
+
+            PreencherTableParcelas(parcelasFiltradas);
+        }
+
+        function FiltroSituacaoPendentes() {
+            parcelasFiltradas = [];
+            var filtro = ['0', '1', '2'];
+
+            $.each(filtro, function(i, value) {
+                parcelasFiltradas = parcelasFiltradas.concat(Items.Parcelas.filter(function(obj) {
+                    return obj.SituacaoParcela == parseInt(value);
+                }));
+            });
+
+            PreencherTableParcelas(parcelasFiltradas);
+        }
+
+    </script>
+}

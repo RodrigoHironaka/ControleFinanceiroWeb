@@ -109,10 +109,10 @@
             $(".btnConfirmar").on("click", function() {
                 $.ajax({
                     method: "POST",
-                    url: "/FaturasCartaoCreditoItens/Deletar",
+                    url: "/FaturasItens/Deletar",
                     data: { id: id },
                     success: function() {
-                        $("#modal").load("/FaturasCartaoCreditoItens/Index?id=" + idCartao, function() {
+                        $("#modal").load("/FaturasItens/Index?id=" + idCartao, function() {
                             $("#idCartao").val(idCartao);
                         });
                         $("#modal-excluir").modal("hide");
@@ -129,7 +129,7 @@
             $(".novoItem").click(function() {
                 var id = $(this).attr("data-id");
                 var idCartao = $("#idCartao").val();
-                $("#modalItem").load("/FaturasCartaoCreditoItens/Editar?id=" + id, function() {
+                $("#modalItem").load("/FaturasItens/Editar?id=" + id, function() {
                     $(".tituloItem").html("ADICIONAR NOVO ITEM");
                     $("#CartaoCreditoId").val(idCartao);
                     $("#modalItem").modal("show");
@@ -138,7 +138,7 @@
 
             $(".editar").click(function() {
                 var id = $(this).attr("data-id");
-                $("#modalItem").load("/FaturasCartaoCreditoItens/Editar?id=" + id, function() {
+                $("#modalItem").load("/FaturasItens/Editar?id=" + id, function() {
                     $(".tituloItem").html("ALTERANDO ITEM");
                     $("#modalItem").modal("show");
                 })
