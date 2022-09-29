@@ -1,0 +1,154 @@
+﻿@model ControlFinWeb.App.ViewModels.GerarParcelasVM
+
+@{
+    ViewData["Title"] = "ModalGerarParcelas";
+}
+
+<div class="modal-dialog modal-md modal-dialog-centered">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="text-black">GERAR PARCELAS</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" style="font-size: 14px;">
+            <form asp-action="ModalGerarParcelas" id="frmGerar">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input asp-for="JsonParcelas" class="form-control" type="hidden" />
+                <div class="row">
+                    <div class="col-md-3">
+                        <label asp-for="ValorDigitado" class="control-label"></label>
+                        <input asp-for="ValorDigitado" class="form-control" style="text-align: right;" />
+                        <span asp-validation-for="ValorDigitado" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-3">
+                        <label asp-for="Qtd" class="control-label"></label> <input asp-for="Replicar" class="form-check-input" type="checkbox" /><label asp-for="Replicar" class="control-label"></label>
+                        <input asp-for="Qtd" class="form-control" type="number" style="text-align: right;" />
+                        <span asp-validation-for="Qtd" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-4">
+                        <label asp-for="PrimeiroVencimento" class="control-label"></label>
+                        <input asp-for="PrimeiroVencimento" class="form-control" type="date" style="text-align: right;" />
+                        <span asp-validation-for="PrimeiroVencimento" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-2">
+                        <br />
+                        <button type="button" class="w-100 btn btn-dark" onclick="GerarParcelas()"><i class="bi bi-plus-lg"></i></button>
+                    </div>
+                </div>
+            </form>
+            <div class="row">
+                <div class="col-md">
+                    <br />
+                    <table class="table table-bordered table-striped table-hover table-responsive">
+                        <colgroup>
+                            <col style="width: 10%" />
+                            <col style="width: 40%" />
+                            <col style="width: 40%" />
+                            <col style="width: 10%" />
+                        </colgroup>
+                        <thead>
+                            <tr style="text-align:center">
+                                <th>#</th>
+                                <th>Parcela</th>
+                                <th>Vencimento</th>
+                                <th>#</th>
+                            </tr>
+                        </thead>
+                        <tbody id=tbodyParcelasGeradas>
+                        </tbody>
+                        <tfoot id=tfootParcelasGeradas>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="w-100 btn btn-outline-success">Confirmar</button>
+        </div>
+
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script>
+        $("#ValorDigitado").maskMoney({ thousands: '', decimal: ',', allowZero: true });
+
+        Parcelas = new Array();
+        var tbodyParcelas = document.getElementById("tbodyParcelasGeradas");
+        var tfootParcelas = document.getElementById("tfootParcelasGeradas");
+
+        function FixaDuasCasasDecimais(num) {
+            return parseFloat(Math.round(num * 100) / 100).toFixed(2);
+        };
+
+        function PreencherTableParcelas(parcelas) {
+            $("#tbodyParcelasGeradas").empty();
+
+            var totalValorParcela = 0;
+
+            $.each(parcelas, function(i, item) {
+                var linha = "<tr>" +
+                    "<td align='center'>" + (i + 1) + "</td>" +
+                    "<td><input id='valorGerado' class='form-control' style='text-align:right' type='number' step='.01' value='" + FixaDuasCasasDecimais(item.ValorParcela) + "'></td>" +
+                    "<td><input id='dataGerada' class='form-control' style='text-align:right' type='date' value='" + item.DataVencimento.substring(0, 10) + "'></td>" +
+                    "<td align='center'> <button type='button' class='btn btn-success btn-sm' onclick='ModificarParcela(this)'><i class='bi bi-check-lg'></i></button></td>" +
+                    "</tr>";
+                tbodyParcelas.innerHTML += linha;
+
+                totalValorParcela += parseFloat(item.ValorParcela);
+            });
+
+            $('#tfootParcelasGeradas').empty();
+            var rodape = "<tr>" +
+                "<td></td>" +
+                "<td><input class='form-control' style='text-align:right; font-weight: bold;' type='number' step='.01' readonly value='" + FixaDuasCasasDecimais(totalValorParcela).replace(",", ".") + "'></td>" +                
+                "<td></td>" +
+                "<td></td>" +
+                "</tr>";
+            tfootParcelas.innerHTML += rodape;
+        };
+
+        function GerarParcelas() {
+            var dados = $("#frmGerar").serialize();
+            var valor = parseFloat($('#ValorDigitado').val().replace(',', '.'));
+            var qtd = parseFloat($('#Qtd').val());
+            var primeiroVencimento = $("#PrimeiroVencimento").val();
+
+            if (valor <= 0) {
+                $("[data-valmsg-for=ValorDigitado]").html('Obrigatório');
+                return false;
+            } else {
+                $("[data-valmsg-for=ValorDigitado]").html('');
+            }
+
+            if ($('#Qtd').val().toString() == "" || qtd <= 0) {
+                $("[data-valmsg-for=Qtd]").html('Obrigatório');
+                return false;
+            } else {
+                $("[data-valmsg-for=Qtd]").html('');
+            }
+
+            if (primeiroVencimento == "") {
+                $("[data-valmsg-for=PrimeiroVencimento]").html('Obrigatório');
+                return false;
+            } else {
+                $("[data-valmsg-for=PrimeiroVencimento]").html('');
+            }
+
+            $.ajax({
+                url: '/Parcelas/GerarNovasParcelas',
+                method: 'POST',
+                data: dados,
+                success: function(jsonParcelas) {
+                    $("#JsonParcelas").val(jsonParcelas);
+                    Parcelas = JSON.parse(jsonParcelas);
+                    PreencherTableParcelas(Parcelas);
+                }
+            });
+        }
+    </script>
+}

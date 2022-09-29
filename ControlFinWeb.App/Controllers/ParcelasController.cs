@@ -23,19 +23,20 @@ namespace ControlFinWeb.App.Controllers
         ParcelaVM parcelaVM = new ParcelaVM();
         IList<Parcela> parcelas = new List<Parcela>();
         IList<ParcelaVM> parcelasVM = new List<ParcelaVM>();
+        GerarParcelasVM gerarParcelasVM = new GerarParcelasVM();
 
-        public IActionResult AbrirModalGerarParcelas()
+        public IActionResult ModalGerarParcelas()
         {
-            return View(parcelaVM);
+            return View(gerarParcelasVM);
         }
 
-        public String GerarNovasParcelas(string valor, string qtd, string primeiroVencimento, string replicar)
+        [HttpPost]
+        public String GerarNovasParcelas(GerarParcelasVM gerarParcelasVM)
         {
-            Decimal Valor = Decimal.Parse(valor);
-            Int32 Qtd = Int32.Parse(qtd);
-            Qtd = Qtd > 0 ? Qtd : 1;
-            DateTime PrimeiroVencimento = DateTime.Parse(primeiroVencimento);
-            Boolean Replicar = Boolean.Parse(replicar);
+            Decimal Valor = gerarParcelasVM.ValorDigitado;
+            Int32 Qtd = gerarParcelasVM.Qtd;
+            DateTime PrimeiroVencimento = (DateTime)gerarParcelasVM.PrimeiroVencimento;
+            Boolean Replicar = gerarParcelasVM.Replicar;
 
             Decimal valorParcela = 0, restante = 0;
 
@@ -50,6 +51,11 @@ namespace ControlFinWeb.App.Controllers
             for (int i = 0; i < Qtd; i++)
             {
                 if (restante > 0 && i == Qtd - 1)
+                {
+                    valorParcela += restante;
+                    restante = 0;
+                }
+                else if (restante < 0 && i == Qtd - 1)
                 {
                     valorParcela += restante;
                     restante = 0;
