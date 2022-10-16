@@ -59,25 +59,29 @@ namespace ControlFinWeb.App.Controllers
             {
                 if (contaVM.Id > 0)
                 {
-                    contaVM.ParcelasVM = JsonConvert.DeserializeObject<IList<ParcelaVM>>(contaVM.JsonParcelas);
+                    if(contaVM.JsonParcelas != null && !String.IsNullOrEmpty(contaVM.JsonParcelas))
+                        contaVM.ParcelasVM = JsonConvert.DeserializeObject<IList<ParcelaVM>>(contaVM.JsonParcelas);
                     conta = Repositorio.ObterPorId(contaVM.Id);
                     conta = Mapper.Map<Conta>(contaVM);
                     conta.UsuarioAlteracao = Configuracao.Usuario;
                     conta.Parcelas.ForEach(x => x.Conta = conta);
+                    conta.Parcelas.Where(x => x.Id == 0).ForEach(x => { x.DataGeracao = DateTime.Now; x.UsuarioCriacao = Configuracao.Usuario;});
                     conta.Arquivos.ForEach(x => x.Conta = conta);
                     Repositorio.Alterar(conta);
                 }
                 else
                 {
-                    contaVM.ParcelasVM = JsonConvert.DeserializeObject<IList<ParcelaVM>>(contaVM.JsonParcelas);
+                    if (contaVM.JsonParcelas != null && !String.IsNullOrEmpty(contaVM.JsonParcelas))
+                        contaVM.ParcelasVM = JsonConvert.DeserializeObject<IList<ParcelaVM>>(contaVM.JsonParcelas);
                     conta = Mapper.Map(contaVM, conta);
                     conta.Codigo = Repositorio.RetornaUltimoCodigo() + 1;
                     conta.UsuarioCriacao = Configuracao.Usuario;
                     conta.Parcelas.ForEach(x => x.Conta = conta);
+                    conta.Parcelas.Where(x => x.Id == 0).ForEach(x => { x.DataGeracao = DateTime.Now; x.UsuarioCriacao = Configuracao.Usuario; });
                     conta.Arquivos.ForEach(x => x.Conta = conta);
                     Repositorio.Salvar(conta);
                 }
-                return new EmptyResult();
+                return RedirectToAction("Index");
             }
             ViewBag.FormaPagamentoId = new SelectList(new RepositorioFormaPagamento(NHibernateHelper.ObterSessao()).ObterPorParametros(x => x.Situacao == Situacao.Ativo), "Id", "Nome", contaVM.Id);
             ViewBag.PessoaId = new SelectList(new RepositorioPessoa(NHibernateHelper.ObterSessao()).ObterPorParametros(x => x.Situacao == Situacao.Ativo), "Id", "Nome", contaVM.Id);

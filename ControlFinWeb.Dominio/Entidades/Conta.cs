@@ -22,7 +22,6 @@ namespace ControlFinWeb.Dominio.Entidades
         public virtual String NumeroDocumento { get; set; }
         public virtual SubGasto SubGasto { get; set; }
         public virtual FormaPagamento FormaCompra { get; set; }
-        public virtual Fatura Fatura { get; set; }
         public virtual Pessoa Pessoa { get; set; }
         public virtual String Observacao { get; set; }
         public virtual IList<Parcela> Parcelas { get; set; }

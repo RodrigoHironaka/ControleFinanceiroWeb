@@ -39,13 +39,14 @@ namespace ControlFinWeb.App.AutoMapper
               .AfterMap((src, dest) =>
               {
                   dest.SubGasto = new SubGasto { Id = src.SubGastoId };
-                  dest.Fatura = src.FaturaId > 0 ? new Fatura { Id = src.FaturaId } : null;
                   dest.Pessoa = src.PessoaId > 0 ? new Pessoa { Id = src.PessoaId } : null;
 
                   dest.Parcelas = new MapperConfiguration(cfg => cfg.CreateMap<ParcelaVM, Parcela>()
                  .AfterMap((src, dest) =>
                  {
                      dest.FormaPagamento = src.FormaPagamentoId > 0 ? new FormaPagamento { Id = src.FormaPagamentoId } : null;
+                     dest.UsuarioCriacao = src.UsuarioCriacaoId > 0 ? new Usuario { Id = src.UsuarioCriacaoId } : null;
+                     dest.UsuarioAlteracao = src.UsuarioAlteracaoId > 0 ? new Usuario { Id = src.UsuarioAlteracaoId } : null;
                  }))
                  .CreateMapper().Map<List<Parcela>>(src.ParcelasVM);
 
@@ -117,7 +118,6 @@ namespace ControlFinWeb.App.AutoMapper
              {
                  dest.SubGastoVM = AutoMapperConfig<SubGasto, SubGastoVM>.Mapear(src.SubGasto);
                  dest.SubGastoVM.GastoVM = AutoMapperConfig<Gasto, GastoVM>.Mapear(src.SubGasto.Gasto);
-                 dest.FaturaVM = AutoMapperConfig<Fatura, FaturaVM>.Mapear(src.Fatura);
                  dest.PessoaVM = AutoMapperConfig<Pessoa, PessoaVM>.Mapear(src.Pessoa);
 
              })
@@ -126,9 +126,8 @@ namespace ControlFinWeb.App.AutoMapper
                   dest.ParcelasVM = new MapperConfiguration(cfg => cfg.CreateMap<Parcela, ParcelaVM>().AfterMap((src, dest) =>
                   {
                       dest.FormaPagamentoVM = AutoMapperConfig<FormaPagamento, FormaPagamentoVM>.Mapear(src.FormaPagamento);
-                      //dest.ContaVM = AutoMapperConfig<Conta, ContaVM>.Mapear(src.Conta);
-                      //dest.ContaId = dest.ContaVM.Id;
-
+                      dest.UsuarioCriacaoVM = AutoMapperConfig<Usuario, UsuarioVM>.Mapear(src.UsuarioCriacao);
+                      dest.UsuarioAlteracaoVM = AutoMapperConfig<Usuario, UsuarioVM>.Mapear(src.UsuarioAlteracao);
                   }))
                   .CreateMapper().Map<List<ParcelaVM>>(src.Parcelas);
 

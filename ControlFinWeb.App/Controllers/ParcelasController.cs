@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using ControlFinWeb.App.Utilitarios;
 using ControlFinWeb.App.ViewModels;
 using ControlFinWeb.Dominio.Entidades;
 using ControlFinWeb.Repositorio.Repositorios;
@@ -33,29 +34,29 @@ namespace ControlFinWeb.App.Controllers
         [HttpPost]
         public String GerarNovasParcelas(GerarParcelasVM gerarParcelasVM)
         {
-            Decimal Valor = gerarParcelasVM.ValorDigitado;
-            Int32 Qtd = gerarParcelasVM.Qtd;
-            DateTime PrimeiroVencimento = (DateTime)gerarParcelasVM.PrimeiroVencimento;
-            Boolean Replicar = gerarParcelasVM.Replicar;
-
+            Decimal valor = gerarParcelasVM.Valor;
+            Int32 qtd = gerarParcelasVM.Qtd;
+            DateTime primeiroVencimento = (DateTime)gerarParcelasVM.PrimeiroVencimento;
+            Boolean replicar = gerarParcelasVM.Replicar;
             Decimal valorParcela = 0, restante = 0;
+            Int64 numero = gerarParcelasVM.UltimoNumero;
 
-            if (Replicar)
-                valorParcela = Valor;
+            if (replicar)
+                valorParcela = valor;
             else
             {
-                valorParcela = Math.Round(Valor / Qtd, 2);
-                restante = Math.Round(Valor - (valorParcela * Qtd), 2);
+                valorParcela = Math.Round(valor / qtd, 2);
+                restante = Math.Round(valor - (valorParcela * qtd), 2);
             }
 
-            for (int i = 0; i < Qtd; i++)
+            for (int i = 1; i <= qtd; i++)
             {
-                if (restante > 0 && i == Qtd - 1)
+                if (restante > 0 && i == qtd )
                 {
                     valorParcela += restante;
                     restante = 0;
                 }
-                else if (restante < 0 && i == Qtd - 1)
+                else if (restante < 0 && i == qtd )
                 {
                     valorParcela += restante;
                     restante = 0;
@@ -63,12 +64,12 @@ namespace ControlFinWeb.App.Controllers
 
                 var novaParcela = new ParcelaVM()
                 {
-                    //Numero = parcelasVM.Count > 0 ? parcelasVM.Count + 1 : 1,
-                    ParcelaDe = $"{i + 1}/{Qtd}",
+                    Numero = numero + i,
+                    ParcelaDe = $"{i}/{qtd}",
                     ValorParcela = valorParcela,
                     ValorAberto = valorParcela,
                     ValorReajustado = valorParcela,
-                    DataVencimento = PrimeiroVencimento.AddMonths(i),
+                    DataVencimento = primeiroVencimento.AddMonths(i),
                     SituacaoParcela = Dominio.ObjetoValor.SituacaoParcela.Pendente,
                 };
 

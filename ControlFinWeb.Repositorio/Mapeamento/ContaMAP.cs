@@ -29,7 +29,6 @@ namespace ControlFinWeb.Repositorio.Mapeamentos
             ManyToOne(x => x.FormaCompra, m => m.Column("FormaCompra"));
             ManyToOne(x => x.SubGasto, m => m.Column("SubGasto"));
             ManyToOne(x => x.Pessoa, m => m.Column("Pessoa"));
-            ManyToOne(x => x.Fatura, m => m.Column("Fatura"));
             ManyToOne(x => x.UsuarioCriacao, m => m.Column("UsuarioCriacao"));
             ManyToOne(x => x.UsuarioAlteracao, m => m.Column("UsuarioAlteracao"));
             

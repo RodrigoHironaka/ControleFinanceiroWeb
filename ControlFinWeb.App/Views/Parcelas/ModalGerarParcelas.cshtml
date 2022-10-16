@@ -16,9 +16,9 @@
                 <input asp-for="JsonParcelas" class="form-control" type="hidden" />
                 <div class="row">
                     <div class="col-md-3">
-                        <label asp-for="ValorDigitado" class="control-label"></label>
-                        <input asp-for="ValorDigitado" class="form-control" style="text-align: right;" />
-                        <span asp-validation-for="ValorDigitado" class="text-danger"></span>
+                        <label asp-for="Valor" class="control-label"></label>
+                        <input asp-for="Valor" class="form-control" style="text-align: right;" />
+                        <span asp-validation-for="Valor" class="text-danger"></span>
                     </div>
                     <div class="col-md-3">
                         <label asp-for="Qtd" class="control-label"></label> <input asp-for="Replicar" class="form-check-input" type="checkbox" /><label asp-for="Replicar" class="control-label"></label>
@@ -40,7 +40,7 @@
             <div class="row">
                 <div class="col-md">
                     <br />
-                    <table class="table table-bordered table-striped table-hover table-responsive">
+                    <table class="table table-bordered table-striped table-hover table-responsive" id="tParcelasGeradas">
                         <colgroup>
                             <col style="width: 10%" />
                             <col style="width: 40%" />
@@ -64,7 +64,7 @@
             </div>
         </div>
         <div class="modal-footer">
-            <button type="button" class="w-100 btn btn-outline-success">Confirmar</button>
+            <a class="w-100 btn btn-outline-success" onclick="Confirmar()" >Confirmar</a>
         </div>
 
     </div>
@@ -102,15 +102,24 @@
                 totalValorParcela += parseFloat(item.ValorParcela);
             });
 
+            PreencherTablesParcelasRodape();
+        }
+
+        function PreencherTablesParcelasRodape() {
+            var total = 0;
+            $.each(Parcelas, function(i, item) {
+                total += parseFloat(item.ValorParcela);
+            });
+
             $('#tfootParcelasGeradas').empty();
             var rodape = "<tr>" +
                 "<td></td>" +
-                "<td><input class='form-control' style='text-align:right; font-weight: bold;' type='number' step='.01' readonly value='" + FixaDuasCasasDecimais(totalValorParcela).replace(",", ".") + "'></td>" +                
+                "<td><input class='form-control' style='text-align:right; font-weight: bold;' type='number' step='.01' readonly value='" + FixaDuasCasasDecimais(total).replace(",", ".") + "'></td>" +
                 "<td></td>" +
                 "<td></td>" +
                 "</tr>";
             tfootParcelas.innerHTML += rodape;
-        };
+        }
 
         function GerarParcelas() {
             var dados = $("#frmGerar").serialize();
@@ -144,11 +153,41 @@
                 method: 'POST',
                 data: dados,
                 success: function(jsonParcelas) {
-                    $("#JsonParcelas").val(jsonParcelas);
+                    $("#JsonParcelasGeradas").val(jsonParcelas);
                     Parcelas = JSON.parse(jsonParcelas);
                     PreencherTableParcelas(Parcelas);
                 }
             });
+        }
+
+        function ModificarParcela(element) {
+            var linha = $(element).closest('tr');
+            var valor = parseFloat(linha.find("td:eq(1) input[type='number']").val());
+            var dataVenc = new Date(linha.find("td:eq(2) input[type='date']").val());
+            var index = linha.index();
+            Parcelas[index].ValorParcela = valor;
+            Parcelas[index].ValorAberto = valor;
+            Parcelas[index].ValorReajustado = valor;
+            Parcelas[index].DataVencimento = dataVenc.toISOString().substring(0, 19);
+
+            $("#JsonParcelasGeradas").val(JSON.stringify(Parcelas));
+            PreencherTablesParcelasRodape();
+        }
+
+        function Confirmar() {
+            //var json = $("#JsonParcelasGeradas").val();
+            //$.ajax({
+            //    url: '/Parcelas/ModalGerarParcelas',
+            //    method: 'GET',
+            //    data: { json: json};
+            //    success: function(retorno) {
+            //        $("#JsonParcelas").val(retorno);
+            //        alert(retorno);
+            //    }
+
+            //});
+            return 
+            
         }
     </script>
 }

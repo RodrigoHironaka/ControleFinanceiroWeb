@@ -7,7 +7,7 @@ namespace ControlFinWeb.App.ViewModels
     public class GerarParcelasVM
     {
         [DisplayName("Valor")]
-        public Decimal ValorDigitado { get; set; }
+        public Decimal Valor { get; set; }
 
         public Int32 Qtd { get; set; }
 
@@ -18,5 +18,7 @@ namespace ControlFinWeb.App.ViewModels
         public Boolean Replicar { get; set; }
 
         public String JsonParcelas { get; set; }
+
+        public Int32 UltimoNumero { get; set; }
     }
 }

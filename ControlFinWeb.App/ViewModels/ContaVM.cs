@@ -52,17 +52,13 @@ namespace ControlFinWeb.App.ViewModels
         public Int64 SubGastoId { get; set; }
         public SubGastoVM SubGastoVM { get; set; }
 
-        [DisplayName("Fatura")]
-        public Int64 FaturaId { get; set; }
-        public FaturaVM FaturaVM { get; set; }
-
         [DisplayName("Pessoa")]
         public Int64 PessoaId { get; set; }
         public PessoaVM PessoaVM { get; set; }
 
         #endregion
 
-        public String JsonParcelas { get; set; }
+        
         public IList<ParcelaVM> ParcelasVM { get; set; }
         public IList<ArquivoVM> ArquivosVM { get; set; }
 
@@ -117,6 +113,7 @@ namespace ControlFinWeb.App.ViewModels
         #endregion
 
         #region Campos Gerar Parcelas
+        public String JsonParcelas { get; set; }
 
         [DisplayName("Valor")]
         public Decimal Valor { get; set; }
@@ -125,6 +122,10 @@ namespace ControlFinWeb.App.ViewModels
 
         [DisplayName("1º Vencimento")]
         public DateTime? PrimeiroVencimento { get; set; }
+
+        public Boolean Replicar { get; set; }
+
+        public Int32 UltimoNumero { get; set; }
         #endregion
     }
 }
