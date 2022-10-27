@@ -35,7 +35,7 @@ namespace ControlFinWeb.App.ViewModels
         public Decimal JurosPorcentual { get; set; }
 
         [DisplayName("Juros(R$)")]
-        public Decimal? JurosValor { get; set; }
+        public Decimal JurosValor { get; set; }
 
         [DisplayName("Desconto(%)")]
         public Decimal DescontoPorcentual { get; set; }
@@ -69,6 +69,10 @@ namespace ControlFinWeb.App.ViewModels
         [DisplayName("Fatura")]
         public Int64 FaturaId { get; set; }
         public FaturaVM FaturaVM { get; set; }
+
+        [DisplayName("Banco")]
+        public Int64 BancoId { get; set; }
+        public BancoVM BancoVM { get; set; }
 
         public DateTime DataGeracao { get; set; }
         public DateTime? DataAlteracao { get; set; }

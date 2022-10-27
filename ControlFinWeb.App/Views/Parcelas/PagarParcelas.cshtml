@@ -1,0 +1,197 @@
+﻿@model ControlFinWeb.App.ViewModels.PagarParcelaVM
+
+@{
+    ViewData["Title"] = "PagarParcelas";
+}
+
+<div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="text-black">PAGAR PARCELA(S)</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <fieldset id=fsPagarParcela>
+            <div class="modal-body">
+                <form asp-action="ConParcelas" id="FrmPagarParcela">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label asp-for="ValorAPagar" class="control-label"></label>
+                            <input asp-for="ValorAPagar" class="form-control" style="text-align:right; font-weight:bold;" readonly />
+                            <span asp-validation-for="ValorAPagar" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="DataPagamento" class="control-label"></label>
+                            <input asp-for="DataPagamento" class="form-control" type="date" style="text-align:right" />
+                            <span asp-validation-for="DataPagamento" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-3">
+                            <label asp-for="JurosPorcentual" class="control-label"></label>
+                            <input asp-for="JurosPorcentual" id="JurosPorcentualPagamento" onblur="AtualizaPorcentagemParaValor()" class="form-control" style="text-align:right" />
+                            <span asp-validation-for="JurosPorcentual" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-3">
+                            <label asp-for="JurosValor" class="control-label"></label>
+                            <input asp-for="JurosValor" id="JurosValorPagamento" onblur="AtualizarValorReajustado()" class="form-control" style="text-align:right" />
+                            <span asp-validation-for="JurosValor" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-3">
+                            <label asp-for="DescontoPorcentual" class="control-label"></label>
+                            <input asp-for="DescontoPorcentual" id="DescontoPorcentualPagamento" onblur="AtualizaPorcentagemParaValor()" class="form-control" style="text-align:right" />
+                            <span asp-validation-for="DescontoPorcentual" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-3">
+                            <label asp-for="DescontoValor" class="control-label"></label>
+                            <input asp-for="DescontoValor" id="DescontoValorPagamento" onblur="AtualizarValorReajustado()" class="form-control" style="text-align:right" />
+                            <span asp-validation-for="DescontoValor" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <label asp-for="ValorReajustado" class="control-label"></label>
+                            <input asp-for="ValorReajustado" id="ValorReajustadoPagamento" class="form-control" style="text-align:right; font-weight:bold;" readonly />
+                            <span asp-validation-for="ValorReajustado" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-4">
+                            <label asp-for="ValorPago" class="control-label"></label>
+                            <input asp-for="ValorPago" id="ValorPagoPagamento" onblur="AtualizaValorRestante()" class="form-control" style="text-align:right" />
+                            <span asp-validation-for="ValorPago" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-4">
+                            <label asp-for="ValorRestante" class="control-label"> Valor Restante</label>
+                            <input asp-for="ValorRestante" id="ValorRestantePagamento" class="form-control" style="text-align:right" readonly />
+                            <span asp-validation-for="ValorRestante" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <label asp-for="FormaPagamentoId" class="control-label">Forma Pagamento</label>
+                            <select asp-for="FormaPagamentoId" onchange="VerificarDebitoAutomatico()" class="form-select" asp-items="ViewBag.FormaPagamentoId">
+                                <option value="0">---Selecione um item---</option>
+                            </select>
+                            <span asp-validation-for="FormaPagamentoId" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="row rowBancoId" id="rowBancoId" style="display: none;">
+                        <div class="col-md-12">
+                            <label asp-for="BancoId" class="control-label"></label>
+                            <select asp-for="BancoId" class="form-select" asp-items="ViewBag.BancoId">
+                                <option value="0">---Selecione um item---</option>
+                            </select>
+                            <span asp-validation-for="BancoId" class="text-danger"></span>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <input type="button" value="Pagar" id="btnConfirmarPagamento" class="w-100 btn btn-outline-success btnConfirmarPagamento" />
+            </div>
+        </fieldset>
+    </div>
+</div>
+
+@{
+    await Html.RenderPartialAsync("_ValidationScriptsPartial");
+}
+
+<script>
+    $(function() {
+        $("#ValorPagarPagamento, #ValorRestantePagamento, #JurosPorcentualPagamento, #JurosValorPagamento, #DescontoPorcentualPagamento, #DescontoValorPagamento, #ValorPagoPagamento, #ValorRestantePagamento").maskMoney({ thousands: '', decimal: ',', allowZero: true });
+
+        $("#btnConfirmarPagamento").click(function() {
+
+            var dados = $("#FrmPagarParcela").serialize();
+            $.ajax({
+                url: '/Parcelas/PagarParcelas',
+                method: 'POST',
+                data: dados,
+                success: function(retorno) {
+                    if (retorno == "")
+                        $("#modal").modal("hide");
+                    else {
+                        $("#modal").html(retorno);
+                    }
+                }
+
+            });
+        });
+
+    });
+
+    function VerificarDebitoAutomatico() {
+        var idFormaPagamento = document.getElementById("FormaPagamentoId");
+        var url = `/FormaPagamentoDebito/${idFormaPagamento.value}`;
+        var xhr = new XMLHttpRequest(); //xhr = XML http Request
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState == XMLHttpRequest.DONE) {
+                if (xhr.responseText == "true") {
+                    $('#rowBancoId').css('display', 'block');
+                } else {
+                    $('#rowBancoId').css('display', 'none');
+                }
+            }
+        }
+        xhr.open('GET', url, false);
+        xhr.send(null);
+    }
+
+    function FixaDuasCasasDecimais(num) {
+        return parseFloat(Math.round(num * 100) / 100).toFixed(2);
+    };
+
+    function AtualizarValorReajustado() {
+
+        var valor = parseFloat($('#ValorAPagar').val().replace(",", "."));
+        var jurosValor = parseFloat($('#JurosValorPagamento').val().replace(",", "."));
+        var descontoValor = parseFloat($('#DescontoValorPagamento').val().replace(",", "."));
+        var valorPago = parseFloat($('#ValorPagoPagamento').val().replace(",", "."));
+        var calculoValorReajustado = (valor + jurosValor) - descontoValor;
+
+        $('#JurosPorcentualPagamento').val(FixaDuasCasasDecimais(ValorParaPorcentagem(jurosValor, valor)).toString().replace(".", ","));
+        $('#DescontoPorcentualPagamento').val(FixaDuasCasasDecimais(ValorParaPorcentagem(descontoValor, valor)).toString().replace(".", ","));
+        $('#ValorReajustadoPagamento').val(FixaDuasCasasDecimais(calculoValorReajustado).toString().replace(".", ","));
+
+    }
+
+    function AtualizaPorcentagemParaValor() {
+        var valor = parseFloat($('#ValorAPagar').val().replace(",", "."));
+        var jurosPorcentagem = parseFloat($('#JurosPorcentualPagamento').val().replace(",", "."));
+        var descontoPorcentagem = parseFloat($('#DescontoPorcentualPagamento').val().replace(",", "."));
+
+        $("#JurosValorPagamento").val(FixaDuasCasasDecimais(PorcentagemParaValor(jurosPorcentagem, valor)).toString().replace(".", ","));
+        $('#DescontoValorPagamento').val(FixaDuasCasasDecimais(PorcentagemParaValor(descontoPorcentagem, valor)).toString().replace(".", ","));
+
+        AtualizaValorRestante();
+    }
+
+    function PorcentagemParaValor(valorPorcentagem, valorParcela) {
+        var valorParcela = parseFloat(valorParcela);
+        var porcentagem = parseFloat(valorPorcentagem);
+        return (valorParcela * porcentagem) / 100;
+    }
+
+    function ValorParaPorcentagem(valorDinheiro, valorParcela) {
+        var valorParcela = parseFloat(valorParcela);
+        var valor = parseFloat(valorDinheiro);
+        return (valor * 100) / valorParcela;
+    }
+
+    function AtualizaValorRestante() {
+        AtualizarValorReajustado();
+        var valorReajustado = parseFloat($('#ValorReajustadoPagamento').val().replace(",", "."));
+        var valorPago = parseFloat($('#ValorPagoPagamento').val().replace(",", "."));
+        if (FixaDuasCasasDecimais(valorPago) < FixaDuasCasasDecimais(valorReajustado)) {
+            var restante = valorReajustado - valorPago;
+            $("#ValorRestantePagamento").val(FixaDuasCasasDecimais(restante).toString().replace(".", ","));
+        } else if (FixaDuasCasasDecimais(valorPago) > FixaDuasCasasDecimais(valorReajustado)) {
+            $("[data-valmsg-for=ValorPago]").html('Valor Inválido');
+            $("#ValorRestantePagamento").val("0,00");
+            $('#ValorPagoPagamento').focus();
+        } else {
+            $("#ValorRestantePagamento").val("0,00");
+        }
+    }
+</script>
+

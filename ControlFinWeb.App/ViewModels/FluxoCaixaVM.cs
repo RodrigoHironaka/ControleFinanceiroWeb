@@ -22,7 +22,16 @@ namespace ControlFinWeb.App.ViewModels
         [DisplayName("Tipo")]
         public DebitoCredito DebitoCredito { get; set; }
 
+        #region Associações
 
+        public Int64 FormaPagamentoId { get; set; }
+        public FormaPagamentoVM FormaPagamentoVM{ get; set; }
+        public Int64 ParcelaId { get; set; }
+        public ParcelaVM ParcelaVM { get; set; }
 
+        public Int64 CaixaId { get; set; }
+        public CaixaVM CaixaVM { get; set; }
+
+        #endregion
     }
 }

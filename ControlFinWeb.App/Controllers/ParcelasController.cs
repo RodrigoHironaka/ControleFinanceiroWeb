@@ -1,22 +1,28 @@
-﻿using AutoMapper;
+﻿using App1.Repositorio.Configuracao;
+using AutoMapper;
 using ControlFinWeb.App.Utilitarios;
 using ControlFinWeb.App.ViewModels;
 using ControlFinWeb.Dominio.Entidades;
+using ControlFinWeb.Dominio.ObjetoValor;
 using ControlFinWeb.Repositorio.Repositorios;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace ControlFinWeb.App.Controllers
 {
     public class ParcelasController : Controller
     {
         private readonly RepositorioParcela Repositorio;
+        private readonly RepositorioFormaPagamento RepositorioFormaPagamento;
         private readonly IMapper Mapper;
-        public ParcelasController(RepositorioParcela repositorio, IMapper mapper)
+        public ParcelasController(RepositorioParcela repositorio, RepositorioFormaPagamento repositorioFormaPagamento, IMapper mapper)
         {
             Repositorio = repositorio;
+            RepositorioFormaPagamento = repositorioFormaPagamento;
             Mapper = mapper;
         }
 
@@ -25,6 +31,7 @@ namespace ControlFinWeb.App.Controllers
         IList<Parcela> parcelas = new List<Parcela>();
         IList<ParcelaVM> parcelasVM = new List<ParcelaVM>();
         GerarParcelasVM gerarParcelasVM = new GerarParcelasVM();
+        PagarParcelaVM pagarParcelaVM = new PagarParcelaVM();
 
         public IActionResult ModalGerarParcelas()
         {
@@ -79,5 +86,50 @@ namespace ControlFinWeb.App.Controllers
             var novasParcelas = JsonConvert.SerializeObject(parcelasVM);
             return novasParcelas;
         }
+
+        public IActionResult PagarParcelas(List<Int64> ids)
+        {
+            if (ids.Count <= 0)
+                return new EmptyResult();
+
+            var parcelas = new List<Parcela>();
+            foreach (var id in ids)
+                parcelas.Add(Repositorio.ObterPorId(id));
+
+            pagarParcelaVM.ValorAPagar = parcelas.Sum(x => x.ValorAberto);
+            pagarParcelaVM.ValorReajustado = parcelas.Sum(x => x.ValorAberto);
+            pagarParcelaVM.DataPagamento = DateTime.Now;
+            pagarParcelaVM.JurosValor = parcelas.Sum(x => x.JurosValor);
+            pagarParcelaVM.JurosPorcentual = parcelas.Sum(x => x.JurosPorcentual);
+            pagarParcelaVM.DescontoValor = parcelas.Sum(x => x.DescontoValor);
+            pagarParcelaVM.DescontoPorcentual = parcelas.Sum(x => x.DescontoPorcentual);
+            pagarParcelaVM.ValorPago = parcelas.Sum(x => x.ValorPago);
+            pagarParcelaVM.ParcelasVM = Mapper.Map<List<ParcelaVM>>(parcelas);
+
+            ViewBag.FormaPagamentoId = new SelectList(new RepositorioFormaPagamento(NHibernateHelper.ObterSessao()).ObterPorParametros(x => x.Situacao == Situacao.Ativo), "Id", "Nome");
+            ViewBag.BancoId = new SelectList(new RepositorioBanco(NHibernateHelper.ObterSessao()).ObterPorParametros(x => x.Situacao == Situacao.Ativo), "Id", "DadosCompletos");
+            return PartialView(pagarParcelaVM);
+        }
+
+        [HttpPost]
+        public IActionResult PagarParcelas(PagarParcelaVM pagarParcelaVM)
+        {
+            if (ModelState.IsValid)
+            {
+                return new EmptyResult();
+            }
+
+            ViewBag.FormaPagamentoId = new SelectList(new RepositorioFormaPagamento(NHibernateHelper.ObterSessao()).ObterPorParametros(x => x.Situacao == Situacao.Ativo), "Id", "Nome");
+            ViewBag.BancoId = new SelectList(new RepositorioBanco(NHibernateHelper.ObterSessao()).ObterPorParametros(x => x.Situacao == Situacao.Ativo), "Id", "DadosCompletos");
+            return PartialView(pagarParcelaVM);
+            
+        }
+
+        [HttpGet("FormaPagamentoDebito/{idFormaPagamento}")]
+        public bool FormaPagamentoDebito(int idFormaPagamento)
+        {
+            return RepositorioFormaPagamento.ObterPorId(idFormaPagamento).DebitoAutomatico;
+        }
+
     }
 }

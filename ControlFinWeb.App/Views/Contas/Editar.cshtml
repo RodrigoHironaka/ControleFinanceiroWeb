@@ -104,7 +104,7 @@
                             <div class="col-md-6">
                                 <div class="btn-group" role="group">
                                     <button type="button" class="btn btn-dark" onclick="ModalGerarParcelas()">Gerar</button>
-                                    <button type="button" class="btn btn-secondary">Pagar</button>
+                                    <button type="button" class="btn btn-secondary pagar">Pagar</button>
                                     <button type="button" class="btn btn-dark" onclick="RemoverParcelas()">Excluir</button>
                                     <div class="px-2">
                                         <select id="filtroParcelas" asp-items="Html.GetEnumSelectList<SituacaoParcela>()" multiple="multiple"></select>
@@ -189,8 +189,7 @@
     </div>
 </div>
 
-@*
-<div id="modal-Gerar" class="modal fade" role="dialog" data-bs-backdrop="static" data-bs-keyboard="false"></div>*@
+<div id="modal" class="modal fade" aria-hidden="true" role="dialog" data-bs-backdrop="static" data-bs-keyboard="false"></div>
 
 <!--Modal Gerar Parcelas-->
 <div class="modal fade modal-gerarParcelas" id="modal-gerarParcelas" tabindex="-1" aria-hidden="true" role="dialog" data-bs-backdrop="static" data-bs-keyboard="false">
@@ -282,7 +281,6 @@
                 }
             });
 
-            // $(".form-check-input").click(function() { FiltroSituacao(); })
         });
 
         function FixaDuasCasasDecimais(num) {
@@ -455,7 +453,7 @@
             Parcelas[index].DescontoPorcentagem = descontoPorc;
             Parcelas[index].DataAlteracao = dataIso;
             Parcelas[index].UsuarioAlteracaoId = @Configuracao.Usuario.Id;
-   
+
             $("#JsonParcelas").val(JSON.stringify(Parcelas));
             FiltroSituacao();
         }
@@ -573,6 +571,40 @@
             });
         }
 
+        $(function() {
+            var ids = new Array();
+            $(".pagar").click(function() {
+                var trs = $("tbody input:checked").closest("tr"); //pega no tr os elementos que estão checados
+                var numerosParcelasSelecionadas = $.map(trs, function(tr) { return $(tr).find('.numeroParcela').val(); });
+                ids = [];
+                if (numerosParcelasSelecionadas.length > 0) {
+                    $.each(numerosParcelasSelecionadas, function(i, value) {
+                        var parcelaVerificar = Parcelas.find(x => x.Numero == value);
+                        if (parcelaVerificar.SituacaoParcela > 2) {
+                            $("#alertParcelas").addClass("alert alert-danger").css('display', 'block').html('Parcelas pagas ou canceladas foram selecionadas. Por favor verifique!');
+                            return false;
+                        }
+                        else {
+                            ids.push(parcelaVerificar.Id);
+                        }
+                    });
+                    
+                    var urlIds = ids.map((item) => {return "ids="+item })
 
+                    $.ajax({
+                        method: "GET",
+                        url: "/Parcelas/PagarParcelas?"+urlIds.join("&"),
+                        success: function(result) {
+                            if(result != ""){
+                                $("#modal").html(result);
+                                $("#modal").modal("show");
+                            }
+                        },
+                    });
+                } else {
+                    $("#alertParcelas").addClass("alert alert-danger").css('display', 'block').html('Nenhuma parcela selecionada!').delay(30000).fadeOut(400);;
+                }
+            });
+        });
     </script>
  }

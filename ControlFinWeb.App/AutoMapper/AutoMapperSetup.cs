@@ -19,6 +19,7 @@ namespace ControlFinWeb.App.AutoMapper
             CreateMap<FormaPagamentoVM, FormaPagamento>();
             CreateMap<GastoVM, Gasto>();
             CreateMap<RendaVM, Renda>();
+            CreateMap<ParcelaVM, Parcela>();
             CreateMap<SubGastoVM, SubGasto>()
                 .AfterMap((src, dest) => { dest.Gasto = new Gasto { Id = src.GastoId }; }); //outro exemplo: .ForPath(dest => dest.Gasto.Id, m =>  m.MapFrom(src => src.GastoId));
             CreateMap<PessoaVM, Pessoa>().AfterMap((src, dest) =>
@@ -86,6 +87,7 @@ namespace ControlFinWeb.App.AutoMapper
             CreateMap<FormaPagamento, FormaPagamentoVM>();
             CreateMap<Gasto, GastoVM>();
             CreateMap<Renda, RendaVM>();
+            CreateMap<Parcela, ParcelaVM>();
             CreateMap<SubGasto, SubGastoVM>()
                 .AfterMap((src, dest) =>
                 {
