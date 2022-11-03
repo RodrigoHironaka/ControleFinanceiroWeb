@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace ControlFinWeb.App.Controllers
 {
@@ -26,9 +27,10 @@ namespace ControlFinWeb.App.Controllers
 
         public IActionResult Index()
         {
-            IEnumerable<Caixa> caixas = Repositorio.ObterTodos();
-            List<CaixaVM> caixasVM = Mapper.Map<List<CaixaVM>>(caixas);
-            return View(caixasVM);
+            var caixa = Repositorio.ObterCaixaAberto(Configuracao.Usuario.Id);
+            if(caixa != null)
+                caixaVM = Mapper.Map(caixa, caixaVM);
+            return View(caixaVM);
         }
 
         public IActionResult Editar(Int64 Id = 0)
@@ -36,7 +38,7 @@ namespace ControlFinWeb.App.Controllers
             if (Id > 0)
             {
                 caixa = Repositorio.ObterPorId(Id);
-                caixaVM = Mapper.Map<CaixaVM>(caixa);
+                caixaVM = Mapper.Map(caixa, caixaVM);
             }
 
             return View(caixaVM);
@@ -53,16 +55,19 @@ namespace ControlFinWeb.App.Controllers
                     caixa = Repositorio.ObterPorId(caixaVM.Id);
                     caixa = Mapper.Map(caixaVM, caixa);
                     caixa.UsuarioAlteracao = Configuracao.Usuario;
+                    caixa.Situacao = Dominio.ObjetoValor.SituacaoCaixa.Fechado;
                     Repositorio.Alterar(caixa);
                 }
                 else
                 {
                     caixa = Mapper.Map(caixaVM, caixa);
+                    caixa.Codigo = Repositorio.RetornaUltimoCodigo() + 1;
                     caixa.UsuarioCriacao = Configuracao.Usuario;
-                    Repositorio.Salvar(caixa);
+                    Repositorio.SalvarCaixa(caixa, Configuracao.Usuario);
+                    //Repositorio.Salvar(caixa);
                 }
 
-                return new EmptyResult();
+                return RedirectToAction("Index");
             }
             return View(caixaVM);
         }
@@ -74,6 +79,5 @@ namespace ControlFinWeb.App.Controllers
             Repositorio.Excluir(caixa);
             return Json(caixa.Id + "excluído com sucesso");
         }
-
     }
 }

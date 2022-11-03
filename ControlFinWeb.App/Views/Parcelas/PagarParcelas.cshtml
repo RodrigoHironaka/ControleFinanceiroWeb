@@ -12,8 +12,9 @@
         </div>
         <fieldset id=fsPagarParcela>
             <div class="modal-body">
-                <form asp-action="ConParcelas" id="FrmPagarParcela">
+                <form id="FrmPagarParcela">
                     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <input asp-for="JsonParcelasPagar" type="hidden" />
                     <div class="row">
                         <div class="col-md-6">
                             <label asp-for="ValorAPagar" class="control-label"></label>
@@ -108,13 +109,16 @@
                 method: 'POST',
                 data: dados,
                 success: function(retorno) {
-                    if (retorno == "")
+                    if (retorno == "") {
                         $("#modal").modal("hide");
+                        location.reload();
+                        //$("#alertParcelas").addClass("alert alert-success").css('display', 'block').html('Parcela(s) paga(s) com sucesso!');
+                    }
                     else {
                         $("#modal").html(retorno);
                     }
                 }
-
+                
             });
         });
 
@@ -179,18 +183,22 @@
     }
 
     function AtualizaValorRestante() {
-        AtualizarValorReajustado();
+        //AtualizarValorReajustado();
+
         var valorReajustado = parseFloat($('#ValorReajustadoPagamento').val().replace(",", "."));
         var valorPago = parseFloat($('#ValorPagoPagamento').val().replace(",", "."));
-        if (FixaDuasCasasDecimais(valorPago) < FixaDuasCasasDecimais(valorReajustado)) {
+
+        if (valorReajustado > valorPago) {
             var restante = valorReajustado - valorPago;
             $("#ValorRestantePagamento").val(FixaDuasCasasDecimais(restante).toString().replace(".", ","));
-        } else if (FixaDuasCasasDecimais(valorPago) > FixaDuasCasasDecimais(valorReajustado)) {
+            $("[data-valmsg-for=ValorPago]").html('');
+        } else if (valorReajustado < valorPago) {
             $("[data-valmsg-for=ValorPago]").html('Valor Inválido');
             $("#ValorRestantePagamento").val("0,00");
             $('#ValorPagoPagamento').focus();
         } else {
             $("#ValorRestantePagamento").val("0,00");
+            $("[data-valmsg-for=ValorPago]").html('');
         }
     }
 </script>

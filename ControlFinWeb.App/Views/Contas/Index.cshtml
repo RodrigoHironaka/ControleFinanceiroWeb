@@ -5,7 +5,7 @@
     ViewData["Title"] = "Contas";
 }
 
-<div >
+<div>
     <div class="row">
         <div class="input-group mb-3">
             <div class="input-group-prepend">
@@ -23,7 +23,7 @@
                 <th>Descrição</th>
                 <th style="text-align:right">Qtd</th>
                 <th style="text-align:right">Total Parcelas</th>
-               <th style="text-align:right">Total Reajustado</th>
+                <th style="text-align:right">Total Reajustado</th>
                 <th style="text-align:right">Total Aberto</th>
                 <th style="text-align:right">Situação</th>
                 <th></th>
@@ -36,7 +36,7 @@
                     <td style="text-align:center">
                         @Html.DisplayFor(modelItem => item.TipoConta)
                     </td>
-                     <td style="text-align:center">
+                    <td style="text-align:center">
                         @Html.Raw(item.DataEmissao.Value.ToShortDateString())
                     </td>
                     <td>

@@ -3,6 +3,7 @@ using LinqKit;
 using NHibernate;
 using NHibernate.Criterion;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using Expression = NHibernate.Criterion.Expression;
@@ -47,6 +48,15 @@ namespace ControlFinWeb.Repositorio.Repositorios
             Session.Save(entidade);
         }
 
+        public void SalvarLote(IList<T> entidades)
+        {
+            foreach (var entidade in entidades)
+            {
+                entidade.DataGeracao = DateTime.Now;
+                Session.Save(entidade);
+            }
+        }
+
         public void Alterar(T entidade)
         {
             using (var trans = Session.BeginTransaction())
@@ -69,6 +79,14 @@ namespace ControlFinWeb.Repositorio.Repositorios
         {
             entidade.DataAlteracao = DateTime.Now;
             Session.Merge<T>(entidade);
+        }
+        public void AlterarLote(IList<T> entidades)
+        {
+            foreach (var entidade in entidades)
+            {
+                entidade.DataAlteracao = DateTime.Now;
+                Session.Merge<T>(entidade);
+            }
         }
 
         public void Excluir(T entidade)

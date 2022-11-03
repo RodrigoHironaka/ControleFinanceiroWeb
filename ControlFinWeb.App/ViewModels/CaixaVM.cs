@@ -19,28 +19,31 @@ namespace ControlFinWeb.App.ViewModels
 
         [DisplayName("Situação")]
         public virtual SituacaoCaixa Situacao { get; set; }
-        
+
+        [DisplayName("Data Abertura")]
+        public virtual DateTime DataGeracao { get; set; }
+
         public virtual IList<FluxoCaixaVM> FluxosCaixaVM { get; set; }
 
         public virtual Decimal TotalDebito //saída
         {
             get
             {
-                return FluxosCaixaVM.Where(x => x.DebitoCredito == DebitoCredito.Débito).Select(x => x.Valor).Sum();
+                return FluxosCaixaVM != null ? FluxosCaixaVM.Where(x => x.DebitoCredito == DebitoCredito.Débito).Select(x => x.Valor).Sum() : 0;
             }
         }
         public virtual Decimal TotalCredito //Entrada
         {
             get
             {
-                return FluxosCaixaVM.Where(x => x.DebitoCredito == DebitoCredito.Crédito).Select(x => x.Valor).Sum();
+                return FluxosCaixaVM != null ? FluxosCaixaVM.Where(x => x.DebitoCredito == DebitoCredito.Crédito).Select(x => x.Valor).Sum() : 0;
             }
         }
         public virtual Decimal BalancoFinal
         {
             get
             {
-                return ValorInicial + TotalCredito - TotalDebito;
+                return TotalCredito - TotalDebito;
             }
         }
 

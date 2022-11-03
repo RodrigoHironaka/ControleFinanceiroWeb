@@ -1,0 +1,76 @@
+﻿@model ControlFinWeb.App.ViewModels.CaixaVM
+
+@{
+    ViewData["Title"] = Model.Id > 0 ? "Fechar Caixa" : "Abrir Caixa";
+}
+
+<div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title"></h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="javascript:window.location.reload()"></button>
+        </div>
+        <div class="modal-body">
+            <form asp-action="Editar">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input asp-for="Id" class="form-control" type="hidden" />
+                <input asp-for="DataGeracao" class="form-control" type="hidden" />
+                <input asp-for="FluxosCaixaVM" class="form-control" type="hidden" />
+                <div class="row">
+                    <div class="col-md-4">
+                        <label asp-for="Codigo" class="control-label"></label>
+                        <input asp-for="Codigo" class="form-control" disabled />
+                        <span asp-validation-for="Codigo" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-4">
+                        <label asp-for="Situacao" class="control-label"></label>
+                        <input asp-for="Situacao" class="form-control" disabled />
+                        <span asp-validation-for="Situacao" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-4">
+                        <label asp-for="ValorInicial" class="control-label"></label>
+                        <input asp-for="ValorInicial" class="form-control" style="text-align:right" />
+                        <span asp-validation-for="ValorInicial" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4">
+                        <label asp-for="TotalDebito" class="control-label"></label>
+                        <input asp-for="TotalDebito" class="form-control" style="text-align:right" disabled />
+                        <span asp-validation-for="TotalDebito" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-4">
+                        <label asp-for="TotalCredito" class="control-label"></label>
+                        <input asp-for="TotalCredito" class="form-control" style="text-align:right" disabled />
+                        <span asp-validation-for="TotalCredito" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-4">
+                        <label asp-for="BalancoFinal" class="control-label"></label>
+                        <input asp-for="BalancoFinal" class="form-control" style="text-align:right" disabled />
+                        <span asp-validation-for="BalancoFinal" class="text-danger"></span>
+                    </div>
+                </div>
+                <br />
+                <div class="form-group">
+                    <input type="submit" value="Salvar" class="w-100 btn btn-outline-success" />
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script type="text/javascript">
+        $(function() {
+            $("#ValorInicial").maskMoney({ thousands: '', decimal: ',', allowZero: true });
+        });
+
+        $(document).ready(function() {
+            $("#ValorInicial").focus();
+        });
+    </script>
+
+}

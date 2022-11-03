@@ -13,7 +13,7 @@ namespace ControlFinWeb.Dominio.Entidades
         }
        
         public virtual Decimal Valor { get; set; }
-        public virtual DebitoCredito DebitoCredito { get; set; }
+        public virtual DebitoCredito DebitoCredito { get; set; } //Debito = Pagamento | credito = Recebimento
         public virtual FormaPagamento FormaPagamento { get; set; }
         public virtual Parcela Parcela { get; set; }
         public virtual Caixa Caixa { get; set; }

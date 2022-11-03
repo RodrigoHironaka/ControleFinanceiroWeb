@@ -15,7 +15,6 @@
         <span class="input-group-text fw-bold">Conta @Model.Nome</span>
     </div>
 </div>
-
 <div class="row">
     <div>
         <form asp-action="Editar" id="FrmConta" class="center">
@@ -580,7 +579,11 @@
                 if (numerosParcelasSelecionadas.length > 0) {
                     $.each(numerosParcelasSelecionadas, function(i, value) {
                         var parcelaVerificar = Parcelas.find(x => x.Numero == value);
-                        if (parcelaVerificar.SituacaoParcela > 2) {
+                        if (parcelaVerificar.Id <= 0) {
+                            $("#alertParcelas").addClass("alert alert-danger").css('display', 'block').html('Salve a conta antes de efetuar o pagamento!');
+                            return false;
+                        }
+                        else if (parcelaVerificar.SituacaoParcela > 2) {
                             $("#alertParcelas").addClass("alert alert-danger").css('display', 'block').html('Parcelas pagas ou canceladas foram selecionadas. Por favor verifique!');
                             return false;
                         }
@@ -588,14 +591,14 @@
                             ids.push(parcelaVerificar.Id);
                         }
                     });
-                    
-                    var urlIds = ids.map((item) => {return "ids="+item })
+
+                    var urlIds = ids.map((item) => { return "ids=" + item })
 
                     $.ajax({
                         method: "GET",
-                        url: "/Parcelas/PagarParcelas?"+urlIds.join("&"),
+                        url: "/Parcelas/PagarParcelas?" + urlIds.join("&"),
                         success: function(result) {
-                            if(result != ""){
+                            if (result != "") {
                                 $("#modal").html(result);
                                 $("#modal").modal("show");
                             }

@@ -27,6 +27,13 @@ namespace ControlFinWeb.Dominio.Entidades
         public virtual IList<Parcela> Parcelas { get; set; }
         public virtual IList<Arquivo> Arquivos { get; set; }
 
+        public virtual String DescricaoCompleta
+        {
+            get
+            {
+                return $"{Nome} [{Codigo}]";
+            }
+        }
 
         //public virtual Decimal? ValorTotalConta { get; set; }
         //public virtual Int64? QtdTotalParcelas { get; set; }

@@ -22,6 +22,9 @@ namespace ControlFinWeb.App.ViewModels
         [DisplayName("Tipo")]
         public DebitoCredito DebitoCredito { get; set; }
 
+        [DisplayName("Data Criação")]
+        public virtual DateTime DataGeracao { get; set; }
+
         #region Associações
 
         public Int64 FormaPagamentoId { get; set; }

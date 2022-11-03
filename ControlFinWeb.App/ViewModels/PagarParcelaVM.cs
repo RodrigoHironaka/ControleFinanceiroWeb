@@ -48,6 +48,6 @@ namespace ControlFinWeb.App.ViewModels
         public Int64 BancoId { get; set; }
         public BancoVM BancoVM { get; set; }
 
-        public List<ParcelaVM> ParcelasVM { get; set; }
+        public String JsonParcelasPagar { get; set; }
     }
 }

@@ -3,13 +3,20 @@ using ControlFinWeb.Dominio.Entidades;
 using ControlFinWeb.Dominio.ObjetoValor;
 using NHibernate;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace ControlFinWeb.Repositorio.Repositorios
 {
     public class RepositorioParcela : RepositorioBase<Parcela>
     {
-        public RepositorioParcela(ISession session) : base(session) { }
+        private readonly RepositorioFluxoCaixa RepositorioFluxoCaixa;
+        private readonly RepositorioCaixa RepositorioCaixa;
+        public RepositorioParcela(ISession session, RepositorioFluxoCaixa repositorioFluxoCaixa, RepositorioCaixa repositorioCaixa) : base(session)
+        {
+            RepositorioFluxoCaixa = repositorioFluxoCaixa;
+            RepositorioCaixa = repositorioCaixa;
+        }
 
         public void AdicionarNovaParcela(Decimal valor, DateTime? dataVencimento, Usuario usuario, Conta conta = null, Fatura fatura = null)
         {
@@ -43,6 +50,35 @@ namespace ControlFinWeb.Repositorio.Repositorios
 
                 AlterarLote(existeParcela);
             }
+        }
+
+        public void PagamentoParcela(IList<Parcela> parcelas, Usuario usuario)
+        {
+            if(parcelas == null)
+                throw new ArgumentException("Nenhuma parcela para pagar!");
+
+            using (var trans = Session.BeginTransaction())
+            {
+                try
+                {
+                    AlterarLote(parcelas);
+                    var caixa = RepositorioCaixa.ObterCaixaAberto(usuario.Id);
+                    if (caixa == null)
+                        throw new ArgumentException("Nenhum caixa aberto!");
+
+                    RepositorioFluxoCaixa.GerarFluxoCaixa(parcelas, usuario, caixa);
+                    //log aqui
+
+                    trans.Commit();
+                }
+                catch (Exception ex)
+                {
+                    trans.Rollback();
+                    throw new Exception(ex.ToString());
+                }
+            }
+            
+
         }
     }
 }

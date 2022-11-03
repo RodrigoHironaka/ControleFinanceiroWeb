@@ -19,7 +19,15 @@ namespace ControlFinWeb.App.AutoMapper
             CreateMap<FormaPagamentoVM, FormaPagamento>();
             CreateMap<GastoVM, Gasto>();
             CreateMap<RendaVM, Renda>();
-            CreateMap<ParcelaVM, Parcela>();
+            CreateMap<ParcelaVM, Parcela>()
+                .AfterMap((src, dest) =>
+                {
+                    dest.UsuarioCriacao = new Usuario { Id = src.UsuarioCriacaoId };
+                    dest.UsuarioAlteracao = src.UsuarioAlteracaoId > 0 ? new Usuario { Id = src.UsuarioAlteracaoId } : null;
+                    dest.FormaPagamento = src.FormaPagamentoId > 0 ? new FormaPagamento { Id = src.FormaPagamentoId } : null;
+                    dest.Conta = src.ContaId > 0 ? new Conta { Id = src.ContaId } : null;
+                    dest.Fatura = src.FaturaId > 0 ? new Fatura { Id = src.FaturaId } : null;
+                });
             CreateMap<SubGastoVM, SubGasto>()
                 .AfterMap((src, dest) => { dest.Gasto = new Gasto { Id = src.GastoId }; }); //outro exemplo: .ForPath(dest => dest.Gasto.Id, m =>  m.MapFrom(src => src.GastoId));
             CreateMap<PessoaVM, Pessoa>().AfterMap((src, dest) =>
@@ -79,6 +87,18 @@ namespace ControlFinWeb.App.AutoMapper
                     dest.Pessoa = src.PessoaId > 0 ? new Pessoa { Id = src.PessoaId } : null;
                     dest.CartaoCredito = new Fatura { Id = src.CartaoCreditoId };
                 });
+            CreateMap<CaixaVM, Caixa>()
+                .AfterMap((src, dest) =>
+                {
+                    dest.FluxosCaixa = new MapperConfiguration(cfg => cfg.CreateMap<FluxoCaixaVM, FluxoCaixa>()
+                    .AfterMap((src, dest) =>
+                    {
+                        dest.FormaPagamento = src.FormaPagamentoId > 0 ? new FormaPagamento { Id = src.FormaPagamentoId } : null;
+                        dest.Parcela = src.ParcelaId > 0 ? new Parcela { Id = src.ParcelaId } : null;
+                        dest.Caixa = src.CaixaId > 0 ? new Caixa { Id = src.CaixaId } : null;
+                    }))
+                    .CreateMapper().Map<List<FluxoCaixa>>(src.FluxosCaixaVM);
+                });
             #endregion
 
             //-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -87,7 +107,15 @@ namespace ControlFinWeb.App.AutoMapper
             CreateMap<FormaPagamento, FormaPagamentoVM>();
             CreateMap<Gasto, GastoVM>();
             CreateMap<Renda, RendaVM>();
-            CreateMap<Parcela, ParcelaVM>();
+            CreateMap<Parcela, ParcelaVM>()
+                .AfterMap((src, dest) =>
+                {
+                    dest.UsuarioCriacaoVM = AutoMapperConfig<Usuario, UsuarioVM>.Mapear(src.UsuarioCriacao);
+                    dest.UsuarioAlteracaoVM = AutoMapperConfig<Usuario, UsuarioVM>.Mapear(src.UsuarioAlteracao);
+                    dest.FormaPagamentoVM = AutoMapperConfig<FormaPagamento, FormaPagamentoVM>.Mapear(src.FormaPagamento);
+                    dest.ContaVM = AutoMapperConfig<Conta, ContaVM>.Mapear(src.Conta);
+                    dest.FaturaVM = AutoMapperConfig<Fatura, FaturaVM>.Mapear(src.Fatura);
+                });
             CreateMap<SubGasto, SubGastoVM>()
                 .AfterMap((src, dest) =>
                 {
@@ -141,8 +169,8 @@ namespace ControlFinWeb.App.AutoMapper
 
               });
             CreateMap<Fatura, FaturaVM>()
-                .AfterMap((src, dest) => 
-                { 
+                .AfterMap((src, dest) =>
+                {
                     dest.CartaoVM = AutoMapperConfig<Cartao, CartaoVM>.Mapear(src.Cartao);
                 })
                  .AfterMap((src, dest) =>
@@ -163,6 +191,19 @@ namespace ControlFinWeb.App.AutoMapper
                     dest.PessoaVM = AutoMapperConfig<Pessoa, PessoaVM>.Mapear(src.Pessoa);
                     dest.CartaoCreditoVM = AutoMapperConfig<Fatura, FaturaVM>.Mapear(src.CartaoCredito);
                 });
+            CreateMap<Caixa, CaixaVM>()
+                .AfterMap((src, dest) =>
+            {
+                dest.FluxosCaixaVM = new MapperConfiguration(cfg => cfg.CreateMap<FluxoCaixa, FluxoCaixaVM>().AfterMap((src, dest) =>
+                {
+                    dest.ParcelaVM = AutoMapperConfig<Parcela, ParcelaVM>.Mapear(src.Parcela);
+                    dest.FormaPagamentoVM = AutoMapperConfig<FormaPagamento, FormaPagamentoVM>.Mapear(src.FormaPagamento);
+                    dest.CaixaVM = AutoMapperConfig<Caixa, CaixaVM>.Mapear(src.Caixa);
+
+                }))
+                .CreateMapper().Map<List<FluxoCaixaVM>>(src.FluxosCaixa);
+
+            });
             #endregion
         }
 
