@@ -46,7 +46,7 @@ namespace ControlFinWeb.Dominio.Entidades
         {
             get
             {
-                return ValorInicial + TotalCredito - TotalDebito;
+                return TotalCredito - TotalDebito;
             }
         }
 

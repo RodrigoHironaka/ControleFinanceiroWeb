@@ -1,0 +1,68 @@
+﻿@model IEnumerable<ControlFinWeb.App.ViewModels.CaixaVM>
+
+@{
+    ViewData["Title"] = "Pesquisa";
+}
+
+<div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title"></h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="javascript:window.location.reload()"></button>
+        </div>
+        <div class="modal-body">
+            <table id="tabelaPesquisaCaixa" class="table table-bordered table-striped table-hover" style="font-size: 14px;">
+                <thead>
+                    <tr>
+                        <th style="text-align:center">Código</th>
+                        <th style="text-align:right">Valor Inicial</th>
+                        <th style="text-align:center">Data Abertura</th>
+                        <th style="text-align:right">Balanço Final</th>
+                        <th style="text-align:center">Situação</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr ondblclick="MostrarDetalhesCaixa(@item.Id)">
+                            <td style="text-align:center">
+                                @Html.DisplayFor(modelItem => item.Codigo)
+                            </td>
+                            <td style="text-align:right">
+                                @Html.DisplayFor(modelItem => item.ValorInicial)
+                            </td>
+                            <td style="text-align:center">
+                                @Html.Raw(item.DataGeracao.ToString())
+                            </td>
+                            <td style="text-align:right">
+                                @Html.DisplayFor(modelItem => item.BalancoFinal)
+                            </td>
+                            <td style="text-align:center">
+                                @Html.DisplayFor(modelItem => item.Situacao)
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@section Scripts
+    {
+    <script>
+         $(document).ready(function() {
+             $('#tabelaPesquisaCaixa').DataTable({
+                 order: [[0, 'desc']],
+                "language": {
+                    "url": "//cdn.datatables.net/plug-ins/1.11.5/i18n/pt-BR.json"
+                },
+                
+            });
+        });
+        function MostrarDetalhesCaixa(idCaixa) {
+            $("#modal").modal("hide");
+            window.location.href = 'Index?idCaixa=' + idCaixa;
+        }
+    </script>
+    }

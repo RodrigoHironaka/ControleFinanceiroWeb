@@ -25,12 +25,29 @@ namespace ControlFinWeb.App.Controllers
         Caixa caixa = new Caixa();
         CaixaVM caixaVM = new CaixaVM();
 
-        public IActionResult Index()
+        public IActionResult Index(Int64 idCaixa = 0)
         {
-            var caixa = Repositorio.ObterCaixaAberto(Configuracao.Usuario.Id);
-            if(caixa != null)
-                caixaVM = Mapper.Map(caixa, caixaVM);
+            if (idCaixa == 0)
+            {
+                caixa = Repositorio.ObterCaixaAberto(Configuracao.Usuario.Id);
+                if (caixa != null)
+                    caixaVM = Mapper.Map(caixa, caixaVM);
+            } 
+            else
+            {
+                caixa = Repositorio.ObterPorId(idCaixa);
+                if (caixa != null)
+                    caixaVM = Mapper.Map<CaixaVM>(caixa);
+            }
             return View(caixaVM);
+        }
+
+        public IActionResult Pesquisa()
+        {
+            IEnumerable<Caixa> caixas = Repositorio.ObterPorParametros(x => x.UsuarioCriacao.Id == Configuracao.Usuario.Id);
+            List<CaixaVM> caixasVM = Mapper.Map<List<CaixaVM>>(caixas);
+            return View(caixasVM);
+
         }
 
         public IActionResult Editar(Int64 Id = 0)
@@ -64,7 +81,6 @@ namespace ControlFinWeb.App.Controllers
                     caixa.Codigo = Repositorio.RetornaUltimoCodigo() + 1;
                     caixa.UsuarioCriacao = Configuracao.Usuario;
                     Repositorio.SalvarCaixa(caixa, Configuracao.Usuario);
-                    //Repositorio.Salvar(caixa);
                 }
 
                 return RedirectToAction("Index");

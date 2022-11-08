@@ -34,10 +34,6 @@
                 <h6>Situação </h6>
                 <h6>@Model.Situacao</h6>
             </div>
-           @* <div class="col-md-2 badge bg-secondary">
-                <h6>Valor Inicial </h6>
-                <h6>@Model.ValorInicial.ToString("C2")</h6>
-            </div>*@
             <div class="col-md-2 badge bg-secondary">
                 <h6>Total Crédito </h6>
                 <h6>@Model.TotalCredito.ToString("C2")</h6>
@@ -126,7 +122,7 @@
             $(".btnConfirmar").on("click", function() {
                 $.ajax({
                     method: "POST",
-                    url: "/bancos/Deletar",
+                    url: "Deletar",
                     data: { id: id },
                     success: function() {
                         location.reload();
@@ -145,10 +141,17 @@
                 $("#modal").load("Editar?id=" + id, function() {
                     if (id > 0) {
                         $(".modal-title").html("FECHAR CAIXA");
-                        $("#ValorInicial").attr("disabled", true);
+                        $("#ValorInicial").attr("readonly", true);
                     } else {
                          $(".modal-title").html("ABRIR CAIXA");
                     }
+                    $("#modal").modal("show");
+                })
+            });
+
+             $(".pesquisar").click(function() {
+                $("#modal").load("Pesquisa", function() {
+                    $(".modal-title").html("PESQUISA DE CAIXAS");
                     $("#modal").modal("show");
                 })
             });
