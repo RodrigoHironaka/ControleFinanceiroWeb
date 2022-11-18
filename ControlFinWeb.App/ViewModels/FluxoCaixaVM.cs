@@ -17,16 +17,21 @@ namespace ControlFinWeb.App.ViewModels
         [Required(ErrorMessage = "Campo Obrigatório")]
         public String Nome { get; set; }
 
+        [Range(0.01, double.MaxValue, ErrorMessage = "Valor deve ser maior que zero")]
         public Decimal Valor { get; set; }
 
         [DisplayName("Tipo")]
         public DebitoCredito DebitoCredito { get; set; }
 
-        [DisplayName("Data Criação")]
-        public virtual DateTime DataGeracao { get; set; }
+        [DisplayName("Data")]
+        [Range(typeof(DateTime), "01/01/1980", "31/12/5000", ErrorMessage = "Data Inválida!")]
+        [Required(ErrorMessage = "Campo Obrigatório")]
+        public virtual DateTime? Data { get; set; }
 
         #region Associações
 
+        [DisplayName("Forma de Pagamento")]
+        [Range(1, Int64.MaxValue, ErrorMessage = "Informe uma forma de pagamento")]
         public Int64 FormaPagamentoId { get; set; }
         public FormaPagamentoVM FormaPagamentoVM{ get; set; }
         public Int64 ParcelaId { get; set; }

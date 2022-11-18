@@ -29,7 +29,7 @@
                     </div>
                     <div class="col-md-4">
                         <label asp-for="ValorInicial" class="control-label"></label>
-                        <input asp-for="ValorInicial" class="form-control" style="text-align:right" />
+                        <input asp-for="ValorInicial" id="ValorAberturaFechamento" class="form-control" style="text-align:right" />
                         <span asp-validation-for="ValorInicial" class="text-danger"></span>
                     </div>
                 </div>
@@ -65,11 +65,13 @@
     }
     <script type="text/javascript">
         $(function() {
-            $("#ValorInicial").maskMoney({ thousands: '', decimal: ',', allowZero: true });
+            var id = parseInt($("#Id").val());
+            if(id == 0 )
+                $("#ValorAberturaFechamento").maskMoney({ thousands: '', decimal: ',', allowZero: true });
         });
 
         $(document).ready(function() {
-            $("#ValorInicial").focus();
+            $("#ValorAberturaFechamento").focus();
         });
     </script>
 

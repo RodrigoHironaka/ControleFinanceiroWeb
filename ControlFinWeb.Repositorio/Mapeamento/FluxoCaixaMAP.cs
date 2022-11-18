@@ -17,6 +17,7 @@ namespace ControlFinWeb.Repositorio.Mapeamentos
             });
             Property(x => x.Nome, m => m.Length(150));
             Property(x => x.Valor);
+            Property(x => x.Data);
             Property(x => x.DataGeracao, m => m.Column("DataMovimento"));
             Property(x => x.DataAlteracao, m => m.Column("DataMovimentoAlteracao"));
             Property(x => x.DebitoCredito, m => m.Type<EnumType<DebitoCredito>>());

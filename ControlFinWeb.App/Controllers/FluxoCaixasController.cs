@@ -1,9 +1,12 @@
-﻿using AutoMapper;
+﻿using App1.Repositorio.Configuracao;
+using AutoMapper;
 using ControlFinWeb.App.Utilitarios;
 using ControlFinWeb.App.ViewModels;
 using ControlFinWeb.Dominio.Entidades;
+using ControlFinWeb.Dominio.ObjetoValor;
 using ControlFinWeb.Repositorio.Repositorios;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
 using System.Collections.Generic;
 
@@ -38,7 +41,8 @@ namespace ControlFinWeb.App.Controllers
                 fluxoCaixaVM = Mapper.Map<FluxoCaixaVM>(fluxoCaixa);
             }
 
-            return View(fluxoCaixa);
+            ViewBag.FormaPagamentoId = new SelectList(new RepositorioFormaPagamento(NHibernateHelper.ObterSessao()).ObterPorParametros(x => x.Situacao == Situacao.Ativo), "Id", "Nome", Id);
+            return View(fluxoCaixaVM);
         }
 
         [HttpPost]
@@ -63,7 +67,8 @@ namespace ControlFinWeb.App.Controllers
 
                 return new EmptyResult();
             }
-            
+
+            ViewBag.FormaPagamentoId = new SelectList(new RepositorioFormaPagamento(NHibernateHelper.ObterSessao()).ObterPorParametros(x => x.Situacao == Situacao.Ativo), "Id", "Nome", fluxoCaixaVM.Id);
             return View(fluxoCaixaVM);
         }
 

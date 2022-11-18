@@ -42,7 +42,7 @@ namespace ControlFinWeb.Repositorio.Repositorios
                     novoFluxoCaixa.Parcela = parcela;
                     novoFluxoCaixa.Caixa = caixa;
                     novoFluxoCaixa.UsuarioCriacao = usuario;
-                    novoFluxoCaixa.DataGeracao = DateTime.Now;
+                    novoFluxoCaixa.Data = DateTime.Now;
                     SalvarLote(novoFluxoCaixa);
                 }
             }
@@ -54,7 +54,7 @@ namespace ControlFinWeb.Repositorio.Repositorios
             novoFluxoCaixa.Nome = $"Valor inicial via abertura de Caixa: {caixa.ValorInicial:C2}";
             novoFluxoCaixa.Valor = caixa.ValorInicial;
             novoFluxoCaixa.UsuarioCriacao = usuario;
-            novoFluxoCaixa.DataGeracao = DateTime.Now;
+            novoFluxoCaixa.Data = DateTime.Now;
             novoFluxoCaixa.DebitoCredito = Dominio.ObjetoValor.DebitoCredito.Crédito;
             novoFluxoCaixa.FormaPagamento = null;
             novoFluxoCaixa.Parcela = null;

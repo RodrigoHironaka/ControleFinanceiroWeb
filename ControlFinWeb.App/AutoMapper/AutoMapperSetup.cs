@@ -99,6 +99,13 @@ namespace ControlFinWeb.App.AutoMapper
                     }))
                     .CreateMapper().Map<List<FluxoCaixa>>(src.FluxosCaixaVM);
                 });
+            CreateMap<FluxoCaixaVM, FluxoCaixa>()
+              .AfterMap((src, dest) => 
+              { 
+                  dest.FormaPagamento = new FormaPagamento { Id = src.FormaPagamentoId }; 
+                  dest.Parcela = src.ParcelaId > 0 ? new Parcela { Id = src.ParcelaId } : null;
+                  dest.Caixa = new Caixa { Id = src.CaixaId };
+              });
             #endregion
 
             //-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -203,6 +210,14 @@ namespace ControlFinWeb.App.AutoMapper
                 }))
                 .CreateMapper().Map<List<FluxoCaixaVM>>(src.FluxosCaixa);
 
+            });
+
+            CreateMap<FluxoCaixa, FluxoCaixaVM>()
+            .AfterMap((src, dest) =>
+            {
+                dest.FormaPagamentoVM = AutoMapperConfig<FormaPagamento, FormaPagamentoVM>.Mapear(src.FormaPagamento);
+                dest.ParcelaVM = AutoMapperConfig<Parcela, ParcelaVM>.Mapear(src.Parcela);
+                dest.CaixaVM = AutoMapperConfig<Caixa, CaixaVM>.Mapear(src.Caixa);
             });
             #endregion
         }

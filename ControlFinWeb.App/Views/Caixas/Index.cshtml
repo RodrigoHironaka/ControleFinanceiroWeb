@@ -1,10 +1,11 @@
-﻿@model ControlFinWeb.App.ViewModels.CaixaVM
+﻿@using ControlFinWeb.Dominio.ObjetoValor
+@model ControlFinWeb.App.ViewModels.CaixaVM
 
 @{
     ViewData["Title"] = "Caixa";
 }
 
-<div style="margin-left: 200px; margin-right: 200px;">
+<div @*style="margin-left: 200px; margin-right: 200px;"*@>
     <div class="row">
         <div class="col-md-4">
             <div class="input-group mb-3">
@@ -12,7 +13,13 @@
                     <button class="btn btn-dark pesquisar"><i class="bi bi-search"></i></button>
                 </div>
                 <span class="input-group-text fw-bold">Pesquisar Caixas</span>
-                <button type="button" class="btn btn-dark abrirFecharCaixa" data-id="@Model.Id"><i class="bi bi-wallet2"></i> Abrir caixa</button>
+
+            </div>
+        </div>
+        <div class="col-md-8" id="botoes" style="text-align:right">
+            <div class="btn-group" role="group" aria-label="botoes" >
+                <button type="button" class="btn btn-dark abrirFecharCaixa" data-id="@Model.Id"> Abrir caixa</button>
+                <button type="button" class="btn btn-secondary novo" data-id="0"> Adicionar</button>
             </div>
         </div>
     </div>
@@ -54,14 +61,16 @@
         <colgroup>
             <col style="width: 5%" />
             <col style="width: 15%" />
-            <col style="width: 10%" />
-            <col style="width: 70%" />
+            <col style="width: 5%" />
+            <col style="width: 15%" />
+            <col style="width: 65%" />
         </colgroup>
         <thead>
             <tr>
                 <th style="text-align:center">Tipo</th>
                 <th style="text-align:center">Data</th>
                 <th style="text-align:right">Valor</th>
+                <th>Forma de Pagamento</th>
                 <th>Descrição</th>
             </tr>
         </thead>
@@ -75,10 +84,13 @@
                             @Html.DisplayFor(modelItem => item.DebitoCredito)
                         </td>
                         <td>
-                            @Html.Raw(item.DataGeracao.ToString())
+                            @Html.Raw(item.Data.ToString())
                         </td>
                         <td style="text-align:right">
                             @Html.DisplayFor(modelItem => item.Valor)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.FormaPagamentoVM.Nome)
                         </td>
                         <td>
                             @Html.DisplayFor(modelItem => item.Nome)
@@ -115,6 +127,20 @@
             if (@Model.Id > 0) {
                 $(".abrirFecharCaixa").text("Fechar Caixa");
             }
+            
+            if (parseInt(@Model.Situacao.GetHashCode()) == parseInt(@SituacaoCaixa.Fechado.GetHashCode())) {
+                $("#botoes *").prop('disabled', true);
+            }
+
+            $('#tabela').DataTable({
+                order: [[1, 'desc']],
+                "language": {
+                    "url": "//cdn.datatables.net/plug-ins/1.11.5/i18n/pt-BR.json"
+                },
+                paging: false,
+                info: false,
+
+            });
         });
 
         function ExibirModalExcluir(id) {
@@ -141,17 +167,27 @@
                 $("#modal").load("Editar?id=" + id, function() {
                     if (id > 0) {
                         $(".modal-title").html("FECHAR CAIXA");
-                        $("#ValorInicial").attr("readonly", true);
+                        $("#ValorAberturaFechamento").prop('readonly', true);
                     } else {
-                         $(".modal-title").html("ABRIR CAIXA");
+                        $(".modal-title").html("ABRIR CAIXA");
                     }
                     $("#modal").modal("show");
                 })
             });
 
-             $(".pesquisar").click(function() {
+            $(".pesquisar").click(function() {
                 $("#modal").load("Pesquisa", function() {
                     $(".modal-title").html("PESQUISA DE CAIXAS");
+                    $("#modal").modal("show");
+                })
+            });
+
+            $(".novo").click(function() {
+                var id = $(this).attr("data-id");
+                var idCaixa = @Model.Id;
+                $("#modal").load("/FluxoCaixas/Editar?id=" + id, function() {
+                    $(".modal-title").html("NOVO REGISTRO");
+                    $("#CaixaId").val(idCaixa);
                     $("#modal").modal("show");
                 })
             });

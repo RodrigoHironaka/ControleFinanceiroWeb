@@ -1,0 +1,88 @@
+﻿@model ControlFinWeb.App.ViewModels.FluxoCaixaVM
+@using ControlFinWeb.Dominio.ObjetoValor
+
+@{
+    ViewData["Title"] = "Fluxo de Caixa";
+}
+
+<div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title"></h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="javascript:window.location.reload()"></button>
+        </div>
+        <div class="modal-body">
+            <form asp-action="Editar" id="FrmFluxoCaixa">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input asp-for="Id" class="form-control" type="hidden" />
+                <input asp-for="CaixaId" class="form-control"  type="hidden" />
+                <div class="form-group">
+                    <label asp-for="Nome" class="control-label"></label>
+                    <input asp-for="Nome" class="form-control" />
+                    <span asp-validation-for="Nome" class="text-danger"></span>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <label asp-for="Valor" class="control-label"></label>
+                        <input asp-for="Valor" class="form-control" style="text-align:right" />
+                        <span asp-validation-for="Valor" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6">
+                        <label asp-for="Data" class="control-label"></label>
+                        <input asp-for="Data" class="form-control" type="date" style="text-align:right" />
+                        <span asp-validation-for="Data" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label asp-for="FormaPagamentoId" class="control-label"></label>
+                    <select class="form-select" asp-for="FormaPagamentoId" asp-items="ViewBag.FormaPagamentoId">
+                        <option value="0">---Selecione um item---</option>
+                    </select>
+                    <span asp-validation-for="FormaPagamentoId" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="DebitoCredito" class="control-label"></label>
+                    <select class="form-select" asp-for="DebitoCredito" asp-items="Html.GetEnumSelectList<DebitoCredito>()">
+                    </select>
+                    <span asp-validation-for="DebitoCredito" class="text-danger"></span>
+                </div>
+                <br />
+                <button type="button" onclick="Salvar()" class="w-100 btn btn-success">Salvar</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script type="text/javascript">
+        $(function() {
+            $("#Valor").maskMoney({ thousands: '', decimal: ',', allowZero: true });
+        });
+
+
+        function Salvar() {
+            var dados = $("#FrmFluxoCaixa").serialize();
+            $.ajax({
+                url: '/FluxoCaixas/Editar',
+                method: 'POST',
+                data: dados,
+                success: function(retorno) {
+                    if (retorno == "") {
+                        location.reload();
+                    }
+                    else {
+                        $("#modal").html(retorno);
+                        if ($("#id").val() > 0)
+                            $(".modal-title").html("ALTERANDO REGISTRO");
+                        else
+                            $(".modal-title").html("NOVO REGISTRO");
+                    }
+                }
+
+            });
+        }
+    </script>
+    }
