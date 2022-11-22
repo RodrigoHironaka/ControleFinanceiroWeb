@@ -12,10 +12,12 @@ namespace ControlFinWeb.Repositorio.Repositorios
     {
         private readonly RepositorioFluxoCaixa RepositorioFluxoCaixa;
         private readonly RepositorioCaixa RepositorioCaixa;
-        public RepositorioParcela(ISession session, RepositorioFluxoCaixa repositorioFluxoCaixa, RepositorioCaixa repositorioCaixa) : base(session)
+        private readonly RepositorioContaBancaria RepositorioContaBancaria;
+        public RepositorioParcela(ISession session, RepositorioFluxoCaixa repositorioFluxoCaixa, RepositorioCaixa repositorioCaixa, RepositorioContaBancaria repositorioContaBancaria) : base(session)
         {
             RepositorioFluxoCaixa = repositorioFluxoCaixa;
             RepositorioCaixa = repositorioCaixa;
+            RepositorioContaBancaria = repositorioContaBancaria;
         }
 
         public void AdicionarNovaParcela(Decimal valor, DateTime? dataVencimento, Usuario usuario, Conta conta = null, Fatura fatura = null)
@@ -52,7 +54,7 @@ namespace ControlFinWeb.Repositorio.Repositorios
             }
         }
 
-        public void PagamentoParcela(IList<Parcela> parcelas, Usuario usuario)
+        public void PagamentoParcela(IList<Parcela> parcelas, Usuario usuario, Banco banco)
         {
             if(parcelas == null)
                 throw new ArgumentException("Nenhuma parcela para pagar!");
@@ -67,18 +69,18 @@ namespace ControlFinWeb.Repositorio.Repositorios
                         throw new ArgumentException("Nenhum caixa aberto!");
 
                     RepositorioFluxoCaixa.GerarFluxoCaixa(parcelas, usuario, caixa);
-                    //log aqui
+
+                    if (banco != null)
+                        RepositorioContaBancaria.RemoverOuAdicionar(parcelas, usuario, banco);
 
                     trans.Commit();
                 }
                 catch (Exception ex)
                 {
                     trans.Rollback();
-                    throw new Exception(ex.ToString());
+                    throw new Exception(ex.Message.ToString());
                 }
             }
-            
-
         }
     }
 }

@@ -12,6 +12,7 @@ namespace ControlFinWeb.Dominio.ObjetoValor
         Saque,
         Pix,
         DOC,
-        TED
+        TED,
+        Outros
     }
 }

@@ -105,6 +105,7 @@
                                     <button type="button" class="btn btn-dark" onclick="ModalGerarParcelas()">Gerar</button>
                                     <button type="button" class="btn btn-secondary pagar">Pagar</button>
                                     <button type="button" class="btn btn-dark" onclick="RemoverParcelas()">Excluir</button>
+                                    <button type="button" class="btn btn-secondary" onclick="CancelarParcelas()">Cancelar</button>
                                     <div class="px-2">
                                         <select id="filtroParcelas" asp-items="Html.GetEnumSelectList<SituacaoParcela>()" multiple="multiple"></select>
                                     </div>
@@ -506,11 +507,11 @@
             var numerosParcelaRemover = $.map(trs, function(tr) { return $(tr).find('.numeroParcela').val(); });
             var parcelasAtualizadas = new Array();
 
-            //verificando se todas as parcelas selecionadas sao pendentes, pendentesParcial ou atrasadas
+            //verificando se todas as parcelas selecionadas sao pendentes ou atrasadas
             $.each(numerosParcelaRemover, function(i, value) {
                 var parcelaVerificar = Parcelas.find(x => x.Numero == value);
-                if (parcelaVerificar.SituacaoParcela > 2) {
-                    $("#alertParcelas").addClass("alert alert-danger").css('display', 'block').html('Não é possível excluir parcelas pagas ou canceladas! Por favor verifique as parcelas selecionadas.');
+                if (parcelaVerificar.SituacaoParcela != 0 || parcelaVerificar.SituacaoParcela != 2) {
+                    $("#alertParcelas").addClass("alert alert-danger").css('display', 'block').html('Apenas parcelas pendentes ou atrasadas podem ser excluídas!');
                     parcelasAtualizadas = [];
                     return false;
                 } else {
@@ -520,6 +521,29 @@
                 }
                 Parcelas = parcelasAtualizadas;
             });
+
+            $("#JsonParcelas").val(JSON.stringify(Parcelas));
+            FiltroSituacao();
+        }
+
+        function CancelarParcelas() {
+            var trs = $("tbody input:checked").closest("tr"); //pega no tr os elementos que estão checados
+            var numerosParcelaRemover = $.map(trs, function(tr) { return $(tr).find('.numeroParcela').val(); });
+            //$.each(numerosParcelaRemover, function(i, num) {
+            //    var parcelaPaga = Parcelas.find(x => x.Numero == num && SituacaoParcela == 3);
+            //    console.log(parcelaPaga.Id);
+            //    if (parcelasPaga != null) {
+            //        $.each(Parcelas, function(index, parcela) {
+            //            if (parcela.Numero == num) {
+            //                parcela.SituacaoParcela = 4;
+            //            }
+            //        });
+            //    } else {
+            //        $("#alertParcelas").addClass("alert alert-danger").css('display', 'block').html('Parcelas pagas não podem ser canceladas!');
+            //        return false;
+            //    }
+
+            //});
 
             $("#JsonParcelas").val(JSON.stringify(Parcelas));
             FiltroSituacao();

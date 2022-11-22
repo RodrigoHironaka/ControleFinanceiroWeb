@@ -21,13 +21,15 @@ namespace ControlFinWeb.App.Controllers
         private readonly RepositorioFormaPagamento RepositorioFormaPagamento;
         private readonly RepositorioConta RepositorioConta;
         private readonly RepositorioFatura RepositorioFatura;
+        private readonly RepositorioBanco RepositorioBanco;
         private readonly IMapper Mapper;
-        public ParcelasController(RepositorioParcela repositorio, RepositorioFormaPagamento repositorioFormaPagamento, RepositorioConta repositorioConta, RepositorioFatura repositorioFatura, IMapper mapper)
+        public ParcelasController(RepositorioParcela repositorio, RepositorioFormaPagamento repositorioFormaPagamento, RepositorioConta repositorioConta, RepositorioFatura repositorioFatura, RepositorioBanco repositorioBanco, IMapper mapper)
         {
             Repositorio = repositorio;
             RepositorioFormaPagamento = repositorioFormaPagamento;
             RepositorioConta = repositorioConta;
             RepositorioFatura = repositorioFatura;
+            RepositorioBanco = repositorioBanco;
             Mapper = mapper;
         }
 
@@ -63,12 +65,12 @@ namespace ControlFinWeb.App.Controllers
 
             for (int i = 1; i <= qtd; i++)
             {
-                if (restante > 0 && i == qtd )
+                if (restante > 0 && i == qtd)
                 {
                     valorParcela += restante;
                     restante = 0;
                 }
-                else if (restante < 0 && i == qtd )
+                else if (restante < 0 && i == qtd)
                 {
                     valorParcela += restante;
                     restante = 0;
@@ -121,43 +123,54 @@ namespace ControlFinWeb.App.Controllers
         {
             if (ModelState.IsValid)
             {
-                var parcelasVMPagas = JsonConvert.DeserializeObject<IList<ParcelaVM>>(pagarParcelaVM.JsonParcelasPagar);
-                var valorPago = pagarParcelaVM.ValorPago;
-                foreach (var parcelaVM in parcelasVMPagas)
+                try
                 {
-                    if(valorPago > 0 || valorPago <= parcelaVM.ValorReajustado)
+
+                    var parcelasVMPagas = JsonConvert.DeserializeObject<IList<ParcelaVM>>(pagarParcelaVM.JsonParcelasPagar);
+
+                    var valorPago = pagarParcelaVM.ValorPago;
+                    foreach (var parcelaVM in parcelasVMPagas)
                     {
-                        parcelaVM.ValorPago = parcelaVM.ValorReajustado;
-                        parcelaVM.DataPagamento = pagarParcelaVM.DataPagamento;
-                        parcelaVM.JurosPorcentual = pagarParcelaVM.JurosPorcentual;
-                        parcelaVM.JurosValor = pagarParcelaVM.JurosValor;
-                        parcelaVM.DescontoPorcentual = pagarParcelaVM.DescontoPorcentual;
-                        parcelaVM.DescontoValor = pagarParcelaVM.DescontoValor;
-                        parcelaVM.FormaPagamentoId = pagarParcelaVM.FormaPagamentoId;
-                        parcelaVM.BancoId = pagarParcelaVM.BancoId;
-                        parcelaVM.ValorReajustado = (parcelaVM.ValorParcela + parcelaVM.JurosValor) - parcelaVM.DescontoValor;
-                        parcelaVM.ValorAberto = (parcelaVM.ValorParcela + parcelaVM.JurosValor) - parcelaVM.DescontoValor - parcelaVM.ValorPago;
-                        if(parcelaVM.ValorAberto > 0)
-                            parcelaVM.SituacaoParcela = SituacaoParcela.PendenteParcial;
-                        else
-                            parcelaVM.SituacaoParcela = SituacaoParcela.Pago;
-                        parcelaVM.UsuarioAlteracaoId = Configuracao.Usuario.Id;
-                        valorPago -= parcelaVM.ValorReajustado;
+                        if (valorPago > 0 || valorPago <= parcelaVM.ValorReajustado)
+                        {
+
+                            parcelaVM.DataPagamento = pagarParcelaVM.DataPagamento;
+                            parcelaVM.JurosPorcentual = pagarParcelaVM.JurosPorcentual;
+                            parcelaVM.JurosValor = pagarParcelaVM.JurosValor;
+                            parcelaVM.DescontoPorcentual = pagarParcelaVM.DescontoPorcentual;
+                            parcelaVM.DescontoValor = pagarParcelaVM.DescontoValor;
+                            parcelaVM.FormaPagamentoId = pagarParcelaVM.FormaPagamentoId;
+                            parcelaVM.BancoId = pagarParcelaVM.BancoId;
+                            parcelaVM.ValorReajustado = (parcelaVM.ValorParcela + parcelaVM.JurosValor) - parcelaVM.DescontoValor;
+                            parcelaVM.ValorPago = parcelaVM.ValorReajustado <= valorPago ? parcelaVM.ValorReajustado : valorPago;
+                            parcelaVM.ValorAberto = (parcelaVM.ValorParcela + parcelaVM.JurosValor) - parcelaVM.DescontoValor - parcelaVM.ValorPago;
+                            if (parcelaVM.ValorAberto > 0)
+                                parcelaVM.SituacaoParcela = SituacaoParcela.PendenteParcial;
+                            else
+                                parcelaVM.SituacaoParcela = SituacaoParcela.Pago;
+                            parcelaVM.UsuarioAlteracaoId = Configuracao.Usuario.Id;
+                            valorPago -= parcelaVM.ValorPago;
+                        }
+                        parcelasVM.Add(parcelaVM);
                     }
-                    parcelasVM.Add(parcelaVM);
-                }
 
-                parcelas = Mapper.Map(parcelasVM, parcelas);
+                    parcelas = Mapper.Map(parcelasVM, parcelas);
 
-                if(parcelasVM.First().ContaId > 0)
-                    parcelas.ForEach(x => x.Conta = RepositorioConta.ObterPorId(parcelasVM.First().ContaId));
-                else
-                    parcelas.ForEach(x => x.Fatura = RepositorioFatura.ObterPorId(parcelasVM.First().FaturaId));
-                
-                Repositorio.PagamentoParcela(parcelas, Configuracao.Usuario);
+                    if (parcelasVM.First().ContaId > 0)
+                        parcelas.ForEach(x => x.Conta = RepositorioConta.ObterPorId(parcelasVM.First().ContaId));
+                    else
+                        parcelas.ForEach(x => x.Fatura = RepositorioFatura.ObterPorId(parcelasVM.First().FaturaId));
 
-                return new EmptyResult();
+                    var banco = parcelasVM.First().BancoId > 0 ? RepositorioBanco.ObterPorId(parcelasVM.First().BancoId) : null;
+
+                    Repositorio.PagamentoParcela(parcelas, Configuracao.Usuario, banco);
+                    return new EmptyResult();
             }
+                catch (Exception ex)
+            {
+                return Json(new { result = false, error = ex.Message.ToString() });
+            }
+        }
 
             ViewBag.FormaPagamentoId = new SelectList(new RepositorioFormaPagamento(NHibernateHelper.ObterSessao()).ObterPorParametros(x => x.Situacao == Situacao.Ativo), "Id", "Nome");
             ViewBag.BancoId = new SelectList(new RepositorioBanco(NHibernateHelper.ObterSessao()).ObterPorParametros(x => x.Situacao == Situacao.Ativo), "Id", "DadosCompletos");
@@ -169,6 +182,5 @@ namespace ControlFinWeb.App.Controllers
         {
             return RepositorioFormaPagamento.ObterPorId(idFormaPagamento).DebitoAutomatico;
         }
-
     }
 }

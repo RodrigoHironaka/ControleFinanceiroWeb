@@ -42,10 +42,32 @@ namespace ControlFinWeb.Repositorio.Repositorios
                 }
             }
         }
+
         public void SalvarLote(T entidade)
         {
             entidade.DataGeracao = DateTime.Now;
             Session.Save(entidade);
+        }
+
+        public void Salvar(IList<T> entidades)
+        {
+            using (var trans = Session.BeginTransaction())
+            {
+                foreach (var entidade in entidades)
+                {
+                    try
+                    {
+                        entidade.DataGeracao = DateTime.Now;
+                        this.Session.Save(entidade);
+                        trans.Commit();
+                    }
+                    catch (Exception ex)
+                    {
+                        trans.Rollback();
+                        throw new Exception(ex.ToString());
+                    }
+                }
+            }
         }
 
         public void SalvarLote(IList<T> entidades)
@@ -108,7 +130,7 @@ namespace ControlFinWeb.Repositorio.Repositorios
 
         public void ExcluirLote(T entidade)
         {
-           Session.Delete(entidade);
+            Session.Delete(entidade);
         }
 
         public T ObterPorId(Int64 id)

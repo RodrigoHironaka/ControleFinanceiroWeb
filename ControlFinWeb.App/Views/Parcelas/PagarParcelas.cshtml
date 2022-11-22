@@ -12,6 +12,7 @@
         </div>
         <fieldset id=fsPagarParcela>
             <div class="modal-body">
+                <div id="alerta" role="alert" style="display:none;"></div>
                 <form id="FrmPagarParcela">
                     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                     <input asp-for="JsonParcelasPagar" type="hidden" />
@@ -112,13 +113,16 @@
                     if (retorno == "") {
                         $("#modal").modal("hide");
                         location.reload();
-                        //$("#alertParcelas").addClass("alert alert-success").css('display', 'block').html('Parcela(s) paga(s) com sucesso!');
                     }
                     else {
-                        $("#modal").html(retorno);
+                        if (retorno.result == false) {
+                            $("#alerta").addClass("alert alert-danger").css('display', 'block').html(retorno.error);
+                        } else {
+                            $("#modal").html(retorno);
+                        }
+                        
                     }
                 }
-                
             });
         });
 
