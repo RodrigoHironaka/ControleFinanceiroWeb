@@ -22,7 +22,7 @@ namespace ControlFinWeb.App.ViewModels
         [DisplayName("Parcela")]
         public String ParcelaDe { get; set; }
 
-        [DisplayName("Valor da Parcela")]
+        [DisplayName("Parcela(R$)")]
         public Decimal ValorParcela { get; set; }
 
         [DisplayName("Vencimento")]
@@ -43,7 +43,7 @@ namespace ControlFinWeb.App.ViewModels
         [DisplayName("Desconto(R$)")]
         public Decimal DescontoValor { get; set; }
 
-        [DisplayName("V. Reajustado.(R$)")]
+        [DisplayName("Reajustado(R$)")]
         public Decimal ValorReajustado { get; set; }
 
         [DisplayName("Pago(R$)")]
@@ -58,7 +58,7 @@ namespace ControlFinWeb.App.ViewModels
         [DisplayName("Situação")]
         public SituacaoParcela SituacaoParcela { get; set; }
 
-        [DisplayName("Forma Pagamento")]
+        [DisplayName("F. Pagamento")]
         public Int64 FormaPagamentoId { get; set; }
         public FormaPagamentoVM FormaPagamentoVM { get; set; }
 

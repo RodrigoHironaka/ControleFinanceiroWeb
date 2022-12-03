@@ -1,0 +1,237 @@
+﻿@model ControlFinWeb.App.ViewModels.FiltroParcelasVM
+@using ControlFinWeb.Dominio.ObjetoValor
+
+@{
+    ViewData["Title"] = "Consulta";
+}
+
+<div class="card">
+    <div class="card-header" style="background: darkgrey; font-weight:bold;">Consulta de Parcelas - Filtro</div>
+    <div class="card-body">
+        <form id="frmFiltroParcelas">
+            <input asp-for="SituacaoParcela" type="hidden" class="form-control">
+            <div class="row">
+                <div class="col-md-2">
+                    <label asp-for="DataInicio" class="control-label"></label>
+                    <div class="input-group mb-3">
+                        <button class="btn btn-outline-dark" type="button" id="btnDataInicio" onclick="ProximoMes()"><i class="bi bi-chevron-double-right"></i></button>
+                        <input asp-for="DataInicio" type="date" class="form-control" placeholder="" aria-label="" aria-describedby="btnDataInicio">
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <label asp-for="TipoConta" class="control-label"></label>
+                    <select class="form-select" asp-for="TipoConta" asp-items="Html.GetEnumSelectList<TipoConta>()">
+                        <option value="-1">---Selecione um item---</option>
+                    </select>
+                </div>
+
+                <div class="col-md-2">
+                    <label asp-for="ContaFatura" class="control-label"></label>
+                    <select class="form-select" asp-for="ContaFatura" asp-items="Html.GetEnumSelectList<ContaFatura>()">
+                        <option value="-1">---Selecione um item---</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label asp-for="SituacaoParcela" class="control-label"></label>
+                    <select id="filtroParcelas" asp-items="Html.GetEnumSelectList<SituacaoParcela>()" multiple="multiple"></select>
+                </div>
+                <div class="col-md-4">
+                    <label asp-for="PessoaId" class="control-label">Pessoa Referenciada</label>
+                    <select class="form-select" asp-for="PessoaId" asp-items="ViewBag.PessoaId">
+                        <option value="0">---Selecione um item---</option>
+                    </select>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-2">
+                    <label asp-for="DataFinal" class="control-label"></label>
+                    <div class="input-group mb-3">
+                        <button class="btn btn-outline-dark" type="button" id="button-addon1" onclick="MesAnterior()"><i class="bi bi-chevron-double-left"></i></button>
+                        <input asp-for="DataFinal" type="date" class="form-control" placeholder="" aria-label="Example text with button addon" aria-describedby="button-addon1">
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <label asp-for="PeriodoConta" class="control-label"></label>
+                    <select class="form-select" asp-for="PeriodoConta" asp-items="Html.GetEnumSelectList<PeriodoConta>()">
+                        <option value="-1">---Selecione um item---</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <br />
+                    <button class="w-100 btn btn-dark">Filtrar</button>
+                </div>
+                <div class="col-md-2">
+                    <br />
+                    <button class="w-100 btn btn-dark" onclick="Filtrar()">Pagar Selecionados</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div style="font-size: 14px;"> 
+<table class="table table-bordered table-striped table-hover" id="tabelaParcelas">
+    <colgroup>
+        <col style="width: 2%" />
+        <col style="width: 4%" />
+        <col style="width: 10%" />
+        <col style="width: 10%" />
+        <col style="width: 10%" />
+        <col style="width: 10%" />
+        <col style="width: 5%" />
+        <col style="width: 15%" />
+        <col style="width: auto" />
+    </colgroup>
+    <thead>
+        <tr>
+            <th><input class="form-check-input" id="checkAll" type="checkbox"></th>
+            <th style="text-align:center">Número</th>
+            <th style="text-align:right">Parcela(R$)</th>
+            <th style="text-align:right">Vencimento</th>
+            <th style="text-align:right">Pago(R$)</th>
+            <th style="text-align:right">Pagamento</th>
+            <th>Situação</th>
+            <th>Forma Pagamento</th>
+            <th>Descrição</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Parcelas.OrderBy(x => x.DataVencimento))
+        {
+            <tr>
+                <td scope='row'><input class='form-check-input check' id='check' type='checkbox' onclick='ClickCheckItem()'></td>
+                <td style="text-align:center">
+                    @Html.DisplayFor(modelItem => item.Numero)
+                </td>
+                <td style="text-align:right">
+                    @Html.DisplayFor(modelItem => item.ValorAberto)
+                </td>
+                <td style="text-align:right">
+                    @Html.Raw(item.DataVencimento.Value.ToShortDateString())
+                </td>
+                <td style="text-align:right">
+                    @Html.DisplayFor(modelItem => item.ValorPago)
+                </td>
+                <td style="text-align:right">
+                    @if (item.DataPagamento != null)
+                    {
+                        @Html.Raw(item.DataPagamento.Value.ToShortDateString())
+                    }
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.SituacaoParcela)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.FormaPagamentoVM.Nome)
+                </td>
+                <td>
+                    @if (item.ContaId > 0)
+                    {
+                        @Html.DisplayFor(modelItem => item.ContaVM.DescricaoCompleta)
+                    }
+                    else
+                    {
+                        @Html.DisplayFor(modelItem => item.FaturaVM.DescricaoCompleta)
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+</div>
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $('#filtroParcelas').multiselect({
+                buttonClass: 'form-select',
+                templates: {
+                    button: '<button type="button" class="multiselect dropdown-toggle" id="filtroSituacao" data-bs-toggle="dropdown" aria-expanded="false"><span class="multiselect-selected-text"></span></button>',
+                },
+                buttonWidth: '100%',
+                allSelectedText: 'Todos',
+                nonSelectedText: 'Filtro Situação',
+                nSelectedText: 'selecionado(s)',
+                onChange: function(option, checked, select) {
+                    SituacoesSelecionadas();
+                }
+            });
+
+            $('#tabelaParcelas').DataTable({
+                "language": {
+                    "url": "//cdn.datatables.net/plug-ins/1.11.5/i18n/pt-BR.json"
+                },
+                paging: false,
+                info: false,
+                searching: false,
+            });
+        });
+
+        function Filtrar() {
+            var dados = $("#frmFiltrarParcelas").serialize();
+            $.ajax({
+                url: '/Parcelas/Index',
+                method: 'POST',
+                data: dados,
+                success: function(retorno) {
+                    console.log(retorno);
+                    console.log("ok");
+                  
+                }
+
+            });
+        }
+
+        function ProximoMes() {
+
+            var data = $('#DataInicio').val();
+            var dataSel = new Date(data + " " + "00:00:00");
+
+            dataSel.setMonth(dataSel.getMonth() + 1);
+            var primeiroDia = new Date(dataSel.getFullYear(), dataSel.getMonth(), 1);
+            var ultimoDia = new Date(dataSel.getFullYear(), dataSel.getMonth() + 1, 0);
+
+            $('#DataInicio').val(primeiroDia.toJSON().substring(0, 10));
+            $('#DataFinal').val(ultimoDia.toJSON().substring(0, 10));
+
+
+        }
+        function MesAnterior() {
+            var data = $('#DataInicio').val();
+            var dataSel = new Date(data + " " + "00:00:00");
+
+            dataSel.setMonth(dataSel.getMonth() - 1);
+
+            var primeiroDia = new Date(dataSel.getFullYear(), dataSel.getMonth(), 1);
+            var ultimoDia = new Date(dataSel.getFullYear(), dataSel.getMonth() + 1, 0);
+
+            $('#DataInicio').val(primeiroDia.toJSON().substring(0, 10));
+            $('#DataFinal').val(ultimoDia.toJSON().substring(0, 10));
+        }
+
+        function SituacoesSelecionadas() {
+            var filtro = $("#filtroParcelas").val();
+            console.log(filtro);
+            $('#SituacaoParcela').val(filtro);
+        }
+
+         //CheckAll
+        $('#checkAll').change(function() {
+            $('.check').prop('checked', this.checked);
+        });
+
+        function ClickCheckItem() {
+            $('.check').change(function() {
+                if ($('.check:checked').length == $('.check').length) {
+                    $('#checkAll').prop('checked', true);
+                }
+                else {
+                    $('#checkAll').prop('checked', false);
+                }
+            });
+        }
+    </script>
+}

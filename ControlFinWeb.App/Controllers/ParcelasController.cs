@@ -40,6 +40,60 @@ namespace ControlFinWeb.App.Controllers
         GerarParcelasVM gerarParcelasVM = new GerarParcelasVM();
         PagarParcelaVM pagarParcelaVM = new PagarParcelaVM();
 
+        public IActionResult Index(FiltroParcelasVM filtrarParcelasVM)
+        {
+            var predicado = Repositorio.CriarPredicado();
+
+            if(filtrarParcelasVM.DataInicio != null)
+                predicado = predicado.And(x => x.DataVencimento >= filtrarParcelasVM.DataInicio);
+
+            if (filtrarParcelasVM.DataFinal != null)
+            {
+                if(filtrarParcelasVM.DataFinal >= filtrarParcelasVM.DataInicio)
+                    predicado = predicado.And(x => x.DataVencimento <= filtrarParcelasVM.DataFinal.Value.AddHours(23).AddMinutes(59).AddSeconds(59));
+            }
+
+            if (filtrarParcelasVM.TipoConta != null)
+                predicado = predicado.And(x => x.Conta.TipoConta == filtrarParcelasVM.TipoConta);
+
+            if (filtrarParcelasVM.PeriodoConta != null)
+                predicado = predicado.And(x => x.Conta.TipoPeriodo == filtrarParcelasVM.PeriodoConta);
+
+            if (filtrarParcelasVM.PessoaId > 0)
+                predicado = predicado.And(x => x.Conta.Pessoa.Id == filtrarParcelasVM.PessoaId);
+
+            if (!String.IsNullOrEmpty(filtrarParcelasVM.SituacaoParcela))
+            {
+                var situacaoesParcelas = new List<SituacaoParcela>();
+                var situacoes = filtrarParcelasVM.SituacaoParcela.Split(",");
+                foreach (var num in situacoes)
+                {
+                    var numero = Int32.Parse(num);
+                    situacaoesParcelas.Add((SituacaoParcela)Int32.Parse(num));
+                }
+                predicado = predicado.And(x => situacaoesParcelas.Contains(x.SituacaoParcela));
+            }
+
+            var parcelas = Repositorio.ObterPorParametros(predicado).ToList();
+
+            if (filtrarParcelasVM.ContaFatura != null)
+            {
+                if (filtrarParcelasVM.ContaFatura == ContaFatura.Conta)
+                    parcelas = parcelas.Where(x => x.Conta?.Situacao == SituacaoConta.Aberto).ToList();
+                else
+                    parcelas = parcelas.Where(x => x.Fatura?.SituacaoFatura == SituacaoFatura.Aberta || x.Fatura?.SituacaoFatura == SituacaoFatura.Fechada).ToList();
+            }
+            else
+            {
+                parcelas = parcelas.Where(x => x.Conta?.Situacao == SituacaoConta.Aberto || x.Fatura?.SituacaoFatura == SituacaoFatura.Aberta || x.Fatura?.SituacaoFatura == SituacaoFatura.Fechada).ToList();
+            }
+          
+            filtrarParcelasVM.Parcelas = Mapper.Map<List<ParcelaVM>>(parcelas);
+            
+            ViewBag.PessoaId = new SelectList(new RepositorioPessoa(NHibernateHelper.ObterSessao()).ObterPorParametros(x => x.Situacao == Situacao.Ativo), "Id", "Nome", filtrarParcelasVM.PessoaId);
+            return View(filtrarParcelasVM);
+        }
+
         public IActionResult ModalGerarParcelas()
         {
             return View(gerarParcelasVM);
@@ -111,7 +165,7 @@ namespace ControlFinWeb.App.Controllers
             pagarParcelaVM.DescontoValor = parcelas.Sum(x => x.DescontoValor);
             pagarParcelaVM.DescontoPorcentual = parcelas.Sum(x => x.DescontoPorcentual);
             pagarParcelaVM.ValorPago = parcelas.Sum(x => x.ValorPago);
-            pagarParcelaVM.JsonParcelasPagar = JsonConvert.SerializeObject(Mapper.Map<List<ParcelaVM>>(parcelas)); //Mapper.Map<List<ParcelaVM>>(parcelas);
+            pagarParcelaVM.JsonParcelasPagar = JsonConvert.SerializeObject(Mapper.Map<List<ParcelaVM>>(parcelas));
 
             ViewBag.FormaPagamentoId = new SelectList(new RepositorioFormaPagamento(NHibernateHelper.ObterSessao()).ObterPorParametros(x => x.Situacao == Situacao.Ativo), "Id", "Nome");
             ViewBag.BancoId = new SelectList(new RepositorioBanco(NHibernateHelper.ObterSessao()).ObterPorParametros(x => x.Situacao == Situacao.Ativo), "Id", "DadosCompletos");
@@ -165,12 +219,12 @@ namespace ControlFinWeb.App.Controllers
 
                     Repositorio.PagamentoParcela(parcelas, Configuracao.Usuario, banco);
                     return new EmptyResult();
-            }
+                }
                 catch (Exception ex)
-            {
-                return Json(new { result = false, error = ex.Message.ToString() });
+                {
+                    return Json(new { result = false, error = ex.Message.ToString() });
+                }
             }
-        }
 
             ViewBag.FormaPagamentoId = new SelectList(new RepositorioFormaPagamento(NHibernateHelper.ObterSessao()).ObterPorParametros(x => x.Situacao == Situacao.Ativo), "Id", "Nome");
             ViewBag.BancoId = new SelectList(new RepositorioBanco(NHibernateHelper.ObterSessao()).ObterPorParametros(x => x.Situacao == Situacao.Ativo), "Id", "DadosCompletos");

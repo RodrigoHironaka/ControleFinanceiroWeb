@@ -127,5 +127,13 @@ namespace ControlFinWeb.App.ViewModels
 
         public Int32 UltimoNumero { get; set; }
         #endregion
+
+        public virtual String DescricaoCompleta
+        {
+            get
+            {
+                return $"{Nome} [{Codigo}]";
+            }
+        }
     }
 }

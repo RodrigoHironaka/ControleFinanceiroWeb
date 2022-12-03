@@ -158,7 +158,7 @@ namespace ControlFinWeb.Repositorio.Repositorios
 
         public Expression<Func<T, bool>> CriarPredicado()
         {
-            return PredicateBuilder.New<T>();
+            return PredicateBuilder.True<T>();
         }
 
         public Int64 RetornaUltimoId() //retorna ultimo id da Tabela mas nao é o ultimo id Usado, ele nao pega da tabela uniquekey
