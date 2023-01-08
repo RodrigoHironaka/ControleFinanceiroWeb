@@ -5,6 +5,7 @@
     ViewData["Title"] = "Consulta";
 }
 
+<div id="alertParcelas" role="alert" style="display:none;"></div>
 <div class="card">
     <div class="card-header" style="background: darkgrey; font-weight:bold;">Consulta de Parcelas - Filtro</div>
     <div class="card-body">
@@ -58,87 +59,90 @@
                 </div>
                 <div class="col-md-2">
                     <br />
-                    <button class="w-100 btn btn-dark">Filtrar</button>
+                    <button type="submit" class="w-100 btn btn-dark">Filtrar</button>
                 </div>
                 <div class="col-md-2">
                     <br />
-                    <button class="w-100 btn btn-dark" onclick="Filtrar()">Pagar Selecionados</button>
+                    <button type="button" class="w-100 btn btn-dark" onclick="Pagar()">Pagar Selecionados</button>
                 </div>
             </div>
         </form>
     </div>
 </div>
 
-<div style="font-size: 14px;"> 
-<table class="table table-bordered table-striped table-hover" id="tabelaParcelas">
-    <colgroup>
-        <col style="width: 2%" />
-        <col style="width: 4%" />
-        <col style="width: 10%" />
-        <col style="width: 10%" />
-        <col style="width: 10%" />
-        <col style="width: 10%" />
-        <col style="width: 5%" />
-        <col style="width: 15%" />
-        <col style="width: auto" />
-    </colgroup>
-    <thead>
-        <tr>
-            <th><input class="form-check-input" id="checkAll" type="checkbox"></th>
-            <th style="text-align:center">Número</th>
-            <th style="text-align:right">Parcela(R$)</th>
-            <th style="text-align:right">Vencimento</th>
-            <th style="text-align:right">Pago(R$)</th>
-            <th style="text-align:right">Pagamento</th>
-            <th>Situação</th>
-            <th>Forma Pagamento</th>
-            <th>Descrição</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model.Parcelas.OrderBy(x => x.DataVencimento))
-        {
+<div style="font-size: 14px;">
+    <table class="table table-bordered table-striped table-hover" id="tabelaParcelas">
+        <colgroup>
+            <col style="width: 2%" />
+            <col style="width: 4%" />
+            <col style="width: 10%" />
+            <col style="width: 10%" />
+            <col style="width: 10%" />
+            <col style="width: 10%" />
+            <col style="width: 5%" />
+            <col style="width: 15%" />
+            <col style="width: auto" />
+        </colgroup>
+        <thead>
             <tr>
-                <td scope='row'><input class='form-check-input check' id='check' type='checkbox' onclick='ClickCheckItem()'></td>
-                <td style="text-align:center">
-                    @Html.DisplayFor(modelItem => item.Numero)
-                </td>
-                <td style="text-align:right">
-                    @Html.DisplayFor(modelItem => item.ValorAberto)
-                </td>
-                <td style="text-align:right">
-                    @Html.Raw(item.DataVencimento.Value.ToShortDateString())
-                </td>
-                <td style="text-align:right">
-                    @Html.DisplayFor(modelItem => item.ValorPago)
-                </td>
-                <td style="text-align:right">
-                    @if (item.DataPagamento != null)
-                    {
-                        @Html.Raw(item.DataPagamento.Value.ToShortDateString())
-                    }
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.SituacaoParcela)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.FormaPagamentoVM.Nome)
-                </td>
-                <td>
-                    @if (item.ContaId > 0)
-                    {
-                        @Html.DisplayFor(modelItem => item.ContaVM.DescricaoCompleta)
-                    }
-                    else
-                    {
-                        @Html.DisplayFor(modelItem => item.FaturaVM.DescricaoCompleta)
-                    }
-                </td>
+                <th><input class="form-check-input" id="checkAll" type="checkbox"></th>
+                <th style="text-align:center">Número</th>
+                <th style="text-align:right">Parcela(R$)</th>
+                <th style="text-align:right">Vencimento</th>
+                <th style="text-align:right">Pago(R$)</th>
+                <th style="text-align:right">Pagamento</th>
+                <th>Situação</th>
+                <th>Forma Pagamento</th>
+                <th>Descrição</th>
             </tr>
-        }
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.Parcelas.OrderBy(x => x.DataVencimento))
+            {
+                <tr>
+                    <td scope='row'><input class='form-check-input check' id='check' type='checkbox' onclick='ClickCheckItem()' value="@item.Id"></td>
+                    <td style="text-align:center">
+                        @Html.DisplayFor(modelItem => item.Numero)
+                    </td>
+                    <td style="text-align:right">
+                        @Html.DisplayFor(modelItem => item.ValorAberto)
+                    </td>
+                    <td style="text-align:right">
+                        @Html.Raw(item.DataVencimento.Value.ToShortDateString())
+                    </td>
+                    <td style="text-align:right">
+                        @Html.DisplayFor(modelItem => item.ValorPago)
+                    </td>
+                    <td style="text-align:right">
+                        @if (item.DataPagamento != null)
+                        {
+                            @Html.Raw(item.DataPagamento.Value.ToShortDateString())
+                        }
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.SituacaoParcela)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.FormaPagamentoVM.Nome)
+                    </td>
+                    <td>
+                        @if (item.ContaId > 0)
+                        {
+                            @Html.DisplayFor(modelItem => item.ContaVM.DescricaoCompleta)
+                        }
+                        else
+                        {
+                            @Html.DisplayFor(modelItem => item.FaturaVM.DescricaoCompleta)
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
 </div>
+
+<div id="modalPagar" class="modal fade" aria-hidden="true" role="dialog" data-bs-backdrop="static" data-bs-keyboard="false"></div>
+
 @section Scripts {
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
@@ -179,7 +183,7 @@
                 success: function(retorno) {
                     console.log(retorno);
                     console.log("ok");
-                  
+
                 }
 
             });
@@ -214,11 +218,10 @@
 
         function SituacoesSelecionadas() {
             var filtro = $("#filtroParcelas").val();
-            console.log(filtro);
             $('#SituacaoParcela').val(filtro);
         }
 
-         //CheckAll
+        //CheckAll
         $('#checkAll').change(function() {
             $('.check').prop('checked', this.checked);
         });
@@ -232,6 +235,42 @@
                     $('#checkAll').prop('checked', false);
                 }
             });
+        }
+
+        function Pagar() {
+            var ids = new Array();
+
+            var trs = $("tbody input:checked").closest("tr"); //pega no tr os elementos que estão checados
+            var ids = $.map(trs, function(tr) { return $(tr).find('.check').val(); });
+            if (ids.length > 0) {
+                var urlIds = ids.map((item) => { return "ids=" + item });
+
+                $.ajax({
+                    method: "GET",
+                    url: "/Parcelas/SituacaoDasParcelas?" + urlIds.join("&"),
+                    success: function(result) {
+                        if (result == false) {
+                            $("#alertParcelas").addClass("alert alert-danger").css('display', 'block').html('Parcelas pagas ou canceladas foram selecionadas. Por favor verifique!');
+                            return;
+                        } else {
+                            $('#alertParcelas').css('display', 'none');
+                            $.ajax({
+                                method: "GET",
+                                url: "/Parcelas/PagarParcelas?" + urlIds.join("&"),
+                                success: function(result) {
+                                    if (result != "") {
+                                        $("#modalPagar").html(result);
+                                        $("#modalPagar").modal("show");
+                                    }
+                                },
+                            });
+                        }
+                    },
+                });
+            } else {
+                $("#alertParcelas").addClass("alert alert-warning").css('display', 'block').html('Nenhuma parcela selecionada!').delay(30000).fadeOut(400);
+            }
+
         }
     </script>
 }

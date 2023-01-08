@@ -54,9 +54,9 @@ namespace ControlFinWeb.Repositorio.Repositorios
             }
         }
 
-        public void PagamentoParcela(IList<Parcela> parcelas, Usuario usuario, Banco banco)
+        public void PagamentoParcela(IList<Parcela> parcelas, Usuario usuario, Banco banco, IDictionary<Int64, decimal> valoresPagoParcelas)
         {
-            if(parcelas == null)
+            if (parcelas == null)
                 throw new ArgumentException("Nenhuma parcela para pagar!");
 
             using (var trans = Session.BeginTransaction())
@@ -68,11 +68,18 @@ namespace ControlFinWeb.Repositorio.Repositorios
                     if (caixa == null)
                         throw new ArgumentException("Nenhum caixa aberto!");
 
-                    RepositorioFluxoCaixa.GerarFluxoCaixa(parcelas, usuario, caixa);
+                    foreach (var parcela in parcelas)
+                    {
+                        var valorPago = valoresPagoParcelas[parcela.Id];
+                        if (valorPago > 0)
+                        {
+                            RepositorioFluxoCaixa.GerarFluxoCaixa(parcela, usuario, caixa, valorPago);
 
-                    if (banco != null)
-                        RepositorioContaBancaria.RemoverOuAdicionar(parcelas, usuario, banco);
-
+                            if (banco != null)
+                                RepositorioContaBancaria.RemoverOuAdicionar(parcela, usuario, banco, valorPago);
+                        }
+                    }
+           
                     trans.Commit();
                 }
                 catch (Exception ex)

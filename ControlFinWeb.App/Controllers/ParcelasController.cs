@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Newtonsoft.Json;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -164,7 +165,6 @@ namespace ControlFinWeb.App.Controllers
             pagarParcelaVM.JurosPorcentual = parcelas.Sum(x => x.JurosPorcentual);
             pagarParcelaVM.DescontoValor = parcelas.Sum(x => x.DescontoValor);
             pagarParcelaVM.DescontoPorcentual = parcelas.Sum(x => x.DescontoPorcentual);
-            pagarParcelaVM.ValorPago = parcelas.Sum(x => x.ValorPago);
             pagarParcelaVM.JsonParcelasPagar = JsonConvert.SerializeObject(Mapper.Map<List<ParcelaVM>>(parcelas));
 
             ViewBag.FormaPagamentoId = new SelectList(new RepositorioFormaPagamento(NHibernateHelper.ObterSessao()).ObterPorParametros(x => x.Situacao == Situacao.Ativo), "Id", "Nome");
@@ -179,15 +179,16 @@ namespace ControlFinWeb.App.Controllers
             {
                 try
                 {
-
                     var parcelasVMPagas = JsonConvert.DeserializeObject<IList<ParcelaVM>>(pagarParcelaVM.JsonParcelasPagar);
 
-                    var valorPago = pagarParcelaVM.ValorPago;
+                    decimal valorPagoGeral = pagarParcelaVM.ValorPago;
+                    IDictionary<Int64, decimal> valoresPagoParcelas = new Dictionary<Int64, decimal>();
+   
+
                     foreach (var parcelaVM in parcelasVMPagas)
                     {
-                        if (valorPago > 0 || valorPago <= parcelaVM.ValorReajustado)
+                        if (valorPagoGeral > 0)
                         {
-
                             parcelaVM.DataPagamento = pagarParcelaVM.DataPagamento;
                             parcelaVM.JurosPorcentual = pagarParcelaVM.JurosPorcentual;
                             parcelaVM.JurosValor = pagarParcelaVM.JurosValor;
@@ -195,17 +196,19 @@ namespace ControlFinWeb.App.Controllers
                             parcelaVM.DescontoValor = pagarParcelaVM.DescontoValor;
                             parcelaVM.FormaPagamentoId = pagarParcelaVM.FormaPagamentoId;
                             parcelaVM.BancoId = pagarParcelaVM.BancoId;
-                            parcelaVM.ValorReajustado = (parcelaVM.ValorParcela + parcelaVM.JurosValor) - parcelaVM.DescontoValor;
-                            parcelaVM.ValorPago = parcelaVM.ValorReajustado <= valorPago ? parcelaVM.ValorReajustado : valorPago;
-                            parcelaVM.ValorAberto = (parcelaVM.ValorParcela + parcelaVM.JurosValor) - parcelaVM.DescontoValor - parcelaVM.ValorPago;
+                            parcelaVM.ValorReajustado = (parcelaVM.ValorAberto + parcelaVM.JurosValor) - parcelaVM.DescontoValor;
+                            valoresPagoParcelas.Add(parcelaVM.Id, parcelaVM.ValorReajustado <= valorPagoGeral ? parcelaVM.ValorReajustado : valorPagoGeral);//add no Dicitionary para usar depois os valores de cada parcela paga
+                            parcelaVM.ValorPago += valoresPagoParcelas[parcelaVM.Id];
+                            parcelaVM.ValorAberto = (parcelaVM.ValorAberto + parcelaVM.JurosValor) - parcelaVM.DescontoValor - valoresPagoParcelas[parcelaVM.Id];
                             if (parcelaVM.ValorAberto > 0)
                                 parcelaVM.SituacaoParcela = SituacaoParcela.PendenteParcial;
                             else
                                 parcelaVM.SituacaoParcela = SituacaoParcela.Pago;
                             parcelaVM.UsuarioAlteracaoId = Configuracao.Usuario.Id;
-                            valorPago -= parcelaVM.ValorPago;
+
+                            valorPagoGeral -= parcelaVM.ValorReajustado;
+                            parcelasVM.Add(parcelaVM);
                         }
-                        parcelasVM.Add(parcelaVM);
                     }
 
                     parcelas = Mapper.Map(parcelasVM, parcelas);
@@ -213,11 +216,17 @@ namespace ControlFinWeb.App.Controllers
                     if (parcelasVM.First().ContaId > 0)
                         parcelas.ForEach(x => x.Conta = RepositorioConta.ObterPorId(parcelasVM.First().ContaId));
                     else
-                        parcelas.ForEach(x => x.Fatura = RepositorioFatura.ObterPorId(parcelasVM.First().FaturaId));
+                    {
+                        foreach (var parcelaFatura in parcelas)
+                        {
+                            var faturaId = parcelasVM.Where(x => x.Id == parcelaFatura.Id).First().FaturaId;
+                            parcelaFatura.Fatura = RepositorioFatura.ObterPorId(faturaId);
+                        }
+                    }
 
                     var banco = parcelasVM.First().BancoId > 0 ? RepositorioBanco.ObterPorId(parcelasVM.First().BancoId) : null;
 
-                    Repositorio.PagamentoParcela(parcelas, Configuracao.Usuario, banco);
+                    Repositorio.PagamentoParcela(parcelas, Configuracao.Usuario, banco, valoresPagoParcelas);
                     return new EmptyResult();
                 }
                 catch (Exception ex)
@@ -235,6 +244,17 @@ namespace ControlFinWeb.App.Controllers
         public bool FormaPagamentoDebito(int idFormaPagamento)
         {
             return RepositorioFormaPagamento.ObterPorId(idFormaPagamento).DebitoAutomatico;
+        }
+
+        public bool SituacaoDasParcelas(List<Int64> ids)
+        {
+            foreach (var id in ids)
+            {
+               var sit = Repositorio.ObterPorId(id).SituacaoParcela;
+                if(sit == SituacaoParcela.Pago || sit == SituacaoParcela.Cancelado)
+                    return false;
+            }
+            return true;
         }
     }
 }
