@@ -43,15 +43,10 @@ namespace ControlFinWeb.Repositorio.Repositorios
         {
             var existeParcela = ObterPorParametros(x => x.Fatura.Id.Equals(faturaItens.CartaoCredito.Id)).FirstOrDefault();
 
-            if (existeParcela != null)
-            {
-                if (faturaItens.Id > 0)
-                    existeParcela.ValorParcela = faturaItens.CartaoCredito.ValorFatura;
-                else
-                    existeParcela.ValorParcela = faturaItens.CartaoCredito.ValorFatura + faturaItens.Valor;
-
-                AlterarLote(existeParcela);
-            }
+            existeParcela.ValorParcela = faturaItens.CartaoCredito.ValorFatura + faturaItens.Valor;
+            existeParcela.ValorReajustado = faturaItens.CartaoCredito.ValorFatura + faturaItens.Valor;
+            existeParcela.ValorAberto = faturaItens.CartaoCredito.ValorFatura + faturaItens.Valor;
+            AlterarLote(existeParcela);
         }
 
         public void PagamentoParcela(IList<Parcela> parcelas, Usuario usuario, Banco banco, IDictionary<Int64, decimal> valoresPagoParcelas)
@@ -79,7 +74,7 @@ namespace ControlFinWeb.Repositorio.Repositorios
                                 RepositorioContaBancaria.RemoverOuAdicionar(parcela, usuario, banco, valorPago);
                         }
                     }
-           
+
                     trans.Commit();
                 }
                 catch (Exception ex)

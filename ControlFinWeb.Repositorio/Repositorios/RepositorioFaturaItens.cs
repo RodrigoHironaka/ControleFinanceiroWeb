@@ -17,33 +17,6 @@ namespace ControlFinWeb.Repositorio.Repositorios
             RepositorioFaturaCartaoCredito = repositorioFaturaCartaoCredito;
         }
 
-        //public void SalvarAlterarFaturaItemEAlterarParcela(FaturaCartaoCreditoItens faturaCartaoCreditoItens)
-        //{
-        //    using (var trans = Session.BeginTransaction())
-        //    {
-        //        try
-        //        {
-        //            RepositorioParcela.AlterarParcelaFatura(faturaCartaoCreditoItens);
-        //            if (faturaCartaoCreditoItens.Id > 0)
-        //            {
-        //                AlterarLote(faturaCartaoCreditoItens);
-        //            }
-        //            else
-        //            {
-        //                SalvarLote(faturaCartaoCreditoItens);
-        //            }
-
-        //            trans.Commit();
-
-        //        }
-        //        catch (Exception ex)
-        //        {
-        //            trans.Rollback();
-        //            throw new Exception(ex.ToString());
-        //        }
-        //    }
-        //}
-
         public void SalvarAlterarFaturaItemEAlterarParcela(FaturaItens faturaCartaoCreditoItens, String nParcelas, Boolean replicar)
         {
             using (var trans = Session.BeginTransaction())
@@ -52,6 +25,7 @@ namespace ControlFinWeb.Repositorio.Repositorios
                 {
                     var numParcelas = Int32.Parse(nParcelas);
                     Decimal valorParcela = 0, restante = 0;
+                    String codItemRelacionado = String.Empty;
 
                     if (replicar)
                         valorParcela = faturaCartaoCreditoItens.Valor;
@@ -72,8 +46,14 @@ namespace ControlFinWeb.Repositorio.Repositorios
                         if (i == 0)
                         {
                             faturaCartaoCreditoItens.Valor = valorParcela;
-                            RepositorioParcela.AlterarParcelaFatura(faturaCartaoCreditoItens);
+                            faturaCartaoCreditoItens.QuantidadeRelacionado = String.Format("{0}/{1}", i+1, numParcelas);
                             SalvarOuAlterar(faturaCartaoCreditoItens);
+                            
+                            codItemRelacionado = String.Format("{0}{1}", faturaCartaoCreditoItens.CartaoCredito.Id, faturaCartaoCreditoItens.Id);
+                            faturaCartaoCreditoItens.CodigoItemRelacionado = codItemRelacionado;
+                            SalvarOuAlterar(faturaCartaoCreditoItens);
+
+                            RepositorioParcela.AlterarParcelaFatura(faturaCartaoCreditoItens);
                         }
                         else
                         {
@@ -88,7 +68,9 @@ namespace ControlFinWeb.Repositorio.Repositorios
                                 DataCompra = faturaCartaoCreditoItens.DataCompra,
                                 SubGasto = faturaCartaoCreditoItens.SubGasto,
                                 Pessoa = faturaCartaoCreditoItens.Pessoa,
-                                UsuarioCriacao = faturaCartaoCreditoItens.UsuarioCriacao
+                                UsuarioCriacao = faturaCartaoCreditoItens.UsuarioCriacao,
+                                CodigoItemRelacionado = codItemRelacionado,
+                                QuantidadeRelacionado = String.Format("{0}/{1}", i+1, numParcelas)
                             };
 
                             if (proximaFatura == null)
@@ -103,6 +85,7 @@ namespace ControlFinWeb.Repositorio.Repositorios
                                 novoItemFatura.CartaoCredito = novaFatura;
                                 RepositorioParcela.AlterarParcelaFatura(novoItemFatura);
                                 SalvarOuAlterar(novoItemFatura);
+                               
                             }
                             else
                             {
@@ -153,5 +136,6 @@ namespace ControlFinWeb.Repositorio.Repositorios
                 SalvarLote(faturaCartaoCreditoItens);
             }
         }
+
     }
 }

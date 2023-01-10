@@ -19,6 +19,8 @@ namespace ControlFinWeb.Repositorio.Mapeamentos
             Property(x => x.Valor);
             Property(x => x.DataGeracao);
             Property(x => x.DataAlteracao);
+            Property(x => x.CodigoItemRelacionado);
+            Property(x => x.QuantidadeRelacionado);
             ManyToOne(x => x.Pessoa, m => m.Column("Pessoa"));
             ManyToOne(x => x.SubGasto, m => m.Column("SubGasto"));
             ManyToOne(x => x.CartaoCredito, m => m.Column("CartaoCredito"));

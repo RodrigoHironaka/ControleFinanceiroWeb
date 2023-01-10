@@ -35,6 +35,17 @@ namespace ControlFinWeb.App.ViewModels
 
         public IList<FaturaItensVM> FaturasItensVM { get; set; }
 
+        #region Campos para verificar outros itens relacionados
+
+        public String CodigoItemRelacionado { get; set; }
+        public String QuantidadeRelacionado { get; set; }
+
+        public String DescricaoCompleta
+        {
+            get { return String.Format("{0} ({1})", Nome, QuantidadeRelacionado); }
+        }
+        #endregion
+
         #region Campos vinculados a outras classes
         [DisplayName("Gasto")]
         [Range(1, Int64.MaxValue, ErrorMessage = "Informe um Gasto")]
