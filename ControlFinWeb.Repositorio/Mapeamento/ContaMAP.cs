@@ -11,12 +11,8 @@ namespace ControlFinWeb.Repositorio.Mapeamentos
         public ContaMAP()
         {
             Table("Contas");
-            Id(x => x.Id, m =>
-            {
-                m.Generator(Generators.HighLow, g => g.Params(new { max_lo = 0 }));
-            });
 
-            Property(x => x.Codigo);
+            Id(x => x.Id, m => m.Generator(Generators.Identity));
             Property(x => x.Nome, m => m.Length(70));
             Property(x => x.Observacao, m => m.Length(400));
             Property(x => x.DataEmissao);

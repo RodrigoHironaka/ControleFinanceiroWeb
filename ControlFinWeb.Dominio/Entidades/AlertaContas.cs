@@ -17,7 +17,7 @@ namespace ControlFinWeb.Dominio.Entidades
         {
             get
             {
-                return String.Format("{0}-{1}- Parcela {2}", Parcela.Conta.Codigo, Parcela.Conta.Nome, Parcela.ParcelaDe);
+                return String.Format("{0}-{1}- Parcela {2}", Parcela.Conta.Id, Parcela.Conta.Nome, Parcela.ParcelaDe);
             }
         }
     }

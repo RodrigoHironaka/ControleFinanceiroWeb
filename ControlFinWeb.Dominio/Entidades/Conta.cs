@@ -14,7 +14,6 @@ namespace ControlFinWeb.Dominio.Entidades
             Arquivos = new List<Arquivo>();
             Situacao = SituacaoConta.Aberto;
         }
-        public virtual Int64 Codigo { get; set; }
         public virtual TipoConta TipoConta { get; set; }
         public virtual PeriodoConta TipoPeriodo { get; set; }
         public virtual SituacaoConta Situacao { get; set; }
@@ -31,27 +30,8 @@ namespace ControlFinWeb.Dominio.Entidades
         {
             get
             {
-                return $"{Nome} [{Codigo}]";
+                return $"{Nome} [{Id}]";
             }
         }
-
-        //public virtual Decimal? ValorTotalConta { get; set; }
-        //public virtual Int64? QtdTotalParcelas { get; set; }
-
-        //public virtual Decimal? ValorTotalAberto
-        //{
-        //    get
-        //    {
-        //        return Parcelas.Select(x => x.ValorAberto).Sum();
-        //    }
-        //}
-
-        //public virtual Int64? QtdTotalParcelasEmAberto
-        //{
-        //    get
-        //    {
-        //        return Parcelas.Where(x => x.ValorAberto > 0).Count();
-        //    }
-        //}
     }
 }

@@ -11,11 +11,8 @@ namespace ControlFinWeb.Repositorio.Mapeamentos
         public ParcelaMAP()
         {
             Table("Parcelas");
-            Id(x => x.Id, m =>
-            {
-                m.Generator(Generators.HighLow, g => g.Params(new { max_lo = 0 }));
-                
-            });
+
+            Id(x => x.Id, m => m.Generator(Generators.Identity));
             Property(x => x.Numero);
             Property(x => x.ParcelaDe, m => m.Length(10));
             Property(x => x.ValorParcela);

@@ -47,7 +47,6 @@ namespace ControlFinWeb.Repositorio.Repositorios
             }
 
             novoContaBancaria.UsuarioCriacao = usuario;
-            novoContaBancaria.Codigo = RetornaUltimoCodigo() + 1;
             novoContaBancaria.Valor = valorPagoParcela;
             novoContaBancaria.DataRegistro = DateTime.Now;
             novoContaBancaria.TransacaoBancaria = Dominio.ObjetoValor.TransacaoBancaria.Outros;

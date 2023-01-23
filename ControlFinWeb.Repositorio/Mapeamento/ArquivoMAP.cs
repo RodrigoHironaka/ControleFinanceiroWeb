@@ -9,12 +9,8 @@ namespace ControlFinWeb.Repositorio.Mapeamento
         public ArquivoMAP()
         {
             Table("Arquivos");
-            Id(x => x.Id, m =>
-            {
-                m.Generator(Generators.HighLow, g => g.Params(new { max_lo = 0 }));
 
-            });
-           
+            Id(x => x.Id, m => m.Generator(Generators.Identity));
             Property(x => x.Nome, m => m.Length(255));
             Property(x => x.Caminho, m => m.Length(255));
             Property(x => x.Extensao, m => m.Length(255));

@@ -75,7 +75,6 @@ namespace ControlFinWeb.App.Controllers
                     if (contaVM.JsonParcelas != null && !String.IsNullOrEmpty(contaVM.JsonParcelas))
                         contaVM.ParcelasVM = JsonConvert.DeserializeObject<IList<ParcelaVM>>(contaVM.JsonParcelas);
                     conta = Mapper.Map(contaVM, conta);
-                    conta.Codigo = Repositorio.RetornaUltimoCodigo() + 1;
                     conta.UsuarioCriacao = Configuracao.Usuario;
                     conta.Parcelas.ForEach(x => x.Conta = conta);
                     conta.Parcelas.Where(x => x.Id == 0).ForEach(x => { x.DataGeracao = DateTime.Now; x.UsuarioCriacao = Configuracao.Usuario; });

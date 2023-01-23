@@ -33,7 +33,7 @@ namespace ControlFinWeb.App.Controllers
 
         public IActionResult Index(Int64 Id)//Id é da fatura do cartao
         {
-            IEnumerable<FaturaItens> faturasItens = Repositorio.ObterPorParametros(x => x.CartaoCredito.Id == Id);
+            IEnumerable<FaturaItens> faturasItens = Repositorio.ObterPorParametros(x => x.Fatura.Id == Id);
             List<FaturaItensVM> faturasVM = Mapper
                 .Map<List<FaturaItensVM>>(faturasItens);
             return View(faturasVM);
@@ -67,7 +67,7 @@ namespace ControlFinWeb.App.Controllers
                     faturaItens.UsuarioCriacao = Configuracao.Usuario;
 
                 faturaItens = Mapper.Map(faturaItensVM, faturaItens);
-                faturaItens.CartaoCredito = RepositorioFatura.ObterPorId(faturaItens.CartaoCredito.Id);
+                faturaItens.Fatura = RepositorioFatura.ObterPorId(faturaItens.Fatura.Id);
                 Repositorio.SalvarAlterarFaturaItemEAlterarParcela(faturaItens, faturaItensVM.NumeroParcelas, faturaItensVM.Replicar);
                 return RedirectToAction("ConsultaItensRelacionados", new { codItemRelacionado = faturaItens.CodigoItemRelacionado });
             }
@@ -99,7 +99,7 @@ namespace ControlFinWeb.App.Controllers
             IEnumerable<FaturaItens> faturasItens = Repositorio.ObterPorParametros(x => x.CodigoItemRelacionado == codItemRelacionado);
             foreach (var item in faturasItens)
             {
-                var fatura = RepositorioFatura.ObterPorId(item.CartaoCredito.Id);
+                var fatura = RepositorioFatura.ObterPorId(item.Fatura.Id);
                 if (fatura != null && fatura.SituacaoFatura == Dominio.ObjetoValor.SituacaoFatura.Aberta)
                     faturasItensFiltradas.Add(item);
             }
@@ -131,7 +131,7 @@ namespace ControlFinWeb.App.Controllers
             var itens = Repositorio.ObterPorParametros(x => x.CodigoItemRelacionado == codItemRelacionado && x.UsuarioCriacao == Configuracao.Usuario);
             foreach (var item in itens)
             {
-                if (item.CartaoCredito.SituacaoFatura == Dominio.ObjetoValor.SituacaoFatura.Aberta)
+                if (item.Fatura.SituacaoFatura == Dominio.ObjetoValor.SituacaoFatura.Aberta)
                     Repositorio.ExcluirItemFaturaEAlterarParcela(item.Id);
             }
             return Json("Excluído com sucesso");

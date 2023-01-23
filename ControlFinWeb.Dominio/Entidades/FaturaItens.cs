@@ -11,6 +11,6 @@ namespace ControlFinWeb.Dominio.Entidades
         public virtual DateTime? DataCompra { get; set; }
         public virtual SubGasto SubGasto { get; set; }
         public virtual Pessoa Pessoa { get; set; }
-        public virtual Fatura CartaoCredito { get; set; }
+        public virtual Fatura Fatura { get; set; }
     }
 }

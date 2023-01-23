@@ -10,11 +10,7 @@ namespace ControlFinWeb.Repositorio.Mapeamento.Logs
         {
             Table("LogsModificacoes");
 
-            Id(x => x.Id, m =>
-            {
-                m.Generator(Generators.HighLow, g => g.Params(new { max_lo = 0 }));
-            });
-
+            Id(x => x.Id, m => m.Generator(Generators.Identity));
             Property(x => x.Nome, m => m.Length(200));
             Property(x => x.Chave, m => m.Length(200));
             Property(x => x.Historico, m => m.Length(2000));

@@ -10,11 +10,7 @@ namespace ControlFinWeb.Repositorio.Mapeamentos
         {
             Table("HorasExtra");
 
-            Id(x => x.Id, m =>
-            {
-                m.Generator(Generators.HighLow, g => g.Params(new { max_lo = 0 }));
-            });
-            
+            Id(x => x.Id, m => m.Generator(Generators.Identity));
             Property(x => x.Nome);
             Property(x => x.HorasTrabalhoManha);
             Property(x => x.HorasTrabalhoTarde);

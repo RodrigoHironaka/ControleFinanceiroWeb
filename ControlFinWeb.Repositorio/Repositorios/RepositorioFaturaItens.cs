@@ -9,15 +9,15 @@ namespace ControlFinWeb.Repositorio.Repositorios
     public class RepositorioFaturaItens : RepositorioBase<FaturaItens>
     {
         private readonly RepositorioParcela RepositorioParcela;
-        private readonly RepositorioFatura RepositorioFaturaCartaoCredito;
+        private readonly RepositorioFatura RepositorioFatura;
 
-        public RepositorioFaturaItens(RepositorioParcela repositorioParcela, RepositorioFatura repositorioFaturaCartaoCredito, ISession session) : base(session)
+        public RepositorioFaturaItens(RepositorioParcela repositorioParcela, RepositorioFatura repositorioFatura, ISession session) : base(session)
         {
             RepositorioParcela = repositorioParcela;
-            RepositorioFaturaCartaoCredito = repositorioFaturaCartaoCredito;
+            RepositorioFatura = repositorioFatura;
         }
 
-        public void SalvarAlterarFaturaItemEAlterarParcela(FaturaItens faturaCartaoCreditoItens, String nParcelas, Boolean replicar)
+        public void SalvarAlterarFaturaItemEAlterarParcela(FaturaItens faturaItens, String nParcelas, Boolean replicar)
         {
             using (var trans = Session.BeginTransaction())
             {
@@ -28,11 +28,11 @@ namespace ControlFinWeb.Repositorio.Repositorios
                     String codItemRelacionado = String.Empty;
 
                     if (replicar)
-                        valorParcela = faturaCartaoCreditoItens.Valor;
+                        valorParcela = faturaItens.Valor;
                     else
                     {
-                        valorParcela = Math.Round(faturaCartaoCreditoItens.Valor / numParcelas, 2);
-                        restante = Math.Round(faturaCartaoCreditoItens.Valor - (valorParcela * numParcelas), 2);
+                        valorParcela = Math.Round(faturaItens.Valor / numParcelas, 2);
+                        restante = Math.Round(faturaItens.Valor - (valorParcela * numParcelas), 2);
                     }
 
                     for (int i = 0; i < numParcelas; i++)
@@ -45,31 +45,31 @@ namespace ControlFinWeb.Repositorio.Repositorios
 
                         if (i == 0)
                         {
-                            faturaCartaoCreditoItens.Valor = valorParcela;
-                            faturaCartaoCreditoItens.QuantidadeRelacionado = faturaCartaoCreditoItens.Id == 0 ? String.Format("{0}/{1}", i + 1, numParcelas) : faturaCartaoCreditoItens.QuantidadeRelacionado;
-                            SalvarOuAlterar(faturaCartaoCreditoItens);
+                            faturaItens.Valor = valorParcela;
+                            faturaItens.QuantidadeRelacionado = faturaItens.Id == 0 ? String.Format("{0}/{1}", i + 1, numParcelas) : faturaItens.QuantidadeRelacionado;
+                            SalvarOuAlterar(faturaItens);
 
-                            if (String.IsNullOrEmpty(faturaCartaoCreditoItens.CodigoItemRelacionado))
+                            if (String.IsNullOrEmpty(faturaItens.CodigoItemRelacionado))
                             {
-                                codItemRelacionado = String.Format("{0}{1}", faturaCartaoCreditoItens.CartaoCredito.Id, faturaCartaoCreditoItens.Id);
-                                faturaCartaoCreditoItens.CodigoItemRelacionado = codItemRelacionado;
-                                AlterarLote(faturaCartaoCreditoItens);
+                                codItemRelacionado = String.Format("{0}{1}", faturaItens.Fatura.Id, faturaItens.Id);
+                                faturaItens.CodigoItemRelacionado = codItemRelacionado;
+                                AlterarLote(faturaItens);
                             }
                         }
                         else
                         {
-                            var proximaFatura = RepositorioFaturaCartaoCredito.ObterPorParametros(x => x.Cartao == faturaCartaoCreditoItens.CartaoCredito.Cartao
+                            var proximaFatura = RepositorioFatura.ObterPorParametros(x => x.Cartao == faturaItens.Fatura.Cartao
                             && x.SituacaoFatura == SituacaoFatura.Aberta
-                            && x.MesAnoReferencia == faturaCartaoCreditoItens.CartaoCredito.MesAnoReferencia.AddMonths(i)).FirstOrDefault();
+                            && x.MesAnoReferencia == faturaItens.Fatura.MesAnoReferencia.AddMonths(i)).FirstOrDefault();
 
                             var novoItemFatura = new FaturaItens()
                             {
-                                Nome = faturaCartaoCreditoItens.Nome,
+                                Nome = faturaItens.Nome,
                                 Valor = valorParcela,
-                                DataCompra = faturaCartaoCreditoItens.DataCompra,
-                                SubGasto = faturaCartaoCreditoItens.SubGasto,
-                                Pessoa = faturaCartaoCreditoItens.Pessoa,
-                                UsuarioCriacao = faturaCartaoCreditoItens.UsuarioCriacao,
+                                DataCompra = faturaItens.DataCompra,
+                                SubGasto = faturaItens.SubGasto,
+                                Pessoa = faturaItens.Pessoa,
+                                UsuarioCriacao = faturaItens.UsuarioCriacao,
                                 CodigoItemRelacionado = codItemRelacionado,
                                 QuantidadeRelacionado = String.Format("{0}/{1}", i + 1, numParcelas)
                             };
@@ -78,17 +78,17 @@ namespace ControlFinWeb.Repositorio.Repositorios
                             {
                                 var novaFatura = new Fatura()
                                 {
-                                    MesAnoReferencia = faturaCartaoCreditoItens.CartaoCredito.MesAnoReferencia.AddMonths(i),
-                                    Cartao = faturaCartaoCreditoItens.CartaoCredito.Cartao,
-                                    UsuarioCriacao = faturaCartaoCreditoItens.UsuarioCriacao,
+                                    MesAnoReferencia = faturaItens.Fatura.MesAnoReferencia.AddMonths(i),
+                                    Cartao = faturaItens.Fatura.Cartao,
+                                    UsuarioCriacao = faturaItens.UsuarioCriacao,
                                 };
-                                RepositorioFaturaCartaoCredito.SalvarEGerarNovaParcelaLote(novaFatura);
-                                novoItemFatura.CartaoCredito = novaFatura;
+                                RepositorioFatura.SalvarEGerarNovaParcelaLote(novaFatura);
+                                novoItemFatura.Fatura = novaFatura;
                                 SalvarOuAlterar(novoItemFatura);
                             }
                             else
                             {
-                                novoItemFatura.CartaoCredito = proximaFatura;
+                                novoItemFatura.Fatura = proximaFatura;
                                 SalvarOuAlterar(novoItemFatura);
                             }
                         }
@@ -109,10 +109,10 @@ namespace ControlFinWeb.Repositorio.Repositorios
             {
                 try
                 {
-                    var faturaCartaoCreditoItem = ObterPorId(Id);
-                    faturaCartaoCreditoItem.CartaoCredito.FaturaItens.Remove(faturaCartaoCreditoItem);
-                    RepositorioParcela.AlterarParcelaFatura(faturaCartaoCreditoItem, true);
-                    ExcluirLote(faturaCartaoCreditoItem);
+                    var faturaItem = ObterPorId(Id);
+                    faturaItem.Fatura.FaturaItens.Remove(faturaItem);
+                    RepositorioParcela.AlterarParcelaFatura(faturaItem, true);
+                    ExcluirLote(faturaItem);
                     trans.Commit();
                 }
                 catch (Exception ex)
@@ -123,17 +123,17 @@ namespace ControlFinWeb.Repositorio.Repositorios
             }
         }
 
-        public void SalvarOuAlterar(FaturaItens faturaCartaoCreditoItem)
+        public void SalvarOuAlterar(FaturaItens faturaItem)
         {
-            if (faturaCartaoCreditoItem.Id > 0)
+            if (faturaItem.Id > 0)
             {
-                RepositorioParcela.AlterarParcelaFatura(faturaCartaoCreditoItem, false, true);
-                AlterarLote(faturaCartaoCreditoItem);
+                RepositorioParcela.AlterarParcelaFatura(faturaItem, false, true);
+                AlterarLote(faturaItem);
             }
             else
             {
-                RepositorioParcela.AlterarParcelaFatura(faturaCartaoCreditoItem, false, false);
-                SalvarLote(faturaCartaoCreditoItem);
+                RepositorioParcela.AlterarParcelaFatura(faturaItem, false, false);
+                SalvarLote(faturaItem);
             }
 
         }

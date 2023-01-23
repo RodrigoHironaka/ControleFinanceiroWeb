@@ -11,11 +11,8 @@ namespace ControlFinWeb.Repositorio.Mapeamentos
         public CaixaMAP()
         {
             Table("Caixas");
-            Id(x => x.Id, m =>
-            {
-                m.Generator(Generators.HighLow, g => g.Params(new { max_lo = 0 }));
-            });
-            Property(x => x.Codigo);
+
+            Id(x => x.Id, m => m.Generator(Generators.Identity));
             Property(x => x.ValorInicial);
             Property(x => x.DataGeracao);
             Property(x => x.DataAlteracao);

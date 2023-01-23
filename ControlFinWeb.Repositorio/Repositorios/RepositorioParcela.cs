@@ -41,7 +41,7 @@ namespace ControlFinWeb.Repositorio.Repositorios
 
         public void AlterarParcelaFatura(FaturaItens faturaItens, Boolean RemovendoItemFatura = false, Boolean AlterandoItemFatura = false)
         {
-            var existeParcela = ObterPorParametros(x => x.Fatura.Id.Equals(faturaItens.CartaoCredito.Id)).FirstOrDefault();
+            var existeParcela = ObterPorParametros(x => x.Fatura.Id.Equals(faturaItens.Fatura.Id)).FirstOrDefault();
             
             if (RemovendoItemFatura)
             {
@@ -51,15 +51,15 @@ namespace ControlFinWeb.Repositorio.Repositorios
             }
             else if (AlterandoItemFatura)
             {
-                existeParcela.ValorParcela = faturaItens.CartaoCredito.ValorFatura;
-                existeParcela.ValorReajustado = faturaItens.CartaoCredito.ValorFatura;
-                existeParcela.ValorAberto = faturaItens.CartaoCredito.ValorFatura;
+                existeParcela.ValorParcela = faturaItens.Fatura.ValorFatura;
+                existeParcela.ValorReajustado = faturaItens.Fatura.ValorFatura;
+                existeParcela.ValorAberto = faturaItens.Fatura.ValorFatura;
             }
             else
             {
-                existeParcela.ValorParcela = faturaItens.CartaoCredito.ValorFatura + faturaItens.Valor;
-                existeParcela.ValorReajustado = faturaItens.CartaoCredito.ValorFatura + faturaItens.Valor;
-                existeParcela.ValorAberto = faturaItens.CartaoCredito.ValorFatura + faturaItens.Valor;
+                existeParcela.ValorParcela = faturaItens.Fatura.ValorFatura + faturaItens.Valor;
+                existeParcela.ValorReajustado = faturaItens.Fatura.ValorFatura + faturaItens.Valor;
+                existeParcela.ValorAberto = faturaItens.Fatura.ValorFatura + faturaItens.Valor;
             }
 
             AlterarLote(existeParcela);

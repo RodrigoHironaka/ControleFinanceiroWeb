@@ -11,11 +11,8 @@ namespace ControlFinWeb.Repositorio.Mapeamentos
         public ContaBancariaMAP()
         {
             Table("contasBancarias");
-            Id(x => x.Id, m =>
-            {
-                m.Generator(Generators.HighLow, g => g.Params(new { max_lo = 0 }));
-            });
-            Property(x => x.Codigo);
+
+            Id(x => x.Id, m => m.Generator(Generators.Identity));
             Property(x => x.Nome, m => m.Length(200));
             Property(x => x.Valor);
             Property(x => x.DataRegistro);

@@ -11,10 +11,8 @@ namespace ControlFinWeb.Repositorio.Mapeamentos
         public FaturaMAP()
         {
             Table("Faturas");
-            Id(x => x.Id, m =>
-            {
-                m.Generator(Generators.HighLow, g => g.Params(new { max_lo = 0 }));
-            });
+
+            Id(x => x.Id, m => m.Generator(Generators.Identity));
             Property(x => x.Nome, m => m.Length(500));
             Property(x => x.MesAnoReferencia);
             Property(x => x.DataFechamento);

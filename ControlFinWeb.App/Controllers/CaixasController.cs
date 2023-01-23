@@ -78,7 +78,6 @@ namespace ControlFinWeb.App.Controllers
                 else
                 {
                     caixa = Mapper.Map(caixaVM, caixa);
-                    caixa.Codigo = Repositorio.RetornaUltimoCodigo() + 1;
                     caixa.UsuarioCriacao = Configuracao.Usuario;
                     Repositorio.SalvarCaixa(caixa, Configuracao.Usuario);
                 }

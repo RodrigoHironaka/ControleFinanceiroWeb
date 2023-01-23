@@ -16,11 +16,8 @@ namespace ControlFinWeb.Repositorio.Mapeamento
         public CartaoMAP()
         {
             Table("Cartoes");
-            Id(x => x.Id, m =>
-            {
-                m.Generator(Generators.HighLow, g => g.Params(new { max_lo = 0 }));
-            });
 
+            Id(x => x.Id, m => m.Generator(Generators.Identity));
             Property(x => x.Nome, m => m.Length(70));
             Property(x => x.LimiteFatura);
             Property(x => x.DiaVencimento);

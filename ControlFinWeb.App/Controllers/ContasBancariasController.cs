@@ -64,7 +64,6 @@ namespace ControlFinWeb.App.Controllers
                 else
                 {
                     contaBancaria = Mapper.Map(contaBancariaVM, contaBancaria);
-                    contaBancaria.Codigo = Repositorio.RetornaUltimoCodigo() + 1;
                     contaBancaria.UsuarioCriacao = Configuracao.Usuario;
                     Repositorio.Salvar(contaBancaria);
                 }

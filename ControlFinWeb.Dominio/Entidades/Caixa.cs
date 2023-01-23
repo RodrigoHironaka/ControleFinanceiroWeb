@@ -15,11 +15,10 @@ namespace ControlFinWeb.Dominio.Entidades
         }
         public override string ToString()
         {
-            return Codigo.ToString();
+            return Id.ToString();
         }
 
         public virtual Int64 Id { get; set; }
-        public virtual Int64 Codigo { get; set; }
         public virtual Decimal ValorInicial { get; set; } 
         public virtual SituacaoCaixa Situacao { get; set; }
         public virtual DateTime DataGeracao { get; set; }

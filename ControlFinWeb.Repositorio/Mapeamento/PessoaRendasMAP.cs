@@ -10,9 +10,7 @@ namespace ControlFinWeb.Repositorio.Mapeamentos
         {
             Table("PessoasRendas");
 
-            Id(x => x.Id, m => {
-                m.Generator(Generators.HighLow, g => g.Params(new { max_lo = 0}));
-            });
+            Id(x => x.Id, m => m.Generator(Generators.Identity));
             Property(x => x.RendaBruta);
             Property(x => x.RendaLiquida);
             ManyToOne(x => x.TipoRenda, m=>m.Column("TipoRenda"));

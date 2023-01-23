@@ -6,7 +6,6 @@ namespace ControlFinWeb.Dominio.Entidades
 {
     public class ContaBancaria : Base
     {
-        public virtual Int64 Codigo { get; set; }
         public virtual Decimal Valor { get; set; }
         public virtual DateTime? DataRegistro { get; set; }
         public virtual TransacaoBancaria TransacaoBancaria{ get; set; }
