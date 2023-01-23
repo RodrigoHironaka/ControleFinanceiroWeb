@@ -69,7 +69,7 @@ namespace ControlFinWeb.App.Controllers
                 faturaItens = Mapper.Map(faturaItensVM, faturaItens);
                 faturaItens.CartaoCredito = RepositorioFatura.ObterPorId(faturaItens.CartaoCredito.Id);
                 Repositorio.SalvarAlterarFaturaItemEAlterarParcela(faturaItens, faturaItensVM.NumeroParcelas, faturaItensVM.Replicar);
-                return new EmptyResult();
+                return RedirectToAction("ConsultaItensRelacionados", new { codItemRelacionado = faturaItens.CodigoItemRelacionado });
             }
             ViewBag.Pessoas = new SelectList(new RepositorioPessoa(NHibernateHelper.ObterSessao()).ObterPorParametros(x => x.Situacao == Situacao.Ativo), "Id", "Nome", faturaItensVM.Id);
             ViewBag.Subgastos = new SelectList(new RepositorioSubGasto(NHibernateHelper.ObterSessao()).ObterPorParametros(x => x.Situacao == Situacao.Ativo), "Id", "DescricaoCompleta", faturaItensVM.Id);
@@ -87,10 +87,54 @@ namespace ControlFinWeb.App.Controllers
         public String SituacaoFatura(Int64 idCartao)
         {
             var fatura = RepositorioFatura.ObterPorId(idCartao);
-            if(fatura == null)
-               return String.Empty;
+            if (fatura == null)
+                return String.Empty;
 
             return fatura.SituacaoFatura.ToString();
+        }
+
+        public IActionResult ConsultaItensRelacionados(String codItemRelacionado)
+        {
+            IList<FaturaItens> faturasItensFiltradas = new List<FaturaItens>();
+            IEnumerable<FaturaItens> faturasItens = Repositorio.ObterPorParametros(x => x.CodigoItemRelacionado == codItemRelacionado);
+            foreach (var item in faturasItens)
+            {
+                var fatura = RepositorioFatura.ObterPorId(item.CartaoCredito.Id);
+                if (fatura != null && fatura.SituacaoFatura == Dominio.ObjetoValor.SituacaoFatura.Aberta)
+                    faturasItensFiltradas.Add(item);
+            }
+            List<FaturaItensVM> faturasVM = Mapper
+                .Map<List<FaturaItensVM>>(faturasItensFiltradas);
+            return View(faturasVM);
+        }
+
+        [HttpPost]
+        public IActionResult EditarDireto(Int64 idFaturaItem, decimal novoValor)
+        {
+            if (idFaturaItem > 0 && novoValor > 0)
+            {
+                var faturaItem = Repositorio.ObterPorId(idFaturaItem);
+                if (faturaItem != null)
+                {
+                    if (faturaItem.Valor != novoValor)
+                        faturaItem.Valor = novoValor;
+                    Repositorio.SalvarAlterarFaturaItemEAlterarParcela(faturaItem, "1", false);
+                    return new EmptyResult();
+                }
+            }
+            return Json("Erro! Item não encontrado.");
+        }
+
+        [HttpPost]
+        public JsonResult DeletarPeloCodigoRelacionado(String codItemRelacionado)
+        {
+            var itens = Repositorio.ObterPorParametros(x => x.CodigoItemRelacionado == codItemRelacionado && x.UsuarioCriacao == Configuracao.Usuario);
+            foreach (var item in itens)
+            {
+                if (item.CartaoCredito.SituacaoFatura == Dominio.ObjetoValor.SituacaoFatura.Aberta)
+                    Repositorio.ExcluirItemFaturaEAlterarParcela(item.Id);
+            }
+            return Json("Excluído com sucesso");
         }
     }
 }

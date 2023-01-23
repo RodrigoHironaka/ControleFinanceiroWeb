@@ -1,0 +1,104 @@
+﻿@model IEnumerable<ControlFinWeb.App.ViewModels.FaturaItensVM>
+
+@{
+    ViewData["Title"] = "Itens Relacionados";
+}
+
+<div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="text-black">Itens da Fatura Criados</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" onclick="Fechar()"></button>
+        </div>
+        <div class="modal-body" style="font-size: 14px;">
+            <input id="ultimaFaturaId" class='form-control' style="display: none" />
+            <div class="row">
+                <div class="col-md">
+                    <div id="msgItensRelacionados" role="alert"></div>
+                    <br />
+                    <table class="table table-bordered table-striped table-hover table-responsive">
+                        <thead>
+                            <tr style="text-align:center">
+                                <th>Numero</th>
+                                <th>Valor</th>
+                                <th>Fatura</th>
+                                <th> <button class="w-100 btn btn-sm btn-dark modal-trigger removerTodos"><i class="bi bi-trash"></i> Todos</button></th>
+                            </tr>
+                        </thead>
+                        <tbody id=tBodyCampos>
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td>
+                                        <input class='form-control' style='text-align:center' type='text' readonly value="@item.QuantidadeRelacionado">
+                                        <input id="CodigoItemRelacionado" class='form-control' style='display:none' type='text' readonly value="@item.CodigoItemRelacionado">
+                                    </td>
+                                    <td style="text-align:center">
+                                        <input id="Valor_@item.Id" class='form-control Valor' style='text-align:center' type='text' value="@item.Valor.ToString("N2")">
+                                    </td>
+                                    <td style="text-align:center">
+                                        <input class='form-control' style='text-align:center' type='text' readonly value="@item.CartaoCreditoVM.DescricaoCompleta">
+                                    </td>
+                                    <td style="text-align:center">
+                                        <button class="btn btn-sm btn-success modal-trigger alterar" data-id="@item.Id"><i class="bi bi-check-lg"></i></button>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script>
+        $(".Valor").maskMoney({ thousands: '', decimal: ',', allowZero: true });
+
+        $(function() {
+            $(".alterar").click(function() {
+                var id = $(this).attr("data-id");
+                var valor = $('#Valor_' + id).val();
+                $.ajax({
+                    method: "POST",
+                    url: "/FaturasItens/EditarDireto",
+                    data: { idFaturaItem: id, novoValor: valor },
+                    success: function(retorno) {
+                        if (retorno == "") {
+                            $("#msgItensRelacionados").addClass('alert alert-success').html("<strong>Alterado com sucesso!</strong>").delay(30000).fadeOut(400);
+                        } else {
+                            $("#msgItensRelacionados").addClass('alert alert-warning').html("<strong>Não foi possível alterar! Verifique com o suporte.</strong>").delay(30000).fadeOut(400);
+                        }
+                    }
+                });
+            });
+
+            $(".removerTodos").click(function() {
+                var codItemRel = $("#CodigoItemRelacionado").val();
+                $.ajax({
+                    method: "POST",
+                    url: "/FaturasItens/DeletarPeloCodigoRelacionado",
+                    data: { codItemRelacionado: codItemRel },
+                    success: function() {
+                        $("#msgItensRelacionados").addClass('alert alert-info').html("<strong>Todos os itens foram removidos!</strong>").delay(30000).fadeOut(400);
+                        $("#tBodyCampos").empty();
+                        $(".removerTodos").prop("disabled", true);
+
+                    }
+                });
+            });
+        })
+
+
+        function Fechar() {
+            var ultimaFaturaId = $("#ultimaFaturaId").val();
+            $("#modal").load("/FaturasItens/Index?id=" + ultimaFaturaId, function() {
+                $("#idCartao").val(ultimaFaturaId);
+            });
+        }
+    </script>
+    }

@@ -90,13 +90,16 @@
 @section Scripts
     {
     <script>
-        //$(document).ready(function () {
-        //    $('#tabela').DataTable({
-        //        "language": {
-        //            "url": "//cdn.datatables.net/plug-ins/1.11.5/i18n/pt-BR.json"
-        //        }
-        //    });
-        //});
+        $(document).ready(function () {
+            $('#tabelaItensFatura').DataTable({
+                "language": {
+                    "url": "//cdn.datatables.net/plug-ins/1.11.5/i18n/pt-BR.json"
+                },
+                paging: false,
+                info: false,
+                searching: false,
+            });
+        });
 
         $(document).ready(function() {
             $(".modal-excluir").modal();
