@@ -8,7 +8,7 @@
     <div class="modal-content">
         <div class="modal-header">
             <h5 class="modal-title"></h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="javascript:window.location.reload()"></button>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" onclick="Fechar()"></button>
         </div>
         <div class="modal-body">
             <fieldset id="fsAgrupar">
@@ -48,7 +48,7 @@
 
     <script>
         $(document).ready(function() {
-             var sit = $("#SituacaoFatura").val().toString();
+            var sit = $("#SituacaoFatura").val().toString();
             if (sit != "Aberta") {
                 $('#fsAgrupar').prop('disabled', true);
             }
@@ -62,7 +62,8 @@
                 data: dados,
                 success: function(retorno) {
                     if (retorno == "") {
-                        location.reload();
+                        $("#modal").load("/Faturas/Pesquisa", function() {
+                        });
                     }
                     else {
                         $("#modal").html(retorno);
@@ -72,6 +73,12 @@
                             $(".modal-title").html("NOVO REGISTRO");
                     }
                 }
+            });
+        }
+
+         function Fechar() {
+            $("#modal").load("/Faturas/Pesquisa", function() {
+                $("#modal").modal("show");
             });
         }
     </script>

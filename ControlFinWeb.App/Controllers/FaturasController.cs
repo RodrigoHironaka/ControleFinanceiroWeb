@@ -7,6 +7,7 @@ using ControlFinWeb.App.ViewModels;
 using ControlFinWeb.Dominio.Entidades;
 using ControlFinWeb.Dominio.ObjetoValor;
 using ControlFinWeb.Repositorio.Repositorios;
+using LinqKit;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
@@ -30,12 +31,39 @@ namespace ControlFinWeb.App.Controllers
         Fatura fatura = new Fatura();
         FaturaVM faturaVM = new FaturaVM();
 
-        public IActionResult Index()
+        public IActionResult Index(Int64 idFatura = 0)
         {
-            IEnumerable<Fatura> faturas = Repositorio.ObterTodos();
-            List<FaturaVM> faturaVM = Mapper
-                .Map<List<FaturaVM>>(faturas);
+            if(idFatura > 0)
+            {
+                fatura = Repositorio.ObterPorId(idFatura);
+                if (fatura != null)
+                    faturaVM = Mapper.Map<FaturaVM>(fatura);
+            }
             return View(faturaVM);
+        }
+
+        public IActionResult Pesquisa()
+        {
+            IEnumerable<Fatura> faturas = Repositorio.ObterPorParametros(x => x.UsuarioCriacao.Id == Configuracao.Usuario.Id && x.SituacaoFatura == SituacaoFatura.Aberta);
+            List<FaturaVM> faturasVM = Mapper.Map<List<FaturaVM>>(faturas);
+            ViewBag.Cartoes = new SelectList(new RepositorioCartao(NHibernateHelper.ObterSessao()).ObterPorParametros(x => x.Situacao == Situacao.Ativo), "Id", "Nome", null);
+            return View(faturasVM);
+        }
+
+        [HttpPost]
+        public IActionResult Pesquisa(Int64 cartaoId, bool somenteAtivos)
+        {
+            var predicado = Repositorio.CriarPredicado();
+            predicado = predicado.And(x => x.UsuarioCriacao.Id == Configuracao.Usuario.Id);
+            if(cartaoId > 0)
+                predicado = predicado.And(x => x.Cartao.Id == cartaoId);
+            if (somenteAtivos)
+                predicado = predicado.And(x => x.SituacaoFatura == SituacaoFatura.Aberta);
+
+            IEnumerable<Fatura> faturas = Repositorio.ObterPorParametros(predicado);
+            List<FaturaVM> faturasVM = Mapper.Map<List<FaturaVM>>(faturas);
+            ViewBag.Cartoes = new SelectList(new RepositorioCartao(NHibernateHelper.ObterSessao()).ObterPorParametros(x => x.Situacao == Situacao.Ativo), "Id", "Nome", null);
+            return View(faturasVM);
         }
 
         public IActionResult Editar(Int64 Id = 0)
@@ -59,7 +87,7 @@ namespace ControlFinWeb.App.Controllers
                 if (faturaVM.Id > 0)
                 {
                     fatura = Repositorio.ObterPorId(faturaVM.Id);
-                    fatura = Mapper.Map<Fatura>(faturaVM);
+                    fatura = Mapper.Map(faturaVM, fatura);
                     fatura.UsuarioAlteracao = Configuracao.Usuario;
                     Repositorio.Alterar(fatura);
                 }
@@ -82,7 +110,6 @@ namespace ControlFinWeb.App.Controllers
             return Json(fatura.DescricaoCompleta + "excluído com sucesso");
         }
 
-      
         public IActionResult FecharFatura(String obs, Int64 id = 0)
         {
             var fatura = Repositorio.ObterPorId(id);

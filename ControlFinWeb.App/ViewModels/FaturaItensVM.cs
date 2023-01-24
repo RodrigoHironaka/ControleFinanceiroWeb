@@ -57,8 +57,8 @@ namespace ControlFinWeb.App.ViewModels
         public PessoaVM PessoaVM { get; set; }
 
         [DisplayName("Fatura")]
-        public Int64 CartaoCreditoId { get; set; }
-        public FaturaVM CartaoCreditoVM { get; set; }
+        public Int64 FaturaId { get; set; }
+        public FaturaVM FaturaVM { get; set; }
         #endregion
 
 

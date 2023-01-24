@@ -18,7 +18,6 @@ namespace ControlFinWeb.Dominio.Entidades
         public virtual SituacaoFatura SituacaoFatura { get; set; }
         public virtual Cartao Cartao { get; set; }
         public virtual IList<FaturaItens> FaturaItens { get; set; }
-        public virtual IList<Parcela> Parcelas { get; set; }
 
         public virtual string DescricaoCompleta
         {

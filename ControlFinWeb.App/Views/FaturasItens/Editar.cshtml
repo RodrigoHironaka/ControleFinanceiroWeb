@@ -16,7 +16,7 @@
                 <input asp-for="Id" type="hidden" />
                 <input asp-for="CodigoItemRelacionado" type="hidden" />
                 <input asp-for="QuantidadeRelacionado" type="hidden" />
-                <input asp-for="CartaoCreditoId" style="display: none" />
+                <input asp-for="FaturaId" style="display: none" />
 
                 <div class="form-group">
                     <label asp-for="Nome" class="control-label"></label>
@@ -82,16 +82,15 @@
         });
 
         function Salvar() {
-            var idCartao = $("#CartaoCreditoId").val();
+            var faturaId = $("#FaturaId").val();
             var dados = $("#FrmCartaoItens").serialize();
             $.ajax({
                 url: '/FaturasItens/Editar',
                 method: 'POST',
                 data: dados,
                 success: function(retorno) {
-                    $("#modalItem").html(retorno);
-                    $("#ultimaFaturaId").val(idCartao);
-
+                    $("#modal").html(retorno);
+                    $("#ultimaFaturaId").val(faturaId);
                     if ($("#id").val() > 0)
                         $(".tituloItem").html("ALTERANDO ITEM");
                     else

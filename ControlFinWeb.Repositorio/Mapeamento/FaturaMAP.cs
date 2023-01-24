@@ -26,17 +26,9 @@ namespace ControlFinWeb.Repositorio.Mapeamentos
             Bag(x => x.FaturaItens, m =>
             {
                 m.Cascade(Cascade.All);
-                m.Key(k => k.Column("CartaoCredito"));
+                m.Key(k => k.Column("Fatura"));
                 m.Inverse(true);
             }, map => map.OneToMany(a => a.Class(typeof(FaturaItens))));
-
-            Bag(x => x.Parcelas, m =>
-            {
-                m.Cascade(Cascade.All);
-                m.Key(k => k.Column("Parcela"));
-                m.Inverse(true);
-            }, map => map.OneToMany(a => a.Class(typeof(Parcela))));
-
         }
     }
 }

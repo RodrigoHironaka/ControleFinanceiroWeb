@@ -1,0 +1,196 @@
+﻿@using ControlFinWeb.Dominio.ObjetoValor
+@model IEnumerable<ControlFinWeb.App.ViewModels.FaturaVM>
+
+@{
+    ViewData["Title"] = "Faturas";
+}
+
+<div style="margin-left: 200px; margin-right: 200px;">
+    <div class="row">
+        <div class="input-group mb-3">
+            <div class="input-group-prepend">
+                <button class="btn btn-dark novo" data-id="0"><i class="badge-info bi-plus-lg"></i></button>
+            </div>
+            <span class="input-group-text fw-bold">Lista de faturas</span>
+        </div>
+    </div>
+
+    <div id="mensagem" role="alert"></div>
+    <table id="tabela" class="table table-bordered table-striped table-hover table-responsive">
+        <thead>
+            <tr>
+                <th width="50">Mês/Ano</th>
+                <th>Descrição</th>
+                <th width="100">Valor</th>
+                <th width="70">Situação</th>
+                <th width="180"></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Convert.ToDateTime(item.MesAnoReferencia).ToString("MM/yyyy")
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.CartaoVM.Nome)
+                    </td>
+                    <td align="right">
+                        @Html.DisplayFor(modelItem => item.ValorFatura)
+
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.SituacaoFatura)
+                    </td>
+                    <td>
+                        <div class="dropdown">
+                            <button class="btn btn-dark dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-gear-fill"></i> Opções
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li><a class="btn btn-sm btn-dark addItens dropdown-item" data-id="@item.Id"><i class="bi bi-file-earmark-plus"></i> Adicionar compra</a></li>
+                                @if (item.SituacaoFatura != SituacaoFatura.Aberta)
+                                {
+                                    <li><a class="btn btn-sm btn-dark dropdown-item disabled" onclick="ExibirModalFecharFatura(@item.Id)"><i class="bi bi-file-earmark-check"></i> Fechar Fatura</a></li>
+                                    <li><a class="btn btn-sm btn-dark editar dropdown-item disabled" data-id="@item.Id"> <i class="bi bi-pencil-square"></i> Editar</a></li>
+                                    <li><a class="btn btn-sm btn-danger dropdown-item disabled" onclick="ExibirModalExcluir(@item.Id)"><i class="bi bi-x-square"></i> Excluir</a></li>
+                                }
+                                else
+                                {
+                                    <li><a class="btn btn-sm btn-dark dropdown-item " onclick="ExibirModalFecharFatura(@item.Id)"><i class="bi bi-file-earmark-check"></i> Fechar Fatura</a></li>
+                                    <li><a class="btn btn-sm btn-dark editar dropdown-item " data-id="@item.Id"> <i class="bi bi-pencil-square"></i> Editar</a></li>
+                                    <li><a class="btn btn-sm btn-danger dropdown-item " onclick="ExibirModalExcluir(@item.Id)"><i class="bi bi-x-square"></i> Excluir</a></li>
+                                }
+                            </ul>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+<div id="modal" class="modal fade" role="dialog" data-bs-backdrop="static" data-bs-keyboard="false"></div>
+
+<!--Modal Excluir-->
+<div class="modal fade modal-excluir" id="modal-excluir" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-danger">
+                <h5 class="modal-title text-white">Exluir?</h5>
+            </div>
+            <div class="modal-body">
+                <p>ATENÇÃO: Ao excluir essa fatura todos os itens adicionados serão excluídos também!</p>
+                <p>Deseja continuar mesmo assim?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-outline-danger btnConfirmar">Confirmar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--Modal confirmar fechamento fatura-->
+<div class="modal fade modal-fechamentoFatura" id="modal-fechamentoFatura" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-primary">
+                <h5 class="modal-title text-white">Deseja realmente fechar a fatura @*@Model.First().DescricaoCompleta*@?</h5>
+            </div>
+            <div class="modal-body">
+                <label class="control-label">Se desejar pode escrever alguma observação</label>
+                <textarea id="obs" class="form-control" rows="2"></textarea>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-outline-primary btnConfirmarFechamento">Confirmar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts
+    {
+    <script>
+        $(document).ready(function() {
+            $('#tabela').DataTable({
+                "language": {
+                    "url": "//cdn.datatables.net/plug-ins/1.11.5/i18n/pt-BR.json"
+                },
+                columnDefs: [
+                    { className: "dt-right", targets: [2, 3] },
+                    { className: "dt-center", targets: [0, 4] }
+                ],
+                order: [[1, 'asc']],
+            });
+        });
+
+        $(document).ready(function() {
+            $(".modal-excluir").modal();
+        });
+
+        function ExibirModalExcluir(id) {
+            $("#modal-excluir").modal("show");
+            $(".btnConfirmar").on("click", function() {
+                $.ajax({
+                    method: "POST",
+                    url: "/Faturas/Deletar",
+                    data: { id: id },
+                    success: function() {
+                        location.reload();
+                    },
+                    error: function() {
+                        $("#modal-excluir").modal("hide");
+                        $("#mensagem").addClass('alert alert-danger').html("<strong>Erro!</strong> Não é possível excluir, entre em contato com o suporte técnico!").delay(30000).fadeOut(400);
+                    }
+                });
+            })
+        };
+
+        function ExibirModalFecharFatura(id) {
+            $("#modal-fechamentoFatura").modal("show");
+            $(".btnConfirmarFechamento").on("click", function() {
+                var obs = $("#obs").val().toString();
+                $.ajax({
+                    method: "POST",
+                    url: "/Faturas/FecharFatura",
+                    data: { obs: obs, id: id },
+                    success: function() {
+                        location.reload();
+                    },
+                    error: function() {
+                        $("#modal-fechamentoFatura").modal("hide");
+                        $("#mensagem").addClass('alert alert-danger').html("<strong>Erro!</strong> Não é possível fechar a fatura, entre em contato com o suporte técnico!").delay(30000).fadeOut(400);
+                    }
+                });
+            })
+        };
+
+        $(function() {
+            $(".novo").click(function() {
+                var id = $(this).attr("data-id");
+                $("#modal").load("Editar?id=" + id, function() {
+                    $(".modal-title").html("NOVO REGISTRO");
+                    $("#modal").modal("show");
+                })
+            });
+
+            $(".editar").click(function() {
+                var id = $(this).attr("data-id");
+                $("#modal").load("Editar?id=" + id, function() {
+                    $(".modal-title").html("ALTERANDO REGISTRO");
+                    $("#modal").modal("show");
+                })
+            });
+
+            $(".addItens").click(function() {
+                var id = $(this).attr("data-id");
+                $("#modal").load("/FaturasItens/Index?id=" + id, function() {
+                    $("#idCartao").val(id);
+                    $("#modal").modal("show");
+                })
+            });
+        })
+    </script>
+}
