@@ -15,10 +15,8 @@ namespace ControlFinWeb.App.ViewModels
             ParcelasVM = new List<ParcelaVM>();
             ArquivosVM = new List<ArquivoVM>();
         }
-        public Int64 Id { get; set; }
-
         [DisplayName("Código")]
-        public Int64 Codigo { get; set; }
+        public Int64 Id { get; set; }
        
         [DisplayName("Nº Documento")]
         public String NumeroDocumento { get; set; }
@@ -132,7 +130,7 @@ namespace ControlFinWeb.App.ViewModels
         {
             get
             {
-                return $"{Nome} [{Codigo}]";
+                return $"{Nome} [{Id}]";
             }
         }
     }

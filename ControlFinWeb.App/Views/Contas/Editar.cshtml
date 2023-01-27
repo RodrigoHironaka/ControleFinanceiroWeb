@@ -30,12 +30,11 @@
                     <div class="tab-pane fade show active" id="nav-Geral" role="tabpanel" aria-labelledby="nav-Geral-tab">
                         <br />
                         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                        <input asp-for="Id" type="hidden" />
                         <div class="row">
                             <div class="col-md-3">
-                                <label asp-for="Codigo" class="control-label"></label>
-                                <input asp-for="Codigo" class="form-control" readonly />
-                                <span asp-validation-for="Codigo" class="text-danger"></span>
+                                <label asp-for="Id" class="control-label"></label>
+                                <input asp-for="Id" class="form-control" readonly />
+                                <span asp-validation-for="Id" class="text-danger"></span>
                             </div>
                             <div class="col-md-3">
                                 <label asp-for="DataEmissao" class="control-label"></label>
@@ -106,12 +105,12 @@
                                     <button type="button" class="btn btn-secondary pagar">Pagar</button>
                                     <button type="button" class="btn btn-dark" onclick="RemoverParcelas()">Excluir</button>
                                     <button type="button" class="btn btn-secondary" onclick="CancelarParcelas()">Cancelar</button>
-                                     <div class="px-2">
-                                    <select id="filtroParcelas" asp-items="Html.GetEnumSelectList<SituacaoParcela>()" multiple="multiple"></select>
-                                </div>
+                                    <div class="px-2">
+                                        <select id="filtroParcelas" asp-items="Html.GetEnumSelectList<SituacaoParcela>()" multiple="multiple"></select>
+                                    </div>
                                 </div>
                             </div>
-                           
+
                         </div>
 
                         <div class="row">
@@ -206,7 +205,15 @@
                     </div>
                     <div class="form-group">
                         <label asp-for="Qtd" class="control-label"></label>
-                        <input asp-for="Qtd" class="form-control minZero" type="number" value="0" style="text-align:right" />
+                        <input asp-for="Qtd" class="form-control minUm" type="number" value="1"
+                               min="0" 
+                               max="120" 
+                               step="1" 
+                               style="text-align:right"
+                               onfocus="this.previousValue = this.value"
+                               onkeydown="this.previousValue = this.value"
+                               oninput="validity.valid || (value = this.previousValue)"
+                               onpaste="return false" ondrop="return false" />
                         <span asp-validation-for="Qtd" class="text-danger"></span>
                     </div>
                     <div class="form-group">
@@ -237,9 +244,9 @@
 
     <script>
         $("#Valor").maskMoney({ thousands: '', decimal: ',', allowZero: true });
-        $(".minZero").blur(function() {
-            if ($(this).val() == "") {
-                $(this).val(0);
+        $(".minUm").blur(function () {
+            if ($(this).val() == "" || $(this).val() == "0") {
+                $(this).val(1);
             }
         });
 
@@ -248,7 +255,7 @@
         var tbodyParcelas = document.getElementById("tbodyParcelas");
         var tfootParcelas = document.getElementById("tfootParcelas");
 
-        $(document).ready(function() {
+        $(document).ready(function () {
             var sit = $("#Situacao").val().toString();
             if (sit != "Aberto") {
                 $('#fsAgrupar').prop('disabled', true);
@@ -272,7 +279,7 @@
                 allSelectedText: 'Todos',
                 nonSelectedText: 'Filtro Situação',
                 nSelectedText: 'selecionado(s)',
-                onChange: function(option, checked, select) {
+                onChange: function (option, checked, select) {
                     FiltroSituacao();
                 }
             });
@@ -285,7 +292,7 @@
         function PreencherTableParcelas(parcelas) {
             $("#tbodyParcelas").empty();
 
-            $.each(parcelas, function(i, item) {
+            $.each(parcelas, function (i, item) {
                 if (item.FormaPagamentoVM != null) {
                     var formaPagamento = item.FormaPagamentoVM.Nome;
                 } else {
@@ -331,7 +338,7 @@
             var totalParcelas = 0;
             var totalReajustado = 0;
             var totalAberto = 0;
-            $.each(parcelas, function(i, item) {
+            $.each(parcelas, function (i, item) {
                 totalParcelas += parseFloat(item.ValorParcela);
                 totalReajustado += parseFloat(item.ValorReajustado);
                 totalAberto += parseFloat(item.ValorAberto);
@@ -358,7 +365,7 @@
 
         function ModalGerarParcelas() {
             $("#modal-gerarParcelas").modal("show");
-            $(".btnGerar").on("click", function() {
+            $(".btnGerar").on("click", function () {
                 if (GerarParcelas()) {
 
                     $('#Valor').val('0,00');
@@ -406,7 +413,7 @@
                 url: '/Parcelas/GerarNovasParcelas',
                 method: 'POST',
                 data: dados,
-                success: function(jsonParcelas) {
+                success: function (jsonParcelas) {
                     Parcelas = Parcelas.concat(JSON.parse(jsonParcelas));
                     FiltroSituacao();
                     $("#JsonParcelas").val(JSON.stringify(Parcelas));
@@ -499,18 +506,18 @@
 
         function RemoverParcelas() {
             var trs = $("tbody input:checked").closest("tr"); //pega no tr os elementos que estão checados
-            var numerosParcelaRemover = $.map(trs, function(tr) { return $(tr).find('.numeroParcela').val(); });
+            var numerosParcelaRemover = $.map(trs, function (tr) { return $(tr).find('.numeroParcela').val(); });
             var parcelasAtualizadas = new Array();
 
             //verificando se todas as parcelas selecionadas sao pendentes ou atrasadas
-            $.each(numerosParcelaRemover, function(i, value) {
+            $.each(numerosParcelaRemover, function (i, value) {
                 var parcelaVerificar = Parcelas.find(x => x.Numero == value);
-                if (parcelaVerificar.SituacaoParcela != 0 || parcelaVerificar.SituacaoParcela != 2) {
+                if (parcelaVerificar.SituacaoParcela != 0 && parcelaVerificar.SituacaoParcela != 2) {
                     $("#alertParcelas").addClass("alert alert-danger").css('display', 'block').html('Apenas parcelas pendentes ou atrasadas podem ser excluídas!');
                     parcelasAtualizadas = [];
                     return false;
                 } else {
-                    parcelasAtualizadas = Parcelas.filter(function(obj) {
+                    parcelasAtualizadas = Parcelas.filter(function (obj) {
                         return obj.Numero != value;
                     });
                 }
@@ -523,7 +530,7 @@
 
         function ValidaCancelamentoParcela(numerosParcelaCancelar) {
             var result = true;
-            $.each(numerosParcelaCancelar, function(i, num) {
+            $.each(numerosParcelaCancelar, function (i, num) {
                 var parcelaVerificar = Parcelas.find(x => x.Numero == num);
                 if (parcelaVerificar.SituacaoParcela == 3) {
                     result = false;
@@ -535,11 +542,11 @@
 
         function CancelarParcelas() {
             var trs = $("tbody input:checked").closest("tr"); //pega no tr os elementos que estão checados
-            var numerosParcelaCancelar = $.map(trs, function(tr) { return $(tr).find('.numeroParcela').val(); });
+            var numerosParcelaCancelar = $.map(trs, function (tr) { return $(tr).find('.numeroParcela').val(); });
 
             if (ValidaCancelamentoParcela(numerosParcelaCancelar)) {
-                $.each(Parcelas, function(index, parcela) {
-                    $.each(numerosParcelaCancelar, function(i, num) {
+                $.each(Parcelas, function (index, parcela) {
+                    $.each(numerosParcelaCancelar, function (i, num) {
                         if (parcela.Numero == num) {
                             parcela.SituacaoParcela = 4;
                         }
@@ -559,34 +566,34 @@
                 filtro = ['0', '1', '2'];
             }
 
-            $.each(filtro, function(i, value) {
-                parcelasFiltradas = parcelasFiltradas.concat(Parcelas.filter(function(obj) {
+            $.each(filtro, function (i, value) {
+                parcelasFiltradas = parcelasFiltradas.concat(Parcelas.filter(function (obj) {
                     return obj.SituacaoParcela == parseInt(value);
                 }));
             });
-            PreencherTableParcelas(parcelasFiltradas.sort((a,b) => a.Numero - b.Numero));
+            PreencherTableParcelas(parcelasFiltradas.sort((a, b) => a.Numero - b.Numero));
         }
 
         function FiltroSituacaoPendentes() {
             parcelasFiltradas = [];
             var filtro = ['0', '1', '2'];
 
-            $.each(filtro, function(i, value) {
-                parcelasFiltradas = parcelasFiltradas.concat(Parcelas.filter(function(obj) {
+            $.each(filtro, function (i, value) {
+                parcelasFiltradas = parcelasFiltradas.concat(Parcelas.filter(function (obj) {
                     return obj.SituacaoParcela == parseInt(value);
                 }));
             });
 
-            PreencherTableParcelas(parcelasFiltradas.sort((a,b) => a.Numero - b.Numero));
+            PreencherTableParcelas(parcelasFiltradas.sort((a, b) => a.Numero - b.Numero));
         }
 
         //CheckAll
-        $('#checkAll').change(function() {
+        $('#checkAll').change(function () {
             $('.check').prop('checked', this.checked);
         });
 
         function ClickCheckItem() {
-            $('.check').change(function() {
+            $('.check').change(function () {
                 if ($('.check:checked').length == $('.check').length) {
                     $('#checkAll').prop('checked', true);
                 }
@@ -596,14 +603,14 @@
             });
         }
 
-        $(function() {
+        $(function () {
             var ids = new Array();
-            $(".pagar").click(function() {
+            $(".pagar").click(function () {
                 var trs = $("tbody input:checked").closest("tr"); //pega no tr os elementos que estão checados
-                var numerosParcelasSelecionadas = $.map(trs, function(tr) { return $(tr).find('.numeroParcela').val(); });
+                var numerosParcelasSelecionadas = $.map(trs, function (tr) { return $(tr).find('.numeroParcela').val(); });
                 ids = [];
                 if (numerosParcelasSelecionadas.length > 0) {
-                    $.each(numerosParcelasSelecionadas, function(i, value) {
+                    $.each(numerosParcelasSelecionadas, function (i, value) {
                         var parcelaVerificar = Parcelas.find(x => x.Numero == value);
                         if (parcelaVerificar.Id <= 0) {
                             $("#alertParcelas").addClass("alert alert-danger").css('display', 'block').html('Salve a conta antes de efetuar o pagamento!');
@@ -623,7 +630,7 @@
                     $.ajax({
                         method: "GET",
                         url: "/Parcelas/PagarParcelas?" + urlIds.join("&"),
-                        success: function(result) {
+                        success: function (result) {
                             if (result != "") {
                                 $("#modal").html(result);
                                 $("#modal").modal("show");

@@ -27,12 +27,11 @@
                         <div class="tab-pane fade show active" id="nav-Geral" role="tabpanel" aria-labelledby="nav-Geral-tab">
                             <br />
                             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                            <input asp-for="Id" type="hidden" />
                             <div class="row">
                                 <div class="col-md-3">
-                                    <label asp-for="Codigo" class="control-label"></label>
-                                    <input asp-for="Codigo" class="form-control" readonly />
-                                    <span asp-validation-for="Codigo" class="text-danger"></span>
+                                    <label asp-for="Id" class="control-label"></label>
+                                    <input asp-for="Id" class="form-control" readonly />
+                                    <span asp-validation-for="Id" class="text-danger"></span>
                                 </div>
                                 <div class="col-md-3">
                                     <label asp-for="DataEmissao" class="control-label"></label>

@@ -31,10 +31,17 @@
                     </div>
                     <div class="col-md-4">
                         <label asp-for="NumeroParcelas" class="control-label"></label> <input asp-for="Replicar" class="form-check-input" type="checkbox" /> <label asp-for="Replicar" class="control-label"></label>
-                        <input asp-for="NumeroParcelas" class="form-control minUm" type="number" style="text-align:right" value="1" />
+                        <input asp-for="NumeroParcelas" class="form-control minUm" type="number" value="1"
+                               min="0"
+                               max="120"
+                               step="1"
+                               style="text-align:right"
+                               onfocus="this.previousValue = this.value"
+                               onkeydown="this.previousValue = this.value"
+                               oninput="validity.valid || (value = this.previousValue)" 
+                               onpaste="return false" ondrop="return false" />
                         <span asp-validation-for="NumeroParcelas" class="text-danger"></span>
                     </div>
-
                     <div class="col-md-4">
                         <label asp-for="DataCompra" class="control-label"></label>
                         <input asp-for="DataCompra" class="form-control" type="date" style="text-align:right" />
