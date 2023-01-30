@@ -10,6 +10,7 @@ using ControlFinWeb.Repositorio.Repositorios;
 using LinqKit;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Org.BouncyCastle.Asn1.Cmp;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -33,7 +34,7 @@ namespace ControlFinWeb.App.Controllers
 
         public IActionResult Index(Int64 idFatura = 0)
         {
-            if(idFatura > 0)
+            if (idFatura > 0)
             {
                 fatura = Repositorio.ObterPorId(idFatura);
                 if (fatura != null)
@@ -51,11 +52,11 @@ namespace ControlFinWeb.App.Controllers
         }
 
         [HttpPost]
-        public IActionResult Pesquisa(Int64 cartaoId, bool somenteAtivos)
+        public IActionResult Pesquisa(Int64 cartaoId = 0, bool somenteAtivos = true)
         {
             var predicado = Repositorio.CriarPredicado();
             predicado = predicado.And(x => x.UsuarioCriacao.Id == Configuracao.Usuario.Id);
-            if(cartaoId > 0)
+            if (cartaoId > 0)
                 predicado = predicado.And(x => x.Cartao.Id == cartaoId);
             if (somenteAtivos)
                 predicado = predicado.And(x => x.SituacaoFatura == SituacaoFatura.Aberta);
@@ -63,7 +64,7 @@ namespace ControlFinWeb.App.Controllers
             IEnumerable<Fatura> faturas = Repositorio.ObterPorParametros(predicado);
             List<FaturaVM> faturasVM = Mapper.Map<List<FaturaVM>>(faturas);
             ViewBag.Cartoes = new SelectList(new RepositorioCartao(NHibernateHelper.ObterSessao()).ObterPorParametros(x => x.Situacao == Situacao.Ativo), "Id", "Nome", null);
-            return View(faturasVM);
+            return PartialView("_TabelaFaturas", faturasVM);
         }
 
         public IActionResult Editar(Int64 Id = 0)
@@ -113,17 +114,24 @@ namespace ControlFinWeb.App.Controllers
         public IActionResult FecharFatura(String obs, Int64 id = 0)
         {
             var fatura = Repositorio.ObterPorId(id);
-            if(fatura != null)
+            if (fatura != null)
             {
                 fatura.SituacaoFatura = SituacaoFatura.Fechada;
                 fatura.DataFechamento = DateTime.Now;
                 if (!String.IsNullOrEmpty(obs))
                     fatura.Nome = obs;
                 Repositorio.Alterar(fatura);
-                
             }
-
             return new EmptyResult();
+        }
+
+        public Boolean ExisteFatura(FaturaVM faturaVM)
+        {
+            var existeFatura = Repositorio.ObterPorParametros(x => x.Cartao.Id == faturaVM.CartaoId && x.MesAnoReferencia == faturaVM.MesAnoReferencia).FirstOrDefault();
+            if (existeFatura != null)
+                return true;
+
+            return false;
         }
     }
 }

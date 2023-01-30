@@ -6,25 +6,31 @@
 }
 
 <div class="row">
-    <div class="col-md-4">
-        <div class="input-group mb-3">
+    <div class="col-md-3">
+        <div class="input-group mt-1">
             <div class="input-group-prepend">
-                <button class="btn btn-dark pesquisar"><i class="bi bi-search"></i></button>
+                <button class="btn btn-lg btn-dark pesquisar"><i class="bi bi-search"></i></button>
             </div>
             <span class="input-group-text fw-bold">Pesquisar Faturas</span>
         </div>
     </div>
-    <div class="col-md-8" ">
-         <h1 style="text-align: right">@Model.DescricaoCompleta </h1>
-    </div>
-
-
-
+    @if (Model.Id > 0)
+    {
+        <div class="col-md-3">
+            <h1 style="text-align:center">@Model.DescricaoCompleta </h1>
+        </div>
+        <div class="col-md-3">
+            <h1 style="text-align:center">@Model.ValorFatura.ToString("C") </h1>
+        </div>
+        <div class="col-md-3">
+            <h1 style="text-align:right">@Model.SituacaoFatura.ToString().ToUpper() </h1>
+        </div>
+    }
 </div>
 
 <div id="mensagem" role="alert"></div>
 
-<table id="tabela" class="table table-bordered table-striped table-hover">
+<table id="tabelaItensFatura" class="table table-bordered table-striped table-hover">
     <thead>
         <tr>
             <th>Nome</th>
@@ -33,15 +39,18 @@
             <th>Gasto</th>
             <th>Pessoa referenciada</th>
             <th style="text-align:center">
-                @if (Model.Id > 0)
+                @if (Model.Id > 0 && Model.SituacaoFatura == SituacaoFatura.Aberta)
                 {
                     <button type="button" class="btn btn-secondary novoItem" data-id="0"> Novo Item</button>
-                    <button type="button" class="btn btn-warning" onclick="ExibirModalFecharFatura(@Model.Id)"> Fechar Fatura</button>
+                    if(DateTime.Now.Date > Model.MesAnoReferencia)
+                    {
+                        <button type="button" class="btn btn-warning" onclick="ExibirModalFecharFatura(@Model.Id)"> Fechar Fatura</button>
+                    }
                 }
                 else
                 {
-                    <button type="button" class="btn btn-secondary disabled" style="visibility:hidden"> Novo Item</button>
-                    <button type="button" class="btn btn-warning disabled" style="visibility:hidden"> Fechar Fatura</button>
+                    <button type="button" class="btn btn-secondary" disabled> Novo Item</button>
+                    <button type="button" class="btn btn-warning" disabled> Fechar Fatura</button>
                 }
             </th>
         </tr>
@@ -68,8 +77,16 @@
                         @Html.DisplayFor(modelItem => item.PessoaVM.Nome)
                     </td>
                     <td align="center">
-                        <button class="btn btn-sm btn-primary modal-trigger editar" data-id="@item.Id"><i class="bi bi-pencil-square"></i></button>
-                        <button class="btn btn-sm btn-danger modal-trigger" onclick="ExibirModalExcluir(@item.Id)"><i class="bi bi-x-square"></i></button>
+                        @if (Model.SituacaoFatura == SituacaoFatura.Aberta)
+                        {
+                            <button class="btn btn-sm btn-primary modal-trigger editar" data-id="@item.Id"><i class="bi bi-pencil-square"></i></button>
+                            <button class="btn btn-sm btn-danger modal-trigger" onclick="ExibirModalExcluir(@item.Id)"><i class="bi bi-x-square"></i></button>
+                        }
+                        else
+                        {
+                            <button class="btn btn-sm btn-primary modal-trigger " disabled><i class="bi bi-pencil-square"></i></button>
+                            <button class="btn btn-sm btn-danger modal-trigger" disabled><i class="bi bi-x-square"></i></button>
+                        }
                     </td>
                 </tr>
             }
@@ -99,10 +116,10 @@
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header bg-primary">
-                <h5 class="modal-title text-white">Deseja realmente fechar a fatura @*@Model.First().DescricaoCompleta*@?</h5>
+                <h5 class="modal-title text-white">Deseja realmente fechar a fatura @Model.DescricaoCompleta?</h5>
             </div>
             <div class="modal-body">
-                <label class="control-label">Se desejar pode escrever alguma observação</label>
+                <label class="control-label">Você pode escrever alguma observação</label>
                 <textarea id="obs" class="form-control" rows="2"></textarea>
             </div>
             <div class="modal-footer">
@@ -116,27 +133,27 @@
 @section Scripts
     {
     <script>
-        $(function() {
+        $(function () {
 
-            $(".pesquisar").click(function() {
-                $("#modal").load("Pesquisa", function() {
+            $(".pesquisar").click(function () {
+                $("#modal").load("Pesquisa", function () {
                     $("#modal").modal("show");
                 })
             });
 
-            $(".novoItem").click(function() {
+            $(".novoItem").click(function () {
                 var id = $(this).attr("data-id");
                 var faturaId = @Model.Id;
-                $("#modal").load("/FaturasItens/Editar?id=" + id, function() {
+                $("#modal").load("/FaturasItens/Editar?id=" + id, function () {
                     $(".tituloItem").html("ADICIONAR NOVO ITEM");
                     $("#FaturaId").val(faturaId);
                     $("#modal").modal("show");
                 })
             });
 
-            $(".editar").click(function() {
+            $(".editar").click(function () {
                 var id = $(this).attr("data-id");
-                $("#modal").load("/FaturasItens/Editar?id=" + id, function() {
+                $("#modal").load("/FaturasItens/Editar?id=" + id, function () {
                     $(".tituloItem").html("ALTERANDO ITEM");
                     $("#modal").modal("show");
                 })
@@ -145,16 +162,16 @@
 
         function ExibirModalFecharFatura(id) {
             $("#modal-fechamentoFatura").modal("show");
-            $(".btnConfirmarFechamento").on("click", function() {
+            $(".btnConfirmarFechamento").on("click", function () {
                 var obs = $("#obs").val().toString();
                 $.ajax({
                     method: "POST",
                     url: "/Faturas/FecharFatura",
                     data: { obs: obs, id: id },
-                    success: function() {
+                    success: function () {
                         window.location.href = 'Index?id=' + 0;
                     },
-                    error: function() {
+                    error: function () {
                         $("#modal-fechamentoFatura").modal("hide");
                         $("#mensagem").addClass('alert alert-danger').html("<strong>Erro!</strong> Não é possível fechar a fatura, entre em contato com o suporte técnico!").delay(30000).fadeOut(400);
                     }
@@ -170,7 +187,7 @@
                     url: "/FaturasItens/Deletar",
                     data: { id: id },
                     success: function () {
-                       window.location.href = "/Faturas/Index?idFatura=" + @Model.Id;
+                        window.location.href = "/Faturas/Index?idFatura=" + @Model.Id;
                     },
                     error: function () {
                         $("#modal-excluir").modal("hide");
@@ -179,5 +196,17 @@
                 });
             })
         }
+
+        $(document).ready(function () {
+            $('#tabelaItensFatura').DataTable({
+                order: [[1, 'asc'], [0, 'asc']],
+                "language": {
+                    "url": "//cdn.datatables.net/plug-ins/1.11.5/i18n/pt-BR.json"
+                },
+                paging: false,
+                info: false,
+
+            });
+        });
     </script>
 }

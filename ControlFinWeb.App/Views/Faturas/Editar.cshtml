@@ -4,12 +4,14 @@
     ViewData["Title"] = "Faturas";
 }
 
+
 <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
         <div class="modal-header">
             <h5 class="modal-title"></h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal" onclick="Fechar()"></button>
         </div>
+        <div id="msg" role="alert"></div>
         <div class="modal-body">
             <fieldset id="fsAgrupar">
                 <form asp-action="Editar" id="FrmFatura">
@@ -47,7 +49,7 @@
     }
 
     <script>
-        $(document).ready(function() {
+        $(document).ready(function () {
             var sit = $("#SituacaoFatura").val().toString();
             if (sit != "Aberta") {
                 $('#fsAgrupar').prop('disabled', true);
@@ -57,29 +59,41 @@
         function Salvar() {
             var dados = $("#FrmFatura").serialize();
             $.ajax({
-                url: '/Faturas/Editar',
-                method: 'POST',
+                url: '/Faturas/ExisteFatura',
+                method: 'GET',
                 data: dados,
-                success: function(retorno) {
-                    if (retorno == "") {
-                        $("#modal").load("/Faturas/Pesquisa", function() {
+                success: function (retorno){ 
+                    if (retorno == false) {
+                        $.ajax({
+                            url: '/Faturas/Editar',
+                            method: 'POST',
+                            data: dados,
+                            success: function (retorno) {
+                                if (retorno == "") {
+                                    $("#modal").load("/Faturas/Pesquisa", function () {});
+                                }
+                                else {
+                                    $("#modal").html(retorno);
+                                    if ($("#id").val() > 0)
+                                        $(".modal-title").html("ALTERANDO REGISTRO");
+                                    else
+                                        $(".modal-title").html("NOVO REGISTRO");
+                                }
+                            }
                         });
                     }
-                    else {
-                        $("#modal").html(retorno);
-                        if ($("#id").val() > 0)
-                            $(".modal-title").html("ALTERANDO REGISTRO");
-                        else
-                            $(".modal-title").html("NOVO REGISTRO");
+                    else{
+                        $("#msg").addClass('alert alert-warning').html("<strong>Aviso!</strong> Fatura já existe!").delay(30000).fadeOut(400);
                     }
                 }
             });
         }
 
-         function Fechar() {
-            $("#modal").load("/Faturas/Pesquisa", function() {
+        function Fechar() {
+            $("#modal").load("/Faturas/Pesquisa", function () {
                 $("#modal").modal("show");
             });
         }
+
     </script>
 }
