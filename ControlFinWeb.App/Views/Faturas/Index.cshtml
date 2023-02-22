@@ -1,36 +1,34 @@
 ﻿@using ControlFinWeb.Dominio.ObjetoValor
-@model ControlFinWeb.App.ViewModels.FaturaVM //////////////// novooo
+@model ControlFinWeb.App.ViewModels.FaturaVM
 
 @{
     ViewData["Title"] = "Fatura";
 }
 
-<div class="row">
-    <div class="col-md-3">
-        <div class="input-group mt-1">
-            <div class="input-group-prepend">
-                <button class="btn btn-lg btn-dark pesquisar"><i class="bi bi-search"></i></button>
-            </div>
-            <span class="input-group-text fw-bold">Pesquisar Faturas</span>
-        </div>
+<div class="row mb-3">
+    <div class="col-sm-4 d-flex justify-content-start">
+        <button class="w-100 btn btn-lg btn-dark pesquisar"><i class="bi bi-search"></i> Faturas</button>
+        @if (Model.Id > 0 && Model.SituacaoFatura == SituacaoFatura.Aberta)
+        {
+            <button type="button" class="w-100 btn btn-secondary novoItem" data-id="0"><i class="bi bi-plus-lg"></i> Novo Item</button>
+            if (DateTime.Now.Date >= Model.MesAnoReferencia)
+            {
+                <button type="button" class="w-100 btn btn-primary" onclick="ExibirModalFecharFatura(@Model.Id)"><i class="bi bi-check-lg"></i> Fechar</button>
+            }
+        }
     </div>
-    @if (Model.Id > 0)
-    {
-        <div class="col-md-3">
-            <h1 style="text-align:center">@Model.DescricaoCompleta </h1>
-        </div>
-        <div class="col-md-3">
-            <h1 style="text-align:center">@Model.ValorFatura.ToString("C") </h1>
-        </div>
-        <div class="col-md-3">
-            <h1 style="text-align:right">@Model.SituacaoFatura.ToString().ToUpper() </h1>
-        </div>
-    }
+    <div class="col-sm-8 d-flex justify-content-right">
+        @if (Model != null && Model.Id > 0)
+        {
+            <h2 style="text-align:center">@Model.DescricaoCompletaTitulo </h2>
+        }
+    </div>
 </div>
+<hr />
 
 <div id="mensagem" role="alert"></div>
 
-<table id="tabelaItensFatura" class="table table-bordered table-striped table-hover">
+<table id="tabelaItensFatura" class="table table-bordered table-striped flex-md-nowrap" width="100%">
     <thead>
         <tr>
             <th>Nome</th>
@@ -38,21 +36,7 @@
             <th>Data da Compra</th>
             <th>Gasto</th>
             <th>Pessoa referenciada</th>
-            <th style="text-align:center">
-                @if (Model.Id > 0 && Model.SituacaoFatura == SituacaoFatura.Aberta)
-                {
-                    <button type="button" class="btn btn-secondary novoItem" data-id="0"> Novo Item</button>
-                    if(DateTime.Now.Date > Model.MesAnoReferencia)
-                    {
-                        <button type="button" class="btn btn-warning" onclick="ExibirModalFecharFatura(@Model.Id)"> Fechar Fatura</button>
-                    }
-                }
-                else
-                {
-                    <button type="button" class="btn btn-secondary" disabled> Novo Item</button>
-                    <button type="button" class="btn btn-warning" disabled> Fechar Fatura</button>
-                }
-            </th>
+            <th style="text-align:center">Opções</th>
         </tr>
     </thead>
     <tbody>
@@ -92,6 +76,16 @@
             }
         }
     </tbody>
+    <tfoot>
+        <tr>
+            <th colspan="1" style="text-align:right">Total:</th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+        </tr>
+    </tfoot>
 </table>
 
 <div id="modal" class="modal fade" role="dialog" data-bs-backdrop="static" data-bs-keyboard="false"></div>
@@ -134,14 +128,13 @@
     {
     <script>
         $(function () {
-
             $(".pesquisar").click(function () {
                 $("#modal").load("Pesquisa", function () {
                     $("#modal").modal("show");
                 })
             });
 
-            $(".novoItem").click(function () {
+            $(document).on(TipoClick().toString(), ".novoItem", function () {
                 var id = $(this).attr("data-id");
                 var faturaId = @Model.Id;
                 $("#modal").load("/FaturasItens/Editar?id=" + id, function () {
@@ -151,7 +144,7 @@
                 })
             });
 
-            $(".editar").click(function () {
+            $(document).on(TipoClick().toString(), ".editar", function () {
                 var id = $(this).attr("data-id");
                 $("#modal").load("/FaturasItens/Editar?id=" + id, function () {
                     $(".tituloItem").html("ALTERANDO ITEM");
@@ -205,8 +198,22 @@
                 },
                 paging: false,
                 info: false,
-
+                responsive: true,
+                footerCallback: function (row, data, start, end, display) {
+                    var numFormat = $.fn.dataTable.render.number('\.', ',', 2).display;
+                    var api = this.api();
+                    // Total por pagina
+                    pageTotal = api
+                        .column(1, { page: 'current' })
+                        .data()
+                        .reduce(function (a, b) {
+                            return parseFloat(a.toString().replace(",", ".")) + parseFloat(b.toString().replace(",", "."));
+                        }, 0);
+                    // Update footer
+                    $(api.column(1).footer()).html(numFormat(pageTotal));
+                },
             });
         });
+
     </script>
 }

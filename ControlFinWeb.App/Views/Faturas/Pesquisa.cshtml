@@ -13,19 +13,22 @@
         </div>
         <div class="modal-body">
             <div class="row">
-                <div class="col-md-4">
-                    <select class="form-select" id="CartaoId" asp-items="ViewBag.Cartoes">
-                        <option value="0">---Selecione um Cartão---</option>
+                <div class="col-md-3">
+                    <select class="form-select mt-1" id="CartaoId" asp-items="ViewBag.Cartoes">
+                        <option value="0">---Selecione---</option>
                     </select>
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-3">
                     <div class="form-check form-switch">
-                        <input id="SomenteAberto" class="form-check-input" type="checkbox" checked role="switch">
-                        <label class="form-check-label" for="flexSwitchCheckChecked">Somente Aberto</label>
+                        <input id="SomenteAberto" class="mt-2 form-check-input" type="checkbox" checked role="switch">
+                        <label class="form-check-label mt-1" for="flexSwitchCheckChecked">Somente Aberto</label>
                     </div>
                 </div>
-                  <div class="col-md-4">
-                    <button type="button" class="w-100 btn btn-dark" onclick="Filtrar()">Filtrar</button>
+                <div class="col-md-3">
+                    <button type="button" class="w-100 btn btn-sm btn-dark mt-1" onclick="Filtrar()"><i class="badge-info bi-filter"></i> Filtrar</button>
+                </div>
+                <div class="col-md-3">
+                    <button type="button" class=" w-100 btn btn-sm btn-secondary mt-1 novo" data-id="0"><i class="badge-info bi-plus-lg"></i> Nova Fatura</button>
                 </div>
             </div>
             <div id="tabelaFaturas" class="mt-1">
@@ -41,16 +44,27 @@
         function Filtrar() {
             var cartaoId = $("#CartaoId").val();
             var somenteAtivos = $("#SomenteAberto").prop("checked");
-           $.ajax({
-               method:"POST",
-               url: "/Faturas/Pesquisa",
-               data:{cartaoId: cartaoId, somenteAtivos: somenteAtivos},
-               success: function(retorno){
+            $.ajax({
+                method: "POST",
+                url: "/Faturas/Pesquisa",
+                data: { cartaoId: cartaoId, somenteAtivos: somenteAtivos },
+                success: function (retorno) {
                     $("#tabelaFaturas").empty();
                     $("#tabelaFaturas").html(retorno);
-               }
-           });
-           
+                }
+            });
+
         }
+
+        $(function () {
+            $(".novo").click(function () {
+                $("#modal").modal("hide");
+                var id = $(this).attr("data-id");
+                $("#modal").load("Editar?id=" + id, function () {
+                    $(".modal-title").html("NOVO REGISTRO");
+                    $("#modal").modal("show");
+                })
+            });
+        });
     </script>
     }

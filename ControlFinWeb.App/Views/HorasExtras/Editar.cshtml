@@ -20,17 +20,17 @@
                     <div class="card-header" style="background: darkgrey; font-weight:bold;">QUANTIDADE DE HORAS POR PERÍODO - PADRÃO</div>
                     <div class="card-body">
                         <div class="row">
-                            <div class="col-4">
+                            <div class="col-md-4">
                                 <label asp-for="HorasTrabalhoManha" class="control-label"></label>
                                 <input asp-for="HorasTrabalhoManha" class="form-control" type="time" />
                                 <span asp-validation-for="HorasTrabalhoManha" class="text-danger"></span>
                             </div>
-                            <div class="col-4">
+                            <div class="col-md-4">
                                 <label asp-for="HorasTrabalhoTarde" class="control-label"></label>
                                 <input asp-for="HorasTrabalhoTarde" class="form-control" type="time" />
                                 <span asp-validation-for="HorasTrabalhoTarde" class="text-danger"></span>
                             </div>
-                            <div class="col-4">
+                            <div class="col-md-4">
                                 <label asp-for="HorasTrabalhoNoite" class="control-label"></label>
                                 <input asp-for="HorasTrabalhoNoite" class="form-control" type="time" />
                                 <span asp-validation-for="HorasTrabalhoNoite" class="text-danger"></span>
@@ -42,12 +42,12 @@
                 <div class="card">
                     <div class="card-body">
                         <div class="row">
-                            <div class="col-3">
+                            <div class="col-md-3">
                                 <label asp-for="Data" class="control-label"></label>
                                 <input asp-for="Data" class="form-control" type="date" />
                                 <span asp-validation-for="Data" class="text-danger"></span>
                             </div>
-                            <div class="col-9">
+                            <div class="col-md-9">
                                 <label asp-for="PessoaId" class="control-label"></label>
                                 <select class="form-select" asp-for="PessoaId" asp-items="ViewBag.PessoaId">
                                     <option value="0">---Selecione um item---</option>
@@ -77,12 +77,12 @@
                                 <input asp-for="HoraFinalTarde" class="form-control" type="time" />
                                 <span asp-validation-for="HoraFinalTarde" class="text-danger"></span>
                             </div>
-                            <div class="col-2">
+                            <div class="col-md-2">
                                 <label asp-for="HoraInicioNoite" class="control-label"></label>
                                 <input asp-for="HoraInicioNoite" class="form-control" type="time" />
                                 <span asp-validation-for="HoraInicioNoite" class="text-danger"></span>
                             </div>
-                            <div class="col-2">
+                            <div class="col-md-2">
                                 <label asp-for="HoraFinalNoite" class="control-label"></label>
                                 <input asp-for="HoraFinalNoite" class="form-control" type="time" />
                                 <span asp-validation-for="HoraFinalNoite" class="text-danger"></span>

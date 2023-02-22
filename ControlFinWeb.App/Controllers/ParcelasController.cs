@@ -220,7 +220,18 @@ namespace ControlFinWeb.App.Controllers
                         foreach (var parcelaFatura in parcelas)
                         {
                             var faturaId = parcelasVM.Where(x => x.Id == parcelaFatura.Id).First().FaturaId;
-                            parcelaFatura.Fatura = RepositorioFatura.ObterPorId(faturaId);
+                            var fatura = RepositorioFatura.ObterPorId(faturaId);
+                            if (fatura != null)
+                            {
+                                if (fatura.SituacaoFatura == SituacaoFatura.Aberta)
+                                {
+                                    fatura.DataFechamento = DateTime.Now;
+                                    fatura.Nome = "Fatura foi fechada na hora do pagamento!";
+                                }
+                                fatura.SituacaoFatura = SituacaoFatura.Paga;
+                                RepositorioFatura.AlterarLote(fatura);
+                            }
+                            parcelaFatura.Fatura = fatura;
                         }
                     }
 

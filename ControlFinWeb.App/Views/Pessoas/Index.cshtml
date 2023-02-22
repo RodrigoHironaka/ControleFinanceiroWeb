@@ -4,59 +4,57 @@
     ViewData["Title"] = "Pessoas";
 }
 
-<div style="margin-left: 200px; margin-right: 200px;">
-    <div class="row">
-        <div class="input-group mb-3">
-            <div class="input-group-prepend">
-                <button class="btn btn-dark novo" data-id="0"><i class="bi bi-plus-lg"></i></button>
-            </div>
-            <span class="input-group-text fw-bold">Lista de Pessoas</span>
+<div class="row">
+    <div class="input-group mb-3">
+        <div class="input-group-prepend">
+            <button class="btn btn-dark novo" data-id="0"><i class="bi bi-plus-lg"></i></button>
         </div>
+        <span class="input-group-text fw-bold">Lista de Pessoas</span>
     </div>
-    <div id="alert" role="alert" style="display:none;"></div>
-    <table id="tabela" class="table table-bordered table-striped table-hover">
-        <thead>
-            <tr>
-                <th>Nome</th>
-                <th>Total Renda Bruta</th>
-                <th>Total Renda Líquida</th>
-                <th>Situação</th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model)
-            {
-                <tr>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Nome)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.TotalRendaBruta)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.TotalRendaLiquida)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Situacao)
-                    </td>
-                    <td align="center">
-                        <button class="btn btn-sm btn-primary modal-trigger editar" data-id="@item.Id"><i class="bi bi-pencil-square"></i></button>
-                        @if (item.Situacao != Situacao.Ativo)
-                        {
-                            <button class="btn btn-sm btn-danger modal-trigger" disabled><i class="bi bi-x-square"></i></button>
-                        }
-                        else
-                        {
-                            <button class="btn btn-sm btn-danger modal-trigger" onclick="ExibirModalExcluir(@item.Id)"><i class="bi bi-x-square"></i></button>
-                        }
-
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
 </div>
+<div id="alert" role="alert" style="display:none;"></div>
+<table id="tabela" class="table table-bordered table-striped table-hover">
+    <thead>
+        <tr>
+            <th>Nome</th>
+            <th>Total Renda Bruta</th>
+            <th>Total Renda Líquida</th>
+            <th>Situação</th>
+            <th style="text-align:center">Opções</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Nome)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.TotalRendaBruta)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.TotalRendaLiquida)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Situacao)
+                </td>
+                <td align="center">
+                    <button class="btn btn-sm btn-primary modal-trigger editar" data-id="@item.Id"><i class="bi bi-pencil-square"></i></button>
+                    @if (item.Situacao != Situacao.Ativo)
+                    {
+                        <button class="btn btn-sm btn-danger modal-trigger" disabled><i class="bi bi-x-square"></i></button>
+                    }
+                    else
+                    {
+                        <button class="btn btn-sm btn-danger modal-trigger" onclick="ExibirModalExcluir(@item.Id)"><i class="bi bi-x-square"></i></button>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
 <div id="modal" class="modal fade" role="dialog" data-bs-backdrop="static" data-bs-keyboard="false"></div>
 
 <!--Modal Excluir-->
@@ -80,29 +78,30 @@
 @section Scripts
     {
     <script>
-        $(document).ready(function() {
+        $(document).ready(function () {
             $('#tabela').DataTable({
                 "language": {
                     "url": "//cdn.datatables.net/plug-ins/1.11.5/i18n/pt-BR.json"
-                }
+                },
+                responsive: true
             });
         });
 
-        $(document).ready(function() {
+        $(document).ready(function () {
             $(".modal-excluir").modal();
         });
 
         function ExibirModalExcluir(id) {
             $("#modal-excluir").modal("show");
-            $(".btnConfirmar").on("click", function() {
+            $(".btnConfirmar").on("click", function () {
                 $.ajax({
                     method: "POST",
                     url: "/Pessoas/Deletar",
                     data: { id: id },
-                    success: function() {
+                    success: function () {
                         location.reload();
                     },
-                    error: function() {
+                    error: function () {
                         $("#alert").addClass("alert alert-danger").css('display', 'block').html('Você não pode excluir este registro! Mas ele pode ser inativado.');
                         $("#modal-excluir").modal("hide");
                     }
@@ -110,18 +109,18 @@
             })
         }
 
-        $(function() {
-            $(".novo").click(function() {
+        $(function () {
+           $(document).on(TipoClick().toString(), ".novo", function () {
                 var id = $(this).attr("data-id");
-                $("#modal").load("Editar?id=" + id, function() {
+                $("#modal").load("Editar?id=" + id, function () {
                     $(".modal-title").html("NOVO REGISTRO");
                     $("#modal").modal("show");
                 })
             });
 
-            $(".editar").click(function() {
+            $(document).on(TipoClick().toString(), ".editar", function () {
                 var id = $(this).attr("data-id");
-                $("#modal").load("Editar?id=" + id, function() {
+                $("#modal").load("Editar?id=" + id, function () {
                     $(".modal-title").html("ALTERANDO REGISTRO");
                     $("#modal").modal("show");
                 })

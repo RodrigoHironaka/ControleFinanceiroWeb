@@ -50,6 +50,15 @@ namespace ControlFinWeb.App.ViewModels
             }
         }
 
+        public string DescricaoCompletaTitulo
+        {
+            get
+            {
+                return string.Format("FATURA: {0} - {1} - {2}", DescricaoCompleta, ValorFatura.ToString("C2"), SituacaoFatura.ToString().ToUpper());
+
+            }
+        }
+
         public Decimal ValorFatura
         {
             get
@@ -57,5 +66,7 @@ namespace ControlFinWeb.App.ViewModels
                 return (FaturaItensVM != null) ? FaturaItensVM.Select(x => x.Valor).Sum() : 0;
             }
         }
+
+
     }
 }

@@ -5,102 +5,76 @@
     ViewData["Title"] = "Caixa";
 }
 
-<div @*style="margin-left: 200px; margin-right: 200px;"*@>
-    <div class="row">
-        <div class="col-md-4">
-            <div class="input-group mb-3">
-                <div class="input-group-prepend">
-                    <button class="btn btn-dark pesquisar"><i class="bi bi-search"></i></button>
-                </div>
-                <span class="input-group-text fw-bold">Pesquisar Caixas</span>
 
-            </div>
-        </div>
-        <div class="col-md-8" id="botoes" style="text-align:right">
-            <div class="btn-group" role="group" aria-label="botoes" >
-                <button type="button" class="btn btn-dark abrirFecharCaixa" data-id="@Model.Id"> Abrir caixa</button>
-                <button type="button" class="btn btn-secondary novo" data-id="0"> Adicionar</button>
-            </div>
-        </div>
+<div class="row mb-3">
+    <div class="col-sm-4 d-flex justify-content-start">
+        <button type="button" class="w-100 btn-md btn btn-dark pesquisar"><i class="bi bi-search"></i> Pesquisar</button>
+        @if (Model.Situacao == SituacaoCaixa.Aberto)
+        {
+            <button type="button" class="w-100 btn-md btn btn-secondary abrirFecharCaixa" data-id="@Model.Id"><i class="bi bi-cash-stack"></i> Abrir Caixa</button>
+        }
+        @if (Model.Id > 0 && Model.Situacao == SituacaoCaixa.Aberto)
+        {
+            <button type="button" class="w-100 btn btn-md btn-dark novo" data-id="0"><i class="bi bi-plus-lg"></i> Adicionar</button>
+        }
     </div>
-
-    <div id="mensagem" role="alert"></div>
-
-    @if (Model.Id > 0)
-    {
-        <div class="row">
-            <div class="col-md-2 badge bg-secondary">
-                <h6>Caixa </h6>
-                <h6>@Model.Codigo</h6>
-            </div>
-            <div class="col-md-2 badge bg-secondary">
-                <h6>Data </h6>
-                <h6>@Model.DataGeracao</h6>
-            </div>
-            <div class="col-md-2 badge bg-secondary">
-                <h6>Situação </h6>
-                <h6>@Model.Situacao</h6>
-            </div>
-            <div class="col-md-2 badge bg-secondary">
-                <h6>Total Crédito </h6>
-                <h6>@Model.TotalCredito.ToString("C2")</h6>
-            </div>
-            <div class="col-md-2 badge bg-secondary">
-                <h6>Total Débito </h6>
-                <h6>@Model.TotalDebito.ToString("C2")</h6>
-            </div>
-            <div class="col-md-2 badge bg-secondary">
-                <h6>Total Geral </h6>
-                <h6>@Model.BalancoFinal.ToString("C2")</h6>
-            </div>
-        </div>
-        <br />
-    }
-
-    <table id="tabela" class="table table-bordered table-striped table-hover">
-        <colgroup>
-            <col style="width: 5%" />
-            <col style="width: 15%" />
-            <col style="width: 5%" />
-            <col style="width: 15%" />
-            <col style="width: 65%" />
-        </colgroup>
-        <thead>
-            <tr>
-                <th style="text-align:center">Tipo</th>
-                <th style="text-align:center">Data</th>
-                <th style="text-align:right">Valor</th>
-                <th>Forma de Pagamento</th>
-                <th>Descrição</th>
-            </tr>
-        </thead>
-        <tbody>
-            @if (Model.FluxosCaixaVM != null)
-            {
-                @foreach (var item in Model.FluxosCaixaVM)
-                {
-                    <tr>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.DebitoCredito)
-                        </td>
-                        <td>
-                            @Html.Raw(item.Data.ToString())
-                        </td>
-                        <td style="text-align:right">
-                            @Html.DisplayFor(modelItem => item.Valor)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.FormaPagamentoVM.Nome)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.Nome)
-                        </td>
-                    </tr>
-                }
-            }
-        </tbody>
-    </table>
+    <div class="col-md-8">
+        @if (Model.Id > 0)
+        {
+            <h2 >@Model.DescricaoCaixa</h2>
+        }
+    </div>
 </div>
+<hr />
+
+<div id="mensagem" role="alert"></div>
+
+<table id="tabela" class="table table-bordered table-striped table-hover">
+    <thead>
+        <tr>
+            <th style="text-align:center">Tipo</th>
+            <th style="text-align:center">Data</th>
+            <th style="text-align:right">Valor</th>
+            <th>Forma de Pagamento</th>
+            <th>Descrição</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.FluxosCaixaVM != null)
+        {
+            @foreach (var item in Model.FluxosCaixaVM)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.DebitoCredito)
+                    </td>
+                    <td>
+                        @Html.Raw(item.Data.ToString())
+                    </td>
+                    <td style="text-align:right">
+                        @Html.DisplayFor(modelItem => item.Valor)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.FormaPagamentoVM.Nome)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Nome)
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+    <tfoot>
+        <tr>
+            <th></th>
+            <th colspan="1" style="text-align:right">Total:</th>
+            <th></th>
+            <th></th>
+            <th></th>
+        </tr>
+    </tfoot>
+</table>
+
 <div id="modal" class="modal fade" role="dialog" data-bs-backdrop="static" data-bs-keyboard="false"></div>
 
 <!--Modal Excluir-->
@@ -121,13 +95,13 @@
 @section Scripts
     {
     <script>
-        $(document).ready(function() {
+        $(document).ready(function () {
             $(".modal-excluir").modal();
 
             if (@Model.Id > 0) {
-                $(".abrirFecharCaixa").text("Fechar Caixa");
+                $(".abrirFecharCaixa").addClass('small').addClass('bi bi-cash-stack').text(" Fechar Caixa");
             }
-            
+
             if (parseInt(@Model.Situacao.GetHashCode()) == parseInt(@SituacaoCaixa.Fechado.GetHashCode())) {
                 $("#botoes *").prop('disabled', true);
             }
@@ -139,21 +113,34 @@
                 },
                 paging: false,
                 info: false,
-
+                responsive: true,
+                footerCallback: function (row, data, start, end, display) {
+                    var numFormat = $.fn.dataTable.render.number('\.', ',', 2).display;
+                    var api = this.api();
+                    // Total por pagina
+                    pageTotal = api
+                        .column(2, { page: 'current' })
+                        .data()
+                        .reduce(function (a, b) {
+                            return parseFloat(a.toString().replace(",", ".")) + parseFloat(b.toString().replace(",", "."));
+                        }, 0);
+                    // Update footer
+                    $(api.column(2).footer()).html(numFormat(pageTotal));
+                },
             });
         });
 
         function ExibirModalExcluir(id) {
             $("#modal-excluir").modal("show");
-            $(".btnConfirmar").on("click", function() {
+            $(".btnConfirmar").on("click", function () {
                 $.ajax({
                     method: "POST",
                     url: "Deletar",
                     data: { id: id },
-                    success: function() {
+                    success: function () {
                         location.reload();
                     },
-                    error: function() {
+                    error: function () {
                         $("#modal-excluir").modal("hide");
                         $("#mensagem").addClass('alert alert-danger').html("<strong>Erro!</strong> Não é possível excluir, por favor inative o registro!").delay(10000).fadeOut(400);
                     }
@@ -161,10 +148,10 @@
             })
         }
 
-        $(function() {
-            $(".abrirFecharCaixa").click(function() {
+        $(function () {
+            $(".abrirFecharCaixa").click(function () {
                 var id = $(this).attr("data-id");
-                $("#modal").load("Editar?id=" + id, function() {
+                $("#modal").load("Editar?id=" + id, function () {
                     if (id > 0) {
                         $(".modal-title").html("FECHAR CAIXA");
                         $("#ValorAberturaFechamento").prop('readonly', true);
@@ -175,17 +162,17 @@
                 })
             });
 
-            $(".pesquisar").click(function() {
-                $("#modal").load("Pesquisa", function() {
+            $(".pesquisar").click(function () {
+                $("#modal").load("Pesquisa", function () {
                     $(".modal-title").html("PESQUISA DE CAIXAS");
                     $("#modal").modal("show");
                 })
             });
 
-            $(".novo").click(function() {
+            $(".novo").click(function () {
                 var id = $(this).attr("data-id");
                 var idCaixa = @Model.Id;
-                $("#modal").load("/FluxoCaixas/Editar?id=" + id, function() {
+                $("#modal").load("/FluxoCaixas/Editar?id=" + id, function () {
                     $(".modal-title").html("NOVO REGISTRO");
                     $("#CaixaId").val(idCaixa);
                     $("#modal").modal("show");

@@ -34,7 +34,7 @@
                         <div class="card-body">
 
                             <div class="row">
-                                <div class="col-md-5">
+                                <div class="col-md-6">
                                     <label asp-for="TipoRendaId" class="control-label"></label>
                                     <select class="form-select" asp-for="TipoRendaId" asp-items="@Model.Rendas">
                                         <option value="0">---Selecione---</option>
@@ -51,10 +51,6 @@
                                     <input asp-for="RendaLiquida" class="form-control" style="text-align:right" />
                                     <span asp-validation-for="RendaLiquida" class="text-danger"></span>
                                 </div>
-                                <div class="col-md-1">
-                                    <br />
-                                    <button type="button" class="btn btn-dark" onclick="AddRenda()"><i class="badge-info bi-plus-lg"></i></button>
-                                </div>
                             </div>
                             <div class="row">
                                 <textarea asp-for="JsonRendas" id="txtJsonRendas" class="form-control" rows="1" style="display:none;"></textarea>
@@ -66,7 +62,7 @@
                                         <th>Renda</th>
                                         <th style="text-align:right" class="rBruta">R.Bruta</th>
                                         <th style="text-align:right">R.Líquida</th>
-                                        <th></th>
+                                        <th style="text-align:center"><button type="button" class="btn btn-sm btn-dark" onclick="AddRenda()"><i class="badge-info bi-plus-lg"></i></button></th>
                                     </tr>
                                 </thead>
                                 <tbody id="tbodyRendas">

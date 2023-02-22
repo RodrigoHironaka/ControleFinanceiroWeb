@@ -65,6 +65,14 @@
                     <br />
                     <button type="button" class="w-100 btn btn-dark" onclick="Pagar()">Pagar Selecionados</button>
                 </div>
+                <div class="col-md-2">
+                    <h4 style="text-align:center">Total</h4>
+                    <h4 style="text-align:center">@Model.Parcelas.Sum(x => x.ValorAberto).ToString("C") </h4>
+                </div>
+                <div class="col-md-2">
+                    <h4 style="text-align:center">Selecionados</h4>
+                    <h4 style="text-align:center">  R$ 0,00 </h4>
+                </div>
             </div>
         </form>
     </div>
@@ -72,17 +80,6 @@
 
 <div style="font-size: 14px;">
     <table class="table table-bordered table-striped table-hover" id="tabelaParcelas">
-        <colgroup>
-            <col style="width: 2%" />
-            <col style="width: 4%" />
-            <col style="width: 10%" />
-            <col style="width: 10%" />
-            <col style="width: 10%" />
-            <col style="width: 10%" />
-            <col style="width: 5%" />
-            <col style="width: 15%" />
-            <col style="width: auto" />
-        </colgroup>
         <thead>
             <tr>
                 <th><input class="form-check-input" id="checkAll" type="checkbox"></th>
@@ -171,6 +168,7 @@
                 paging: false,
                 info: false,
                 searching: false,
+                responsive: true
             });
         });
 
