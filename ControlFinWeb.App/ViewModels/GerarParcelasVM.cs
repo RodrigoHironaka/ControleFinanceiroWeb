@@ -20,5 +20,6 @@ namespace ControlFinWeb.App.ViewModels
         public String JsonParcelas { get; set; }
 
         public Int32 UltimoNumero { get; set; }
+        public Int64 ContaId { get; set; } 
     }
 }

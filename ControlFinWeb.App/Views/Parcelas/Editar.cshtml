@@ -1,0 +1,169 @@
+﻿@model ControlFinWeb.App.ViewModels.ParcelaVM
+
+@{
+    ViewData["Title"] = "Editar";
+}
+
+<div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title">Editar parcela Nº @Model.Numero</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="javascript:window.location.reload()"></button>
+        </div>
+        <div class="modal-body">
+            <form asp-action="Editar" id="FrmParcela">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input asp-for="Id" type="hidden" />
+                <input asp-for="Numero" class="form-control" type="hidden" />
+                <input asp-for="ParcelaDe" class="form-control" type="hidden" />
+                <input asp-for="SituacaoParcela" class="form-control" type="hidden" />
+                <input asp-for="ContaId" class="form-control" type="hidden" />
+                <input asp-for="FaturaId" class="form-control" type="hidden" />
+                <input asp-for="BancoId" class="form-control" type="hidden" />
+                <input asp-for="FormaPagamentoId" class="form-control" type="hidden" />
+                <input asp-for="DataGeracao" class="form-control" type="hidden" />
+                <input asp-for="UsuarioCriacaoId" class="form-control" type="hidden" />
+                <input asp-for="UsuarioAlteracaoId" class="form-control" type="hidden" />
+                <input asp-for="ValorAberto" class="form-control" type="hidden" />
+                <div class="row">
+                    <div class="col-md-6">
+                        <label asp-for="ValorParcela" class="control-label"></label>
+                        <input asp-for="ValorParcela" class="form-control" onblur="AtualizaValorReajustado()" style="text-align:right" />
+                        <span asp-validation-for="ValorParcela" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6">
+                        <label asp-for="DataVencimento" class="control-label"></label>
+                        <input asp-for="DataVencimento" class="form-control" type="date" style="text-align:right" />
+                        <span asp-validation-for="DataVencimento" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <label asp-for="JurosPorcentual" class="control-label"></label>
+                        <input asp-for="JurosPorcentual" class="form-control" onblur="AtualizaPorcentagemParaValor()" style="text-align:right" />
+                        <span asp-validation-for="JurosPorcentual" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6">
+                        <label asp-for="JurosValor" class="control-label"></label>
+                        <input asp-for="JurosValor" class="form-control" onblur="AtualizaValorParaPorcentagem()" style="text-align:right" />
+                        <span asp-validation-for="JurosValor" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <label asp-for="DescontoPorcentual" class="control-label"></label>
+                        <input asp-for="DescontoPorcentual" class="form-control" onblur="AtualizaPorcentagemParaValor()" style="text-align:right" />
+                        <span asp-validation-for="DescontoPorcentual" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6">
+                        <label asp-for="DescontoValor" class="control-label"></label>
+                        <input asp-for="DescontoValor" class="form-control" onblur="AtualizaValorParaPorcentagem()" style="text-align:right" />
+                        <span asp-validation-for="DescontoValor" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Observacao" class="control-label"></label>
+                    <textarea asp-for="Observacao" class="form-control" rows="2"></textarea>
+                    <span asp-validation-for="Observacao" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="ValorReajustado" class="control-label"></label>
+                    <input asp-for="ValorReajustado" class="form-control" style="text-align:center; font-weight:bold; font-size:40px;" readonly />
+                    <span asp-validation-for="ValorReajustado" class="text-danger"></span>
+                </div>
+                <br />
+                <button type="button" onclick="Salvar()" class="w-100 btn btn-success">Salvar</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script>
+        $("#ValorParcela, #JurosPorcentual, #JurosValor, #DescontoPorcentual, #DescontoValor, #ValorPago, #ValorReajustado").maskMoney({ thousands: '', decimal: ',', allowZero: true });
+
+        function Salvar() {
+            var dados = $("#FrmParcela").serialize();
+            $.ajax({
+                url: '/Parcelas/Editar',
+                method: 'POST',
+                data: dados,
+                success: function (retorno) {
+                    if (retorno == "") {
+                        location.reload();
+                    }
+                    else {
+                        $("#modal").html(retorno);
+                    }
+                }
+
+            });
+        }
+
+        function FixaDuasCasasDecimais(num) {
+            return parseFloat(Math.round(num * 100) / 100).toFixed(2);
+        };
+
+        function AtualizaValorReajustado() {
+            var valor = parseFloat($('#ValorParcela').val().replace(",", "."));
+            var jurosValor = parseFloat($('#JurosValor').val().replace(",", "."));
+            var descontoValor = parseFloat($('#DescontoValor').val().replace(",", "."));
+            var calculoValorReajustado = (valor + jurosValor) - descontoValor;
+
+            $('#ValorReajustado').val(FixaDuasCasasDecimais(calculoValorReajustado).toString().replace(".", ","));
+            $('#ValorAberto').val(FixaDuasCasasDecimais(calculoValorReajustado).toString().replace(".", ","));
+        }
+
+        function AtualizaValorParaPorcentagem() {
+            var valor = parseFloat($('#ValorParcela').val().replace(",", "."));
+            if (valor != "0") {
+                var jurosValor = parseFloat($('#JurosValor').val().replace(",", "."));
+                var descontoValor = parseFloat($('#DescontoValor').val().replace(",", "."));
+                $('#JurosPorcentual').val(FixaDuasCasasDecimais(ValorParaPorcentagem(jurosValor, valor)).toString().replace(".", ","));
+                $('#DescontoPorcentual').val(FixaDuasCasasDecimais(ValorParaPorcentagem(descontoValor, valor)).toString().replace(".", ","));
+            }else{
+                $('#JurosPorcentual').val("0,00");
+                $('#DescontoPorcentual').val("0,00");
+                $("#JurosValor").val("0,00");
+                $('#DescontoValor').val("0,00");
+            }
+
+
+            AtualizaValorReajustado();
+        }
+
+        function AtualizaPorcentagemParaValor() {
+            var valor = parseFloat($('#ValorParcela').val().replace(",", "."));
+            if (valor != "0") {
+                var jurosPorcentagem = parseFloat($('#JurosPorcentual').val().replace(",", "."));
+                var descontoPorcentagem = parseFloat($('#DescontoPorcentual').val().replace(",", "."));
+                $("#JurosValor").val(FixaDuasCasasDecimais(PorcentagemParaValor(jurosPorcentagem, valor)).toString().replace(".", ","));
+                $('#DescontoValor').val(FixaDuasCasasDecimais(PorcentagemParaValor(descontoPorcentagem, valor)).toString().replace(".", ","));
+            }else{
+                $("#JurosValor").val("0,00");
+                $('#DescontoValor').val("0,00");
+                $('#JurosPorcentual').val("0,00");
+                $('#DescontoPorcentual').val("0,00");
+            }
+           
+            AtualizaValorReajustado();
+        }
+
+        function PorcentagemParaValor(valorPorcentagem, valorParcela) {
+            var valorParcela = parseFloat(valorParcela);
+            var porcentagem = parseFloat(valorPorcentagem);
+            return (valorParcela * porcentagem) / 100;
+        }
+
+        function ValorParaPorcentagem(valorDinheiro, valorParcela) {
+            var valorParcela = parseFloat(valorParcela);
+            var valor = parseFloat(valorDinheiro);
+            return (valor * 100) / valorParcela;
+        }
+    </script>
+}
+

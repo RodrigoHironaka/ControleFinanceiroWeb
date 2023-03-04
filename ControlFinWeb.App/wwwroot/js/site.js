@@ -5,3 +5,20 @@
         return 'click';
     }
 }
+
+function CheckAll() {
+    $('#checkAll').change(function () {
+        $('.check').prop('checked', this.checked);
+    });
+}
+
+function ClickCheckItem() {
+    $('.check').change(function () {
+        if ($('.check:checked').length == $('.check').length) {
+            $('#checkAll').prop('checked', true);
+        }
+        else {
+            $('#checkAll').prop('checked', false);
+        }
+    });
+}

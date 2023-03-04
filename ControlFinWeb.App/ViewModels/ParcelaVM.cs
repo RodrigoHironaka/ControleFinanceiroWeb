@@ -80,5 +80,7 @@ namespace ControlFinWeb.App.ViewModels
         public UsuarioVM UsuarioCriacaoVM { get; set; }
         public Int64 UsuarioAlteracaoId { get; set; }
         public UsuarioVM UsuarioAlteracaoVM { get; set; }
+
+        public Boolean Selecionado { get; set; }
     }
 }

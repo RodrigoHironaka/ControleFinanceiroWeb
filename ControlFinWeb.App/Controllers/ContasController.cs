@@ -60,13 +60,13 @@ namespace ControlFinWeb.App.Controllers
             {
                 if (contaVM.Id > 0)
                 {
-                    if(contaVM.JsonParcelas != null && !String.IsNullOrEmpty(contaVM.JsonParcelas))
+                    if (contaVM.JsonParcelas != null && !String.IsNullOrEmpty(contaVM.JsonParcelas))
                         contaVM.ParcelasVM = JsonConvert.DeserializeObject<IList<ParcelaVM>>(contaVM.JsonParcelas);
                     conta = Repositorio.ObterPorId(contaVM.Id);
-                    conta = Mapper.Map<Conta>(contaVM);
+                    conta = Mapper.Map<Conta>(contaVM); 
                     conta.UsuarioAlteracao = Configuracao.Usuario;
                     conta.Parcelas.ForEach(x => x.Conta = conta);
-                    conta.Parcelas.Where(x => x.Id == 0).ForEach(x => { x.DataGeracao = DateTime.Now; x.UsuarioCriacao = Configuracao.Usuario;});
+                    conta.Parcelas.Where(x => x.Id == 0).ForEach(x => { x.DataGeracao = DateTime.Now; x.UsuarioCriacao = Configuracao.Usuario; });
                     conta.Arquivos.ForEach(x => x.Conta = conta);
                     Repositorio.Alterar(conta);
                 }
@@ -81,8 +81,8 @@ namespace ControlFinWeb.App.Controllers
                     conta.Arquivos.ForEach(x => x.Conta = conta);
                     Repositorio.Salvar(conta);
                 }
-
-                return RedirectToAction("Editar", new { id = conta.Id});
+                //return View(contaVM);
+                return RedirectToAction("Editar", new { id = conta.Id });
 
             }
             ViewBag.FormaPagamentoId = new SelectList(new RepositorioFormaPagamento(NHibernateHelper.ObterSessao()).ObterPorParametros(x => x.Situacao == Situacao.Ativo), "Id", "Nome", contaVM.Id);
@@ -109,8 +109,15 @@ namespace ControlFinWeb.App.Controllers
                 Repositorio.Excluir(conta);
                 return Json(conta.Nome + "excluído com sucesso");
             }
-            
+
         }
 
+        //public IActionResult CarregarParcelas(Int64 Id)
+        //{
+        //    conta = Repositorio.ObterPorId(Id);
+        //    contaVM = Mapper.Map<ContaVM>(conta);
+
+        //    return PartialView("../Parcelas/_ListaParcelas", contaVM.ParcelasVM);
+        //}
     }
 }

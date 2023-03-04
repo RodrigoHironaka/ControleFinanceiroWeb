@@ -7,6 +7,10 @@ namespace ControlFinWeb.App.ViewModels
 {
     public class PagarParcelaVM
     {
+        public PagarParcelaVM()
+        {
+            Mensagens = new List<String>();
+        }
         [DisplayName("Valor à Pagar")]
         public Decimal ValorAPagar { get; set; }
         
@@ -49,5 +53,6 @@ namespace ControlFinWeb.App.ViewModels
         public BancoVM BancoVM { get; set; }
 
         public String JsonParcelasPagar { get; set; }
+        public List<String> Mensagens { get; set; }
     }
 }

@@ -1,0 +1,99 @@
+﻿@model ControlFinWeb.App.ViewModels.GerarParcelasVM
+
+@{
+    ViewData["Title"] = "Gerar Parcelas";
+}
+
+<div class="modal-dialog modal-sm modal-dialog-centered">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="text-black">GERAR PARCELAS</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" style="font-size: 14px;">
+            <form asp-action="GerarParcelas" id="frmGerar">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input asp-for="ContaId" class="form-control" type="hidden" />
+                <div class="form-group">
+                    <label asp-for="Valor" class="control-label"></label>
+                    <input asp-for="Valor" class="form-control" style="text-align:right" />
+                    <span asp-validation-for="Valor" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Qtd" class="control-label"></label>
+                    <input asp-for="Qtd" class="form-control minUm" type="number" value="1"
+                           min="0"
+                           max="120"
+                           step="1"
+                           style="text-align:right"
+                           onfocus="this.previousValue = this.value"
+                           onkeydown="this.previousValue = this.value"
+                           oninput="validity.valid || (value = this.previousValue)"
+                           onpaste="return false" ondrop="return false" />
+                    <span asp-validation-for="Qtd" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="PrimeiroVencimento" class="control-label"></label>
+                    <input asp-for="PrimeiroVencimento" class="form-control" type="date" value="@DateTime.Now.ToString("yyyy-MM-dd")" style="text-align:right" />
+                    <span asp-validation-for="PrimeiroVencimento" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <div class="form-check form-switch">
+                        <input asp-for="Replicar" class="form-check-input" type="checkbox" role="switch" id="flexcheck">
+                        <label class="form-check-label" for="flexSwitchCheckChecked">Replicar valor digitado?</label>
+                    </div>
+                </div>
+
+            </form>
+            <div class="modal-footer">
+                <button type="button" class="w-100 btn btn-outline-success" onclick="GerarParcelas()">Gerar</button>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script>
+        $("#Valor").maskMoney({ thousands: '', decimal: ',', allowZero: true });
+        $(".minUm").blur(function () {
+            if ($(this).val() == "" || $(this).val() == "0") {
+                $(this).val(1);
+            }
+        });
+
+        function GerarParcelas() {
+            var dados = $("#frmGerar").serialize();
+            var valor = parseFloat($('#Valor').val().replace(',', '.'));
+            var qtd = parseFloat($('#Qtd').val());
+            var primeiroVencimento = $("#PrimeiroVencimento").val();
+
+            if (valor <= 0) {
+                $("[data-valmsg-for=Valor]").html('Obrigatório');
+                return false;
+            } else {
+                $("[data-valmsg-for=Valor]").html('');
+            }
+
+            if (primeiroVencimento == "") {
+                $("[data-valmsg-for=PrimeiroVencimento]").html('Obrigatório');
+                return false;
+            } else {
+                $("[data-valmsg-for=PrimeiroVencimento]").html('');
+            }
+
+            $.ajax({
+                url: '/Parcelas/GerarParcelas',
+                method: 'POST',
+                data: dados,
+                success: function (retorno) {
+                    if (retorno == "") {
+                        location.reload();
+                    }
+                }
+            });
+        }
+
+    </script>
+    }

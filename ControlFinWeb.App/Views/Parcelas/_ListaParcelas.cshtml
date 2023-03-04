@@ -1,0 +1,116 @@
+﻿@model IEnumerable<ControlFinWeb.App.ViewModels.ParcelaVM>
+
+<table class="table table-bordered table-striped table-hover table-responsive" id="tabelaParcela">
+    <thead>
+        <tr>
+            <th>
+                <input class="form-check-input" id="checkAll" type="checkbox" onclick="CheckAll()">
+            </th>
+            <th style="text-align:center">
+                @Html.DisplayNameFor(model => model.Numero)
+            </th>
+            <th style="text-align:right">
+                @Html.DisplayNameFor(model => model.ValorParcela)
+            </th>
+            <th style="text-align:center">
+                @Html.DisplayNameFor(model => model.DataVencimento)
+            </th>
+            <th style="text-align:right">
+                @Html.DisplayNameFor(model => model.JurosValor)
+            </th>
+            <th style="text-align:right">
+                @Html.DisplayNameFor(model => model.DescontoValor)
+            </th>
+            <th style="text-align:right">
+                @Html.DisplayNameFor(model => model.ValorReajustado)
+            </th>
+            <th style="text-align:right">
+                @Html.DisplayNameFor(model => model.ValorAberto)
+            </th>
+            <th style="text-align:right">
+                @Html.DisplayNameFor(model => model.ValorPago)
+            </th>
+          @*  <th style="text-align:center">
+                @Html.DisplayNameFor(model => model.DataPagamento)
+            </th>
+            <th style="text-align:center">
+                @Html.DisplayNameFor(model => model.FormaPagamentoId)
+            </th>*@
+            <th style="text-align:center">
+                @Html.DisplayNameFor(model => model.SituacaoParcela)
+            </th>
+            <th style="text-align:center">Opções</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td scope='row'>
+                    <input class='form-check-input check' id='check' type='checkbox' value="@item.Id" onclick='ClickCheckItem()'>
+                    @Html.HiddenFor(modelItem => item.Id)
+                </td>
+                <td align="center">
+                    @Html.DisplayFor(modelItem => item.Numero)
+                </td>
+                <td align="right">
+                    @Html.DisplayFor(modelItem => item.ValorParcela)
+                </td>
+                <td align="center">
+                    @Html.Raw(item.DataVencimento.Value.ToShortDateString())
+                </td>
+                <td align="right">
+                    @Html.DisplayFor(modelItem => item.JurosValor)
+                </td>
+                <td align="right">
+                    @Html.DisplayFor(modelItem => item.DescontoValor)
+                </td>
+                <td align="right">
+                    @Html.DisplayFor(modelItem => item.ValorReajustado)
+                </td>
+                <td align="right">
+                    @Html.DisplayFor(modelItem => item.ValorAberto)
+                </td>
+                <td align="right">
+                    @Html.DisplayFor(modelItem => item.ValorPago)
+                </td>
+               @* <td align="center">
+                    @if (item.DataPagamento != null)
+                    {
+                        @Html.Raw(item.DataPagamento.Value.ToShortDateString())
+                    }
+                    else
+                    {
+                        @Html.Raw("-")
+                    }
+                </td>
+                <td align="center">
+                    @if (item.FormaPagamentoVM != null)
+                    {
+                        @Html.DisplayFor(modelItem => item.FormaPagamentoVM.Nome)
+                    }
+                    else
+                    {
+                        @Html.Label("-")
+                    }
+                </td>*@
+                <td align="center">
+                    @Html.DisplayFor(modelItem => item.SituacaoParcela)
+                </td>
+                <td align="center">
+                    @if (item.SituacaoParcela == ControlFinWeb.Dominio.ObjetoValor.SituacaoParcela.Pendente || item.SituacaoParcela == ControlFinWeb.Dominio.ObjetoValor.SituacaoParcela.PendenteParcial || item.SituacaoParcela == ControlFinWeb.Dominio.ObjetoValor.SituacaoParcela.Atrasado)
+                    {
+                        <button type="button" class="btn btn-sm btn-primary modal-trigger editarParcela" data-id="@item.Id"><i class="bi bi-pencil-square"></i></button>
+                    }
+                    else
+                    {
+                        <button type="button" class="btn btn-sm btn-primary modal-trigger" disabled><i class="bi bi-pencil-square"></i></button>
+                    }
+                    <button type="button" class="btn btn-sm btn-secondary modal-trigger historicoParcela" data-id="@item.Id"><i class="bi bi-file-earmark-post-fill"></i></button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+

@@ -7,7 +7,14 @@
 <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
         <div class="modal-header">
-            <h5 class="text-black">PAGAR PARCELA(S)</h5>
+            <h5 class="text-black">
+                PAGAR PARCELA(S)
+                @foreach (var msg in Model.Mensagens)
+                {
+                    <br />
+                    <label style="font-weight:bold; color:red; font-size:12px;">@msg</label>
+                }
+            </h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <fieldset id=fsPagarParcela>
@@ -99,17 +106,17 @@
 }
 
 <script>
-    $(function() {
+    $(function () {
         $("#ValorPagarPagamento, #ValorRestantePagamento, #JurosPorcentualPagamento, #JurosValorPagamento, #DescontoPorcentualPagamento, #DescontoValorPagamento, #ValorPagoPagamento, #ValorRestantePagamento").maskMoney({ thousands: '', decimal: ',', allowZero: true });
 
-        $("#btnConfirmarPagamento").click(function() {
+        $("#btnConfirmarPagamento").click(function () {
 
             var dados = $("#FrmPagarParcela").serialize();
             $.ajax({
                 url: '/Parcelas/PagarParcelas',
                 method: 'POST',
                 data: dados,
-                success: function(retorno) {
+                success: function (retorno) {
                     if (retorno == "") {
                         $("#modal").modal("hide");
                         location.reload();
@@ -120,24 +127,24 @@
                         } else {
                             $("#modal").html(retorno);
                         }
-                        
+
                     }
                 }
             });
         });
-
     });
 
     function VerificarDebitoAutomatico() {
         var idFormaPagamento = document.getElementById("FormaPagamentoId");
         var url = `/FormaPagamentoDebito/${idFormaPagamento.value}`;
         var xhr = new XMLHttpRequest(); //xhr = XML http Request
-        xhr.onreadystatechange = function() {
+        xhr.onreadystatechange = function () {
             if (xhr.readyState == XMLHttpRequest.DONE) {
                 if (xhr.responseText == "true") {
                     $('#rowBancoId').css('display', 'block');
                 } else {
                     $('#rowBancoId').css('display', 'none');
+                    $('#BancoId').val(0);
                 }
             }
         }
