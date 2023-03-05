@@ -1,0 +1,51 @@
+﻿@model IEnumerable<ControlFinWeb.App.ViewModels.FluxoCaixaVM>
+
+@{
+    ViewData["Title"] = "Histórico";
+}
+
+<div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title">Historico parcela Nº @Model.First().ParcelaVM.Numero</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" @*onclick="javascript:window.location.reload()"*@></button>
+        </div>
+        <div class="modal-body">
+            <table class="table table-bordered table-striped table-hover table-responsive" id="tabelaHistorico">
+                <thead>
+                    <tr>
+                        <th style="text-align:center">
+                            @Html.DisplayNameFor(model => model.Data)
+                        </th>
+                        <th style="text-align:right">
+                            @Html.DisplayNameFor(model => model.Valor)
+                        </th>
+                        <th style="text-align:center">
+                            @Html.DisplayNameFor(model => model.FormaPagamentoVM.Nome)
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td align="center">
+                                @Html.DisplayFor(modelItem => item.Data)
+                            </td>
+                            <td align="right">
+                                @Html.DisplayFor(modelItem => item.Valor)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.FormaPagamentoVM.Nome)
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+
+
+

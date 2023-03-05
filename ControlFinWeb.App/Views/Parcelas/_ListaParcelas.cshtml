@@ -30,12 +30,6 @@
             <th style="text-align:right">
                 @Html.DisplayNameFor(model => model.ValorPago)
             </th>
-          @*  <th style="text-align:center">
-                @Html.DisplayNameFor(model => model.DataPagamento)
-            </th>
-            <th style="text-align:center">
-                @Html.DisplayNameFor(model => model.FormaPagamentoId)
-            </th>*@
             <th style="text-align:center">
                 @Html.DisplayNameFor(model => model.SituacaoParcela)
             </th>
@@ -74,26 +68,6 @@
                 <td align="right">
                     @Html.DisplayFor(modelItem => item.ValorPago)
                 </td>
-               @* <td align="center">
-                    @if (item.DataPagamento != null)
-                    {
-                        @Html.Raw(item.DataPagamento.Value.ToShortDateString())
-                    }
-                    else
-                    {
-                        @Html.Raw("-")
-                    }
-                </td>
-                <td align="center">
-                    @if (item.FormaPagamentoVM != null)
-                    {
-                        @Html.DisplayFor(modelItem => item.FormaPagamentoVM.Nome)
-                    }
-                    else
-                    {
-                        @Html.Label("-")
-                    }
-                </td>*@
                 <td align="center">
                     @Html.DisplayFor(modelItem => item.SituacaoParcela)
                 </td>
@@ -111,6 +85,21 @@
             </tr>
         }
     </tbody>
+    <tfoot>
+        <tr style="text-align:right">
+            <th colspan="1">Total:</th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+        </tr>
+    </tfoot>
 </table>
 
 

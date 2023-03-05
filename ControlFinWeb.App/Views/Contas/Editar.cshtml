@@ -9,11 +9,12 @@
 <div class="row">
     <div class="input-group mb-3">
         <div class="input-group-prepend">
-            <a asp-action="Index" class="btn btn-dark"><i class="bi bi-arrow-left-circle"></i></a>
+            <a asp-action="Index" class="btn btn-lg btn-dark"><i class="bi bi-arrow-left-circle"></i></a>
         </div>
-        <span class="input-group-text fw-bold">Conta @Model.Nome</span>
+        <span class="input-group-text fw-bold" style="font-size:20px;">CONTA @Model.Nome?.ToUpper()</span>
     </div>
 </div>
+
 <div class="row">
     <div>
         <form asp-action="Editar" id="FrmConta" class="center">
@@ -22,7 +23,7 @@
                 <div class="nav nav-tabs" id="nav-tab" role="tablist">
                     <a class="nav-link active" id="nav-Geral-tab" data-bs-toggle="tab" data-bs-target="#nav-Geral" href="#Geral" role="tab" aria-controls="nav-Geral" aria-selected="true">Geral</a>
                     <a class="nav-link" id="nav-Parcelas-tab" data-bs-toggle="tab" data-bs-target="#nav-Parcelas" href="#Parcelas" role="tab" aria-controls="nav-Parcelas" aria-selected="false">Parcelas</a>
-                    <a class="nav-link" id="nav-Arquivos-tab" data-bs-toggle="tab" data-bs-target="#nav-Arquivos" href="#Arquivos" role="tab" aria-controls="nav-Arquivos" aria-selected="false">Arquivos</a>
+                   @* <a class="nav-link" id="nav-Arquivos-tab" data-bs-toggle="tab" data-bs-target="#nav-Arquivos" href="#Arquivos" role="tab" aria-controls="nav-Arquivos" aria-selected="false">Arquivos</a>*@
                 </div>
             </nav>
             <fieldset id="fsAgrupar">
@@ -119,13 +120,13 @@
                             <partial name="../Parcelas/_ListaParcelas" model="@Model.ParcelasVM" />
                         </div>
                     </div>
-                    <div class="tab-pane fade" id="nav-Arquivos" role="tabpanel" aria-labelledby="nav-Arquivos-tab">
+                   @* <div class="tab-pane fade" id="nav-Arquivos" role="tabpanel" aria-labelledby="nav-Arquivos-tab">
                         <div class="card">
                             <div class="card-body">
                                 Arquivos (imagens, documentos, videos, etc)
                             </div>
                         </div>
-                    </div>
+                    </div>*@
                 </div>
                 <br />
                 <div class="row">
@@ -157,6 +158,55 @@
             info: false,
             "autoWidth": false,
             responsive: true,
+             footerCallback: function (row, data, start, end, display) {
+                    var numFormat = $.fn.dataTable.render.number('\.', ',', 2).display;
+                    var api = this.api();
+
+                    parcelaTotal = api
+                        .column(2, { page: 'current' })
+                        .data()
+                        .reduce(function (a, b) {
+                            return parseFloat(a.toString().replace(",", ".")) + parseFloat(b.toString().replace(",", "."));
+                        }, 0);
+                jurosTotal = api
+                    .column(4, { page: 'current' })
+                    .data()
+                    .reduce(function (a, b) {
+                        return parseFloat(a.toString().replace(",", ".")) + parseFloat(b.toString().replace(",", "."));
+                    }, 0);
+                descontoTotal = api
+                    .column(5, { page: 'current' })
+                    .data()
+                    .reduce(function (a, b) {
+                        return parseFloat(a.toString().replace(",", ".")) + parseFloat(b.toString().replace(",", "."));
+                    }, 0);
+                reajustadoTotal = api
+                    .column(6, { page: 'current' })
+                    .data()
+                    .reduce(function (a, b) {
+                        return parseFloat(a.toString().replace(",", ".")) + parseFloat(b.toString().replace(",", "."));
+                    }, 0);
+                abertoTotal = api
+                    .column(7, { page: 'current' })
+                    .data()
+                    .reduce(function (a, b) {
+                        return parseFloat(a.toString().replace(",", ".")) + parseFloat(b.toString().replace(",", "."));
+                    }, 0);
+                 pagoTotal = api
+                    .column(8, { page: 'current' })
+                    .data()
+                    .reduce(function (a, b) {
+                        return parseFloat(a.toString().replace(",", ".")) + parseFloat(b.toString().replace(",", "."));
+                    }, 0);
+
+                // Update footer
+                $(api.column(2).footer()).html(numFormat(parcelaTotal));
+                $(api.column(4).footer()).html(numFormat(jurosTotal));
+                $(api.column(5).footer()).html(numFormat(descontoTotal));
+                $(api.column(6).footer()).html(numFormat(reajustadoTotal));
+                $(api.column(7).footer()).html(numFormat(abertoTotal));
+                $(api.column(8).footer()).html(numFormat(pagoTotal));
+                },
         });
 
         $('#filtroParcelas').multiselect({
@@ -257,6 +307,13 @@
         $(document).on(TipoClick().toString(), ".editarParcela", function () {
             var id = $(this).attr("data-id");
             $("#modal").load("/Parcelas/Editar?id=" + id, function () {
+                $("#modal").modal("show");
+            })
+        });
+
+        $(document).on(TipoClick().toString(), ".historicoParcela", function () {
+            var id = $(this).attr("data-id");
+            $("#modal").load("/Parcelas/HistoricoParcela?id=" + id, function () {
                 $("#modal").modal("show");
             })
         });

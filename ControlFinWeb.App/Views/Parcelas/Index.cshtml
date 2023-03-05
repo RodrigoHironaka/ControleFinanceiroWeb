@@ -66,12 +66,8 @@
                     <button type="button" class="w-100 btn btn-dark" onclick="Pagar()">Pagar Selecionados</button>
                 </div>
                 <div class="col-md-2">
-                    <h4 style="text-align:center">Total</h4>
-                    <h4 style="text-align:center">@Model.Parcelas.Sum(x => x.ValorAberto).ToString("C") </h4>
                 </div>
                 <div class="col-md-2">
-                    <h4 style="text-align:center">Selecionados</h4>
-                    <h4 style="text-align:center">  R$ 0,00 </h4>
                 </div>
             </div>
         </form>
@@ -135,6 +131,19 @@
                 </tr>
             }
         </tbody>
+        <tfoot>
+            <tr style="text-align: right">
+                <th>Total</th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+            </tr>
+        </tfoot>
     </table>
 </div>
 
@@ -168,7 +177,29 @@
                 paging: false,
                 info: false,
                 searching: false,
-                responsive: true
+                responsive: true,
+                footerCallback: function (row, data, start, end, display) {
+                    var numFormat = $.fn.dataTable.render.number('\.', ',', 2).display;
+                    var api = this.api();
+
+                    parcelaTotal = api
+                        .column(2, { page: 'current' })
+                        .data()
+                        .reduce(function (a, b) {
+                            return parseFloat(a.toString().replace(",", ".")) + parseFloat(b.toString().replace(",", "."));
+                        }, 0);
+                    pagoTotal = api
+                    .column(4, { page: 'current' })
+                    .data()
+                    .reduce(function (a, b) {
+                        return parseFloat(a.toString().replace(",", ".")) + parseFloat(b.toString().replace(",", "."));
+                    }, 0);
+
+                    // Update footer
+                    $(api.column(2).footer()).html(numFormat(parcelaTotal));
+                    $(api.column(4).footer()).html(numFormat(pagoTotal));
+                    
+                },
             });
         });
 

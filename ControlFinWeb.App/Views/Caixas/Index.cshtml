@@ -17,6 +17,10 @@
         {
             <button type="button" class="w-100 btn btn-md btn-dark novo" data-id="0"><i class="bi bi-plus-lg"></i> Adicionar</button>
         }
+        @if (Model.Situacao == SituacaoCaixa.Fechado)
+        {
+            <button type="button" class="w-100 btn btn-md btn-secondary transferirBanco" data-id="@Model.Id"><i class="bi bi-bank2"></i> Transferir</button>
+        }
     </div>
     <div class="col-md-8">
         @if (Model.Id > 0)
@@ -65,9 +69,9 @@
         }
     </tbody>
     <tfoot>
-        <tr>
+        <tr style="text-align:right">
             <th></th>
-            <th colspan="1" style="text-align:right">Total:</th>
+            <th colspan="1">Total:</th>
             <th></th>
             <th></th>
             <th></th>

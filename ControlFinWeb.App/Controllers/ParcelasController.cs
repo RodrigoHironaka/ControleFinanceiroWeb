@@ -12,6 +12,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Data.Entity.Core.Metadata.Edm;
 using System.Linq;
 using System.Text;
 
@@ -24,14 +25,17 @@ namespace ControlFinWeb.App.Controllers
         private readonly RepositorioConta RepositorioConta;
         private readonly RepositorioFatura RepositorioFatura;
         private readonly RepositorioBanco RepositorioBanco;
+        private readonly RepositorioFluxoCaixa RepositorioFluxoCaixa;
         private readonly IMapper Mapper;
-        public ParcelasController(RepositorioParcela repositorio, RepositorioFormaPagamento repositorioFormaPagamento, RepositorioConta repositorioConta, RepositorioFatura repositorioFatura, RepositorioBanco repositorioBanco, IMapper mapper)
+        public ParcelasController(RepositorioParcela repositorio, RepositorioFormaPagamento repositorioFormaPagamento, RepositorioConta repositorioConta,
+            RepositorioFatura repositorioFatura, RepositorioBanco repositorioBanco, RepositorioFluxoCaixa repositorioFluxoCaixa, IMapper mapper)
         {
             Repositorio = repositorio;
             RepositorioFormaPagamento = repositorioFormaPagamento;
             RepositorioConta = repositorioConta;
             RepositorioFatura = repositorioFatura;
             RepositorioBanco = repositorioBanco;
+            RepositorioFluxoCaixa = repositorioFluxoCaixa;
             Mapper = mapper;
         }
 
@@ -46,12 +50,12 @@ namespace ControlFinWeb.App.Controllers
         {
             var predicado = Repositorio.CriarPredicado();
 
-            if(filtrarParcelasVM.DataInicio != null)
+            if (filtrarParcelasVM.DataInicio != null)
                 predicado = predicado.And(x => x.DataVencimento >= filtrarParcelasVM.DataInicio);
 
             if (filtrarParcelasVM.DataFinal != null)
             {
-                if(filtrarParcelasVM.DataFinal >= filtrarParcelasVM.DataInicio)
+                if (filtrarParcelasVM.DataFinal >= filtrarParcelasVM.DataInicio)
                     predicado = predicado.And(x => x.DataVencimento <= filtrarParcelasVM.DataFinal.Value.AddHours(23).AddMinutes(59).AddSeconds(59));
             }
 
@@ -89,9 +93,9 @@ namespace ControlFinWeb.App.Controllers
             {
                 parcelas = parcelas.Where(x => x.Conta?.Situacao == SituacaoConta.Aberto || x.Fatura?.SituacaoFatura == SituacaoFatura.Aberta || x.Fatura?.SituacaoFatura == SituacaoFatura.Fechada).ToList();
             }
-          
+
             filtrarParcelasVM.Parcelas = Mapper.Map<List<ParcelaVM>>(parcelas);
-            
+
             ViewBag.PessoaId = new SelectList(new RepositorioPessoa(NHibernateHelper.ObterSessao()).ObterPorParametros(x => x.Situacao == Situacao.Ativo), "Id", "Nome", filtrarParcelasVM.PessoaId);
             return View(filtrarParcelasVM);
         }
@@ -104,7 +108,7 @@ namespace ControlFinWeb.App.Controllers
                 parcelaVM = Mapper.Map(parcela, parcelaVM);
             }
             ViewBag.FormaPagamentoId = new SelectList(new RepositorioFormaPagamento(NHibernateHelper.ObterSessao()).ObterPorParametros(x => x.Situacao == Situacao.Ativo), "Id", "Nome", Id);
-           
+
             return View(parcelaVM);
         }
 
@@ -123,14 +127,14 @@ namespace ControlFinWeb.App.Controllers
                 }
                 else
                 {
-                   parcela = Mapper.Map(parcelaVM, parcela);
-                   parcela.UsuarioCriacao = Configuracao.Usuario;
+                    parcela = Mapper.Map(parcelaVM, parcela);
+                    parcela.UsuarioCriacao = Configuracao.Usuario;
                     Repositorio.Salvar(parcela);
                 }
                 return new EmptyResult();
             }
             ViewBag.FormaPagamentoId = new SelectList(new RepositorioFormaPagamento(NHibernateHelper.ObterSessao()).ObterPorParametros(x => x.Situacao == Situacao.Ativo), "Id", "Nome", parcelaVM.Id);
-           return View(parcelaVM);
+            return View(parcelaVM);
         }
 
         public IActionResult GerarParcelas()
@@ -233,8 +237,8 @@ namespace ControlFinWeb.App.Controllers
 
                     foreach (var parcelaVM in parcelasVMPagas)
                     {
-                        decimal juros = Math.Round(parcelaVM.ValorAberto * (pagarParcelaVM.JurosPorcentual / 100),2);
-                        decimal desconto = Math.Round(parcelaVM.ValorAberto * (pagarParcelaVM.DescontoPorcentual / 100),2);
+                        decimal juros = Math.Round(parcelaVM.ValorAberto * (pagarParcelaVM.JurosPorcentual / 100), 2);
+                        decimal desconto = Math.Round(parcelaVM.ValorAberto * (pagarParcelaVM.DescontoPorcentual / 100), 2);
                         if (valorPagoGeral > 0)
                         {
                             parcelaVM.UsuarioAlteracaoId = Configuracao.Usuario.Id;
@@ -258,8 +262,8 @@ namespace ControlFinWeb.App.Controllers
                                 parcelaVM.SituacaoParcela = SituacaoParcela.Pago;
                                 parcelaVM.ValorReajustado = (parcelaVM.ValorParcela + parcelaVM.JurosValor) - parcelaVM.DescontoValor;
                             }
-                           
-                            
+
+
                             parcelasVM.Add(parcelaVM);
                         }
                     }
@@ -315,8 +319,8 @@ namespace ControlFinWeb.App.Controllers
         {
             foreach (var id in ids)
             {
-               var sit = Repositorio.ObterPorId(id).SituacaoParcela;
-                if(sit == SituacaoParcela.Pago || sit == SituacaoParcela.Cancelado)
+                var sit = Repositorio.ObterPorId(id).SituacaoParcela;
+                if (sit == SituacaoParcela.Pago || sit == SituacaoParcela.Cancelado)
                     return false;
             }
             return true;
@@ -326,7 +330,7 @@ namespace ControlFinWeb.App.Controllers
         {
             if (!SituacaoDasParcelas(ids))
                 return Json(new { result = false, error = "Parcelas Pagas e Canceladas não podem ser selecionadas!" });
-            
+
             foreach (var id in ids)
             {
                 var parcela = Repositorio.ObterPorId(id);
@@ -355,5 +359,30 @@ namespace ControlFinWeb.App.Controllers
 
         }
 
+        public IActionResult HistoricoParcela(Int64 Id = 0)
+        {
+            var historicos = new List<FluxoCaixa>(); 
+            var historicosVM = new List<FluxoCaixaVM>();
+            parcela = Repositorio.ObterPorId(Id);
+
+            if (Id > 0)
+            {
+                historicos = RepositorioFluxoCaixa.ObterPorParametros(x => x.Parcela.Id == Id).ToList();
+                if (historicos.Count > 0)
+                {
+                    historicosVM = Mapper.Map<List<FluxoCaixaVM>>(historicos);
+                    return PartialView("_HistoricoParcela", historicosVM);
+                }
+            }
+
+            historicosVM.Add(new FluxoCaixaVM()
+            {
+                Data = null,
+                Valor = 0,
+                FormaPagamentoVM = new FormaPagamentoVM() { Nome = "" },
+                ParcelaVM= new ParcelaVM() { Numero = parcela.Numero}
+            });
+            return PartialView("_HistoricoParcela", historicosVM);
+        }
     }
 }
