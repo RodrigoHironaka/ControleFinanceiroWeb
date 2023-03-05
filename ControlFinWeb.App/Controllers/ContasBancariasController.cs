@@ -8,6 +8,7 @@ using ControlFinWeb.Repositorio.Repositorios;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -36,13 +37,17 @@ namespace ControlFinWeb.App.Controllers
             return View(contasBancariasVM);
         }
 
-        public IActionResult Editar(Int64 Id = 0)
+        public IActionResult Editar(Int64 Id = 0, decimal valorTransferencia = 0)
         {
             if (Id > 0)
             {
                 contaBancaria = Repositorio.ObterPorId(Id);
                 contaBancariaVM = Mapper.Map<ContaBancariaVM>(contaBancaria);
+                
             }
+
+            if (valorTransferencia > 0)
+                contaBancariaVM.Valor = valorTransferencia;
 
             ViewBag.BancoId = new SelectList(new RepositorioBanco(NHibernateHelper.ObterSessao()).ObterPorParametros(x => x.Situacao == Situacao.Ativo), "Id", "DadosCompletos", Id);
             return View(contaBancariaVM);

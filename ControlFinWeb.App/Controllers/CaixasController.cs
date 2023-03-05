@@ -1,10 +1,13 @@
-﻿using AutoMapper;
+﻿using App1.Repositorio.Configuracao;
+using AutoMapper;
 using ControlFinWeb.App.Utilitarios;
 using ControlFinWeb.App.ViewModels;
 using ControlFinWeb.Dominio.Entidades;
+using ControlFinWeb.Dominio.ObjetoValor;
 using ControlFinWeb.Repositorio.Repositorios;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,9 +17,10 @@ namespace ControlFinWeb.App.Controllers
     public class CaixasController : Controller
     {
         private readonly RepositorioCaixa Repositorio;
+        private readonly RepositorioContaBancaria RepositorioContaBancaria;
         private readonly IMapper Mapper;
 
-        public CaixasController(RepositorioCaixa repositorio, IMapper mapper)
+        public CaixasController(RepositorioCaixa repositorio, IMapper mapper, RepositorioContaBancaria repositorioContaBancaria)
         {
             Repositorio = repositorio;
             Mapper = mapper;
@@ -32,7 +36,7 @@ namespace ControlFinWeb.App.Controllers
                 caixa = Repositorio.ObterCaixaAberto(Configuracao.Usuario.Id);
                 if (caixa != null)
                     caixaVM = Mapper.Map(caixa, caixaVM);
-            } 
+            }
             else
             {
                 caixa = Repositorio.ObterPorId(idCaixa);
@@ -94,5 +98,6 @@ namespace ControlFinWeb.App.Controllers
             Repositorio.Excluir(caixa);
             return Json(caixa.Id + "excluído com sucesso");
         }
+
     }
 }

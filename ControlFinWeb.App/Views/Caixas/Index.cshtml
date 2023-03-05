@@ -19,13 +19,13 @@
         }
         @if (Model.Situacao == SituacaoCaixa.Fechado)
         {
-            <button type="button" class="w-100 btn btn-md btn-secondary transferirBanco" data-id="@Model.Id"><i class="bi bi-bank2"></i> Transferir</button>
+            <button type="button" class="w-100 btn btn-md btn-secondary transferirBanco" data-id="0"><i class="bi bi-bank2"></i> Transferir</button>
         }
     </div>
     <div class="col-md-8">
         @if (Model.Id > 0)
         {
-            <h2 >@Model.DescricaoCaixa</h2>
+            <h2>@Model.DescricaoCaixa</h2>
         }
     </div>
 </div>
@@ -56,7 +56,16 @@
                         @Html.Raw(item.Data.ToString())
                     </td>
                     <td style="text-align:right">
-                        @Html.DisplayFor(modelItem => item.Valor)
+                        @if(item.DebitoCredito == DebitoCredito.Crédito)
+                        {
+                            @Html.DisplayFor(modelItem => item.Valor)
+                        }
+                        else
+                        {
+                            var neg = item.Valor * -1;
+                            @Html.DisplayFor(modelItem => neg)
+                            
+                        }
                     </td>
                     <td>
                         @Html.DisplayFor(modelItem => item.FormaPagamentoVM.Nome)
@@ -181,6 +190,20 @@
                     $("#CaixaId").val(idCaixa);
                     $("#modal").modal("show");
                 })
+            });
+            $(".transferirBanco").click(function () {
+                var id = $(this).attr("data-id");
+                var idCaixa = @Model.Id;
+                if (parseFloat(@Model.BalancoFinal) > 0) {
+                    $("#modal").load("/ContasBancarias/Editar?valorTransferencia=" + @Model.BalancoFinal, function () {
+                        $(".modal-title").html("NOVO REGISTRO");
+                        $("#CaixaId").val(idCaixa);
+                        $("#modal").modal("show");
+                    });
+                }else{
+                    $("#mensagem").addClass('alert alert-warning').html("<strong>Erro!</strong> Balanço Final é negativo! Não é possível transferir.").delay(10000).fadeOut(400);
+                }
+
             });
 
         })
