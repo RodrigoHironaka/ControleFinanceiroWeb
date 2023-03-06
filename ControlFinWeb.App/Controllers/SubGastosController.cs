@@ -46,7 +46,6 @@ namespace ControlFinWeb.App.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public IActionResult Editar(SubGastoVM subGastoVM)
         {
             if (ModelState.IsValid)

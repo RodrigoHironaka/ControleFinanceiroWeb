@@ -80,7 +80,6 @@ namespace ControlFinWeb.App.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public IActionResult Editar(FaturaVM faturaVM)
         {
             if (ModelState.IsValid)

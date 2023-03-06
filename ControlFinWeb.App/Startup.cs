@@ -1,4 +1,5 @@
 using ControlFinWeb.App.AutoMapper;
+using ControlFinWeb.App.Configurations;
 using ControlFinWeb.App.Utilitarios;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
@@ -22,23 +23,12 @@ namespace ControlFinWeb.App
 
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddCors();
             services.AddHttpContextAccessor();
-
-            services.Configure<CookiePolicyOptions>(options =>
-            {
-                options.CheckConsentNeeded = context => true;
-                options.MinimumSameSitePolicy = Microsoft.AspNetCore.Http.SameSiteMode.None;
-            });
-
-            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie(options =>
-            {
-                options.Cookie.Name = "CookieLoginControleFinanceiro";
-                options.LoginPath = "/Login/Entrar";
-            });
+            services.AddMvcConfiguration();
+            services.AddCookieConfiguration();
                 
             services.AddNHibernate();
             services.AddControllersWithViews();
@@ -52,7 +42,7 @@ namespace ControlFinWeb.App
             services.AddAutoMapper(typeof(AutoMapperSetup));
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+    
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IHttpContextAccessor accessor)
         {
             if (env.IsDevelopment())
@@ -62,7 +52,6 @@ namespace ControlFinWeb.App
             else
             {
                 app.UseExceptionHandler("/Home/Error");
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
 

@@ -44,7 +44,6 @@ namespace ControlFinWeb.App.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public IActionResult Editar(FormaPagamentoVM formaPagamentoVM)
         {
             if (ModelState.IsValid)

@@ -51,7 +51,6 @@ namespace ControlFinWeb.App.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public IActionResult Editar(PessoaVM pessoaVM)
         {
             if (ModelState.IsValid)
@@ -78,7 +77,6 @@ namespace ControlFinWeb.App.Controllers
             pessoaVM.Rendas = new SelectList(new RepositorioRenda(NHibernateHelper.ObterSessao()).ObterPorParametros(x => x.Situacao == Situacao.Ativo), "Id", "Nome", pessoaVM.Id);
             return View(pessoaVM);
         }
-
 
         [HttpPost]
         public JsonResult Deletar(int id)

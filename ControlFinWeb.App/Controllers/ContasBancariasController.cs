@@ -54,7 +54,6 @@ namespace ControlFinWeb.App.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public IActionResult Editar(ContaBancariaVM contaBancariaVM)
         {
             if (ModelState.IsValid)

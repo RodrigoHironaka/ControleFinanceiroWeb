@@ -45,7 +45,6 @@ namespace ControlFinWeb.App.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public IActionResult Editar(GastoVM gastoVM)
         {
             if (ModelState.IsValid)

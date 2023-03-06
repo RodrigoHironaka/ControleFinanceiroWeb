@@ -113,7 +113,6 @@ namespace ControlFinWeb.App.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public IActionResult Editar(ParcelaVM parcelaVM)
         {
             if (ModelState.IsValid)

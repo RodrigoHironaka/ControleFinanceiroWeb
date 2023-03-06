@@ -53,7 +53,6 @@ namespace ControlFinWeb.App.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public IActionResult Editar(ContaVM contaVM)
         {
             if (ModelState.IsValid)
@@ -91,7 +90,6 @@ namespace ControlFinWeb.App.Controllers
             return View(contaVM);
         }
 
-
         [HttpPost]
         public JsonResult Deletar(int id)
         {
@@ -112,12 +110,5 @@ namespace ControlFinWeb.App.Controllers
 
         }
 
-        //public IActionResult CarregarParcelas(Int64 Id)
-        //{
-        //    conta = Repositorio.ObterPorId(Id);
-        //    contaVM = Mapper.Map<ContaVM>(conta);
-
-        //    return PartialView("../Parcelas/_ListaParcelas", contaVM.ParcelasVM);
-        //}
     }
 }

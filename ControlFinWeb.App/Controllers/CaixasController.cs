@@ -17,10 +17,9 @@ namespace ControlFinWeb.App.Controllers
     public class CaixasController : Controller
     {
         private readonly RepositorioCaixa Repositorio;
-        private readonly RepositorioContaBancaria RepositorioContaBancaria;
         private readonly IMapper Mapper;
 
-        public CaixasController(RepositorioCaixa repositorio, IMapper mapper, RepositorioContaBancaria repositorioContaBancaria)
+        public CaixasController(RepositorioCaixa repositorio, IMapper mapper)
         {
             Repositorio = repositorio;
             Mapper = mapper;
@@ -66,7 +65,6 @@ namespace ControlFinWeb.App.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public IActionResult Editar(CaixaVM caixaVM)
         {
             if (ModelState.IsValid)

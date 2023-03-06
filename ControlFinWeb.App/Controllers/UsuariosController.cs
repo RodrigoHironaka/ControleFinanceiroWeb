@@ -43,7 +43,6 @@ namespace ControlFinWeb.App.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public IActionResult Editar(UsuarioVM usuarioVM)
         {
             if (ModelState.IsValid)

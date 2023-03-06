@@ -47,7 +47,6 @@ namespace ControlFinWeb.App.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public IActionResult Editar(CartaoVM cartaoVM)
         {
             if (ModelState.IsValid)
