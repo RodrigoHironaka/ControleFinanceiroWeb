@@ -47,14 +47,22 @@ namespace ControlFinWeb.App.Controllers
 
                 if (usuario != null)
                 {
-                    if (usuario.Senha == new Criptografia(SHA512.Create()).Criptografar(loginVM.Senha))
+                    if (usuario.Senha == new Criptografia(SHA512.Create()).Criptografar(loginVM.Senha) )
                     {
-                        Autenticar(usuario);
+                        if(usuario.Autorizado == Dominio.ObjetoValor.SimNao.Sim)
+                        {
+                            Autenticar(usuario);
 
-                        if (Url.IsLocalUrl(loginVM.ReturnUrl) && loginVM.ReturnUrl.Length > 1 && loginVM.ReturnUrl.StartsWith("/", StringComparison.OrdinalIgnoreCase) && !loginVM.ReturnUrl.StartsWith("//", StringComparison.OrdinalIgnoreCase) && !loginVM.ReturnUrl.StartsWith("/\\", StringComparison.OrdinalIgnoreCase))
-                            return Redirect(loginVM.ReturnUrl);
+                            if (Url.IsLocalUrl(loginVM.ReturnUrl) && loginVM.ReturnUrl.Length > 1 && loginVM.ReturnUrl.StartsWith("/", StringComparison.OrdinalIgnoreCase) && !loginVM.ReturnUrl.StartsWith("//", StringComparison.OrdinalIgnoreCase) && !loginVM.ReturnUrl.StartsWith("/\\", StringComparison.OrdinalIgnoreCase))
+                                return Redirect(loginVM.ReturnUrl);
+                            else
+                                return RedirectToAction("Index", "Home");
+                        }
                         else
-                            return RedirectToAction("Index", "Home");
+                        {
+                            ViewData["Mensagem"] = "<div class='alert alert-danger'>Usuário não autorizado!</div>";
+                        }
+
                     }
                     else
                     {
