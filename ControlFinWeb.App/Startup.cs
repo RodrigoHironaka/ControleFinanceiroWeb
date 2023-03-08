@@ -27,9 +27,9 @@ namespace ControlFinWeb.App
         {
             services.AddCors();
             services.AddHttpContextAccessor();
-            services.AddMvcConfiguration();
             services.AddCookieConfiguration();
-                
+            services.AddMvcConfiguration();
+
             services.AddNHibernate();
             services.AddControllersWithViews();
             services.AddControllers();

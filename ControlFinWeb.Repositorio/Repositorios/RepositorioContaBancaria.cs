@@ -1,4 +1,5 @@
 ﻿using ControlFinWeb.Dominio.Entidades;
+using ControlFinWeb.Dominio.ObjetoValor;
 using NHibernate;
 using System;
 using System.Collections.Generic;
@@ -8,8 +9,17 @@ namespace ControlFinWeb.Repositorio.Repositorios
 {
     public class RepositorioContaBancaria : RepositorioBase<ContaBancaria>
     {
-
-        public RepositorioContaBancaria(ISession session) : base(session) { }
+        private readonly RepositorioFluxoCaixa RepositorioFluxoCaixa;
+        private readonly RepositorioCaixa RepositorioCaixa;
+        private readonly RepositorioBanco RepositorioBanco;
+        public RepositorioContaBancaria(RepositorioFluxoCaixa repositorioFluxoCaixa,
+           RepositorioCaixa repositorioCaixa, RepositorioBanco repositorioBanco,
+        ISession session) : base(session) 
+        {
+            RepositorioFluxoCaixa = repositorioFluxoCaixa;
+            RepositorioCaixa = repositorioCaixa;
+            RepositorioBanco = repositorioBanco;
+        }
 
         public Decimal ObterSaldoContaBancaria(Int64 idBanco)
         {
@@ -53,6 +63,35 @@ namespace ControlFinWeb.Repositorio.Repositorios
             novoContaBancaria.Banco = banco;
 
             SalvarLote(novoContaBancaria);
+        }
+
+        public void SalvarAddFluxoCaixa(ContaBancaria contaBancaria, Usuario usuario)
+        {
+            using var trans = Session.BeginTransaction();
+            try
+            {
+                var banco = RepositorioBanco.ObterPorId(contaBancaria.Banco.Id);
+                SalvarLote(contaBancaria);
+                var fluxoCaixa = new FluxoCaixa()
+                {
+                    Valor = contaBancaria.Valor,
+                    Data = DateTime.Now,
+                    DebitoCredito = DebitoCredito.Débito,
+                    FormaPagamento = null,
+                    Parcela = null,
+                    Caixa = RepositorioCaixa.ObterPorId(contaBancaria.Caixa.Id),
+                    DataGeracao = DateTime.Now,
+                    UsuarioCriacao = usuario,
+                    Nome = $"Transferência para {banco.DadosCompletos}",
+                };
+                RepositorioFluxoCaixa.SalvarLote(fluxoCaixa);
+                trans.Commit();
+            }
+            catch (Exception ex)
+            {
+                trans.Rollback();
+                throw new Exception(ex.ToString());
+            }
         }
     }
 }

@@ -16,7 +16,7 @@
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                 <input asp-for="Id" type="hidden" />
                 <input asp-for="CaixaId" type="hidden" />
-                <input asp-for="Codigo" type="hidden" />
+                <input asp-for="GerarFluxoCaixa" type="hidden" />
                 <div class="form-group">
                     <label asp-for="Nome" class="control-label"></label>
                     <textarea asp-for="Nome" class="form-control" rows="2"></textarea>
@@ -47,7 +47,7 @@
                     </div>
                     <div class="col-md-3">
                         <label asp-for="Situacao" class="control-label"></label>
-                        <select class="form-select" asp-for="Situacao" asp-items="Html.GetEnumSelectList<EntradaSaida>()"></select>
+                        <select class="form-select" asp-for="Situacao" id="SituacaoDefinida" asp-items="Html.GetEnumSelectList<EntradaSaida>()"></select>
                         <span asp-validation-for="Situacao" class="text-danger"></span>
                     </div>
                 </div>
@@ -93,7 +93,7 @@
         $(document).ready(function () {
             var caixaId = $("#CaixaId").val();
             if (parseInt(caixaId) > 0) {
-                $("#ValorDefinido").attr("readonly", true);
+                $("#SituacaoDefinida").attr("disabled", true);
             }
         });
     </script>

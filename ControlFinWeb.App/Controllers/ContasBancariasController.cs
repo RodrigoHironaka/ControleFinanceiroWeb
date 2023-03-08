@@ -19,6 +19,8 @@ namespace ControlFinWeb.App.Controllers
     public class ContasBancariasController : Controller
     {
         private readonly RepositorioContaBancaria Repositorio;
+
+        
         private readonly IMapper Mapper;
 
         public ContasBancariasController(RepositorioContaBancaria repositorio, IMapper mapper)
@@ -43,11 +45,13 @@ namespace ControlFinWeb.App.Controllers
             {
                 contaBancaria = Repositorio.ObterPorId(Id);
                 contaBancariaVM = Mapper.Map<ContaBancariaVM>(contaBancaria);
-                
             }
 
             if (valorTransferencia > 0)
+            {
                 contaBancariaVM.Valor = valorTransferencia;
+                contaBancariaVM.GerarFluxoCaixa = true;
+            }
 
             ViewBag.BancoId = new SelectList(new RepositorioBanco(NHibernateHelper.ObterSessao()).ObterPorParametros(x => x.Situacao == Situacao.Ativo), "Id", "DadosCompletos", Id);
             return View(contaBancariaVM);
@@ -69,7 +73,10 @@ namespace ControlFinWeb.App.Controllers
                 {
                     contaBancaria = Mapper.Map(contaBancariaVM, contaBancaria);
                     contaBancaria.UsuarioCriacao = Configuracao.Usuario;
-                    Repositorio.Salvar(contaBancaria);
+                    if (contaBancariaVM.GerarFluxoCaixa)
+                        Repositorio.SalvarAddFluxoCaixa(contaBancaria, Configuracao.Usuario);
+                    else
+                        Repositorio.Salvar(contaBancaria);
                 }
 
                 return new EmptyResult();

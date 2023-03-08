@@ -80,7 +80,6 @@ namespace ControlFinWeb.App.Controllers
                     conta.Arquivos.ForEach(x => x.Conta = conta);
                     Repositorio.Salvar(conta);
                 }
-                //return View(contaVM);
                 return RedirectToAction("Editar", new { id = conta.Id });
 
             }

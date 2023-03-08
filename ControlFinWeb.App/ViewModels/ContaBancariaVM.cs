@@ -10,10 +10,8 @@ namespace ControlFinWeb.App.ViewModels
 {
     public class ContaBancariaVM
     {
-        public Int64 Id { get; set; }
-
         [DisplayName("Código")]
-        public Int64 Codigo { get; set; }
+        public Int64 Id { get; set; }
 
         public DateTime DataGeracao { get; set; }
 
@@ -35,6 +33,8 @@ namespace ControlFinWeb.App.ViewModels
         [DisplayName("Situação")]
         public EntradaSaida Situacao { get; set; }
 
+        public Boolean GerarFluxoCaixa { get;set; }
+
         [Range(1, Int64.MaxValue, ErrorMessage = "Informe um Banco")]
         [DisplayName("Banco")]
         public Int64 BancoId { get; set; }
@@ -45,7 +45,7 @@ namespace ControlFinWeb.App.ViewModels
 
         public String DescricaoComCodigo
         {
-            get { return String.Format("{0} - {1}", Codigo, Nome); }
+            get { return String.Format("{0} - {1}", Id, Nome); }
         }
         public String DescricaoComTipoConta
         {

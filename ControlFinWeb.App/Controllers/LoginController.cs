@@ -45,33 +45,18 @@ namespace ControlFinWeb.App.Controllers
             {
                 var usuario = RepositorioUsuario.ObterPorParametros(x => x.Email == loginVM.Email).FirstOrDefault();
 
-                if (usuario != null)
+                if (usuario != null && usuario.Senha == new Criptografia(SHA512.Create()).Criptografar(loginVM.Senha) && usuario.Autorizado == Dominio.ObjetoValor.SimNao.Sim)
                 {
-                    if (usuario.Senha == new Criptografia(SHA512.Create()).Criptografar(loginVM.Senha) )
-                    {
-                        if(usuario.Autorizado == Dominio.ObjetoValor.SimNao.Sim)
-                        {
-                            Autenticar(usuario);
+                    Autenticar(usuario);
 
-                            if (Url.IsLocalUrl(loginVM.ReturnUrl) && loginVM.ReturnUrl.Length > 1 && loginVM.ReturnUrl.StartsWith("/", StringComparison.OrdinalIgnoreCase) && !loginVM.ReturnUrl.StartsWith("//", StringComparison.OrdinalIgnoreCase) && !loginVM.ReturnUrl.StartsWith("/\\", StringComparison.OrdinalIgnoreCase))
-                                return Redirect(loginVM.ReturnUrl);
-                            else
-                                return RedirectToAction("Index", "Home");
-                        }
-                        else
-                        {
-                            ViewData["Mensagem"] = "<div class='alert alert-danger'>Usuário não autorizado!</div>";
-                        }
-
-                    }
+                    if (Url.IsLocalUrl(loginVM.ReturnUrl) && loginVM.ReturnUrl.Length > 1 && loginVM.ReturnUrl.StartsWith("/", StringComparison.OrdinalIgnoreCase) && !loginVM.ReturnUrl.StartsWith("//", StringComparison.OrdinalIgnoreCase) && !loginVM.ReturnUrl.StartsWith("/\\", StringComparison.OrdinalIgnoreCase))
+                        return Redirect(loginVM.ReturnUrl);
                     else
-                    {
-                        ViewData["Mensagem"] = "<div class='alert alert-danger'>Senha Inválida!</div>";
-                    }
+                        return RedirectToAction("Index", "Home");
                 }
                 else
                 {
-                    ViewData["Mensagem"] = "<div class='alert alert-danger'>Usuário não encontrado!</div>";
+                    ViewData["Mensagem"] = "<div class='alert alert-danger'>Usuário\\Senha incorretos ou não autorizado!</div>";
                 }
             }
             return View(new LoginVM());
