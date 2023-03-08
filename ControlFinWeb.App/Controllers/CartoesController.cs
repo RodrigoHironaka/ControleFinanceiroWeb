@@ -29,7 +29,7 @@ namespace ControlFinWeb.App.Controllers
 
         public IActionResult Index()
         {
-            IEnumerable<Cartao> cartoes = Repositorio.ObterTodos();
+            IEnumerable<Cartao> cartoes = Repositorio.ObterPorParametros(x => x.UsuarioCriacao.Id == Configuracao.Usuario.Id);
             List<CartaoVM> cartoesVM = Mapper.Map<List<CartaoVM>>(cartoes);
             return View(cartoesVM);
         }

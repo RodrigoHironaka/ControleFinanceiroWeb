@@ -1,4 +1,5 @@
-﻿using ControlFinWeb.App.ViewModels.Acesso;
+﻿using ControlFinWeb.App.Utilitarios;
+using ControlFinWeb.App.ViewModels.Acesso;
 using ControlFinWeb.Dominio.Entidades;
 using ControlFinWeb.Dominio.ObjetoValor;
 using ControlFinWeb.Repositorio.Repositorios;
@@ -22,7 +23,7 @@ namespace ControlFinWeb.App.Controllers
 
         public IActionResult Index()
         {
-            return View(Repositorio.ObterPorParametros(x => x.Situacao == Situacao.Ativo));
+            return View(Repositorio.ObterPorParametros(x => x.Situacao == Situacao.Ativo && x.UsuarioCriacao.Id == Configuracao.Usuario.Id));
         }
 
         public IActionResult Editar(Int64 ID = 0)

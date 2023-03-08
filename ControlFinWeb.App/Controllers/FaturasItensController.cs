@@ -31,9 +31,9 @@ namespace ControlFinWeb.App.Controllers
         FaturaItens faturaItens = new FaturaItens();
         FaturaItensVM faturaItensVM = new FaturaItensVM();
 
-        public IActionResult Index(Int64 Id)//Id é da fatura do cartao
+        public IActionResult Index(Int64 IdFatura)
         {
-            IEnumerable<FaturaItens> faturasItens = Repositorio.ObterPorParametros(x => x.Fatura.Id == Id);
+            IEnumerable<FaturaItens> faturasItens = Repositorio.ObterPorParametros(x => x.Fatura.Id == IdFatura);
             List<FaturaItensVM> faturasVM = Mapper
                 .Map<List<FaturaItensVM>>(faturasItens);
             return View(faturasVM);

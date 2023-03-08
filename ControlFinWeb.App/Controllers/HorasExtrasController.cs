@@ -33,7 +33,7 @@ namespace ControlFinWeb.App.Controllers
 
         public IActionResult Index()
         {
-            IEnumerable<HoraExtra> horasExtras = Repositorio.ObterTodos();
+            IEnumerable<HoraExtra> horasExtras = Repositorio.ObterPorParametros(x => x.UsuarioCriacao.Id == Configuracao.Usuario.Id);
             horasExtrasVM = Mapper.Map<List<HoraExtraVM>>(horasExtras);
             return View(horasExtrasVM);
         }

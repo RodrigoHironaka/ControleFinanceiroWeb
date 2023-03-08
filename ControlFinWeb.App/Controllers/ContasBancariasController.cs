@@ -34,7 +34,7 @@ namespace ControlFinWeb.App.Controllers
 
         public IActionResult Index()
         {
-            IEnumerable<ContaBancaria> contasBancarias = Repositorio.ObterTodos();
+            IEnumerable<ContaBancaria> contasBancarias = Repositorio.ObterPorParametros(x => x.UsuarioCriacao.Id == Configuracao.Usuario.Id);
             List<ContaBancariaVM> contasBancariasVM = Mapper.Map<List<ContaBancariaVM>>(contasBancarias);
             return View(contasBancariasVM);
         }

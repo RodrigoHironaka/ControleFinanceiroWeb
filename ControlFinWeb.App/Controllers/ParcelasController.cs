@@ -49,6 +49,7 @@ namespace ControlFinWeb.App.Controllers
         public IActionResult Index(FiltroParcelasVM filtrarParcelasVM)
         {
             var predicado = Repositorio.CriarPredicado();
+            predicado = predicado.And(x => x.UsuarioCriacao.Id == Configuracao.Usuario.Id);
 
             if (filtrarParcelasVM.DataInicio != null)
                 predicado = predicado.And(x => x.DataVencimento >= filtrarParcelasVM.DataInicio);
