@@ -1,12 +1,9 @@
 ﻿using AutoMapper;
-using ControlFinWeb.App.Utilitarios;
 using ControlFinWeb.App.ViewModels;
+using ControlFinWeb.App.ViewModels.Acesso;
 using ControlFinWeb.Dominio.Dominios;
 using ControlFinWeb.Dominio.Entidades;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace ControlFinWeb.App.AutoMapper
 {
@@ -19,6 +16,7 @@ namespace ControlFinWeb.App.AutoMapper
             CreateMap<FormaPagamentoVM, FormaPagamento>();
             CreateMap<GastoVM, Gasto>();
             CreateMap<RendaVM, Renda>();
+            CreateMap<UsuarioVM, Usuario>();
             CreateMap<ParcelaVM, Parcela>()
                 .AfterMap((src, dest) =>
                 {
@@ -114,6 +112,7 @@ namespace ControlFinWeb.App.AutoMapper
             CreateMap<FormaPagamento, FormaPagamentoVM>();
             CreateMap<Gasto, GastoVM>();
             CreateMap<Renda, RendaVM>();
+            CreateMap<Usuario, UsuarioVM>();
             CreateMap<Parcela, ParcelaVM>()
                 .AfterMap((src, dest) =>
                 {

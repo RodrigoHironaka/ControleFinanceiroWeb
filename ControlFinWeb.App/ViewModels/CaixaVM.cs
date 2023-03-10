@@ -9,8 +9,11 @@ namespace ControlFinWeb.App.ViewModels
 {
     public class CaixaVM
     {
-        [DisplayName("Código")]
+       
         public Int64 Id { get; set; }
+
+        [DisplayName("Número")]
+        public Int64 Numero { get; set; }
 
         [DisplayName("Valor Inicial")]
         public Decimal ValorInicial { get; set; }
@@ -49,7 +52,7 @@ namespace ControlFinWeb.App.ViewModels
         {
             get
             {
-                return String.Format("Caixa Nº {0} - {1}", Id, Situacao);
+                return String.Format("Caixa Nº {0:00000} - {1}", Numero, Situacao.ToString().ToUpper());
             }
         }
     }

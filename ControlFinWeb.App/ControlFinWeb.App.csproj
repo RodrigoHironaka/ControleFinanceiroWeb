@@ -5,6 +5,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="ViewModels\UsuarioVM.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Include="wwwroot\lib\popper\umd\enums.js" />
     <None Include="wwwroot\lib\popper\umd\enums.js.map" />
     <None Include="wwwroot\lib\popper\umd\enums.min.js" />

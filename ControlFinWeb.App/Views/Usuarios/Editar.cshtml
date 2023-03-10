@@ -1,0 +1,90 @@
+﻿@using ControlFinWeb.Dominio.ObjetoValor;
+@model ControlFinWeb.App.ViewModels.Acesso.UsuarioVM;
+
+@{
+    ViewData["Title"] = "Editar";
+}
+
+<div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title"></h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="javascript:window.location.reload()"></button>
+        </div>
+        <div class="modal-body">
+            <form asp-action="Editar" id="FrmUsuario">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input asp-for="Autorizado" class="form-control" type="hidden"/>
+                <input asp-for="Id" class="form-control" type="hidden" />
+                <input asp-for="Situacao" class="form-control" type="hidden" />
+                <div class="form-group">
+                    <label asp-for="Nome" class="control-label"></label>
+                    <input asp-for="Nome" class="form-control" />
+                    <span asp-validation-for="Nome" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Email" class="control-label"></label>
+                    <input asp-for="Email" type="email" class="form-control" />
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Senha" class="control-label"></label>
+                    <input asp-for="Senha" class="form-control" />
+                    <span asp-validation-for="Senha" class="text-danger"></span>
+                </div>
+                 <div class="form-group">
+                    <label asp-for="ConfirmaSenha" class="control-label"></label>
+                    <input asp-for="ConfirmaSenha" class="form-control" />
+                    <span asp-validation-for="ConfirmaSenha" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="TipoUsuario" class="control-label"></label>
+                    <select class="form-select" asp-for="TipoUsuario" asp-items="Html.GetEnumSelectList<TipoUsuario>()">
+                    </select>
+                    <span asp-validation-for="TipoUsuario" class="text-danger"></span>
+                </div>
+               @* <div class="form-group">
+                    <label asp-for="Situacao" class="control-label"></label>
+                    <select class="form-select" asp-for="Situacao" asp-items="Html.GetEnumSelectList<Situacao>()">
+                    </select>
+                    <span asp-validation-for="Situacao" class="text-danger"></span>
+                </div>*@
+                <br />
+                <div class="form-group">
+                    <button type="button" onclick="Salvar()" class="w-100 btn btn-success btnConfirmar">Salvar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script>
+        function Salvar() {
+            var dados = $("#FrmUsuario").serialize();
+            $.ajax({
+                url: '/Usuarios/Editar',
+                method: 'POST',
+                data: dados,
+                success: function (retorno) {
+                    if (retorno == "") {
+                        location.reload();
+                    }
+                    else {
+                        $("#modal").html(retorno);
+                        if ($("#id").val() > 0)
+                            $(".modal-title").html("ALTERANDO REGISTRO");
+                        else
+                            $(".modal-title").html("NOVO REGISTRO");
+                    }
+                }
+
+            });
+        }
+    </script>
+}

@@ -1,4 +1,5 @@
-﻿using ControlFinWeb.Dominio.ObjetoValor;
+﻿using ControlFinWeb.App.ViewModels.Acesso;
+using ControlFinWeb.Dominio.ObjetoValor;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;

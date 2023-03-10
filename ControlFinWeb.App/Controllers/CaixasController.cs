@@ -81,6 +81,8 @@ namespace ControlFinWeb.App.Controllers
                 {
                     caixa = Mapper.Map(caixaVM, caixa);
                     caixa.UsuarioCriacao = Configuracao.Usuario;
+                    var ultimoCaixa = Repositorio.ObterPorParametros(x => x.UsuarioCriacao.Id == Configuracao.Usuario.Id).OrderByDescending(x => x.Id).FirstOrDefault();
+                    caixa.Numero = ultimoCaixa != null ? ultimoCaixa.Numero + 1 : 1;
                     Repositorio.SalvarCaixa(caixa, Configuracao.Usuario);
                 }
 

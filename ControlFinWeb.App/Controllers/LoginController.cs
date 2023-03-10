@@ -67,7 +67,7 @@ namespace ControlFinWeb.App.Controllers
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.Name, usuario.Id.ToString()),
-                new Claim(ClaimTypes.Role, "Usuario")
+                new Claim(ClaimTypes.Role, usuario.TipoUsuario.ToString())
             };
 
             var identidadeDeUsuario = new ClaimsIdentity(claims, "Usuario");

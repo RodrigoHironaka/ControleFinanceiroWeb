@@ -5,9 +5,8 @@
     ViewData["Title"] = "Caixa";
 }
 
-
 <div class="row mb-3">
-    <div class="col-sm-4 d-flex justify-content-start">
+    <div class="col-sm-5 d-flex justify-content-start">
         <button type="button" class="w-100 btn-md btn btn-dark pesquisar"><i class="bi bi-search"></i> Pesquisar</button>
         @if (Model.Situacao == SituacaoCaixa.Aberto)
         {
@@ -17,11 +16,12 @@
         {
             <button type="button" class="w-100 btn btn-md btn-dark novo" data-id="0"><i class="bi bi-plus-lg"></i> Adicionar</button>
         }
-        
-        <button type="button" class="w-100 btn btn-md btn-secondary transferirBanco" data-id="0"><i class="bi bi-bank2"></i> Transferir</button>
-        
+        @if (Model.Id > 0)
+        {
+            <button type="button" class="w-100 btn btn-md btn-secondary transferirBanco" data-id="0"><i class="bi bi-bank2"></i> Transferir</button>
+        }
     </div>
-    <div class="col-md-8">
+    <div class="col-md-7">
         @if (Model.Id > 0)
         {
             <h2>@Model.DescricaoCaixa</h2>
@@ -55,7 +55,7 @@
                         @Html.Raw(item.Data.ToString())
                     </td>
                     <td style="text-align:right">
-                        @if(item.DebitoCredito == DebitoCredito.Crédito)
+                        @if (item.DebitoCredito == DebitoCredito.Crédito)
                         {
                             @Html.DisplayFor(modelItem => item.Valor)
                         }
@@ -63,7 +63,7 @@
                         {
                             var neg = item.Valor * -1;
                             @Html.DisplayFor(modelItem => neg)
-                            
+
                         }
                     </td>
                     <td>
@@ -194,14 +194,14 @@
                 var id = $(this).attr("data-id");
                 var idCaixa = @Model.Id;
                 var valor = parseFloat(@Model.BalancoFinal.ToString().Replace(",","."));
-               
+
                 if (valor > 0) {
                     $("#modal").load("/ContasBancarias/Editar?valorTransferencia=" + valor, function () {
                         $(".modal-title").html("NOVO REGISTRO");
                         $("#CaixaId").val(idCaixa);
                         $("#modal").modal("show");
                     });
-                }else{
+                } else {
                     $("#mensagem").addClass('alert alert-warning').html("<strong>Erro!</strong> Balanço Final é negativo! Não é possível transferir.").delay(10000).fadeOut(400);
                 }
 

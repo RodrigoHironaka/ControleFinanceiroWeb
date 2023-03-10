@@ -14,13 +14,15 @@
             <form asp-action="Editar">
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                 <input asp-for="Id" class="form-control" type="hidden" />
+                <input asp-for="Numero" class="form-control" type="hidden" />
+                @*<input asp-for="ValorInicial" class="form-control" type="hidden" />*@
                 <input asp-for="DataGeracao" class="form-control" type="hidden" />
-                
+
                 <div class="row">
                     <div class="col-md-4">
-                        <label asp-for="Id" class="control-label"></label>
-                        <input asp-for="Id" class="form-control" disabled />
-                        <span asp-validation-for="Id" class="text-danger"></span>
+                        <label asp-for="Numero" class="control-label"></label>
+                        <input asp-for="Numero" class="form-control" disabled />
+                        <span asp-validation-for="Numero" class="text-danger"></span>
                     </div>
                     <div class="col-md-4">
                         <label asp-for="Situacao" class="control-label"></label>
@@ -64,13 +66,16 @@
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
     <script type="text/javascript">
-        $(function() {
+        $(function () {
             var id = parseInt($("#Id").val());
-            if(id == 0 )
+            if (id == 0)
                 $("#ValorAberturaFechamento").maskMoney({ thousands: '', decimal: ',', allowZero: true });
+            else
+                $("#ValorAberturaFechamento").prop('readonly', true);
+
         });
 
-        $(document).ready(function() {
+        $(document).ready(function () {
             $("#ValorAberturaFechamento").focus();
         });
     </script>

@@ -13,6 +13,7 @@ namespace ControlFinWeb.Repositorio.Mapeamentos
             Table("Caixas");
 
             Id(x => x.Id, m => m.Generator(Generators.Identity));
+            Property(x => x.Numero);
             Property(x => x.ValorInicial);
             Property(x => x.DataGeracao);
             Property(x => x.DataAlteracao);
