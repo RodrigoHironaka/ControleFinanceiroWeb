@@ -110,11 +110,10 @@
         $("#ValorPagarPagamento, #ValorRestantePagamento, #JurosPorcentualPagamento, #JurosValorPagamento, #DescontoPorcentualPagamento, #DescontoValorPagamento, #ValorPagoPagamento, #ValorRestantePagamento").maskMoney({ thousands: '', decimal: ',', allowZero: true });
 
         $("#btnConfirmarPagamento").click(function () {
-
             var dados = $("#FrmPagarParcela").serialize();
             $.ajax({
-                url: '/Parcelas/PagarParcelas',
                 method: 'POST',
+                url: '/Parcelas/PagarParcelas',               
                 data: dados,
                 success: function (retorno) {
                     if (retorno == "") {

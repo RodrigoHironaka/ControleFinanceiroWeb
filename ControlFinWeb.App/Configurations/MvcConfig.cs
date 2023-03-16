@@ -24,7 +24,7 @@ namespace ControlFinWeb.App.Configurations
 
                 //Validando todos os atributos automaticamente em todos os requests que recebem dados
                 //Com isso não preciso manter o [ValidateAntiForgeryToken] na controller
-                o.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
+                //o.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
             }).SetCompatibilityVersion(CompatibilityVersion.Latest);
 
             return services;

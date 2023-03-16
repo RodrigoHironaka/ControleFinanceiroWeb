@@ -62,7 +62,11 @@ namespace ControlFinWeb.App.Controllers
                     if (contaVM.JsonParcelas != null && !String.IsNullOrEmpty(contaVM.JsonParcelas))
                         contaVM.ParcelasVM = JsonConvert.DeserializeObject<IList<ParcelaVM>>(contaVM.JsonParcelas);
                     conta = Repositorio.ObterPorId(contaVM.Id);
-                    conta = Mapper.Map<Conta>(contaVM); 
+                    //limpando para não dar erro no mapping
+                    conta.Parcelas.Clear();
+                    conta.Arquivos.Clear();
+                    //-------------------------------------
+                    conta = Mapper.Map(contaVM, conta);
                     conta.UsuarioAlteracao = Configuracao.Usuario;
                     conta.Parcelas.ForEach(x => x.Conta = conta);
                     conta.Parcelas.Where(x => x.Id == 0).ForEach(x => { x.DataGeracao = DateTime.Now; x.UsuarioCriacao = Configuracao.Usuario; });
@@ -80,15 +84,14 @@ namespace ControlFinWeb.App.Controllers
                     conta.Arquivos.ForEach(x => x.Conta = conta);
                     Repositorio.Salvar(conta);
                 }
-                return RedirectToAction("Editar", new { id = conta.Id });
 
+                return RedirectToAction("Editar", new { id = conta.Id });
             }
             ViewBag.FormaPagamentoId = new SelectList(new RepositorioFormaPagamento(NHibernateHelper.ObterSessao()).ObterPorParametros(x => x.Situacao == Situacao.Ativo), "Id", "Nome", contaVM.Id);
             ViewBag.PessoaId = new SelectList(new RepositorioPessoa(NHibernateHelper.ObterSessao()).ObterPorParametros(x => x.Situacao == Situacao.Ativo), "Id", "Nome", contaVM.Id);
             ViewBag.SubGastoId = new SelectList(new RepositorioSubGasto(NHibernateHelper.ObterSessao()).ObterPorParametros(x => x.Situacao == Situacao.Ativo), "Id", "DescricaoCompleta", contaVM.Id);
             return View(contaVM);
         }
-
         [HttpPost]
         public JsonResult Deletar(int id)
         {
@@ -97,6 +100,7 @@ namespace ControlFinWeb.App.Controllers
             if (conta.Parcelas.Where(x => x.SituacaoParcela != SituacaoParcela.Pendente).Count() > 0)
             {
                 conta.Situacao = SituacaoConta.Cancelado;
+                conta.Parcelas.Where(x => x.SituacaoParcela != SituacaoParcela.Pago && x.SituacaoParcela != SituacaoParcela.Cancelado).ForEach(x => x.SituacaoParcela = SituacaoParcela.Cancelado);
                 conta.Observacao = "Houve uma tentativa de exclusão, mas havia parcelas que não estavam com situação pendente, neste caso a conta é cancelada!";
                 Repositorio.Alterar(conta);
                 return Json(conta.Nome + "cancelado com sucesso");
@@ -106,7 +110,6 @@ namespace ControlFinWeb.App.Controllers
                 Repositorio.Excluir(conta);
                 return Json(conta.Nome + "excluído com sucesso");
             }
-
         }
 
     }

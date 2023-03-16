@@ -30,14 +30,14 @@ namespace ControlFinWeb.Repositorio.Mapeamentos
             
             Bag(x => x.Parcelas, m =>
             {
-                m.Cascade(Cascade.All | Cascade.DeleteOrphans);
+                m.Cascade(Cascade.All);
                 m.Key(k => k.Column("Conta"));
                 m.Inverse(true);
             }, map => map.OneToMany(a => a.Class(typeof(Parcela))));
 
             Bag(x => x.Arquivos, m =>
             {
-                m.Cascade(Cascade.All | Cascade.DeleteOrphans);
+                m.Cascade(Cascade.All);
                 m.Key(k => k.Column("Conta"));
                 m.Inverse(true);
             }, map => map.OneToMany(a => a.Class(typeof(Arquivo))));

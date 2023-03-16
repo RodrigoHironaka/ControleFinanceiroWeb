@@ -80,6 +80,7 @@ namespace ControlFinWeb.App
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Login}/{action=Entrar}/{id?}");
+               
             });
 
 

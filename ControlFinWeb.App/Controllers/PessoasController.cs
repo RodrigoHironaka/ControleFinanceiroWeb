@@ -59,7 +59,7 @@ namespace ControlFinWeb.App.Controllers
                 {
                     pessoaVM.PessoaRendasVM = JsonConvert.DeserializeObject<IList<PessoaRendasVM>>(pessoaVM.JsonRendas);
                     pessoa = Repositorio.ObterPorId(pessoaVM.Id);
-                    pessoa = Mapper.Map<Pessoa>(pessoaVM);
+                    pessoa = Mapper.Map(pessoaVM, pessoa);
                     pessoa.UsuarioAlteracao = Configuracao.Usuario;
                     pessoa.PessoaRendas.ForEach(x => x.Pessoa = pessoa);
                     Repositorio.Alterar(pessoa);

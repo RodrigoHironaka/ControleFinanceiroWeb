@@ -97,6 +97,28 @@ namespace ControlFinWeb.Repositorio.Repositorios
             }
         }
 
+        public void Alterar(IList<T> entidades)
+        {
+            using (var trans = Session.BeginTransaction())
+            {
+                try
+                {
+                    foreach (var entidade in entidades)
+                    {
+                        entidade.DataAlteracao = DateTime.Now;
+                        this.Session.Merge<T>(entidade);
+                    }
+                  
+                    trans.Commit();
+                }
+                catch (Exception ex)
+                {
+                    trans.Rollback();
+                    throw new Exception(ex.ToString());
+                }
+            }
+        }
+
         public void AlterarLote(T entidade)
         {
             entidade.DataAlteracao = DateTime.Now;

@@ -182,7 +182,7 @@ namespace ControlFinWeb.App.Controllers
                     ValorParcela = valorParcela,
                     ValorAberto = valorParcela,
                     ValorReajustado = valorParcela,
-                    DataVencimento = primeiroVencimento.AddMonths(i),
+                    DataVencimento =  primeiroVencimento.AddMonths(i - 1),
                     SituacaoParcela = Dominio.ObjetoValor.SituacaoParcela.Pendente,
                     ContaId = contaId,
                     UsuarioCriacaoId = Configuracao.Usuario.Id,
