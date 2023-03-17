@@ -63,7 +63,7 @@
                 </div>
                 <div class="col-md-2">
                     <br />
-                    <button type="button" class="w-100 btn btn-dark" onclick="Pagar()">Pagar Selecionados</button>
+                    <button type="button" class="w-100 btn btn-dark pagar" @*onclick="Pagar()"*@>Pagar Selecionados</button>
                 </div>
                 <div class="col-md-2">
                 </div>
@@ -147,7 +147,7 @@
     </table>
 </div>
 
-<div id="modalPagar" class="modal fade" aria-hidden="true" role="dialog" data-bs-backdrop="static" data-bs-keyboard="false"></div>
+<div id="modal" class="modal fade" aria-hidden="true" role="dialog" data-bs-backdrop="static" data-bs-keyboard="false"></div>
 
 @section Scripts {
     @{
@@ -263,40 +263,49 @@
             });
         }
 
-        function Pagar() {
-            var ids = new Array();
-
+        $(document).on(TipoClick().toString(), ".pagar", function () {
             var trs = $("tbody input:checked").closest("tr"); //pega no tr os elementos que estão checados
-            var ids = $.map(trs, function(tr) { return $(tr).find('.check').val(); });
-            if (ids.length > 0) {
-                var urlIds = ids.map((item) => { return "ids=" + item });
+            var ids = $.map(trs, function (tr) { return $(tr).find('.check').val(); });
+            var urlIds = ids.map((item) => { return "ids=" + item });
+            if ((ids.toString() != "")) {
+                Swal.fire({
+                    title: 'Confirma o pagamento das parcelas selecionadas?',
+                    text: "Para verificar o pagamento acesse o caixa!",
+                    icon: 'info',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Sim, confirmar!',
+                    cancelButtonText: 'Cancelar'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            method: "GET",
+                            url: '/Parcelas/PagarParcelas?' + urlIds.join("&"),
+                            success: function (retorno) {
+                                if (retorno.result == false) {
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: 'Oops...',
+                                        text: 'Não é possível realizar o pagamento! Erro: ' + retorno.error,
+                                    })
+                                } else {
+                                    $("#modal").html(retorno);
+                                    $("#modal").modal("show");
+                                }
 
-                $.ajax({
-                    method: "GET",
-                    url: "/Parcelas/SituacaoDasParcelas?" + urlIds.join("&"),
-                    success: function(result) {
-                        if (result == false) {
-                            $("#alertParcelas").addClass("alert alert-danger").css('display', 'block').html('Parcelas pagas ou canceladas foram selecionadas. Por favor verifique!');
-                            return;
-                        } else {
-                            $('#alertParcelas').css('display', 'none');
-                            $.ajax({
-                                method: "GET",
-                                url: "/Parcelas/PagarParcelas?" + urlIds.join("&"),
-                                success: function(result) {
-                                    if (result != "") {
-                                        $("#modalPagar").html(result);
-                                        $("#modalPagar").modal("show");
-                                    }
-                                },
-                            });
-                        }
-                    },
-                });
+                            },
+                        });
+                    }
+                })
             } else {
-                $("#alertParcelas").addClass("alert alert-warning").css('display', 'block').html('Nenhuma parcela selecionada!').delay(30000).fadeOut(400);
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Oops...',
+                    text: 'Nenhuma parcela selecionada!',
+                })
             }
-
-        }
+        });
+        
     </script>
 }

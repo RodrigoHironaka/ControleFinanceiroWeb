@@ -22,7 +22,7 @@
                 <div class="form-group">
                     <label asp-for="Qtd" class="control-label"></label>
                     <input asp-for="Qtd" class="form-control minUm text-end" type="number" value="1"
-                           min="0"
+                           min="1"
                            max="120"
                            step="1"
                            onfocus="this.previousValue = this.value"
@@ -57,7 +57,7 @@
     <script>
         $("#Valor").maskMoney({ thousands: '', decimal: ',', allowZero: true });
         $(".minUm").blur(function () {
-            if ($(this).val() == "" || $(this).val() == "0") {
+            if ($(this).val() == "" || parseInt($(this).val()) <= 0) {
                 $(this).val(1);
             }
         });

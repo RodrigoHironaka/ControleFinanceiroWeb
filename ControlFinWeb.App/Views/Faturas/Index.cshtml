@@ -26,8 +26,6 @@
 </div>
 <hr />
 
-<div id="mensagem" role="alert"></div>
-
 <table id="tabelaItensFatura" class="table table-bordered table-striped flex-md-nowrap" width="100%">
     <thead>
         <tr>
@@ -90,40 +88,6 @@
 
 <div id="modal" class="modal fade" role="dialog" data-bs-backdrop="static" data-bs-keyboard="false"></div>
 
-<!--Modal Excluir-->
-<div class="modal fade modal-excluir" id="modal-excluir" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header bg-danger">
-                <h5 class="modal-title text-white">Confirma exclusão do registro?</h5>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
-                <button type="button" class="btn btn-outline-danger btnConfirmar">Confirmar</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!--Modal confirmar fechamento fatura-->
-<div class="modal fade modal-fechamentoFatura" id="modal-fechamentoFatura" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header bg-primary">
-                <h5 class="modal-title text-white">Deseja realmente fechar a fatura @Model.DescricaoCompleta?</h5>
-            </div>
-            <div class="modal-body">
-                <label class="control-label">Você pode escrever alguma observação</label>
-                <textarea id="obs" class="form-control" rows="2"></textarea>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
-                <button type="button" class="btn btn-outline-primary btnConfirmarFechamento">Confirmar</button>
-            </div>
-        </div>
-    </div>
-</div>
-
 @section Scripts
     {
     <script>
@@ -154,39 +118,67 @@
         });
 
         function ExibirModalFecharFatura(id) {
-            $("#modal-fechamentoFatura").modal("show");
-            $(".btnConfirmarFechamento").on("click", function () {
-                var obs = $("#obs").val().toString();
-                $.ajax({
-                    method: "POST",
-                    url: "/Faturas/FecharFatura",
-                    data: { obs: obs, id: id },
-                    success: function () {
-                        window.location.href = 'Index?id=' + 0;
-                    },
-                    error: function () {
-                        $("#modal-fechamentoFatura").modal("hide");
-                        $("#mensagem").addClass('alert alert-danger').html("<strong>Erro!</strong> Não é possível fechar a fatura, entre em contato com o suporte técnico!").delay(30000).fadeOut(400);
-                    }
-                });
+            Swal.fire({
+                title: 'Digite uma observação',
+                input: 'textarea',
+                inputAttributes: {
+                    autocapitalize: 'off'
+                },
+                showCancelButton: true,
+                confirmButtonText: 'Fechar Fatura',
+                cancelButtonText: 'Cancelar',
+                showLoaderOnConfirm: true,
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    var obs = result.value;
+                    $.ajax({
+                        method: "POST",
+                        url: "/Faturas/FecharFatura",
+                        data: { obs: obs, id: id },
+                        success: function () {
+                            window.location.href = 'Index?id=' + 0;
+                        },
+                        error: function () {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Oops...',
+                                text: 'Não é possível fechar a fatura, entre em contato com o suporte técnico!',
+                            })
+                        }
+                    });
+                }
             })
         };
 
         function ExibirModalExcluir(id) {
-            $("#modal-excluir").modal("show");
-            $(".btnConfirmar").on("click", function () {
-                $.ajax({
-                    method: "POST",
-                    url: "/FaturasItens/Deletar",
-                    data: { id: id },
-                    success: function () {
-                        window.location.href = "/Faturas/Index?idFatura=" + @Model.Id;
-                    },
-                    error: function () {
-                        $("#modal-excluir").modal("hide");
-                        $("#mensagem").addClass('alert alert-danger').html("<strong>Erro!</strong> Não é possível excluir, por favor inative o registro!").delay(10000).fadeOut(400);
-                    }
-                });
+            Swal.fire({
+                title: 'Deseja realmente excluir?',
+                text: "Este processo não pode ser revertido!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Sim, pode apagar!',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        method: "POST",
+                        url: "/FaturasItens/Deletar",
+                        data: { id: id },
+                        success: function () {
+                            window.location.href = "/Faturas/Index?idFatura=" + @Model.Id;
+                        },
+                        error: function (retorno) {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Oops...',
+                                text: 'Não é possível excluir!',
+                            })
+                        }
+                    });
+
+                }
             })
         }
 

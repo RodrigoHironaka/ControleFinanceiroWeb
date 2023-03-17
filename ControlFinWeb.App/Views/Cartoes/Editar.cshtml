@@ -29,7 +29,7 @@
                 </div>
                 <div class="form-group">
                     <label asp-for="DiaVencimento" class="control-label"></label>
-                    <input asp-for="DiaVencimento" class="form-control text-end" type="number" />
+                    <input asp-for="DiaVencimento" class="form-control minUm max31 text-end" type="number" min="1" max="31"/>
                     <span asp-validation-for="DiaVencimento" class="text-danger"></span>
                 </div>
                 <div class="form-group">
@@ -63,6 +63,16 @@
     <script type="text/javascript">
         $(function () {
             $("#LimiteFatura").maskMoney({ thousands: '', decimal: ',', allowZero: true });
+            $(".minUm").blur(function () {
+                if ($(this).val() == "" || parseInt($(this).val()) <= 0) {
+                    $(this).val(1);
+                }
+            });
+            $(".max31").blur(function () {
+                if (parseInt($(this).val()) > 31) {
+                    $(this).val(31);
+                }
+            });
         });
 
         function Salvar() {

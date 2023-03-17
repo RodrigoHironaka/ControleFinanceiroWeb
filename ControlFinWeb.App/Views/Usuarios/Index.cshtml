@@ -16,7 +16,6 @@
     </div>
 </div>
 
-<div id="mensagem" role="alert"></div>
 <table id="tabela" class="table table-bordered table-striped table-hover">
     <thead>
         <tr>
@@ -76,21 +75,6 @@
 
 <div id="modal" class="modal fade" role="dialog" data-bs-backdrop="static" data-bs-keyboard="false"></div>
 
-<!--Modal Excluir-->
-<div class="modal fade modal-excluir" id="modal-excluir" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header bg-danger">
-                <h5 class="modal-title text-white">Confirma cancelamento do registro?</h5>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
-                <button type="button" class="btn btn-outline-danger btnConfirmar">Confirmar</button>
-            </div>
-        </div>
-    </div>
-</div>
-
 @section Scripts
     {
     <script>
@@ -102,28 +86,6 @@
                 responsive: true
             });
         });
-
-        //$(document).ready(function () {
-        //    $(".modal-excluir").modal();
-        //});
-
-        //function ExibirModalExcluir(id) {
-        //    $("#modal-excluir").modal("show");
-        //    $(".btnConfirmar").on("click", function () {
-        //        $.ajax({
-        //            method: "GET",
-        //            url: "/Usuarios/Cancelar",
-        //            data: { id: id },
-        //            success: function () {
-        //                location.reload();
-        //            },
-        //            error: function () {
-        //                $("#modal-excluir").modal("hide");
-        //                $("#mensagem").addClass('alert alert-danger').html("<strong>Erro!</strong> Não é possível cancelar, por favor inative o registro!").delay(10000).fadeOut(400);
-        //            }
-        //        });
-        //    })
-        //}
 
         $(function () {
             $(document).on(TipoClick().toString(), ".novo", function () {

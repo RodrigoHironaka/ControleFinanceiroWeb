@@ -99,8 +99,6 @@
                     </div>
                     <div class="tab-pane fade" id="nav-Parcelas" role="tabpanel" aria-labelledby="nav-Parcelas-tab">
                         <br />
-                        <div id="msgParcelas" role="alert" style="display:none;"></div>
-
                         <div class="row">
                             <div class="col-md-2">
                                 <div class="btn-group d-flex">
@@ -230,7 +228,11 @@
                     $("#modal").modal("show");
                 });
             } else {
-                $("#msgParcelas").addClass("alert alert-danger").css('display', 'block').html('Salve o conta antes de gerar parcelas!');
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Oops...',
+                    text: 'Salve o conta antes de gerar parcelas!',
+                })
             }
         });
 
@@ -239,21 +241,42 @@
             var ids = $.map(trs, function (tr) { return $(tr).find('.check').val(); });
             var urlIds = ids.map((item) => { return "ids=" + item });
             if ((ids.toString() != "")) {
-                $.ajax({
-                    url: '/Parcelas/PagarParcelas?' + urlIds.join("&"),
-                    method: 'GET',
-                    success: function (retorno) {
-                        if (retorno.result == false) {
-                            $("#msgParcelas").addClass("alert alert-danger").css('display', 'block').html(retorno.error);
-                        }
-                        else {
-                            $("#modal").html(retorno);
-                            $("#modal").modal("show");
-                        }
+                Swal.fire({
+                    title: 'Confirma o pagamento das parcelas selecionadas?',
+                    text: "Para verificar o pagamento acesse o caixa!",
+                    icon: 'info',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Sim, confirmar!',
+                    cancelButtonText: 'Cancelar'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            method: "GET",
+                            url: '/Parcelas/PagarParcelas?' + urlIds.join("&"),
+                            success: function (retorno) {
+                                if (retorno.result == false) {
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: 'Oops...',
+                                        text: 'Não é possível realizar o pagamento! Erro: ' + retorno.error,
+                                    })
+                                }else{
+                                    $("#modal").html(retorno);
+                                    $("#modal").modal("show");
+                                }
+                                
+                            },
+                        });
                     }
-                });
+                })
             } else {
-                $("#msgParcelas").addClass("alert alert-warning").css('display', 'block').html('Nenhuma parcela selecionada!');
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Oops...',
+                    text: 'Nenhuma parcela selecionada!',
+                })
             }
         });
 
@@ -262,21 +285,40 @@
             var ids = $.map(trs, function (tr) { return $(tr).find('.check').val(); });
             var urlIds = ids.map((item) => { return "ids=" + item });
             if ((ids.toString() != "")) {
-                $.ajax({
-                    url: '/Parcelas/ExcluirParcelas?' + urlIds.join("&"),
-                    method: 'GET',
-                    success: function (retorno) {
-                        if (retorno == "") {
-                            location.reload();
-                        } else {
-                            if (retorno.result == false) {
-                                $("#msgParcelas").addClass("alert alert-danger").css('display', 'block').html(retorno.error);
+                Swal.fire({
+                    title: 'Deseja realmente excluir?',
+                    text: "Este processo não pode ser revertido!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Sim, pode apagar!',
+                    cancelButtonText: 'Cancelar'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            method: "GET",
+                            url: '/Parcelas/ExcluirParcelas?' + urlIds.join("&"),
+                            success: function () {
+                                location.reload();
+                            },
+                            error: function (retorno) {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Oops...',
+                                    text: 'Não é possível excluir! Erro: ' + retorno.error,
+                                })
                             }
-                        }
+                        });
+
                     }
-                });
+                })
             } else {
-                $("#msgParcelas").addClass("alert alert-warning").css('display', 'block').html('Nenhuma parcela selecionada!');
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Oops...',
+                    text: 'Nenhuma parcela selecionada!',
+                })
             }
         });
 
@@ -284,23 +326,40 @@
             var trs = $("tbody input:checked").closest("tr"); //pega no tr os elementos que estão checados
             var ids = $.map(trs, function (tr) { return $(tr).find('.check').val(); });
             var urlIds = ids.map((item) => { return "ids=" + item });
-
             if (ids.toString() != "") {
-                $.ajax({
-                    url: '/Parcelas/CancelarParcelas?' + urlIds.join("&"),
-                    method: 'GET',
-                    success: function (retorno) {
-                        if (retorno == "") {
-                            location.reload();
-                        } else {
-                            if (retorno.result == false) {
-                                $("#msgParcelas").addClass("alert alert-danger").css('display', 'block').html(retorno.error);
+                Swal.fire({
+                    title: 'Deseja realmente cancelar?',
+                    text: "Este processo não pode ser revertido!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Sim, pode cancelar!',
+                    cancelButtonText: 'Voltar'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            method: "GET",
+                            url: '/Parcelas/CancelarParcelas?' + urlIds.join("&"),
+                            success: function () {
+                                location.reload();
+                            },
+                            error: function (retorno) {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Oops...',
+                                    text: 'Não é possível cancelar! Erro: ' + retorno.error,
+                                })
                             }
-                        }
+                        });
                     }
-                });
+                })
             } else {
-                $("#msgParcelas").addClass("alert alert-warning").css('display', 'block').html('Nenhuma parcela selecionada!');
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Oops...',
+                    text: 'Nenhuma parcela selecionada!',
+                })
             }
         });
 

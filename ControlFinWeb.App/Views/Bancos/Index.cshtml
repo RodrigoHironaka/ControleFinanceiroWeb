@@ -13,7 +13,6 @@
     </div>
 </div>
 
-<div id="mensagem" role="alert"></div>
 <table id="tabela" class="table table-bordered table-striped table-hover">
     <thead>
         <tr>
@@ -38,7 +37,7 @@
                 </td>
                 <td align="center">
                     <button class="btn btn-sm btn-primary modal-trigger editar" data-id="@item.Id"><i class="bi bi-pencil-square"></i></button>
-                    <button class="btn btn-sm btn-danger modal-trigger" onclick="ExibirModalExcluir(@item.Id)"><i class="bi bi-x-square"></i></button>
+                    <button class="btn btn-sm btn-danger modal-trigger" onclick="Excluir(@item.Id)"><i class="bi bi-x-square"></i></button>
                 </td>
             </tr>
         }
@@ -46,21 +45,6 @@
 </table>
 
 <div id="modal" class="modal fade" role="dialog" data-bs-backdrop="static" data-bs-keyboard="false"></div>
-
-<!--Modal Excluir-->
-<div class="modal fade modal-excluir" id="modal-excluir" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header bg-danger">
-                <h5 class="modal-title text-white">Confirma exclusão do registro?</h5>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
-                <button type="button" class="btn btn-outline-danger btnConfirmar">Confirmar</button>
-            </div>
-        </div>
-    </div>
-</div>
 
 @section Scripts
     {
@@ -78,22 +62,37 @@
             $(".modal-excluir").modal();
         });
 
-        function ExibirModalExcluir(id) {
-            $("#modal-excluir").modal("show");
-            $(".btnConfirmar").on("click", function () {
-                $.ajax({
-                    method: "POST",
-                    url: "/Bancos/Deletar",
-                    data: { id: id },
-                    success: function () {
-                        location.reload();
-                    },
-                    error: function () {
-                        $("#modal-excluir").modal("hide");
-                        $("#mensagem").addClass('alert alert-danger').html("<strong>Erro!</strong> Não é possível excluir, por favor inative o registro!").delay(10000).fadeOut(400);
-                    }
-                });
+        function Excluir(id) {
+            Swal.fire({
+                title: 'Deseja realmente excluir?',
+                text: "Este processo não pode ser revertido!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Sim, pode apagar!',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        method: "POST",
+                        url: "/Bancos/Deletar",
+                        data: { id: id },
+                        success: function () {
+                            location.reload();
+                        },
+                        error: function () {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Oops...',
+                                text: 'Não é possível excluir, por favor inative o registro!',
+                            })
+                        }
+                    });
+
+                }
             })
+
         }
 
         $(function () {
