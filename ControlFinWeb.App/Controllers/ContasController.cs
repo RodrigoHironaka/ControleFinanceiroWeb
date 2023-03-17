@@ -93,6 +93,7 @@ namespace ControlFinWeb.App.Controllers
             return View(contaVM);
         }
         [HttpPost]
+        [IgnoreAntiforgeryToken]
         public JsonResult Deletar(int id)
         {
             var conta = Repositorio.ObterPorId(id);

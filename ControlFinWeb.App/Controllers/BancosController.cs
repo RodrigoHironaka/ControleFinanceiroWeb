@@ -71,6 +71,7 @@ namespace ControlFinWeb.App.Controllers
         }
 
         [HttpPost]
+        [IgnoreAntiforgeryToken]
         public JsonResult Deletar(Int64 Id)
         {
             banco = Repositorio.ObterPorId(Id);

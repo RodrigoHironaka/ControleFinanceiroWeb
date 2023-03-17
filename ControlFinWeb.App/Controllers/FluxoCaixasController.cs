@@ -26,13 +26,6 @@ namespace ControlFinWeb.App.Controllers
         FluxoCaixa fluxoCaixa = new FluxoCaixa();
         FluxoCaixaVM fluxoCaixaVM = new FluxoCaixaVM();
 
-        //public IActionResult Index()
-        //{
-        //    IEnumerable<FluxoCaixa> fluxos = Repositorio.ObterTodos(); // pegar por caixa
-        //    List<FluxoCaixaVM> fluxosVM = Mapper.Map<List<FluxoCaixaVM>>(fluxos);
-        //    return View(fluxosVM);
-        //}
-
         public IActionResult Editar(Int64 Id = 0)
         {
             if (Id > 0)
@@ -72,6 +65,7 @@ namespace ControlFinWeb.App.Controllers
         }
 
         [HttpPost]
+        [IgnoreAntiforgeryToken]
         public JsonResult Deletar(Int64 Id)
         {
             fluxoCaixa = Repositorio.ObterPorId(Id);

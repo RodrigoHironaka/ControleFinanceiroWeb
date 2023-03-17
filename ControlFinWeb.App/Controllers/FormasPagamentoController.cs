@@ -67,6 +67,7 @@ namespace ControlFinWeb.App.Controllers
         }
 
         [HttpPost]
+        [IgnoreAntiforgeryToken]
         public JsonResult Deletar(int id)
         {
             var formaPagamento = Repositorio.ObterPorId(id);

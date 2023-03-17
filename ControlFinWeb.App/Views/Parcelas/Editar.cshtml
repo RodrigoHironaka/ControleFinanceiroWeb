@@ -28,36 +28,36 @@
                 <div class="row">
                     <div class="col-md-6">
                         <label asp-for="ValorParcela" class="control-label"></label>
-                        <input asp-for="ValorParcela" class="form-control" onblur="AtualizaValorReajustado()" style="text-align:right" />
+                        <input asp-for="ValorParcela" class="form-control text-end" onblur="AtualizaValorReajustado()" />
                         <span asp-validation-for="ValorParcela" class="text-danger"></span>
                     </div>
                     <div class="col-md-6">
                         <label asp-for="DataVencimento" class="control-label"></label>
-                        <input asp-for="DataVencimento" class="form-control" type="date" style="text-align:right" />
+                        <input asp-for="DataVencimento" class="form-control text-end" type="date" />
                         <span asp-validation-for="DataVencimento" class="text-danger"></span>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-md-6">
                         <label asp-for="JurosPorcentual" class="control-label"></label>
-                        <input asp-for="JurosPorcentual" class="form-control" onblur="AtualizaPorcentagemParaValor()" style="text-align:right" />
+                        <input asp-for="JurosPorcentual" class="form-control text-end" onblur="AtualizaPorcentagemParaValor()" />
                         <span asp-validation-for="JurosPorcentual" class="text-danger"></span>
                     </div>
                     <div class="col-md-6">
                         <label asp-for="JurosValor" class="control-label"></label>
-                        <input asp-for="JurosValor" class="form-control" onblur="AtualizaValorParaPorcentagem()" style="text-align:right" />
+                        <input asp-for="JurosValor" class="form-control text-end text-end" onblur="AtualizaValorParaPorcentagem()" />
                         <span asp-validation-for="JurosValor" class="text-danger"></span>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-md-6">
                         <label asp-for="DescontoPorcentual" class="control-label"></label>
-                        <input asp-for="DescontoPorcentual" class="form-control" onblur="AtualizaPorcentagemParaValor()" style="text-align:right" />
+                        <input asp-for="DescontoPorcentual" class="form-control text-end" onblur="AtualizaPorcentagemParaValor()" />
                         <span asp-validation-for="DescontoPorcentual" class="text-danger"></span>
                     </div>
                     <div class="col-md-6">
                         <label asp-for="DescontoValor" class="control-label"></label>
-                        <input asp-for="DescontoValor" class="form-control" onblur="AtualizaValorParaPorcentagem()" style="text-align:right" />
+                        <input asp-for="DescontoValor" class="form-control text-end" onblur="AtualizaValorParaPorcentagem()" />
                         <span asp-validation-for="DescontoValor" class="text-danger"></span>
                     </div>
                 </div>
@@ -68,7 +68,7 @@
                 </div>
                 <div class="form-group">
                     <label asp-for="ValorReajustado" class="control-label"></label>
-                    <input asp-for="ValorReajustado" class="form-control" style="text-align:center; font-weight:bold; font-size:40px;" readonly />
+                    <input asp-for="ValorReajustado" class="form-control text-center" style="font-weight:bold; font-size:40px;" readonly />
                     <span asp-validation-for="ValorReajustado" class="text-danger"></span>
                 </div>
                 <br />

@@ -24,8 +24,6 @@ namespace ControlFinWeb.App.Controllers
 
         Usuario usuario = new Usuario();
         UsuarioVM usuarioVM = new UsuarioVM();
-        //IList<UsuarioVM> usuariosVM = new List<UsuarioVM>();
-        //IList<Usuario> usuarios = new List<Usuario>();
 
         public IActionResult Index()
         {

@@ -76,6 +76,7 @@ namespace ControlFinWeb.App.Controllers
         }
 
         [HttpPost]
+        [IgnoreAntiforgeryToken]
         public JsonResult Deletar(Int64 id)
         {
             Repositorio.ExcluirItemFaturaEAlterarParcela(id);
@@ -125,6 +126,7 @@ namespace ControlFinWeb.App.Controllers
         }
 
         [HttpPost]
+        [IgnoreAntiforgeryToken]
         public JsonResult DeletarPeloCodigoRelacionado(String codItemRelacionado)
         {
             var itens = Repositorio.ObterPorParametros(x => x.CodigoItemRelacionado == codItemRelacionado && x.UsuarioCriacao == Configuracao.Usuario);

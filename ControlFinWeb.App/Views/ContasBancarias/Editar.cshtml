@@ -37,7 +37,7 @@
                     </div>
                     <div class="col-md-3">
                         <label asp-for="Valor" class="control-label"></label>
-                        <input asp-for="Valor" id="ValorDefinido" class="form-control" />
+                        <input asp-for="Valor" id="ValorDefinido" class="form-control text-end" />
                         <span asp-validation-for="Valor" class="text-danger"></span>
                     </div>
                     <div class="col-md-3">
@@ -66,7 +66,7 @@
 
     <script type="text/javascript">
         $(function () {
-            $("#Valor").maskMoney({ thousands: '.', decimal: ',', allowZero: true });
+            $("#ValorDefinido").maskMoney({ thousands: '.', decimal: ',', allowZero: true });
         });
 
         function Salvar() {

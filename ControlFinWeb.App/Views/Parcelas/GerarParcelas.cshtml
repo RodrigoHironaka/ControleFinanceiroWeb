@@ -16,16 +16,15 @@
                 <input asp-for="ContaId" class="form-control" type="hidden" />
                 <div class="form-group">
                     <label asp-for="Valor" class="control-label"></label>
-                    <input asp-for="Valor" class="form-control" style="text-align:right" />
+                    <input asp-for="Valor" class="form-control text-end" />
                     <span asp-validation-for="Valor" class="text-danger"></span>
                 </div>
                 <div class="form-group">
                     <label asp-for="Qtd" class="control-label"></label>
-                    <input asp-for="Qtd" class="form-control minUm" type="number" value="1"
+                    <input asp-for="Qtd" class="form-control minUm text-end" type="number" value="1"
                            min="0"
                            max="120"
                            step="1"
-                           style="text-align:right"
                            onfocus="this.previousValue = this.value"
                            onkeydown="this.previousValue = this.value"
                            oninput="validity.valid || (value = this.previousValue)"
@@ -34,7 +33,7 @@
                 </div>
                 <div class="form-group">
                     <label asp-for="PrimeiroVencimento" class="control-label"></label>
-                    <input asp-for="PrimeiroVencimento" class="form-control" type="date" value="@DateTime.Now.ToString("yyyy-MM-dd")" style="text-align:right" />
+                    <input asp-for="PrimeiroVencimento" class="form-control text-end" type="date" value="@DateTime.Now.ToString("yyyy-MM-dd")" />
                     <span asp-validation-for="PrimeiroVencimento" class="text-danger"></span>
                 </div>
                 <div class="form-group">

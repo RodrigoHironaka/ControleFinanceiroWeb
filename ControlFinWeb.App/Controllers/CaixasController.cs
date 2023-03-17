@@ -92,6 +92,7 @@ namespace ControlFinWeb.App.Controllers
         }
 
         [HttpPost]
+        [IgnoreAntiforgeryToken]
         public JsonResult Deletar(Int64 Id)
         {
             caixa = Repositorio.ObterPorId(Id);

@@ -92,7 +92,7 @@ namespace ControlFinWeb.App.Controllers
             }
             else
             {
-                parcelas = parcelas.Where(x => x.Conta?.Situacao == SituacaoConta.Aberto || x.Fatura?.SituacaoFatura == SituacaoFatura.Aberta || x.Fatura?.SituacaoFatura == SituacaoFatura.Fechada).ToList();
+                parcelas = parcelas.Where(x => x.Conta?.Situacao != SituacaoConta.Cancelado || x.Fatura?.SituacaoFatura != SituacaoFatura.Cancelada).ToList();
             }
 
             filtrarParcelasVM.Parcelas = Mapper.Map<List<ParcelaVM>>(parcelas);
@@ -223,6 +223,7 @@ namespace ControlFinWeb.App.Controllers
         }
 
         [HttpPost]
+        [IgnoreAntiforgeryToken]
         public IActionResult PagarParcelas(PagarParcelaVM pagarParcelaVM)
         {
             if (ModelState.IsValid)

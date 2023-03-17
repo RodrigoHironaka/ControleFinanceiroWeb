@@ -9,6 +9,16 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Remove="Views\Contas\Editar2.cshtml" />
+    <Content Remove="Views\Contas\Editar3.cshtml" />
+    <Content Remove="Views\Contas\EditarParcela.cshtml" />
+    <Content Remove="Views\Faturas\Index2.cshtml" />
+    <Content Remove="Views\Parcelas\ModalGerarParcelas.cshtml" />
+    <Content Remove="Views\Parcelas\PagarParcelas2.cshtml" />
+    <Content Remove="Views\Pessoas\EditarExemploSemJson.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Include="wwwroot\lib\popper\umd\enums.js" />
     <None Include="wwwroot\lib\popper\umd\enums.js.map" />
     <None Include="wwwroot\lib\popper\umd\enums.min.js" />

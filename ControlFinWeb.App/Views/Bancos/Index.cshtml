@@ -83,7 +83,7 @@
             $(".btnConfirmar").on("click", function () {
                 $.ajax({
                     method: "POST",
-                    url: "/bancos/Deletar",
+                    url: "/Bancos/Deletar",
                     data: { id: id },
                     success: function () {
                         location.reload();

@@ -52,6 +52,7 @@ namespace ControlFinWeb.App.Controllers
         }
 
         [HttpPost]
+        [IgnoreAntiforgeryToken]
         public IActionResult Pesquisa(Int64 cartaoId = 0, bool somenteAtivos = true)
         {
             var predicado = Repositorio.CriarPredicado();
@@ -104,12 +105,14 @@ namespace ControlFinWeb.App.Controllers
         }
 
         [HttpPost]
+        [IgnoreAntiforgeryToken]
         public JsonResult Deletar(int id)
         {
             Repositorio.ExcluirOuCancelarFaturaEParcela(id);
             return Json(fatura.DescricaoCompleta + "excluído com sucesso");
         }
 
+        [IgnoreAntiforgeryToken]
         public IActionResult FecharFatura(String obs, Int64 id = 0)
         {
             var fatura = Repositorio.ObterPorId(id);
