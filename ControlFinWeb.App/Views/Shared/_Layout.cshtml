@@ -72,9 +72,12 @@
                                     @ControlFinWeb.App.Utilitarios.Configuracao.Usuario.Nome
                                 </a>
                                 <div class="dropdown-menu text-small" aria-labelledby="navbarDropdown">
-                                    <a class="dropdown-item" asp-action="Index" asp-controller="Usuarios">Usuários</a>
-                                    <a class="dropdown-item" asp-action="" asp-controller="Configuracoes">Configurações</a>
-                                    <hr class="dropdown-divider">
+                                    @if (User.IsInRole(TipoUsuario.Administrador.ToString()))
+                                    {
+                                        <a class="dropdown-item" asp-action="Index" asp-controller="Usuarios">Usuários</a>
+                                        <a class="dropdown-item" asp-action="" asp-controller="Configuracoes">Configurações</a>
+                                        <hr class="dropdown-divider">
+                                    }
                                     <a class="dropdown-item" asp-action="Sair" asp-controller="Login">Sair</a>
                                 </div>
                             </li>

@@ -43,9 +43,9 @@ namespace ControlFinWeb.App.Controllers
         {
             if (ModelState.IsValid)
             {
-                var usuario = RepositorioUsuario.ObterPorParametros(x => x.Email == loginVM.Email).FirstOrDefault();
+                var usuario = RepositorioUsuario.ObterPorParametros(x => x.Email == loginVM.Email && x.Situacao == Dominio.ObjetoValor.Situacao.Ativo).FirstOrDefault();
 
-                if (usuario != null && usuario.Senha == new Criptografia(SHA512.Create()).Criptografar(loginVM.Senha) && usuario.Autorizado == Dominio.ObjetoValor.SimNao.Sim)
+                if (usuario != null && usuario.Senha == new Criptografia(SHA256.Create()).Criptografar(loginVM.Senha) && usuario.Autorizado == Dominio.ObjetoValor.SimNao.Sim)
                 {
                     Autenticar(usuario);
 

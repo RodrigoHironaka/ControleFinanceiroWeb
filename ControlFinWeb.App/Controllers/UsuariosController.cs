@@ -64,7 +64,7 @@ namespace ControlFinWeb.App.Controllers
                 usuario.TipoUsuario = usuarioVM.TipoUsuario;
                 usuario.Situacao = usuarioVM.Situacao;
                 if (!string.IsNullOrEmpty(usuarioVM.Senha)) 
-                    usuario.Senha = new Criptografia(SHA512.Create()).Criptografar(usuarioVM.Senha); 
+                    usuario.Senha = new Criptografia(SHA256.Create()).Criptografar(usuarioVM.Senha); 
 
                 if (usuarioVM.Id == 0)
                     Repositorio.Salvar(usuario);
