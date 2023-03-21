@@ -15,7 +15,6 @@ namespace ControlFinWeb.Dominio.Entidades
             Situacao = SituacaoConta.Aberto;
         }
         public virtual TipoConta TipoConta { get; set; }
-        public virtual PeriodoConta TipoPeriodo { get; set; }
         public virtual SituacaoConta Situacao { get; set; }
         public virtual DateTime? DataEmissao { get; set; }
         public virtual String NumeroDocumento { get; set; }

@@ -35,6 +35,11 @@ namespace ControlFinWeb.App.ViewModels
         [Range(1, Int64.MaxValue, ErrorMessage = "Informe um Cartão")]
         public Int64 CartaoId { get; set; }
         public CartaoVM CartaoVM { get; set; }
+
+        [DisplayName("Pessoa")]
+        [Range(1, Int64.MaxValue, ErrorMessage = "Informe uma pessoa")]
+        public Int64 PessoaId { get; set; }
+        public PessoaVM PessoaVM { get; set; }
         #endregion
 
         public IList<FaturaItensVM> FaturaItensVM { get; set; }

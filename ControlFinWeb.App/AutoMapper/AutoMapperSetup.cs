@@ -69,6 +69,7 @@ namespace ControlFinWeb.App.AutoMapper
                 .AfterMap((src, dest) =>
                 {
                     dest.Cartao = new Cartao { Id = src.CartaoId };
+                    dest.Pessoa = new Pessoa { Id = src.PessoaId };
                     dest.FaturaItens = new MapperConfiguration(cfg => cfg.CreateMap<FaturaItensVM, FaturaItens>()
                     .AfterMap((src, dest) =>
                     {
@@ -183,6 +184,7 @@ namespace ControlFinWeb.App.AutoMapper
                 .AfterMap((src, dest) =>
                 {
                     dest.CartaoVM = AutoMapperConfig<Cartao, CartaoVM>.Mapear(src.Cartao);
+                    dest.PessoaVM = AutoMapperConfig<Pessoa, PessoaVM>.Mapear(src.Pessoa);
                 })
                  .AfterMap((src, dest) =>
                  {

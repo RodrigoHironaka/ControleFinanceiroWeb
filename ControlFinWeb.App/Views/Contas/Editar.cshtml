@@ -15,8 +15,7 @@
     </div>
 </div>
 
-<div class="row">
-    <div>
+    <div class="row">
         <form asp-action="Editar" id="FrmConta" class="center">
             <input asp-for="JsonParcelas" class="form-control" type="hidden" />
             <nav id="navContas">
@@ -49,9 +48,9 @@
                                 <span asp-validation-for="TipoConta" class="text-danger"></span>
                             </div>
                             <div class="col-md-3">
-                                <label asp-for="TipoPeriodo" class="control-label"></label>
-                                <select class="form-select" asp-for="TipoPeriodo" asp-items="Html.GetEnumSelectList<PeriodoConta>()"></select>
-                                <span asp-validation-for="TipoPeriodo" class="text-danger"></span>
+                                <label asp-for="NumeroDocumento" class="control-label"></label>
+                                <input asp-for="NumeroDocumento" class="form-control text-end" />
+                                <span asp-validation-for="NumeroDocumento" class="text-danger"></span>
                             </div>
                         </div>
                         <div class="row">
@@ -62,26 +61,19 @@
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-md-6">
+                            <div class="col-md-4">
                                 <label asp-for="SubGastoId" class="control-label"></label>
                                 <select class="form-select" asp-for="SubGastoId" asp-items="ViewBag.SubGastoId">
                                     <option value="0">---Selecione um item---</option>
                                 </select>
                                 <span asp-validation-for="SubGastoId" class="text-danger"></span>
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-md-4">
                                 <label asp-for="PessoaId" class="control-label"></label>
                                 <select class="form-select" asp-for="PessoaId" asp-items="ViewBag.PessoaId">
                                     <option value="0">---Selecione um item---</option>
                                 </select>
                                 <span asp-validation-for="PessoaId" class="text-danger"></span>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-8">
-                                <label asp-for="NumeroDocumento" class="control-label"></label>
-                                <input asp-for="NumeroDocumento" class="form-control text-end" />
-                                <span asp-validation-for="NumeroDocumento" class="text-danger"></span>
                             </div>
                             <div class="col-md-4">
                                 <label asp-for="Situacao" class="control-label"></label>
@@ -92,7 +84,7 @@
                         <div class="row">
                             <div class="col-md-12">
                                 <label asp-for="Observacao" class="control-label"></label>
-                                <textarea asp-for="Observacao" class="form-control" rows="2"></textarea>
+                                <textarea asp-for="Observacao" class="form-control" rows="3"></textarea>
                                 <span asp-validation-for="Observacao" class="text-danger"></span>
                             </div>
                         </div>
@@ -139,7 +131,7 @@
             </fieldset>
         </form>
     </div>
-</div>
+
 
 <div id="modal" class="modal fade" aria-hidden="true" role="dialog" data-bs-backdrop="static" data-bs-keyboard="false"></div>
 
@@ -299,15 +291,16 @@
                         $.ajax({
                             method: "GET",
                             url: '/Parcelas/ExcluirParcelas?' + urlIds.join("&"),
-                            success: function () {
-                                location.reload();
-                            },
-                            error: function (retorno) {
-                                Swal.fire({
-                                    icon: 'error',
-                                    title: 'Oops...',
-                                    text: 'Não é possível excluir! Erro: ' + retorno.error,
-                                })
+                            success: function (retorno) {
+                                if (retorno.result == false) {
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: 'Oops...',
+                                        text: 'Não é possível excluir! Erro: ' + retorno.error,
+                                    })
+                                } else {
+                                    location.reload();
+                                }
                             }
                         });
 
@@ -341,15 +334,17 @@
                         $.ajax({
                             method: "GET",
                             url: '/Parcelas/CancelarParcelas?' + urlIds.join("&"),
-                            success: function () {
-                                location.reload();
-                            },
-                            error: function (retorno) {
-                                Swal.fire({
-                                    icon: 'error',
-                                    title: 'Oops...',
-                                    text: 'Não é possível cancelar! Erro: ' + retorno.error,
-                                })
+                            success: function (retorno) {
+                                if (retorno.result == false) {
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: 'Oops...',
+                                        text: 'Não é possível cancelar! Erro: ' + retorno.error,
+                                    })
+                                } else {
+                                    location.reload();
+                                }
+                                
                             }
                         });
                     }

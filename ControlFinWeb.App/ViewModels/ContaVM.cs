@@ -29,9 +29,6 @@ namespace ControlFinWeb.App.ViewModels
         [DisplayName("Tipo Conta")]
         public TipoConta TipoConta { get; set; }
 
-        [DisplayName("Período")]
-        public PeriodoConta TipoPeriodo { get; set; }
-
         [DisplayName("Situação")]
         public SituacaoConta Situacao { get; set; }
 

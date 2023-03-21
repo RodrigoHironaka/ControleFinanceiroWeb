@@ -79,7 +79,7 @@
 
     <script type="text/javascript">
         $(function() {
-            $("#Valor").maskMoney({ thousands: '', decimal: ',', allowZero: true });
+            $("#Valor").maskMoney({ thousands: '', decimal: ',', allowZero: true, allowNegative: true });
             $(".minUm").blur(function() {
                 if ($(this).val() == "" || $(this).val() == "0") {
                     $(this).val(1);

@@ -52,7 +52,6 @@ namespace ControlFinWeb.App.Controllers
         {
             var predicado = Repositorio.CriarPredicado();
             predicado = predicado.And(x => x.UsuarioCriacao.Id == Configuracao.Usuario.Id);
-           
             predicado = predicado.And(x => x.Conta.TipoConta == filtrarParcelasVM.TipoConta || x.Fatura != null);
 
             if (filtrarParcelasVM.DataInicio != null)
@@ -65,7 +64,7 @@ namespace ControlFinWeb.App.Controllers
             }
 
             if (filtrarParcelasVM.PessoaId > 0)
-                predicado = predicado.And(x => x.Conta.Pessoa.Id == filtrarParcelasVM.PessoaId);
+                predicado = predicado.And(x => x.Conta.Pessoa.Id == filtrarParcelasVM.PessoaId || x.Fatura.Pessoa.Id == filtrarParcelasVM.PessoaId);
 
             if (!String.IsNullOrEmpty(filtrarParcelasVM.SituacaoParcela))
             {
@@ -86,7 +85,7 @@ namespace ControlFinWeb.App.Controllers
                 if (filtrarParcelasVM.ContaFatura == ContaFatura.Conta)
                     parcelas = parcelas.Where(x => x.Conta?.Situacao == SituacaoConta.Aberto).ToList();
                 else
-                    parcelas = parcelas.Where(x => x.Fatura?.SituacaoFatura == SituacaoFatura.Aberta || x.Fatura?.SituacaoFatura == SituacaoFatura.Fechada).ToList();
+                    parcelas = parcelas.Where(x => x.Fatura?.SituacaoFatura != SituacaoFatura.Cancelada).ToList();
             }
             else
             {
@@ -199,7 +198,7 @@ namespace ControlFinWeb.App.Controllers
         public IActionResult PagarParcelas(List<Int64> ids)
         {
             if (!SituacaoDasParcelas(ids))
-                return Json(new { result = false, error = "Parcelas Pagas e Canceladas não podem ser selecionadas!" });
+                return Json(new { result = false, error = "Parcelas pagas, recebidas ou canceladas não podem ser selecionadas!" });
 
             var parcelas = new List<Parcela>();
             foreach (var id in ids)

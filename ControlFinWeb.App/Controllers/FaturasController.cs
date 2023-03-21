@@ -77,6 +77,7 @@ namespace ControlFinWeb.App.Controllers
             }
 
             ViewBag.Cartoes = new SelectList(new RepositorioCartao(NHibernateHelper.ObterSessao()).ObterPorParametros(x => x.Situacao == Situacao.Ativo), "Id", "Nome", Id);
+            ViewBag.Pessoas = new SelectList(new RepositorioPessoa(NHibernateHelper.ObterSessao()).ObterPorParametros(x => x.Situacao == Situacao.Ativo), "Id", "Nome", Id);
             return View(faturaVM);
         }
 
@@ -101,6 +102,7 @@ namespace ControlFinWeb.App.Controllers
                 return new EmptyResult();
             }
             ViewBag.Cartoes = new SelectList(new RepositorioCartao(NHibernateHelper.ObterSessao()).ObterPorParametros(x => x.Situacao == Situacao.Ativo), "Id", "Nome", fatura.Id);
+            ViewBag.Pessoas = new SelectList(new RepositorioPessoa(NHibernateHelper.ObterSessao()).ObterPorParametros(x => x.Situacao == Situacao.Ativo), "Id", "Nome", fatura.Id);
             return View(faturaVM);
         }
 
@@ -129,7 +131,7 @@ namespace ControlFinWeb.App.Controllers
 
         public Boolean ExisteFatura(FaturaVM faturaVM)
         {
-            var existeFatura = Repositorio.ObterPorParametros(x => x.Cartao.Id == faturaVM.CartaoId && x.MesAnoReferencia == faturaVM.MesAnoReferencia).FirstOrDefault();
+            var existeFatura = Repositorio.ObterPorParametros(x => x.Cartao.Id == faturaVM.CartaoId && x.MesAnoReferencia == faturaVM.MesAnoReferencia && x.Pessoa.Id == faturaVM.PessoaId).FirstOrDefault();
             if (existeFatura != null)
                 return true;
 
