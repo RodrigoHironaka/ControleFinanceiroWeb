@@ -72,19 +72,29 @@ namespace ControlFinWeb.Repositorio.Repositorios
             try
             {
                 var banco = RepositorioBanco.ObterPorId(contaBancaria.Banco.Id);
+                var caixa = RepositorioCaixa.ObterPorId(contaBancaria.Caixa.Id);
                 SalvarLote(contaBancaria);
-                var fluxoCaixa = new FluxoCaixa()
+                var fluxoCaixa = new FluxoCaixa();
+                if(contaBancaria.Situacao == EntradaSaida.Entrada)
                 {
-                    Valor = contaBancaria.Valor,
-                    Data = DateTime.Now,
-                    DebitoCredito = DebitoCredito.Débito,
-                    FormaPagamento = null,
-                    Parcela = null,
-                    Caixa = RepositorioCaixa.ObterPorId(contaBancaria.Caixa.Id),
-                    DataGeracao = DateTime.Now,
-                    UsuarioCriacao = usuario,
-                    Nome = $"Transferência para {banco.DadosCompletos}",
-                };
+                    fluxoCaixa.DebitoCredito = DebitoCredito.Débito;
+                    fluxoCaixa.Nome = $"Transferência do caixa para {banco.DadosCompletos}";
+                }
+                else
+                {
+                    //VERIFICAR SALDO CONTA AQUI - TRATAR CONTABANCARIA INICIO E FIM DE MES
+                    fluxoCaixa.DebitoCredito = DebitoCredito.Crédito;
+                    fluxoCaixa.Nome = $"Transferência do {banco.DadosCompletos} para o caixa";
+                }
+
+                fluxoCaixa.Valor = contaBancaria.Valor;
+                fluxoCaixa.Data = DateTime.Now;
+                fluxoCaixa.FormaPagamento = null;
+                fluxoCaixa.Parcela = null;
+                fluxoCaixa.Caixa = caixa;
+                fluxoCaixa.DataGeracao = DateTime.Now;
+                fluxoCaixa.UsuarioCriacao = usuario;
+               
                 RepositorioFluxoCaixa.SalvarLote(fluxoCaixa);
                 trans.Commit();
             }

@@ -17,6 +17,7 @@
                 <input asp-for="Id" type="hidden" />
                 <input asp-for="CaixaId" type="hidden" />
                 <input asp-for="GerarFluxoCaixa" type="hidden" />
+                <input asp-for="TransfereParaBanco" type="hidden" />
                 <div class="form-group">
                     <label asp-for="Nome" class="control-label"></label>
                     <textarea asp-for="Nome" class="form-control" rows="2"></textarea>
@@ -91,8 +92,13 @@
         }
 
         $(document).ready(function () {
-            var caixaId = $("#CaixaId").val();
-            if (parseInt(caixaId) > 0) {
+            var transfereParaBanco = $("#TransfereParaBanco").val();
+            if (transfereParaBanco == "true") {
+                $("#SituacaoDefinida").val(0);
+                $("#SituacaoDefinida").attr("disabled", true);
+            }
+            else if (transfereParaBanco == "false"){
+                $("#SituacaoDefinida").val(1);
                 $("#SituacaoDefinida").attr("disabled", true);
             }
         });

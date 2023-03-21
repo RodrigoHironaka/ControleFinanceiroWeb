@@ -15,7 +15,17 @@
         @if (Model.Id > 0 && Model.Situacao == SituacaoCaixa.Aberto)
         {
             <button type="button" class="w-100 btn btn-md btn-dark novo" data-id="0"><i class="bi bi-plus-lg"></i> Adicionar</button>
-            <button type="button" class="w-100 btn btn-md btn-secondary transferirBanco" data-id="0"><i class="bi bi-bank2"></i> Transferir</button>
+            <div class="btn-group">
+                <button type="button" class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="bi bi-bank2"></i> Transferir
+                </button>
+                <ul class="dropdown-menu">
+                    <li><a class="dropdown-item transferirBanco">Para o Banco</a></li>
+                    <li><a class="dropdown-item transferirCaixa">Para o Caixa</a></li>
+
+                </ul>
+            </div>
+           
         }
     </div>
     <div class="col-md-7">
@@ -194,8 +204,9 @@
 
                 if (valor > 0) {
                     $("#modal").load("/ContasBancarias/Editar?valorTransferencia=" + valor, function () {
-                        $(".modal-title").html("NOVO REGISTRO");
+                        $(".modal-title").html("TRANSFERIR PARA O BANCO");
                         $("#CaixaId").val(idCaixa);
+                        $("#TransfereParaBanco").val(true);
                         $("#modal").modal("show");
                     });
                 } else {
@@ -203,7 +214,18 @@
                 }
 
             });
+            $(".transferirCaixa").click(function () {
+                var id = $(this).attr("data-id");
+                var idCaixa = @Model.Id;
+                var valor = parseFloat(@Model.BalancoFinal.ToString().Replace(",","."));
 
+                $("#modal").load("/ContasBancarias/Editar?valorTransferencia=" + valor, function () {
+                    $(".modal-title").html("TRANSFERIR PARA O CAIXA");
+                    $("#CaixaId").val(idCaixa);
+                    $("#TransfereParaBanco").val(false);
+                    $("#modal").modal("show");
+                });
+            });
         })
     </script>
 }
