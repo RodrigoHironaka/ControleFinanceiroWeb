@@ -12,6 +12,7 @@ namespace ControlFinWeb.Dominio.ObjetoValor
         PendenteParcial,
         Atrasado,
         Pago,
+        Recebido,
         Cancelado
     }
 }

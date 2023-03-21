@@ -14,7 +14,7 @@ namespace ControlFinWeb.Repositorio.Repositorios
         private readonly RepositorioBanco RepositorioBanco;
         public RepositorioContaBancaria(RepositorioFluxoCaixa repositorioFluxoCaixa,
            RepositorioCaixa repositorioCaixa, RepositorioBanco repositorioBanco,
-        ISession session) : base(session) 
+        ISession session) : base(session)
         {
             RepositorioFluxoCaixa = repositorioFluxoCaixa;
             RepositorioCaixa = repositorioCaixa;
@@ -28,41 +28,42 @@ namespace ControlFinWeb.Repositorio.Repositorios
             return valorEntrada - valorSaida;
         }
 
-        public void RemoverOuAdicionar(Parcela parcela, Usuario usuario, Banco banco, decimal valorPagoParcela)
+        public void RemoverOuAdicionar(Parcela parcela, Usuario usuario, Banco banco, decimal valorPagoParcela, Caixa caixa)
         {
             var saldoContaBancaria = ObterSaldoContaBancaria(banco.Id);
 
-            if (saldoContaBancaria < valorPagoParcela)
-                throw new Exception("Saldo na conta bancária insulficiente para transação!");
-
-            var novoContaBancaria = new ContaBancaria();
+            var novoRegistro = new ContaBancaria();
 
             if (parcela.Conta != null)
             {
                 if (parcela.Conta.TipoConta == Dominio.ObjetoValor.TipoConta.Pagar)
                 {
-                    novoContaBancaria.Nome = $"Saída para pagamento da conta: {parcela.Conta.DescricaoCompleta} - parcela N.º: [{parcela.Numero}]";
-                    novoContaBancaria.Situacao = Dominio.ObjetoValor.EntradaSaida.Saída;
+                    if (saldoContaBancaria < valorPagoParcela)
+                        throw new Exception("Saldo na conta bancária insulficiente para transação!");
+
+                    novoRegistro.Nome = $"Saída para pagamento da conta: {parcela.Conta.DescricaoCompleta} - parcela N.º: [{parcela.Numero}]";
+                    novoRegistro.Situacao = Dominio.ObjetoValor.EntradaSaida.Saída;
                 }
                 else
                 {
-                    novoContaBancaria.Nome = $"Entrada para pagamento da conta {parcela.Conta.DescricaoCompleta} - parcela N.º: [{parcela.Numero}]";
-                    novoContaBancaria.Situacao = Dominio.ObjetoValor.EntradaSaida.Entrada;
+                    novoRegistro.Nome = $"Entrada para pagamento da conta {parcela.Conta.DescricaoCompleta} - parcela N.º: [{parcela.Numero}]";
+                    novoRegistro.Situacao = Dominio.ObjetoValor.EntradaSaida.Entrada;
                 }
             }
             else
             {
-                novoContaBancaria.Nome = $"Saída para pagamento da fatura {parcela.Fatura.DescricaoCompleta}";
-                novoContaBancaria.Situacao = Dominio.ObjetoValor.EntradaSaida.Saída;
+                novoRegistro.Nome = $"Saída para pagamento da fatura {parcela.Fatura.DescricaoCompleta}";
+                novoRegistro.Situacao = Dominio.ObjetoValor.EntradaSaida.Saída;
             }
 
-            novoContaBancaria.UsuarioCriacao = usuario;
-            novoContaBancaria.Valor = valorPagoParcela;
-            novoContaBancaria.DataRegistro = DateTime.Now;
-            novoContaBancaria.TransacaoBancaria = Dominio.ObjetoValor.TransacaoBancaria.Outros;
-            novoContaBancaria.Banco = banco;
+            novoRegistro.UsuarioCriacao = usuario;
+            novoRegistro.Valor = valorPagoParcela;
+            novoRegistro.DataRegistro = DateTime.Now;
+            novoRegistro.TransacaoBancaria = Dominio.ObjetoValor.TransacaoBancaria.Outros;
+            novoRegistro.Banco = banco;
+            novoRegistro.Caixa = caixa;
 
-            SalvarLote(novoContaBancaria);
+            SalvarLote(novoRegistro);
         }
 
         public void SalvarAddFluxoCaixa(ContaBancaria contaBancaria, Usuario usuario)

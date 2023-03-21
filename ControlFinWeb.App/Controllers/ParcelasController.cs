@@ -8,6 +8,7 @@ using ControlFinWeb.Repositorio.Repositorios;
 using LinqKit;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Newtonsoft.Json;
 using System;
 using System.Collections;
@@ -15,6 +16,7 @@ using System.Collections.Generic;
 using System.Data.Entity.Core.Metadata.Edm;
 using System.Linq;
 using System.Text;
+using Utils.Extensions.Enums;
 
 namespace ControlFinWeb.App.Controllers
 {
@@ -50,6 +52,8 @@ namespace ControlFinWeb.App.Controllers
         {
             var predicado = Repositorio.CriarPredicado();
             predicado = predicado.And(x => x.UsuarioCriacao.Id == Configuracao.Usuario.Id);
+           
+            predicado = predicado.And(x => x.Conta.TipoConta == filtrarParcelasVM.TipoConta || x.Fatura != null);
 
             if (filtrarParcelasVM.DataInicio != null)
                 predicado = predicado.And(x => x.DataVencimento >= filtrarParcelasVM.DataInicio);
@@ -57,14 +61,8 @@ namespace ControlFinWeb.App.Controllers
             if (filtrarParcelasVM.DataFinal != null)
             {
                 if (filtrarParcelasVM.DataFinal >= filtrarParcelasVM.DataInicio)
-                    predicado = predicado.And(x => x.DataVencimento <= filtrarParcelasVM.DataFinal.Value.AddHours(23).AddMinutes(59).AddSeconds(59));
+                    predicado = predicado.And(x => x.DataVencimento <= filtrarParcelasVM.DataFinal.Value.FinalDia());
             }
-
-            if (filtrarParcelasVM.TipoConta != null)
-                predicado = predicado.And(x => x.Conta.TipoConta == filtrarParcelasVM.TipoConta);
-
-            if (filtrarParcelasVM.PeriodoConta != null)
-                predicado = predicado.And(x => x.Conta.TipoPeriodo == filtrarParcelasVM.PeriodoConta);
 
             if (filtrarParcelasVM.PessoaId > 0)
                 predicado = predicado.And(x => x.Conta.Pessoa.Id == filtrarParcelasVM.PessoaId);
@@ -260,7 +258,10 @@ namespace ControlFinWeb.App.Controllers
                                 parcelaVM.SituacaoParcela = SituacaoParcela.PendenteParcial;
                             else
                             {
-                                parcelaVM.SituacaoParcela = SituacaoParcela.Pago;
+                                if (parcelaVM.ContaVM != null && parcelaVM.ContaVM.TipoConta == TipoConta.Receber)
+                                    parcelaVM.SituacaoParcela = SituacaoParcela.Recebido;
+                                else
+                                    parcelaVM.SituacaoParcela = SituacaoParcela.Pago;
                                 parcelaVM.ValorReajustado = (parcelaVM.ValorParcela + parcelaVM.JurosValor) - parcelaVM.DescontoValor;
                             }
 
@@ -321,7 +322,7 @@ namespace ControlFinWeb.App.Controllers
             foreach (var id in ids)
             {
                 var sit = Repositorio.ObterPorId(id).SituacaoParcela;
-                if (sit == SituacaoParcela.Pago || sit == SituacaoParcela.Cancelado)
+                if (sit == SituacaoParcela.Pago || sit == SituacaoParcela.Recebido || sit == SituacaoParcela.Cancelado)
                     return false;
             }
             return true;
@@ -330,7 +331,7 @@ namespace ControlFinWeb.App.Controllers
         public IActionResult ExcluirParcelas(List<Int64> ids)
         {
             if (!SituacaoDasParcelas(ids))
-                return Json(new { result = false, error = "Parcelas Pagas e Canceladas não podem ser selecionadas!" });
+                return Json(new { result = false, error = "Parcelas pagas, recebidas ou canceladas não podem ser selecionadas!" });
 
             foreach (var id in ids)
             {
@@ -345,7 +346,7 @@ namespace ControlFinWeb.App.Controllers
         public IActionResult CancelarParcelas(List<Int64> ids)
         {
             if (!SituacaoDasParcelas(ids))
-                return Json(new { result = false, error = "Parcelas Pagas e Canceladas não podem ser selecionadas!" });
+                return Json(new { result = false, error = "Parcelas pagas, recebidas ou canceladas não podem ser selecionadas!" });
 
             foreach (var id in ids)
             {

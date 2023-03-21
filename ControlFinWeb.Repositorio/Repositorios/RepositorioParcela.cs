@@ -84,10 +84,13 @@ namespace ControlFinWeb.Repositorio.Repositorios
                         var valorPago = valoresPagoParcelas[parcela.Id];
                         if (valorPago > 0)
                         {
-                            RepositorioFluxoCaixa.GerarFluxoCaixa(parcela, usuario, caixa, valorPago);
+                            RepositorioFluxoCaixa.GerarFluxoCaixa(parcela, usuario, caixa, valorPago, null);
 
                             if (banco != null)
-                                RepositorioContaBancaria.RemoverOuAdicionar(parcela, usuario, banco, valorPago);
+                            {
+                                RepositorioContaBancaria.RemoverOuAdicionar(parcela, usuario, banco, valorPago, caixa);
+                                RepositorioFluxoCaixa.GerarFluxoCaixa(parcela, usuario, caixa, valorPago, banco);
+                            }
                         }
                     }
 

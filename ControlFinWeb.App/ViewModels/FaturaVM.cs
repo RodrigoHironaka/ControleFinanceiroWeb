@@ -44,7 +44,7 @@ namespace ControlFinWeb.App.ViewModels
             get
             {
                 if (CartaoVM != null)
-                    return string.Format("{0} - {1:MMyyyy}", CartaoVM.Nome, MesAnoReferencia);
+                    return string.Format("FATURA: {0} - {1:MMyyyy}", CartaoVM.Nome, MesAnoReferencia);
                 else
                     return string.Empty;
             }
@@ -54,7 +54,7 @@ namespace ControlFinWeb.App.ViewModels
         {
             get
             {
-                return string.Format("FATURA: {0} - {1} - {2}", DescricaoCompleta, ValorFatura.ToString("C2"), SituacaoFatura.ToString().ToUpper());
+                return string.Format("{0} - {1} - {2}", DescricaoCompleta, ValorFatura.ToString("C2"), SituacaoFatura.ToString().ToUpper());
 
             }
         }

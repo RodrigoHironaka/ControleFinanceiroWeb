@@ -2,6 +2,7 @@
 using NHibernate;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 
 namespace ControlFinWeb.Repositorio.Repositorios
@@ -10,29 +11,56 @@ namespace ControlFinWeb.Repositorio.Repositorios
     {
         public RepositorioFluxoCaixa(ISession session) : base(session) { }
 
-        public void GerarFluxoCaixa(Parcela parcela, Usuario usuario, Caixa caixa, decimal valorPagoParcela)
+        public void GerarFluxoCaixa(Parcela parcela, Usuario usuario, Caixa caixa, decimal valorPagoParcela, Banco banco = null)
         {
             if (parcela != null)
             {
+                var descricaoParcela = String.Format("Parcela Nº: {0} - {1}", parcela.Numero, parcela.Conta != null ? parcela.Conta.DescricaoCompleta : parcela.Fatura.DescricaoCompleta);
                 var novoFluxoCaixa = new FluxoCaixa();
 
                 if (parcela.Conta != null)
                 {
                     if (parcela.Conta.TipoConta == Dominio.ObjetoValor.TipoConta.Pagar)
                     {
-                        novoFluxoCaixa.Nome = $"Pagamento efetuado no valor de {valorPagoParcela:C2} referente a conta: {parcela.Conta.DescricaoCompleta} - parcela N.º: [{parcela.Numero}]";
-                        novoFluxoCaixa.DebitoCredito = Dominio.ObjetoValor.DebitoCredito.Débito;
+                        if(banco != null)
+                        {
+                            novoFluxoCaixa.Nome = $"Entrada de valor via o banco {banco.DadosCompletos} ref. {descricaoParcela}";
+                            novoFluxoCaixa.DebitoCredito = Dominio.ObjetoValor.DebitoCredito.Crédito;
+                           
+                        }
+                        else
+                        {
+                            novoFluxoCaixa.Nome = $"Pagamento efetuado no valor de {valorPagoParcela:C2} referente a conta: {parcela.Conta.DescricaoCompleta} - parcela N.º: [{parcela.Numero}] {parcela.DataVencimento}";
+                            novoFluxoCaixa.DebitoCredito = Dominio.ObjetoValor.DebitoCredito.Débito;
+                        }
+                       
                     }
                     else if (parcela.Conta.TipoConta == Dominio.ObjetoValor.TipoConta.Receber)
                     {
-                        novoFluxoCaixa.Nome = $"Recebimento efetuado no valor de {valorPagoParcela:C2} referente a conta {parcela.Conta.DescricaoCompleta} - parcela N.º: [{parcela.Numero}]";
-                        novoFluxoCaixa.DebitoCredito = Dominio.ObjetoValor.DebitoCredito.Crédito;
+                        if( banco != null)
+                        {
+                            novoFluxoCaixa.Nome = $"Transferência de valor para o banco {banco.DadosCompletos} ref. {descricaoParcela}";
+                            novoFluxoCaixa.DebitoCredito = Dominio.ObjetoValor.DebitoCredito.Débito;
+                        }
+                        else
+                        {
+                            novoFluxoCaixa.Nome = $"Recebimento efetuado no valor de {valorPagoParcela:C2} referente a conta {parcela.Conta.DescricaoCompleta} - parcela N.º: [{parcela.Numero}] {parcela.DataVencimento}";
+                            novoFluxoCaixa.DebitoCredito = Dominio.ObjetoValor.DebitoCredito.Crédito;
+                        }
                     }
                 }
                 else
                 {
-                    novoFluxoCaixa.Nome = $"Pagamento efetuado no valor de {valorPagoParcela:C2} referente a fatura {parcela.Fatura.DescricaoCompleta}";
-                    novoFluxoCaixa.DebitoCredito = Dominio.ObjetoValor.DebitoCredito.Débito;
+                    if(banco != null)
+                    {
+                        novoFluxoCaixa.Nome = $"Entrada de valor via banco {banco.DadosCompletos} ref. {descricaoParcela}";
+                        novoFluxoCaixa.DebitoCredito = Dominio.ObjetoValor.DebitoCredito.Crédito;
+                    }
+                    else
+                    {
+                        novoFluxoCaixa.Nome = $"Pagamento efetuado no valor de {valorPagoParcela:C2} referente a fatura {parcela.Fatura.DescricaoCompleta}";
+                        novoFluxoCaixa.DebitoCredito = Dominio.ObjetoValor.DebitoCredito.Débito;
+                    }
                 }
 
                 novoFluxoCaixa.Valor = valorPagoParcela;

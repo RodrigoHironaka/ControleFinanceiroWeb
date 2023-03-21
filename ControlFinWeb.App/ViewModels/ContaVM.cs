@@ -130,7 +130,7 @@ namespace ControlFinWeb.App.ViewModels
         {
             get
             {
-                return $"{Nome} [{Id}]";
+                return $"CONTA: {Nome} [{Id}]";
             }
         }
     }

@@ -242,8 +242,8 @@
             var urlIds = ids.map((item) => { return "ids=" + item });
             if ((ids.toString() != "")) {
                 Swal.fire({
-                    title: 'Confirma o pagamento das parcelas selecionadas?',
-                    text: "Para verificar o pagamento acesse o caixa!",
+                    title: 'Confirma as parcelas selecionadas?',
+                    text: "Para verificar o pagamento ou recebimento acesse o caixa!",
                     icon: 'info',
                     showCancelButton: true,
                     confirmButtonColor: '#3085d6',
@@ -260,7 +260,7 @@
                                     Swal.fire({
                                         icon: 'error',
                                         title: 'Oops...',
-                                        text: 'Não é possível realizar o pagamento! Erro: ' + retorno.error,
+                                        text: 'Não é possível realizar o procedimento! Erro: ' + retorno.error,
                                     })
                                 }else{
                                     $("#modal").html(retorno);

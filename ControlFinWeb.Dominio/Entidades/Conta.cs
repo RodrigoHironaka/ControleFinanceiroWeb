@@ -30,7 +30,7 @@ namespace ControlFinWeb.Dominio.Entidades
         {
             get
             {
-                return $"{Nome} [{Id}]";
+                return $"[{Id}] {Nome}";
             }
         }
     }

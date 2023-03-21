@@ -12,32 +12,27 @@ namespace ControlFinWeb.App.ViewModels
         {
             DataInicio = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
             DataFinal = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month));
+            TipoConta = TipoConta.Pagar;
+            if (String.IsNullOrEmpty(SituacaoParcela))
+            {
+                SituacaoParcela = "0,1,2";
+            }
         }
 
         [DisplayName("Início")]
-        //[Range(typeof(DateTime), "01/01/1980", "31/12/5000", ErrorMessage = "Data Inválida!")]
-        //[Required(ErrorMessage = "Campo Obrigatório")]
         public DateTime? DataInicio { get; set; }
 
         [DisplayName("Final")]
-        //[Range(typeof(DateTime), "01/01/1980", "31/12/5000", ErrorMessage = "Data Inválida!")]
-        //[Required(ErrorMessage = "Campo Obrigatório")]
         public DateTime? DataFinal { get; set; }
 
-        [DisplayName("Tipo Conta")]
-        public TipoConta? TipoConta { get; set; }
+        [DisplayName("Tipo")]
+        public TipoConta TipoConta { get; set; }
 
-        [DisplayName("Período da Conta")]
-        public PeriodoConta? PeriodoConta { get; set; }
-
-        [DisplayName("Conta ou Fatura")]
+        [DisplayName("Conta/Fatura")]
         public ContaFatura? ContaFatura { get; set; }
 
         [DisplayName("Situação Parcela")]
         public String SituacaoParcela { get; set; }
-
-        //[DisplayName("Pesquisa Geral")]
-        //public String PesquisaGeral { get; set; }
 
         [DisplayName("Pessoa Referenciada")]
         public Int64 PessoaId { get; set; }

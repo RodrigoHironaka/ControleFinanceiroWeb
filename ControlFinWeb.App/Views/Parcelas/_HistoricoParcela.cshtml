@@ -1,4 +1,5 @@
-﻿@model IEnumerable<ControlFinWeb.App.ViewModels.FluxoCaixaVM>
+﻿@using ControlFinWeb.Dominio.ObjetoValor;
+@model IEnumerable<ControlFinWeb.App.ViewModels.FluxoCaixaVM>
 
 @{
     ViewData["Title"] = "Histórico";
@@ -15,10 +16,16 @@
                 <thead>
                     <tr>
                         <th style="text-align:center">
+                            @Html.DisplayNameFor(model => model.DebitoCredito)
+                        </th>
+                        <th style="text-align:center">
                             @Html.DisplayNameFor(model => model.Data)
                         </th>
                         <th style="text-align:right">
                             @Html.DisplayNameFor(model => model.Valor)
+                        </th>
+                        <th style="text-align:right">
+                            Caixa
                         </th>
                         <th style="text-align:center">
                             @Html.DisplayNameFor(model => model.FormaPagamentoVM.Nome)
@@ -30,11 +37,23 @@
                     {
                         <tr>
                             <td align="center">
+                                @Html.DisplayFor(modelItem => item.DebitoCredito)
+                            </td>
+                            <td align="center">
                                 @Html.DisplayFor(modelItem => item.Data)
                             </td>
                             <td align="right">
-                                @Html.DisplayFor(modelItem => item.Valor)
+                                @if(item.DebitoCredito == DebitoCredito.Débito)
+                                {
+                                    var neg = item.Valor * -1;
+                                    @Html.DisplayFor(modelItem => neg)
+                                }
+                                else
+                                    @Html.DisplayFor(modelItem => item.Valor)
                             </td>
+                                <td align="center">
+                                    @Html.DisplayFor(modelItem => item.CaixaVM.Numero)
+                                </td>
                             <td>
                                 @Html.DisplayFor(modelItem => item.FormaPagamentoVM.Nome)
                             </td>
