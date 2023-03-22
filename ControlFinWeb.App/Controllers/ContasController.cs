@@ -9,6 +9,7 @@ using LinqKit;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -111,6 +112,49 @@ namespace ControlFinWeb.App.Controllers
                 Repositorio.Excluir(conta);
                 return Json(conta.Nome + "excluído com sucesso");
             }
+        }
+
+        [HttpPost]
+        [IgnoreAntiforgeryToken]
+        public IActionResult Finalizar(Int64 id)
+        {
+            try
+            {
+                var conta = Repositorio.ObterPorId(id);
+                if (conta != null)
+                {
+                    conta.Situacao = SituacaoConta.Finalizado;
+                    Repositorio.Alterar(conta);
+                }
+            }
+            catch (Exception ex)
+            {
+                return Json(new { result = false, error = ex.Message });
+                
+            }
+            
+            return new EmptyResult();
+        }
+
+        [HttpPost]
+        [IgnoreAntiforgeryToken]
+        public IActionResult Reabrir(Int64 id)
+        {
+            try
+            {
+                var conta = Repositorio.ObterPorId(id);
+                if (conta != null)
+                {
+                    conta.Situacao = SituacaoConta.Aberto;
+                    Repositorio.Alterar(conta);
+                }
+            }
+            catch (Exception ex)
+            {
+                return Json(new { result = false, error = ex.Message });
+            }
+           
+            return new EmptyResult();
         }
 
     }

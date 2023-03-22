@@ -5,6 +5,7 @@ using ControlFinWeb.App.ViewModels;
 using ControlFinWeb.Dominio.Entidades;
 using ControlFinWeb.Dominio.ObjetoValor;
 using ControlFinWeb.Repositorio.Repositorios;
+using K4os.Hash.xxHash;
 using LinqKit;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -179,7 +180,7 @@ namespace ControlFinWeb.App.Controllers
                     ValorParcela = valorParcela,
                     ValorAberto = valorParcela,
                     ValorReajustado = valorParcela,
-                    DataVencimento =  primeiroVencimento.AddMonths(i - 1),
+                    DataVencimento = primeiroVencimento.AddMonths(i - 1),
                     SituacaoParcela = Dominio.ObjetoValor.SituacaoParcela.Pendente,
                     ContaId = contaId,
                     UsuarioCriacaoId = Configuracao.Usuario.Id,
@@ -362,7 +363,7 @@ namespace ControlFinWeb.App.Controllers
 
         public IActionResult HistoricoParcela(Int64 Id = 0)
         {
-            var historicos = new List<FluxoCaixa>(); 
+            var historicos = new List<FluxoCaixa>();
             var historicosVM = new List<FluxoCaixaVM>();
             parcela = Repositorio.ObterPorId(Id);
 
@@ -381,7 +382,7 @@ namespace ControlFinWeb.App.Controllers
                 Data = null,
                 Valor = 0,
                 FormaPagamentoVM = new FormaPagamentoVM() { Nome = "" },
-                ParcelaVM= new ParcelaVM() { Numero = parcela.Numero}
+                ParcelaVM = new ParcelaVM() { Numero = parcela.Numero }
             });
             return PartialView("_HistoricoParcela", historicosVM);
         }

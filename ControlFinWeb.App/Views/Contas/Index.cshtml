@@ -62,10 +62,12 @@
                         @if (item.Situacao != SituacaoConta.Aberto)
                         {
                             <button class="btn btn-sm btn-danger modal-trigger" disabled><i class="bi bi-x-square"></i></button>
+                            <button class="btn btn-sm btn-warning modal-trigger" onclick="ReabrirConta(@item.Id)"><i class="bi bi-file-earmark-check"></i></button>
                         }
                         else
                         {
                             <button class="btn btn-sm btn-danger modal-trigger" onclick="ExibirModalExcluir(@item.Id)"><i class="bi bi-x-square"></i></button>
+                            <button class="btn btn-sm btn-success modal-trigger" onclick="FinalizarConta(@item.Id)"><i class="bi bi-file-earmark-check"></i></button>
                         }
                     </td>
                 </tr>
@@ -118,5 +120,68 @@
             })
         }
 
+        function FinalizarConta(id) {
+            Swal.fire({
+                title: 'Deseja realmente finalizar a conta?',
+                text: "Não se preocupe você pode reabri-lá novamente!",
+                icon: 'info',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Sim, pode finalizar!',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        method: "POST",
+                        url: "/Contas/Finalizar",
+                        data: { id: id },
+                        success: function (retorno) {
+                            if(retorno == ""){
+                                location.reload();
+                            }else{
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Oops...',
+                                    text: 'Não é possível finalizar! Erro: ' + retorno.error,
+                                })
+                            }
+                        }
+                    });
+                }
+            })
+        }
+
+        function ReabrirConta(id) {
+            Swal.fire({
+                title: 'Deseja realmente reabrir a conta?',
+                text: "",
+                icon: 'info',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Sim, pode reabrir!',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        method: "POST",
+                        url: "/Contas/Reabrir",
+                        data: { id: id },
+                        success: function (retorno) {
+                            if (retorno == "") {
+                                location.reload();
+                            } else {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Oops...',
+                                    text: 'Não é possível reabrir! Erro: ' + retorno.error,
+                                })
+                            }
+                        }
+                    });
+                }
+            })
+        }
     </script>
 }
