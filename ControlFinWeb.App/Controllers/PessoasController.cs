@@ -43,11 +43,8 @@ namespace ControlFinWeb.App.Controllers
             {
                 pessoa = Repositorio.ObterPorId(Id);
                 pessoaVM = Mapper.Map<PessoaVM>(pessoa);
-                pessoaVM.JsonRendas = JsonConvert.SerializeObject(pessoaVM.PessoaRendasVM);
             }
-
-            pessoaVM.Rendas = new SelectList(new RepositorioRenda(NHibernateHelper.ObterSessao()).ObterPorParametros(x => x.Situacao == Situacao.Ativo), "Id", "Nome", Id);
-            return View(pessoaVM);
+                return View(pessoaVM);
         }
 
         [HttpPost]
@@ -57,24 +54,21 @@ namespace ControlFinWeb.App.Controllers
             {
                 if (pessoaVM.Id > 0)
                 {
-                    pessoaVM.PessoaRendasVM = JsonConvert.DeserializeObject<IList<PessoaRendasVM>>(pessoaVM.JsonRendas);
+                   
                     pessoa = Repositorio.ObterPorId(pessoaVM.Id);
                     pessoa = Mapper.Map(pessoaVM, pessoa);
                     pessoa.UsuarioAlteracao = Configuracao.Usuario;
-                    pessoa.PessoaRendas.ForEach(x => x.Pessoa = pessoa);
                     Repositorio.Alterar(pessoa);
                 }
                 else
                 {
-                    pessoaVM.PessoaRendasVM = JsonConvert.DeserializeObject<IList<PessoaRendasVM>>(pessoaVM.JsonRendas);
+                    
                     pessoa = Mapper.Map(pessoaVM, pessoa);
                     pessoa.UsuarioCriacao = Configuracao.Usuario;
-                    pessoa.PessoaRendas.ForEach(x => x.Pessoa = pessoa);
                     Repositorio.Salvar(pessoa);
                 }
                 return new EmptyResult();
             }
-            pessoaVM.Rendas = new SelectList(new RepositorioRenda(NHibernateHelper.ObterSessao()).ObterPorParametros(x => x.Situacao == Situacao.Ativo), "Id", "Nome", pessoaVM.Id);
             return View(pessoaVM);
         }
 

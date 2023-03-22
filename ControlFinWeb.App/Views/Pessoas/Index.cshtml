@@ -17,8 +17,7 @@
     <thead>
         <tr>
             <th>Nome</th>
-            <th>Total Renda Bruta</th>
-            <th>Total Renda Líquida</th>
+            <th>Renda</th>
             <th>Situação</th>
             <th style="text-align:center">Opções</th>
         </tr>
@@ -31,10 +30,7 @@
                     @Html.DisplayFor(modelItem => item.Nome)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.TotalRendaBruta)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.TotalRendaLiquida)
+                    @Html.DisplayFor(modelItem => item.Renda)
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.Situacao)

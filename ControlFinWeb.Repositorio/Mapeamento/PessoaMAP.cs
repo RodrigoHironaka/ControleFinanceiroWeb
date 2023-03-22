@@ -16,16 +16,12 @@ namespace ControlFinWeb.Repositorio.Mapeamentos
             Property(x => x.Nome, m => m.Length(70));
             Property(x => x.DataGeracao);
             Property(x => x.DataAlteracao);
+            Property(x => x.Renda);
             Property(x => x.Situacao, m => m.Type<EnumType<Situacao>>());
             ManyToOne(x => x.UsuarioCriacao, m => m.Column("UsuarioCriacao"));
             ManyToOne(x => x.UsuarioAlteracao, m => m.Column("UsuarioAlteracao"));
 
-            Bag(x => x.PessoaRendas, m =>
-            {
-                m.Cascade(Cascade.All);
-                m.Key(k => k.Column("Pessoa"));
-                m.Inverse(true);
-            }, map => map.OneToMany(a => a.Class(typeof(PessoaRendas))));
+           
         }
     }
 }

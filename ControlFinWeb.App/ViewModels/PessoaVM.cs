@@ -13,11 +13,6 @@ namespace ControlFinWeb.App.ViewModels
 {
     public class PessoaVM
     {
-        public PessoaVM()
-        {
-            PessoaRendasVM = new List<PessoaRendasVM>();
-        }
-
         public Int64 Id { get; set; }
 
         [DisplayName("Descrição")]
@@ -25,47 +20,11 @@ namespace ControlFinWeb.App.ViewModels
         [Required(ErrorMessage = "Campo Obrigatório")]
         public String Nome { get; set; }
 
+        [DisplayName("Renda")]
+        public Decimal Renda { get; set; }
+
         [DisplayName("Situação")]
         public Situacao Situacao { get; set; }
-
-        public IList<PessoaRendasVM> PessoaRendasVM { get; set; }
-
-        public SelectList Rendas { get; set; }
-
-        #region Campos Apenas para digitar valores e add a lista PessaRendasVM
-        [DisplayName("R.Bruta")]
-        public Decimal RendaBruta { get; set; }
-
-        [DisplayName("R.Líquida")]
-        public Decimal RendaLiquida { get; set; }
-
-        [DisplayName("Renda")]
-        public Int64 TipoRendaId { get; set; }
-        public RendaVM TipoRendaVM { get; set; }
-
-        public String JsonRendas { get; set; }
-        #endregion
-
-        #region Totalizadores
-        [DisplayName("Total Renda Bruta")]
-        public String TotalRendaBruta
-        {
-            get
-            {
-                return PessoaRendasVM.Select(x => x.RendaBruta).Sum().ToString("C2");
-            }
-        }
-
-        [DisplayName("Total Renda Líquida")]
-        public String TotalRendaLiquida
-        {
-            get
-            {
-                return PessoaRendasVM.Select(x => x.RendaLiquida).Sum().ToString("C2");
-            }
-        }
-        #endregion
-
 
         public override string ToString()
         {
