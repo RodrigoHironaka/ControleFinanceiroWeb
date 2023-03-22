@@ -74,6 +74,7 @@
                 <th>Situação</th>
                 <th>Forma Pagamento</th>
                 <th>Descrição</th>
+                <th style="text-align:center">Opção</th>
             </tr>
         </thead>
         <tbody>
@@ -121,12 +122,23 @@
                             @Html.DisplayFor(modelItem => item.FaturaVM.DescricaoCompleta)
                         }
                     </td>
+                    <td style="text-align:center">
+                        @if (item.ContaId > 0)
+                        {
+                            <button type="button" class="btn btn-secondary abrirConta" data-id="@item.ContaId"><i class="bi bi-file-plus"></i></button>
+                        }
+                        else
+                        {
+                            <button type="button" class="btn btn-secondary abrirFatura" data-id="@item.FaturaId"><i class="bi bi-file-plus"></i></button>
+                        }
+                    </td>
                 </tr>
             }
         </tbody>
         <tfoot>
             <tr style="text-align: right">
                 <th>Total</th>
+                <th></th>
                 <th></th>
                 <th></th>
                 <th></th>
@@ -300,6 +312,14 @@
                 })
             }
         });
-        
+
+        $(document).on(TipoClick().toString(), ".abrirConta", function () {
+            var idConta = $(this).attr("data-id");
+            window.location.href = '/Contas/Editar?id=' + idConta;
+        });
+        $(document).on(TipoClick().toString(), ".abrirFatura", function () {
+            var idFatura = $(this).attr("data-id");
+            window.location.href = '/Faturas/Index?idFatura=' + idFatura;
+        });
     </script>
 }

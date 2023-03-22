@@ -107,21 +107,7 @@ namespace ControlFinWeb.App.ViewModels
         }
         #endregion
 
-        #region Campos Gerar Parcelas
         public String JsonParcelas { get; set; }
-
-        [DisplayName("Valor")]
-        public Decimal Valor { get; set; }
-
-        public Int32 Qtd { get; set; }
-
-        [DisplayName("1º Vencimento")]
-        public DateTime? PrimeiroVencimento { get; set; }
-
-        public Boolean Replicar { get; set; }
-
-        public Int32 UltimoNumero { get; set; }
-        #endregion
 
         public virtual String DescricaoCompleta
         {
