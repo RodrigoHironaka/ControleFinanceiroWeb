@@ -7,6 +7,7 @@ using ControlFinWeb.Dominio.ObjetoValor;
 using ControlFinWeb.Repositorio.Repositorios;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using ObjectsComparer;
 using System;
 using System.Collections.Generic;
 
@@ -15,16 +16,19 @@ namespace ControlFinWeb.App.Controllers
     public class BancosController : Controller
     {
         private readonly RepositorioBanco Repositorio;
+        private readonly RepositorioPessoa RepositorioPessoa;
         private readonly IMapper Mapper;
 
-        public BancosController(RepositorioBanco repositorio, IMapper mapper)
+        public BancosController(RepositorioBanco repositorio, RepositorioPessoa repositorioPessoa, IMapper mapper)
         {
             Repositorio = repositorio;
+            RepositorioPessoa = repositorioPessoa;
             Mapper = mapper;
         }
 
         Banco banco = new Banco();
         BancoVM bancoVM = new BancoVM();
+        Banco cloneBanco;
 
         public IActionResult Index()
         {
@@ -52,10 +56,12 @@ namespace ControlFinWeb.App.Controllers
             {
                 if (bancoVM.Id > 0)
                 {
+                    bancoVM.PessoaRefBancoVM = Mapper.Map<PessoaVM>(RepositorioPessoa.ObterPorId(bancoVM.PessoaRefBancoId));
                     banco = Repositorio.ObterPorId(bancoVM.Id);
+                    cloneBanco = (Banco)banco.Clone();
                     banco = Mapper.Map(bancoVM, banco);
                     banco.UsuarioAlteracao = Configuracao.Usuario;
-                    Repositorio.Alterar(banco);
+                    CompararAlteracoes();
                 }
                 else
                 {
@@ -77,6 +83,17 @@ namespace ControlFinWeb.App.Controllers
             banco = Repositorio.ObterPorId(Id);
             Repositorio.Excluir(banco);
             return Json(banco.Nome + "excluído com sucesso");
+        }
+
+        private void CompararAlteracoes()
+        {
+            var comparer = new ObjectsComparer.Comparer<Banco>();
+            comparer.AddComparerOverride<Usuario>(DoNotCompareValueComparer.Instance);
+            comparer.AddComparerOverride<Int64>(DoNotCompareValueComparer.Instance, member => member.Name.Contains("Id"));
+            comparer.AddComparerOverride<String>(DoNotCompareValueComparer.Instance, member => member.Name.StartsWith("_"));
+            var igual = comparer.Compare(cloneBanco, banco, out IEnumerable<Difference> diferencas);
+            if (!igual)
+                Repositorio.EditarRegistrarLog(banco, diferencas, Configuracao.Usuario, String.Format("Banco[{0}]", banco.Id));
         }
     }
 }

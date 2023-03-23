@@ -8,6 +8,7 @@
     <PackageReference Include="LinqKit" Version="1.2.2" />
     <PackageReference Include="MySql.Data" Version="8.0.28" />
     <PackageReference Include="NHibernate" Version="5.3.11" />
+    <PackageReference Include="ObjectsComparer" Version="1.4.1" />
   </ItemGroup>
 
   <ItemGroup>

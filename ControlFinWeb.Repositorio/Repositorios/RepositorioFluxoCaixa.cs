@@ -24,7 +24,7 @@ namespace ControlFinWeb.Repositorio.Repositorios
                     {
                         if(banco != null)
                         {
-                            novoFluxoCaixa.Nome = $"Entrada de valor via o banco {banco.DadosCompletos} ref. {descricaoParcela}";
+                            novoFluxoCaixa.Nome = $"Entrada de valor via o banco {banco._DadosCompletos} ref. {descricaoParcela}";
                             novoFluxoCaixa.DebitoCredito = Dominio.ObjetoValor.DebitoCredito.Crédito;
                            
                         }
@@ -39,7 +39,7 @@ namespace ControlFinWeb.Repositorio.Repositorios
                     {
                         if( banco != null)
                         {
-                            novoFluxoCaixa.Nome = $"Transferência de valor para o banco {banco.DadosCompletos} ref. {descricaoParcela}";
+                            novoFluxoCaixa.Nome = $"Transferência de valor para o banco {banco._DadosCompletos} ref. {descricaoParcela}";
                             novoFluxoCaixa.DebitoCredito = Dominio.ObjetoValor.DebitoCredito.Débito;
                         }
                         else
@@ -53,7 +53,7 @@ namespace ControlFinWeb.Repositorio.Repositorios
                 {
                     if(banco != null)
                     {
-                        novoFluxoCaixa.Nome = $"Entrada de valor via banco {banco.DadosCompletos} ref. {descricaoParcela}";
+                        novoFluxoCaixa.Nome = $"Entrada de valor via banco {banco._DadosCompletos} ref. {descricaoParcela}";
                         novoFluxoCaixa.DebitoCredito = Dominio.ObjetoValor.DebitoCredito.Crédito;
                     }
                     else

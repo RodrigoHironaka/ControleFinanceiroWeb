@@ -3,6 +3,7 @@ using ControlFinWeb.App.ViewModels;
 using ControlFinWeb.App.ViewModels.Acesso;
 using ControlFinWeb.Dominio.Dominios;
 using ControlFinWeb.Dominio.Entidades;
+using NHibernate.Criterion;
 using System.Collections.Generic;
 
 namespace ControlFinWeb.App.AutoMapper
@@ -30,7 +31,16 @@ namespace ControlFinWeb.App.AutoMapper
             CreateMap<SubGastoVM, SubGasto>()
                 .AfterMap((src, dest) => { dest.Gasto = new Gasto { Id = src.GastoId }; }); //outro exemplo: .ForPath(dest => dest.Gasto.Id, m =>  m.MapFrom(src => src.GastoId));
             CreateMap<BancoVM, Banco>()
-                 .AfterMap((src, dest) => { dest.PessoaRefBanco = new Pessoa { Id = src.PessoaRefBancoId }; });
+                 .AfterMap((src, dest) => { 
+                     dest.PessoaRefBanco = new Pessoa 
+                     { 
+                         Id = src.PessoaRefBancoId, 
+                         Nome = src.PessoaRefBancoVM.Nome, 
+                         Renda = dest.PessoaRefBanco.Renda, 
+                         DataAlteracao = dest.PessoaRefBanco.DataAlteracao,
+                         DataGeracao = dest.PessoaRefBanco.DataGeracao
+                     }; 
+                 });
             CreateMap<CartaoVM, Cartao>()
                 .AfterMap((src, dest) => { dest.Banco = new Banco { Id = src.BancoId }; });
             CreateMap<HoraExtraVM, HoraExtra>()

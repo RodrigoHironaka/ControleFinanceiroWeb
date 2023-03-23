@@ -1,11 +1,33 @@
 ﻿using ControlFinWeb.Dominio.Entidades;
 using ControlFinWeb.Repositorio.Repositorios;
 using NHibernate;
+using ObjectsComparer;
+using System.Collections.Generic;
+using System;
 
 namespace ControlFinWeb.Repositorio.Repositorios
 {
     public class RepositorioBanco : RepositorioBase<Banco>
     {
-        public RepositorioBanco(ISession session) : base(session) { }
+        private readonly RepositorioLogModificacao RepositorioLog;
+        public RepositorioBanco(ISession session, RepositorioLogModificacao repositorioLog = null) : base(session) { RepositorioLog = repositorioLog; }
+
+        public void EditarRegistrarLog(Banco banco, IEnumerable<Difference> diferencas, Usuario usuario, String chave)
+        {
+            using (var trans = Session.BeginTransaction())
+            {
+                try
+                {
+                    RepositorioLog.RegistrarLogModificacao(diferencas, usuario, chave);
+                    AlterarLote(banco);
+                    trans.Commit();
+                }
+                catch (Exception ex)
+                {
+                    trans.Rollback();
+                    throw new Exception(ex.Message);
+                }
+            }
+        }
     }
 }

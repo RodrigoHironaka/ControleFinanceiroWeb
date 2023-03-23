@@ -78,13 +78,13 @@ namespace ControlFinWeb.Repositorio.Repositorios
                 if(contaBancaria.Situacao == EntradaSaida.Entrada)
                 {
                     fluxoCaixa.DebitoCredito = DebitoCredito.Débito;
-                    fluxoCaixa.Nome = $"Transferência do caixa para {banco.DadosCompletos}";
+                    fluxoCaixa.Nome = $"Transferência do caixa para {banco._DadosCompletos}";
                 }
                 else
                 {
                     //VERIFICAR SALDO CONTA AQUI - TRATAR CONTABANCARIA INICIO E FIM DE MES
                     fluxoCaixa.DebitoCredito = DebitoCredito.Crédito;
-                    fluxoCaixa.Nome = $"Transferência do {banco.DadosCompletos} para o caixa";
+                    fluxoCaixa.Nome = $"Transferência do {banco._DadosCompletos} para o caixa";
                 }
 
                 fluxoCaixa.Valor = contaBancaria.Valor;
