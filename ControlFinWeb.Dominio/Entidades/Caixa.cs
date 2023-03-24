@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace ControlFinWeb.Dominio.Entidades
 {
-    public class Caixa : IEntidade
+    public class Caixa : IEntidade, ICloneable
     {
         public Caixa()
         {
@@ -16,6 +16,14 @@ namespace ControlFinWeb.Dominio.Entidades
         public override string ToString()
         {
             return Id.ToString();
+        }
+
+        public virtual object Clone()
+        {
+            var clone = (Caixa)this.MemberwiseClone();
+            clone.UsuarioCriacao = (Usuario)clone.UsuarioCriacao.Clone();
+            clone.UsuarioAlteracao = (Usuario)clone.UsuarioAlteracao.Clone();
+            return clone;
         }
 
         public virtual Int64 Id { get; set; }
@@ -28,25 +36,25 @@ namespace ControlFinWeb.Dominio.Entidades
         public virtual Usuario UsuarioAlteracao { get; set; }
         public virtual IList<FluxoCaixa> FluxosCaixa { get; set; }
 
-        public virtual Decimal TotalDebito //saída
+        public virtual Decimal _TotalDebito //saída
         {
             get
             {
                 return FluxosCaixa.Where(x => x.DebitoCredito == DebitoCredito.Débito).Select(x => x.Valor).Sum();
             } 
         }
-        public virtual Decimal TotalCredito //Entrada
+        public virtual Decimal _TotalCredito //Entrada
         {
             get
             {
                 return FluxosCaixa.Where(x => x.DebitoCredito == DebitoCredito.Crédito).Select(x => x.Valor).Sum();
             }
         }
-        public virtual Decimal BalancoFinal
+        public virtual Decimal _BalancoFinal
         {
             get
             {
-                return TotalCredito - TotalDebito;
+                return _TotalCredito - _TotalDebito;
             }
         }
 

@@ -14,5 +14,10 @@ namespace ControlFinWeb.Dominio.Entidades
         {
            return (Pessoa)this.MemberwiseClone();
         }
+
+        public override string ToString()
+        {
+            return Nome;
+        }
     }
 }

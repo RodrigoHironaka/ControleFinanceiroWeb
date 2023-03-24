@@ -52,7 +52,7 @@ namespace ControlFinWeb.App.Controllers
             if (caixaAberto == null)
                 ViewData["Mensagem"] = "Nenhum caixa aberto!";
             else
-                balancoMes = caixaAberto.BalancoFinal;
+                balancoMes = caixaAberto._BalancoFinal;
 
             var homeVM = new HomeVM();
             homeVM.TotalPagar = pagar;
@@ -160,7 +160,7 @@ namespace ControlFinWeb.App.Controllers
                 {
                     itensFaturas.Add(new HomeVM
                     {
-                        Descricao = item.SubGasto.DescricaoCompleta,
+                        Descricao = item.SubGasto._DescricaoCompleta,
                         Valor = item.Valor
                     });
                 }
@@ -180,7 +180,7 @@ namespace ControlFinWeb.App.Controllers
                     listateste.Add(new HomeVM()
                     {
                         Valor = contas[i].Total,
-                        Descricao = contas[i].SubGasto.DescricaoCompleta
+                        Descricao = contas[i].SubGasto._DescricaoCompleta
                     });
                 }
             }

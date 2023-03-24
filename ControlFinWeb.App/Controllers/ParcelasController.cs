@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Newtonsoft.Json;
+using ObjectsComparer;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -48,6 +49,7 @@ namespace ControlFinWeb.App.Controllers
         IList<ParcelaVM> parcelasVM = new List<ParcelaVM>();
         GerarParcelasVM gerarParcelasVM = new GerarParcelasVM();
         PagarParcelaVM pagarParcelaVM = new PagarParcelaVM();
+        Parcela cloneParcela;
 
         public IActionResult Index(FiltroParcelasVM filtrarParcelasVM)
         {
@@ -119,9 +121,10 @@ namespace ControlFinWeb.App.Controllers
                 if (parcelaVM.Id > 0)
                 {
                     parcela = Repositorio.ObterPorId(parcelaVM.Id);
+                    cloneParcela = (Parcela)parcela.Clone();
                     parcela = Mapper.Map(parcelaVM, parcela);
                     parcela.UsuarioAlteracao = Configuracao.Usuario;
-                    Repositorio.Alterar(parcela);
+                    CompararAlteracoes();
                 }
                 else
                 {
@@ -335,9 +338,10 @@ namespace ControlFinWeb.App.Controllers
 
             foreach (var id in ids)
             {
-                var parcela = Repositorio.ObterPorId(id);
+                parcela = Repositorio.ObterPorId(id);
+                cloneParcela = (Parcela)parcela.Clone();
                 if (parcela != null)
-                    Repositorio.Excluir(parcela);
+                    Repositorio.ExcluirRegistrarLog(parcela, Configuracao.Usuario);
             }
 
             return new EmptyResult();
@@ -350,11 +354,12 @@ namespace ControlFinWeb.App.Controllers
 
             foreach (var id in ids)
             {
-                var parcela = Repositorio.ObterPorId(id);
+                parcela = Repositorio.ObterPorId(id);
+                cloneParcela = (Parcela)parcela.Clone();
                 if (parcela != null)
                 {
                     parcela.SituacaoParcela = SituacaoParcela.Cancelado;
-                    Repositorio.Alterar(parcela);
+                    CompararAlteracoes();
                 }
             }
             return new EmptyResult();
@@ -385,6 +390,23 @@ namespace ControlFinWeb.App.Controllers
                 ParcelaVM = new ParcelaVM() { Numero = parcela.Numero }
             });
             return PartialView("_HistoricoParcela", historicosVM);
+        }
+
+        private void CompararAlteracoes()
+        {
+            var comparer = new ObjectsComparer.Comparer<Parcela>();
+            comparer.AddComparerOverride<Usuario>(DoNotCompareValueComparer.Instance);
+            comparer.AddComparerOverride<Int64>(DoNotCompareValueComparer.Instance, member => member.Name.Contains("Id"));
+            comparer.AddComparerOverride<String>(DoNotCompareValueComparer.Instance, member => member.Name.StartsWith("_"));
+            comparer.AddComparerOverride<Conta>(DoNotCompareValueComparer.Instance);
+            comparer.AddComparerOverride<Fatura>(DoNotCompareValueComparer.Instance);
+            comparer.IgnoreMember("DataGeracao");
+            comparer.IgnoreMember("DataAlteracao");
+            var igual = comparer.Compare(cloneParcela, parcela, out IEnumerable<Difference> diferencas);
+            var contaOuFatura = parcela.Conta != null ? "Conta" : "Fatura";
+            var idContaOuFatura = parcela.Conta != null ? parcela.Conta.Id : parcela.Fatura.Id;
+            if (!igual)
+                Repositorio.EditarRegistrarLog(parcela, diferencas, Configuracao.Usuario, $"{contaOuFatura}[{idContaOuFatura}] - Parcela[{parcela.Numero}]");
         }
     }
 }

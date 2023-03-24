@@ -32,14 +32,14 @@ namespace ControlFinWeb.App.AutoMapper
                 .AfterMap((src, dest) => { dest.Gasto = new Gasto { Id = src.GastoId }; }); //outro exemplo: .ForPath(dest => dest.Gasto.Id, m =>  m.MapFrom(src => src.GastoId));
             CreateMap<BancoVM, Banco>()
                  .AfterMap((src, dest) => { 
-                     dest.PessoaRefBanco = new Pessoa 
+                     dest.PessoaRefBanco = dest.PessoaRefBanco != null ? new Pessoa 
                      { 
                          Id = src.PessoaRefBancoId, 
                          Nome = src.PessoaRefBancoVM.Nome, 
                          Renda = dest.PessoaRefBanco.Renda, 
-                         DataAlteracao = dest.PessoaRefBanco.DataAlteracao,
+                         DataAlteracao = dest.PessoaRefBanco?.DataAlteracao,
                          DataGeracao = dest.PessoaRefBanco.DataGeracao
-                     }; 
+                     } : new Pessoa { Id = src.PessoaRefBancoId }; 
                  });
             CreateMap<CartaoVM, Cartao>()
                 .AfterMap((src, dest) => { dest.Banco = new Banco { Id = src.BancoId }; });
@@ -50,8 +50,8 @@ namespace ControlFinWeb.App.AutoMapper
             CreateMap<ContaVM, Conta>()
               .AfterMap((src, dest) =>
               {
-                  dest.SubGasto = new SubGasto { Id = src.SubGastoId };
-                  dest.Pessoa = src.PessoaId > 0 ? new Pessoa { Id = src.PessoaId } : null;
+                  dest.SubGasto = new SubGasto { Id = src.SubGastoId, Nome = src.SubGastoVM?.Nome };
+                  dest.Pessoa = src.PessoaId > 0 ? new Pessoa { Id = src.PessoaId, Nome = src.PessoaVM?.Nome } : null;
 
                   dest.Parcelas = new MapperConfiguration(cfg => cfg.CreateMap<ParcelaVM, Parcela>()
                  .AfterMap((src, dest) =>

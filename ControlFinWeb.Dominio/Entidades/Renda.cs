@@ -1,8 +1,9 @@
 ﻿using ControlFinWeb.Dominio.ObjetoValor;
+using System;
 
 namespace ControlFinWeb.Dominio.Entidades
 {
-    public class Renda : Base 
+    public class Renda : Base, ICloneable
     {
         public Renda()
         {
@@ -13,6 +14,12 @@ namespace ControlFinWeb.Dominio.Entidades
         {
             return Nome;
         }
+
+        public virtual object Clone()
+        {
+            return (Renda)this.MemberwiseClone();
+        }
+
         public virtual Situacao Situacao { get; set; }
 
     }

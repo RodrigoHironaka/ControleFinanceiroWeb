@@ -29,5 +29,25 @@ namespace ControlFinWeb.Repositorio.Repositorios
                 }
             }
         }
+
+        public void ExcluirRegistrarLog(Banco banco, Usuario usuario)
+        {
+            using (var trans = Session.BeginTransaction())
+            {
+                try
+                {
+                    RepositorioLog.RegistrarLogExclusao($"Registro {banco.Nome}[{banco.Id}] excluído!", usuario, $"Banco[{banco.Id}]");
+                    ExcluirLote(banco);
+                    trans.Commit();
+                }
+                catch (Exception ex)
+                {
+                    trans.Rollback();
+                    throw new Exception(ex.Message);
+                }
+            }
+            
+
+        }
     }
 }

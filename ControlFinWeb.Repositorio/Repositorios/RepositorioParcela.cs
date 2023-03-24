@@ -2,6 +2,7 @@
 using ControlFinWeb.Dominio.Entidades;
 using ControlFinWeb.Dominio.ObjetoValor;
 using NHibernate;
+using ObjectsComparer;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,11 +14,16 @@ namespace ControlFinWeb.Repositorio.Repositorios
         private readonly RepositorioFluxoCaixa RepositorioFluxoCaixa;
         private readonly RepositorioCaixa RepositorioCaixa;
         private readonly RepositorioContaBancaria RepositorioContaBancaria;
-        public RepositorioParcela(ISession session, RepositorioFluxoCaixa repositorioFluxoCaixa, RepositorioCaixa repositorioCaixa, RepositorioContaBancaria repositorioContaBancaria) : base(session)
+        private readonly RepositorioLogModificacao RepositorioLog;
+        public RepositorioParcela(ISession session, RepositorioFluxoCaixa repositorioFluxoCaixa, 
+            RepositorioCaixa repositorioCaixa, 
+            RepositorioContaBancaria repositorioContaBancaria,
+            RepositorioLogModificacao repositorioLog) : base(session)
         {
             RepositorioFluxoCaixa = repositorioFluxoCaixa;
             RepositorioCaixa = repositorioCaixa;
             RepositorioContaBancaria = repositorioContaBancaria;
+            RepositorioLog = repositorioLog;
         }
 
         public void AdicionarNovaParcela(Decimal valor, DateTime? dataVencimento, Usuario usuario, Conta conta = null, Fatura fatura = null)
@@ -51,15 +57,15 @@ namespace ControlFinWeb.Repositorio.Repositorios
             }
             else if (AlterandoItemFatura)
             {
-                existeParcela.ValorParcela = faturaItens.Fatura.ValorFatura;
-                existeParcela.ValorReajustado = faturaItens.Fatura.ValorFatura;
-                existeParcela.ValorAberto = faturaItens.Fatura.ValorFatura;
+                existeParcela.ValorParcela = faturaItens.Fatura._ValorFatura;
+                existeParcela.ValorReajustado = faturaItens.Fatura._ValorFatura;
+                existeParcela.ValorAberto = faturaItens.Fatura._ValorFatura;
             }
             else
             {
-                existeParcela.ValorParcela = faturaItens.Fatura.ValorFatura + faturaItens.Valor;
-                existeParcela.ValorReajustado = faturaItens.Fatura.ValorFatura + faturaItens.Valor;
-                existeParcela.ValorAberto = faturaItens.Fatura.ValorFatura + faturaItens.Valor;
+                existeParcela.ValorParcela = faturaItens.Fatura._ValorFatura + faturaItens.Valor;
+                existeParcela.ValorReajustado = faturaItens.Fatura._ValorFatura + faturaItens.Valor;
+                existeParcela.ValorAberto = faturaItens.Fatura._ValorFatura + faturaItens.Valor;
             }
 
             AlterarLote(existeParcela);
@@ -102,6 +108,46 @@ namespace ControlFinWeb.Repositorio.Repositorios
                     throw new Exception(ex.Message.ToString());
                 }
             }
+        }
+
+        public void EditarRegistrarLog(Parcela parcela, IEnumerable<Difference> diferencas, Usuario usuario, String chave)
+        {
+            using (var trans = Session.BeginTransaction())
+            {
+                try
+                {
+                    RepositorioLog.RegistrarLogModificacao(diferencas, usuario, chave);
+                    AlterarLote(parcela);
+                    trans.Commit();
+                }
+                catch (Exception ex)
+                {
+                    trans.Rollback();
+                    throw new Exception(ex.Message);
+                }
+            }
+        }
+
+        public void ExcluirRegistrarLog(Parcela parcela, Usuario usuario)
+        {
+            using (var trans = Session.BeginTransaction())
+            {
+                try
+                {
+                    var contaOuFatura = parcela.Conta != null ? "Conta" : "Fatura";
+                    var idContaOuFatura = parcela.Conta != null ? parcela.Conta.Id : parcela.Fatura.Id;
+                    RepositorioLog.RegistrarLogExclusao($"Parcela Nº {parcela.Numero} foi excluída!", usuario, $"{contaOuFatura}[{idContaOuFatura}]");
+                    ExcluirLote(parcela);
+                    trans.Commit();
+                }
+                catch (Exception ex)
+                {
+                    trans.Rollback();
+                    throw new Exception(ex.Message);
+                }
+            }
+
+
         }
     }
 }

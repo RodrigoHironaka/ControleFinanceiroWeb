@@ -3,7 +3,7 @@ using System;
 
 namespace ControlFinWeb.Dominio.Entidades
 {
-    public class Usuario : Base
+    public class Usuario : Base, ICloneable
     {
         public Usuario()
         {
@@ -16,5 +16,10 @@ namespace ControlFinWeb.Dominio.Entidades
         public virtual SimNao Autorizado { get; set; }
         public virtual TipoUsuario TipoUsuario { get; set; }
         public virtual Situacao Situacao { get; set; }
+
+        public virtual object Clone()
+        {
+            return (Usuario)this.MemberwiseClone();
+        }
     }
 }

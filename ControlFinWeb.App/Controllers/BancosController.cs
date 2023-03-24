@@ -81,7 +81,7 @@ namespace ControlFinWeb.App.Controllers
         public JsonResult Deletar(Int64 Id)
         {
             banco = Repositorio.ObterPorId(Id);
-            Repositorio.Excluir(banco);
+            Repositorio.ExcluirRegistrarLog(banco, Configuracao.Usuario);
             return Json(banco.Nome + "excluído com sucesso");
         }
 

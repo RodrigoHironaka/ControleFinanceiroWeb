@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace ControlFinWeb.Dominio.Entidades
 {
-    public class Fatura : Base
+    public class Fatura : Base,ICloneable
     {
         public Fatura()
         {
@@ -20,7 +20,7 @@ namespace ControlFinWeb.Dominio.Entidades
         public virtual Pessoa Pessoa { get; set; }
         public virtual IList<FaturaItens> FaturaItens { get; set; }
 
-        public virtual string DescricaoCompleta
+        public virtual string _DescricaoCompleta
         {
             get
             {
@@ -30,7 +30,7 @@ namespace ControlFinWeb.Dominio.Entidades
             }
         }
 
-        public virtual Decimal ValorFatura
+        public virtual Decimal _ValorFatura
         {
             get
             {
@@ -38,5 +38,12 @@ namespace ControlFinWeb.Dominio.Entidades
             }
         }
 
+        public virtual object Clone()
+        {
+            var clone = (Fatura)this.MemberwiseClone();
+            clone.Cartao = (Cartao)clone.Cartao.Clone();
+            clone.Pessoa = (Pessoa)clone.Pessoa.Clone();
+            return clone;
+        }
     }
 }

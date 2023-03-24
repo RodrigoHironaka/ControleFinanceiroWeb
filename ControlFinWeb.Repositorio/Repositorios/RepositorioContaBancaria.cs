@@ -41,18 +41,18 @@ namespace ControlFinWeb.Repositorio.Repositorios
                     if (saldoContaBancaria < valorPagoParcela)
                         throw new Exception("Saldo na conta bancária insulficiente para transação!");
 
-                    novoRegistro.Nome = $"Saída para pagamento da conta: {parcela.Conta.DescricaoCompleta} - parcela N.º: [{parcela.Numero}]";
+                    novoRegistro.Nome = $"Saída para pagamento da conta: {parcela.Conta._DescricaoCompleta} - parcela N.º: [{parcela.Numero}]";
                     novoRegistro.Situacao = Dominio.ObjetoValor.EntradaSaida.Saída;
                 }
                 else
                 {
-                    novoRegistro.Nome = $"Entrada para pagamento da conta {parcela.Conta.DescricaoCompleta} - parcela N.º: [{parcela.Numero}]";
+                    novoRegistro.Nome = $"Entrada para pagamento da conta {parcela.Conta._DescricaoCompleta} - parcela N.º: [{parcela.Numero}]";
                     novoRegistro.Situacao = Dominio.ObjetoValor.EntradaSaida.Entrada;
                 }
             }
             else
             {
-                novoRegistro.Nome = $"Saída para pagamento da fatura {parcela.Fatura.DescricaoCompleta}";
+                novoRegistro.Nome = $"Saída para pagamento da fatura {parcela.Fatura._DescricaoCompleta}";
                 novoRegistro.Situacao = Dominio.ObjetoValor.EntradaSaida.Saída;
             }
 

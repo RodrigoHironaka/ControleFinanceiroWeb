@@ -3,7 +3,7 @@ using System;
 
 namespace ControlFinWeb.Dominio.Entidades
 {
-    public class SubGasto : Base
+    public class SubGasto : Base, ICloneable
     {
         public SubGasto()
         {
@@ -13,12 +13,19 @@ namespace ControlFinWeb.Dominio.Entidades
         public virtual Gasto Gasto { get; set; }
         public virtual Situacao Situacao { get; set; }
 
-        public virtual String DescricaoCompleta
+        public virtual String _DescricaoCompleta
         {
             get
             {
-                return String.Format("{0}/{1}", Gasto.Nome, Nome);
+                return String.Format("{0}/{1}", Gasto?.Nome, Nome);
             }
+        }
+
+        public virtual object Clone()
+        {
+            var clone = (SubGasto)this.MemberwiseClone();
+            clone.Gasto = (Gasto)this.Gasto.Clone();
+            return clone;
         }
     }
 }

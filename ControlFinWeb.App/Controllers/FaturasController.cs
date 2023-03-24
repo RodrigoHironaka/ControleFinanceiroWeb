@@ -111,7 +111,7 @@ namespace ControlFinWeb.App.Controllers
         public JsonResult Deletar(int id)
         {
             Repositorio.ExcluirOuCancelarFaturaEParcela(id);
-            return Json(fatura.DescricaoCompleta + "excluído com sucesso");
+            return Json(fatura._DescricaoCompleta + "excluído com sucesso");
         }
 
         [IgnoreAntiforgeryToken]

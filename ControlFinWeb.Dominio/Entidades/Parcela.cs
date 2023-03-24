@@ -5,7 +5,7 @@ using System;
 
 namespace ControlFinWeb.Dominio.Entidades
 {
-    public class Parcela : IEntidade
+    public class Parcela : IEntidade, ICloneable
     {
         public Parcela()
         {
@@ -33,5 +33,16 @@ namespace ControlFinWeb.Dominio.Entidades
         public virtual DateTime? DataAlteracao { get; set; }
         public virtual Usuario UsuarioCriacao { get; set; }
         public virtual Usuario UsuarioAlteracao { get; set; }
+
+        public virtual object Clone()
+        {
+            var clone = (Parcela)this.MemberwiseClone();
+            clone.FormaPagamento = (FormaPagamento)clone.FormaPagamento?.Clone();
+            clone.Conta = (Conta)clone.Conta?.Clone();
+            clone.Fatura = (Fatura)clone.Fatura?.Clone();
+            clone.UsuarioCriacao = (Usuario)clone.UsuarioCriacao.Clone();
+            clone.UsuarioAlteracao = (Usuario)clone.UsuarioAlteracao?.Clone();
+            return clone;
+        }
     }
 }

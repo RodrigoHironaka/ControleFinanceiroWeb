@@ -16,13 +16,36 @@ namespace ControlFinWeb.Repositorio.Repositorios
         {
             var historico = new StringBuilder();
             foreach (var item in diferencas)
-                historico.AppendLine(String.Format("Campo: {0} | Antes: {1} | Depois: {2}", item.MemberPath, item.Value1, item.Value2));
-
+            {
+                if (item.MemberPath.Contains("."))
+                {
+                    if (item.MemberPath.EndsWith(".Nome") || item.MemberPath.EndsWith(".Value"))
+                        historico.AppendLine(String.Format("Campo: {0} | Antes: {1} | Depois: {2}", item.MemberPath, item.Value1, item.Value2));
+                }
+                else
+                {
+                    historico.AppendLine(String.Format("Campo: {0} | Antes: {1} | Depois: {2}", item.MemberPath, item.Value1, item.Value2));
+                }
+            }
+                
             var log = new LogModificacao
             {
                 DataGeracao = DateTime.Now,
                 UsuarioCriacao = usuario,
                 Historico = historico.ToString(),
+                Chave = chave,
+            };
+
+            SalvarLote(log);
+        }
+
+        public void RegistrarLogExclusao(String historico, Usuario usuario, String chave)
+        {
+            var log = new LogModificacao
+            {
+                DataGeracao = DateTime.Now,
+                UsuarioCriacao = usuario,
+                Historico = historico,
                 Chave = chave,
             };
 

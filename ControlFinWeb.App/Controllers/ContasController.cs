@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Newtonsoft.Json;
+using ObjectsComparer;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,15 +21,20 @@ namespace ControlFinWeb.App.Controllers
     public class ContasController : Controller
     {
         private readonly RepositorioConta Repositorio;
+        private readonly RepositorioPessoa RepositorioPessoa;
+        private readonly RepositorioSubGasto RepositorioSubGasto;
         private readonly IMapper Mapper;
-        public ContasController(RepositorioConta repositorio, IMapper mapper)
+        public ContasController(RepositorioConta repositorio, RepositorioPessoa repositorioPessoa, RepositorioSubGasto repositorioSubGasto, IMapper mapper)
         {
             Repositorio = repositorio;
+            RepositorioPessoa = repositorioPessoa;
+            RepositorioSubGasto = repositorioSubGasto;
             Mapper = mapper;
         }
 
         Conta conta = new Conta();
         ContaVM contaVM = new ContaVM();
+        Conta cloneConta;
 
         public IActionResult Index()
         {
@@ -47,8 +53,8 @@ namespace ControlFinWeb.App.Controllers
                 contaVM.JsonParcelas = JsonConvert.SerializeObject(contaVM.ParcelasVM);
             }
             ViewBag.FormaPagamentoId = new SelectList(new RepositorioFormaPagamento(NHibernateHelper.ObterSessao()).ObterPorParametros(x => x.Situacao == Situacao.Ativo), "Id", "Nome", Id);
-            ViewBag.PessoaId = new SelectList(new RepositorioPessoa(NHibernateHelper.ObterSessao()).ObterPorParametros(x => x.Situacao == Situacao.Ativo), "Id", "Nome", Id);
-            ViewBag.SubGastoId = new SelectList(new RepositorioSubGasto(NHibernateHelper.ObterSessao()).ObterPorParametros(x => x.Situacao == Situacao.Ativo), "Id", "DescricaoCompleta", Id);
+            ViewBag.PessoaId = new SelectList(RepositorioPessoa.ObterPorParametros(x => x.Situacao == Situacao.Ativo), "Id", "Nome", Id);
+            ViewBag.SubGastoId = new SelectList(RepositorioSubGasto.ObterPorParametros(x => x.Situacao == Situacao.Ativo), "Id", "_DescricaoCompleta", Id);
 
             return View(contaVM);
         }
@@ -60,9 +66,13 @@ namespace ControlFinWeb.App.Controllers
             {
                 if (contaVM.Id > 0)
                 {
+                    contaVM.SubGastoVM = Mapper.Map<SubGastoVM>(RepositorioSubGasto.ObterPorId(contaVM.SubGastoId));
+                    contaVM.PessoaVM = Mapper.Map<PessoaVM>(RepositorioPessoa.ObterPorId(contaVM.PessoaId));
                     if (contaVM.JsonParcelas != null && !String.IsNullOrEmpty(contaVM.JsonParcelas))
                         contaVM.ParcelasVM = JsonConvert.DeserializeObject<IList<ParcelaVM>>(contaVM.JsonParcelas);
                     conta = Repositorio.ObterPorId(contaVM.Id);
+                    cloneConta = (Conta)conta.Clone();
+
                     //limpando para não dar erro no mapping
                     conta.Parcelas.Clear();
                     conta.Arquivos.Clear();
@@ -72,7 +82,7 @@ namespace ControlFinWeb.App.Controllers
                     conta.Parcelas.ForEach(x => x.Conta = conta);
                     conta.Parcelas.Where(x => x.Id == 0).ForEach(x => { x.DataGeracao = DateTime.Now; x.UsuarioCriacao = Configuracao.Usuario; });
                     conta.Arquivos.ForEach(x => x.Conta = conta);
-                    Repositorio.Alterar(conta);
+                    CompararAlteracoes();
                 }
                 else
                 {
@@ -89,27 +99,28 @@ namespace ControlFinWeb.App.Controllers
                 return RedirectToAction("Editar", new { id = conta.Id });
             }
             ViewBag.FormaPagamentoId = new SelectList(new RepositorioFormaPagamento(NHibernateHelper.ObterSessao()).ObterPorParametros(x => x.Situacao == Situacao.Ativo), "Id", "Nome", contaVM.Id);
-            ViewBag.PessoaId = new SelectList(new RepositorioPessoa(NHibernateHelper.ObterSessao()).ObterPorParametros(x => x.Situacao == Situacao.Ativo), "Id", "Nome", contaVM.Id);
-            ViewBag.SubGastoId = new SelectList(new RepositorioSubGasto(NHibernateHelper.ObterSessao()).ObterPorParametros(x => x.Situacao == Situacao.Ativo), "Id", "DescricaoCompleta", contaVM.Id);
+            ViewBag.PessoaId = new SelectList(RepositorioPessoa.ObterPorParametros(x => x.Situacao == Situacao.Ativo), "Id", "Nome", contaVM.Id);
+            ViewBag.SubGastoId = new SelectList(RepositorioSubGasto.ObterPorParametros(x => x.Situacao == Situacao.Ativo), "Id", "_DescricaoCompleta", contaVM.Id);
             return View(contaVM);
         }
         [HttpPost]
         [IgnoreAntiforgeryToken]
         public JsonResult Deletar(int id)
         {
-            var conta = Repositorio.ObterPorId(id);
+            conta = Repositorio.ObterPorId(id);
+            cloneConta = (Conta)conta.Clone();
             var parcelasDifPendente = conta.Parcelas.Where(x => x.SituacaoParcela != SituacaoParcela.Pendente).Count();
             if (conta.Parcelas.Where(x => x.SituacaoParcela != SituacaoParcela.Pendente).Count() > 0)
             {
                 conta.Situacao = SituacaoConta.Cancelado;
                 conta.Parcelas.Where(x => x.SituacaoParcela != SituacaoParcela.Pago && x.SituacaoParcela != SituacaoParcela.Cancelado).ForEach(x => x.SituacaoParcela = SituacaoParcela.Cancelado);
                 conta.Observacao = "Houve uma tentativa de exclusão, mas havia parcelas que não estavam com situação pendente, neste caso a conta é cancelada!";
-                Repositorio.Alterar(conta);
+                CompararAlteracoes();
                 return Json(conta.Nome + "cancelado com sucesso");
             }
             else
             {
-                Repositorio.Excluir(conta);
+                Repositorio.ExcluirRegistrarLog(conta, Configuracao.Usuario);
                 return Json(conta.Nome + "excluído com sucesso");
             }
         }
@@ -120,11 +131,12 @@ namespace ControlFinWeb.App.Controllers
         {
             try
             {
-                var conta = Repositorio.ObterPorId(id);
+                conta = Repositorio.ObterPorId(id);
+                cloneConta = (Conta)conta.Clone();
                 if (conta != null)
                 {
                     conta.Situacao = SituacaoConta.Finalizado;
-                    Repositorio.Alterar(conta);
+                    CompararAlteracoes();
                 }
             }
             catch (Exception ex)
@@ -142,11 +154,12 @@ namespace ControlFinWeb.App.Controllers
         {
             try
             {
-                var conta = Repositorio.ObterPorId(id);
+                conta = Repositorio.ObterPorId(id);
+                cloneConta = (Conta)conta.Clone();
                 if (conta != null)
                 {
                     conta.Situacao = SituacaoConta.Aberto;
-                    Repositorio.Alterar(conta);
+                    CompararAlteracoes();
                 }
             }
             catch (Exception ex)
@@ -157,5 +170,19 @@ namespace ControlFinWeb.App.Controllers
             return new EmptyResult();
         }
 
+        private void CompararAlteracoes()
+        {
+            var comparer = new ObjectsComparer.Comparer<Conta>();
+            comparer.AddComparerOverride<Usuario>(DoNotCompareValueComparer.Instance);
+            comparer.AddComparerOverride<Int64>(DoNotCompareValueComparer.Instance, member => member.Name.Contains("Id"));
+            comparer.AddComparerOverride<String>(DoNotCompareValueComparer.Instance, member => member.Name.StartsWith("_"));
+            comparer.IgnoreMember("DataGeracao");
+            comparer.IgnoreMember("DataAlteracao");
+            comparer.IgnoreMember<IList<Parcela>>();
+            comparer.IgnoreMember<IList<Arquivo>>();
+            var igual = comparer.Compare(cloneConta, conta, out IEnumerable<Difference> diferencas);
+            if (!igual)
+                Repositorio.EditarRegistrarLog(conta, diferencas, Configuracao.Usuario, $"{conta.GetType().Name}[{conta.Id}]");
+        }
     }
 }
