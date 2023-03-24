@@ -19,6 +19,7 @@
 <table id="tabela" class="table table-bordered table-striped table-hover">
     <thead>
         <tr>
+            <th>Foto</th>
             <th>
                 @Html.DisplayNameFor(model => model.Nome)
             </th>
@@ -35,7 +36,12 @@
         @foreach (var item in Model)
         {
             <tr>
-
+                <td>
+                    @if (!String.IsNullOrEmpty(item.Imagem))
+                    {
+                        <img src="~/img/Usuarios/@item.Imagem" alt="@item.Imagem" style="width: 100px; height: 100px" />
+                    }
+                </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.Nome)
                 </td>

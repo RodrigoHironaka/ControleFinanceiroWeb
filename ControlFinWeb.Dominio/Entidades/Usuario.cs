@@ -12,6 +12,7 @@ namespace ControlFinWeb.Dominio.Entidades
         }
         public virtual String Email { get; set; }
         public virtual String Senha { get; set; }
+        public virtual String Imagem { get; set; }
         public virtual SimNao Autorizado { get; set; }
         public virtual TipoUsuario TipoUsuario { get; set; }
         public virtual Situacao Situacao { get; set; }

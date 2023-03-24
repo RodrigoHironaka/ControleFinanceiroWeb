@@ -18,6 +18,7 @@ namespace ControlFinWeb.Repositorio.Mapeamentos
             Property(x => x.DataGeracao);
             Property(x => x.DataAlteracao);
             Property(x => x.Senha, m => m.Length(255));
+            Property(x => x.Imagem, m => m.Length(255));
             Property(x => x.Autorizado, m => m.Type<EnumType<SimNao>>());
             Property(x => x.TipoUsuario, m => m.Type<EnumType<TipoUsuario>>());
             Property(x => x.Situacao, m => m.Type<EnumType<Situacao>>());

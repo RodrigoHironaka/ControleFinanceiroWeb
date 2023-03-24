@@ -12,9 +12,8 @@
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="javascript:window.location.reload()"></button>
         </div>
         <div class="modal-body">
-            <form asp-action="Editar" id="FrmUsuario">
+            <form asp-action="Editar" id="FrmUsuario" enctype="multipart/form-data">
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                <input asp-for="Autorizado" class="form-control" type="hidden"/>
                 <input asp-for="Id" class="form-control" type="hidden" />
                 <input asp-for="Situacao" class="form-control" type="hidden" />
                 <div class="form-group">
@@ -39,19 +38,29 @@
                 </div>
                 <div class="form-group">
                     <label asp-for="TipoUsuario" class="control-label"></label>
-                    <select class="form-select" asp-for="TipoUsuario" asp-items="Html.GetEnumSelectList<TipoUsuario>()">
-                    </select>
+                    <select class="form-select" asp-for="TipoUsuario" asp-items="Html.GetEnumSelectList<TipoUsuario>()"></select>
                     <span asp-validation-for="TipoUsuario" class="text-danger"></span>
                 </div>
-               @* <div class="form-group">
-                    <label asp-for="Situacao" class="control-label"></label>
-                    <select class="form-select" asp-for="Situacao" asp-items="Html.GetEnumSelectList<Situacao>()">
-                    </select>
-                    <span asp-validation-for="Situacao" class="text-danger"></span>
-                </div>*@
+                <div class="form-group">
+                    <label asp-for="Autorizado" class="control-label"></label>
+                    <select class="form-select" asp-for="Autorizado" asp-items="Html.GetEnumSelectList<SimNao>()"></select>
+                    <span asp-validation-for="Autorizado" class="text-danger"></span>
+                </div>
+                @if(!String.IsNullOrEmpty(Model.Imagem))
+                {
+                    <div class="form-group">
+                        <label>Imagem Atual</label><br />
+                        <img src="~/img/Usuarios/@Model.Imagem" alt="@Model.Imagem" style="width: 100px; height: 100px" /> <strong>@Model.Imagem</strong>
+                    </div>
+                }
+                <div class="form-group">
+                    <label asp-for="ImagemUpload" class="control-label"></label>
+                    <input type="file" class="form-control" asp-for="ImagemUpload" name="ImagemUpload" />
+                    <span asp-validation-for="ImagemUpload" class="text-danger"></span>
+                </div>
                 <br />
                 <div class="form-group">
-                    <button type="button" onclick="Salvar()" class="w-100 btn btn-success btnConfirmar">Salvar</button>
+                    <button type="submit" class="w-100 btn btn-success">Salvar</button>
                 </div>
             </form>
         </div>
@@ -63,28 +72,4 @@
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
-
-    <script>
-        function Salvar() {
-            var dados = $("#FrmUsuario").serialize();
-            $.ajax({
-                url: '/Usuarios/Editar',
-                method: 'POST',
-                data: dados,
-                success: function (retorno) {
-                    if (retorno == "") {
-                        location.reload();
-                    }
-                    else {
-                        $("#modal").html(retorno);
-                        if ($("#id").val() > 0)
-                            $(".modal-title").html("ALTERANDO REGISTRO");
-                        else
-                            $(".modal-title").html("NOVO REGISTRO");
-                    }
-                }
-
-            });
-        }
-    </script>
-}
+   }

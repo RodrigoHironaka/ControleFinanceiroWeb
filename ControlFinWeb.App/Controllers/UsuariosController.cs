@@ -4,9 +4,11 @@ using ControlFinWeb.App.ViewModels.Acesso;
 using ControlFinWeb.Dominio.Entidades;
 using ControlFinWeb.Dominio.ObjetoValor;
 using ControlFinWeb.Repositorio.Repositorios;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Security.Cryptography;
 using Utils.Seguranca;
 
@@ -44,7 +46,8 @@ namespace ControlFinWeb.App.Controllers
                     Nome = usuario.Nome,
                     Email = usuario.Email,
                     TipoUsuario = usuario.TipoUsuario,
-                    Situacao = usuario.Situacao
+                    Situacao = usuario.Situacao,
+                    Imagem = usuario.Imagem,
                 };
             }
 
@@ -64,14 +67,24 @@ namespace ControlFinWeb.App.Controllers
                 usuario.TipoUsuario = usuarioVM.TipoUsuario;
                 usuario.Situacao = usuarioVM.Situacao;
                 if (!string.IsNullOrEmpty(usuarioVM.Senha)) 
-                    usuario.Senha = new Criptografia(SHA256.Create()).Criptografar(usuarioVM.Senha); 
+                    usuario.Senha = new Criptografia(SHA256.Create()).Criptografar(usuarioVM.Senha);
 
                 if (usuarioVM.Id == 0)
                     Repositorio.Salvar(usuario);
-                else
-                    Repositorio.Alterar(usuario);
 
-                return new EmptyResult();
+                if (usuarioVM.ImagemUpload != null)
+                {
+                    var imgPrefixo = usuario.Id + "_";
+                    if (!UploadArquivo(usuarioVM.ImagemUpload, imgPrefixo))
+                    {
+                        return View(usuarioVM);
+                    }
+                    usuario.Imagem = imgPrefixo + usuarioVM.ImagemUpload.FileName;
+                }
+              
+                Repositorio.Alterar(usuario);
+
+                return RedirectToAction("Index");
             }
 
             return View(usuarioVM);
@@ -97,6 +110,31 @@ namespace ControlFinWeb.App.Controllers
 
             return RedirectToAction("Index");
 
+        }
+
+        private bool UploadArquivo(IFormFile arquivo, string imgPrefixo)
+        {
+            if (arquivo.Length <= 0) return false;
+
+            var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/img/Usuarios", imgPrefixo + arquivo.FileName);
+
+            if (System.IO.File.Exists(path))
+                System.IO.File.Delete(path);
+
+            DirectoryInfo dir = new DirectoryInfo(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/img/Usuarios"));
+            var arqs = dir.GetFiles("*.*");
+            foreach (var arq in arqs)
+            {
+                if (arq.Name.StartsWith(usuario.Id.ToString()))
+                    arq.Delete();
+            }
+
+            using (var stream = new FileStream(path, FileMode.Create))
+            {
+                arquivo.CopyToAsync(stream);
+            }
+
+            return true;
         }
     }
 }

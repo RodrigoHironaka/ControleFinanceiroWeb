@@ -1,4 +1,5 @@
 ﻿using ControlFinWeb.Dominio.ObjetoValor;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -24,6 +25,10 @@ namespace ControlFinWeb.App.ViewModels.Acesso
         public String Senha { get; set; }
 
         public SimNao Autorizado { get; set; }
+        public String Imagem { get; set; }
+        
+        [DisplayName("Foto")]
+        public IFormFile ImagemUpload { get; set; }
 
         [Compare("Senha", ErrorMessage = "Senhas diferentes!")]
         [DisplayName("Confirmar Senha")]

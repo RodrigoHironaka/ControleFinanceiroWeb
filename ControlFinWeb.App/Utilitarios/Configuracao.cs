@@ -25,7 +25,8 @@ namespace ControlFinWeb.App.Utilitarios
                     Usuario = new Usuario
                     {
                         Id = usu.Id,
-                        Nome = usu.Nome
+                        Nome = usu.Nome,
+                        Imagem = usu.Imagem
                     };
 
                 }
