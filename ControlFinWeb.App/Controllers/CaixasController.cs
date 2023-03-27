@@ -8,6 +8,7 @@ using ControlFinWeb.Repositorio.Repositorios;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using ObjectsComparer;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,6 +28,7 @@ namespace ControlFinWeb.App.Controllers
 
         Caixa caixa = new Caixa();
         CaixaVM caixaVM = new CaixaVM();
+        Caixa cloneCaixa;
 
         public IActionResult Index(Int64 idCaixa = 0)
         {
@@ -72,10 +74,11 @@ namespace ControlFinWeb.App.Controllers
                 if (caixaVM.Id > 0)
                 {
                     caixa = Repositorio.ObterPorId(caixaVM.Id);
+                    cloneCaixa = (Caixa)caixa.Clone();
                     caixa = Mapper.Map(caixaVM, caixa);
                     caixa.UsuarioAlteracao = Configuracao.Usuario;
                     caixa.Situacao = Dominio.ObjetoValor.SituacaoCaixa.Fechado;
-                    Repositorio.Alterar(caixa);
+                    CompararAlteracoes();
                 }
                 else
                 {
@@ -96,9 +99,22 @@ namespace ControlFinWeb.App.Controllers
         public JsonResult Deletar(Int64 Id)
         {
             caixa = Repositorio.ObterPorId(Id);
-            Repositorio.Excluir(caixa);
+            Repositorio.ExcluirRegistrarLog(caixa, Configuracao.Usuario);
             return Json(caixa.Id + "excluído com sucesso");
         }
 
+        private void CompararAlteracoes()
+        {
+            var comparer = new ObjectsComparer.Comparer<Caixa>();
+            comparer.AddComparerOverride<Usuario>(DoNotCompareValueComparer.Instance);
+            comparer.AddComparerOverride<Int64>(DoNotCompareValueComparer.Instance, member => member.Name.Contains("Id"));
+            comparer.AddComparerOverride<Decimal>(DoNotCompareValueComparer.Instance, member => member.Name.StartsWith("_"));
+            comparer.IgnoreMember("DataGeracao");
+            comparer.IgnoreMember("DataAlteracao");
+            comparer.IgnoreMember<IList<FluxoCaixa>>();
+            var igual = comparer.Compare(cloneCaixa, caixa, out IEnumerable<Difference> diferencas);
+            if (!igual)
+                Repositorio.EditarRegistrarLog(caixa, diferencas, Configuracao.Usuario, $"Caixa[{caixa.Id}]");
+        }
     }
 }

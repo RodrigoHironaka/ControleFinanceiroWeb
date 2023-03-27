@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using ControlFinWeb.App.Utilitarios;
 using ControlFinWeb.App.ViewModels;
 using ControlFinWeb.App.ViewModels.Acesso;
 using ControlFinWeb.Dominio.Entidades;
@@ -6,6 +7,7 @@ using ControlFinWeb.Dominio.ObjetoValor;
 using ControlFinWeb.Repositorio.Repositorios;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using ObjectsComparer;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -26,6 +28,7 @@ namespace ControlFinWeb.App.Controllers
 
         Usuario usuario = new Usuario();
         UsuarioVM usuarioVM = new UsuarioVM();
+        Usuario cloneUsuario;
 
         public IActionResult Index()
         {
@@ -60,8 +63,11 @@ namespace ControlFinWeb.App.Controllers
             if (ModelState.IsValid)
             {
                 if (usuarioVM.Id > 0)
+                {
                     usuario = Repositorio.ObterPorId(usuarioVM.Id);
-
+                    cloneUsuario = (Usuario)usuario.Clone();
+                }
+                    
                 usuario.Nome = usuarioVM.Nome;
                 usuario.Email = usuarioVM.Email;
                 usuario.TipoUsuario = usuarioVM.TipoUsuario;
@@ -81,8 +87,8 @@ namespace ControlFinWeb.App.Controllers
                     }
                     usuario.Imagem = imgPrefixo + usuarioVM.ImagemUpload.FileName;
                 }
-              
-                Repositorio.Alterar(usuario);
+
+                CompararAlteracoes();
 
                 return RedirectToAction("Index");
             }
@@ -93,9 +99,10 @@ namespace ControlFinWeb.App.Controllers
         [HttpGet]
         public IActionResult Inativar(Int64 id)
         {
-            var usuario = Repositorio.ObterPorId(id);
+            usuario = Repositorio.ObterPorId(id);
+            cloneUsuario = (Usuario)usuario.Clone();
             usuario.Situacao = Situacao.Inativo;
-            Repositorio.Alterar(usuario);
+            CompararAlteracoes();
 
             return RedirectToAction("Index");
 
@@ -104,9 +111,10 @@ namespace ControlFinWeb.App.Controllers
         [HttpGet]
         public IActionResult Ativar(Int64 id)
         {
-            var usuario = Repositorio.ObterPorId(id);
+            usuario = Repositorio.ObterPorId(id);
+            cloneUsuario = (Usuario)usuario.Clone();
             usuario.Situacao = Situacao.Ativo;
-            Repositorio.Alterar(usuario);
+            CompararAlteracoes();
 
             return RedirectToAction("Index");
 
@@ -135,6 +143,16 @@ namespace ControlFinWeb.App.Controllers
             }
 
             return true;
+        }
+
+        private void CompararAlteracoes()
+        {
+            var comparer = new ObjectsComparer.Comparer<Usuario>();
+            comparer.AddComparerOverride<Int64>(DoNotCompareValueComparer.Instance, member => member.Name.Contains("Id"));
+            comparer.AddComparerOverride<String>(DoNotCompareValueComparer.Instance, member => member.Name.StartsWith("_"));
+            var igual = comparer.Compare(cloneUsuario, usuario, out IEnumerable<Difference> diferencas);
+            if (!igual)
+                Repositorio.EditarRegistrarLog(usuario, diferencas, Configuracao.Usuario, String.Format("Usuário[{0}]", usuario.Id));
         }
     }
 }

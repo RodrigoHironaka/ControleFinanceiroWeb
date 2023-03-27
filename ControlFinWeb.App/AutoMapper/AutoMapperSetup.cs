@@ -73,8 +73,8 @@ namespace ControlFinWeb.App.AutoMapper
             CreateMap<FaturaVM, Fatura>()
                 .AfterMap((src, dest) =>
                 {
-                    dest.Cartao = new Cartao { Id = src.CartaoId };
-                    dest.Pessoa = new Pessoa { Id = src.PessoaId };
+                    dest.Cartao = new Cartao { Id = src.CartaoId, Nome = src.CartaoVM?.Nome };
+                    dest.Pessoa = new Pessoa { Id = src.PessoaId, Nome = src.PessoaVM?.Nome };
                     dest.FaturaItens = new MapperConfiguration(cfg => cfg.CreateMap<FaturaItensVM, FaturaItens>()
                     .AfterMap((src, dest) =>
                     {
@@ -87,8 +87,8 @@ namespace ControlFinWeb.App.AutoMapper
             CreateMap<FaturaItensVM, FaturaItens>()
                 .AfterMap((src, dest) =>
                 {
-                    dest.SubGasto = new SubGasto { Id = src.SubGastoId };
-                    dest.Pessoa = src.PessoaId > 0 ? new Pessoa { Id = src.PessoaId } : null;
+                    dest.SubGasto = new SubGasto { Id = src.SubGastoId, Nome = src.SubGastoVM?.Nome };
+                    dest.Pessoa = src.PessoaId > 0 ? new Pessoa { Id = src.PessoaId, Nome = src.PessoaVM?.Nome } : null;
                     dest.Fatura = new Fatura { Id = src.FaturaId };
                 });
             CreateMap<CaixaVM, Caixa>()

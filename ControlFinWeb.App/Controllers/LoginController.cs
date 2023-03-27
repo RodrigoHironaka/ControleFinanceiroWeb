@@ -17,10 +17,12 @@ namespace ControlFinWeb.App.Controllers
     public class LoginController : Controller
     {
         private readonly RepositorioUsuario RepositorioUsuario;
+        private readonly RepositorioLogModificacao RepositorioLog;
 
-        public LoginController(RepositorioUsuario repositorioUsuario)
+        public LoginController(RepositorioUsuario repositorioUsuario, RepositorioLogModificacao repositorioLog)
         {
             RepositorioUsuario = repositorioUsuario;
+            RepositorioLog = repositorioLog;
         }
         public IActionResult Index()
         {
@@ -52,7 +54,10 @@ namespace ControlFinWeb.App.Controllers
                     if (Url.IsLocalUrl(loginVM.ReturnUrl) && loginVM.ReturnUrl.Length > 1 && loginVM.ReturnUrl.StartsWith("/", StringComparison.OrdinalIgnoreCase) && !loginVM.ReturnUrl.StartsWith("//", StringComparison.OrdinalIgnoreCase) && !loginVM.ReturnUrl.StartsWith("/\\", StringComparison.OrdinalIgnoreCase))
                         return Redirect(loginVM.ReturnUrl);
                     else
+                    {
+                        RepositorioLog.RegistrarLog("Acesso ao sistema!", usuario, $"Login[{usuario.Id}]");
                         return RedirectToAction("Index", "Home");
+                    }
                 }
                 else
                 {

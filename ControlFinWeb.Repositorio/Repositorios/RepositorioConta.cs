@@ -36,7 +36,7 @@ namespace ControlFinWeb.Repositorio.Repositorios
             {
                 try
                 {
-                    RepositorioLog.RegistrarLogExclusao($"Registro {conta.Nome}[{conta.Id}] excluído!", usuario, $"{conta.GetType().Name}[{conta.Id}]");
+                    RepositorioLog.RegistrarLog($"Registro {conta.Nome}[{conta.Id}] excluído!", usuario, $"{conta.GetType().Name}[{conta.Id}]");
                     ExcluirLote(conta);
                     trans.Commit();
                 }

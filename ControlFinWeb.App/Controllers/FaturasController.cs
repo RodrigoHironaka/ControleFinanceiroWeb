@@ -10,6 +10,7 @@ using ControlFinWeb.Repositorio.Repositorios;
 using LinqKit;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using ObjectsComparer;
 using Org.BouncyCastle.Asn1.Cmp;
 using System;
 using System.Collections.Generic;
@@ -21,16 +22,22 @@ namespace ControlFinWeb.App.Controllers
     {
         private readonly RepositorioFatura Repositorio;
         private readonly RepositorioParcela RepositorioParcela;
+        private readonly RepositorioCartao RepositorioCartao;
+        private readonly RepositorioPessoa RepositorioPessoa;
         private readonly IMapper Mapper;
-        public FaturasController(RepositorioFatura repositorio, RepositorioParcela repositorioParcela, IMapper mapper)
+        public FaturasController(RepositorioFatura repositorio, RepositorioParcela repositorioParcela, 
+            RepositorioCartao repositorioCartao, RepositorioPessoa repositorioPessoa, IMapper mapper)
         {
             Repositorio = repositorio;
             RepositorioParcela = repositorioParcela;
+            RepositorioCartao = repositorioCartao;
+            RepositorioPessoa = repositorioPessoa;
             Mapper = mapper;
         }
 
         Fatura fatura = new Fatura();
         FaturaVM faturaVM = new FaturaVM();
+        Fatura cloneFatura;
 
         public IActionResult Index(Int64 idFatura = 0)
         {
@@ -88,10 +95,13 @@ namespace ControlFinWeb.App.Controllers
             {
                 if (faturaVM.Id > 0)
                 {
+                    faturaVM.CartaoVM = Mapper.Map<CartaoVM>(RepositorioCartao.ObterPorId(faturaVM.CartaoId));
+                    faturaVM.PessoaVM = Mapper.Map<PessoaVM>(RepositorioPessoa.ObterPorId(faturaVM.PessoaId));
                     fatura = Repositorio.ObterPorId(faturaVM.Id);
+                    cloneFatura = (Fatura)fatura.Clone();
                     fatura = Mapper.Map(faturaVM, fatura);
                     fatura.UsuarioAlteracao = Configuracao.Usuario;
-                    Repositorio.Alterar(fatura);
+                    CompararAlteracoes();
                 }
                 else
                 {
@@ -110,21 +120,22 @@ namespace ControlFinWeb.App.Controllers
         [IgnoreAntiforgeryToken]
         public JsonResult Deletar(int id)
         {
-            Repositorio.ExcluirOuCancelarFaturaEParcela(id);
+            Repositorio.ExcluirOuCancelarFaturaEParcela(id, Configuracao.Usuario);
             return Json(fatura._DescricaoCompleta + "excluído com sucesso");
         }
 
         [IgnoreAntiforgeryToken]
         public IActionResult FecharFatura(String obs, Int64 id = 0)
         {
-            var fatura = Repositorio.ObterPorId(id);
+            fatura = Repositorio.ObterPorId(id);
             if (fatura != null)
             {
+                cloneFatura = (Fatura)fatura.Clone();
                 fatura.SituacaoFatura = SituacaoFatura.Fechada;
                 fatura.DataFechamento = DateTime.Now;
                 if (!String.IsNullOrEmpty(obs))
                     fatura.Nome = obs;
-                Repositorio.Alterar(fatura);
+                CompararAlteracoes();
             }
             return new EmptyResult();
         }
@@ -136,6 +147,21 @@ namespace ControlFinWeb.App.Controllers
                 return true;
 
             return false;
+        }
+
+        private void CompararAlteracoes()
+        {
+            var comparer = new ObjectsComparer.Comparer<Fatura>();
+            comparer.AddComparerOverride<Usuario>(DoNotCompareValueComparer.Instance);
+            comparer.AddComparerOverride<Int64>(DoNotCompareValueComparer.Instance, member => member.Name.Contains("Id"));
+            comparer.AddComparerOverride<String>(DoNotCompareValueComparer.Instance, member => member.Name.StartsWith("_"));
+            comparer.AddComparerOverride<Decimal>(DoNotCompareValueComparer.Instance, member => member.Name.StartsWith("_"));
+            comparer.IgnoreMember("DataGeracao");
+            comparer.IgnoreMember("DataAlteracao");
+            comparer.IgnoreMember<IList<FaturaItens>>();
+            var igual = comparer.Compare(cloneFatura, fatura, out IEnumerable<Difference> diferencas);
+            if (!igual)
+                Repositorio.EditarRegistrarLog(fatura, diferencas, Configuracao.Usuario, $"Fatura[{fatura.Id}]");
         }
     }
 }

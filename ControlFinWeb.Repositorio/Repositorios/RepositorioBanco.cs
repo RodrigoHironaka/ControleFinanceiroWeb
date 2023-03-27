@@ -36,7 +36,7 @@ namespace ControlFinWeb.Repositorio.Repositorios
             {
                 try
                 {
-                    RepositorioLog.RegistrarLogExclusao($"Registro {banco.Nome}[{banco.Id}] excluído!", usuario, $"Banco[{banco.Id}]");
+                    RepositorioLog.RegistrarLog($"Registro {banco.Nome}[{banco.Id}] excluído!", usuario, $"Banco[{banco.Id}]");
                     ExcluirLote(banco);
                     trans.Commit();
                 }
@@ -47,7 +47,6 @@ namespace ControlFinWeb.Repositorio.Repositorios
                 }
             }
             
-
         }
     }
 }

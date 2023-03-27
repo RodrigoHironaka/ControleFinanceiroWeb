@@ -22,7 +22,7 @@ namespace ControlFinWeb.Dominio.Entidades
         {
             var clone = (Caixa)this.MemberwiseClone();
             clone.UsuarioCriacao = (Usuario)clone.UsuarioCriacao.Clone();
-            clone.UsuarioAlteracao = (Usuario)clone.UsuarioAlteracao.Clone();
+            clone.UsuarioAlteracao = (Usuario)clone.UsuarioAlteracao?.Clone();
             return clone;
         }
 

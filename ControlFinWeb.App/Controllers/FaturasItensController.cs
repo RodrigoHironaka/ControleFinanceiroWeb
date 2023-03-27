@@ -8,6 +8,7 @@ using ControlFinWeb.Repositorio.Repositorios;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using ObjectsComparer;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,17 +20,24 @@ namespace ControlFinWeb.App.Controllers
         private readonly RepositorioFaturaItens Repositorio;
         private readonly RepositorioFatura RepositorioFatura;
         private readonly RepositorioParcela RepositorioParcela;
+        private readonly RepositorioPessoa RepositorioPessoa;
+        private readonly RepositorioSubGasto RepositorioSubGasto;
         private readonly IMapper Mapper;
-        public FaturasItensController(RepositorioFaturaItens repositorio, RepositorioFatura repositorioFatura, RepositorioParcela repositorioParcela, IMapper mapper)
+        public FaturasItensController(RepositorioFaturaItens repositorio, RepositorioFatura repositorioFatura, 
+            RepositorioParcela repositorioParcela, RepositorioPessoa repositorioPessoa, RepositorioSubGasto repositorioSubGasto,
+            IMapper mapper)
         {
             Repositorio = repositorio;
             RepositorioFatura = repositorioFatura;
             RepositorioParcela = repositorioParcela;
+            RepositorioPessoa = repositorioPessoa;
+            RepositorioSubGasto = repositorioSubGasto;
             Mapper = mapper;
         }
 
         FaturaItens faturaItens = new FaturaItens();
         FaturaItensVM faturaItensVM = new FaturaItensVM();
+        FaturaItens cloneFaturaItens;
 
         public IActionResult Index(Int64 IdFatura)
         {
@@ -48,7 +56,7 @@ namespace ControlFinWeb.App.Controllers
             }
 
             ViewBag.Pessoas = new SelectList(new RepositorioPessoa(NHibernateHelper.ObterSessao()).ObterPorParametros(x => x.Situacao == Situacao.Ativo), "Id", "Nome", Id);
-            ViewBag.Subgastos = new SelectList(new RepositorioSubGasto(NHibernateHelper.ObterSessao()).ObterPorParametros(x => x.Situacao == Situacao.Ativo), "Id", "DescricaoCompleta", Id);
+            ViewBag.Subgastos = new SelectList(new RepositorioSubGasto(NHibernateHelper.ObterSessao()).ObterPorParametros(x => x.Situacao == Situacao.Ativo), "Id", "_DescricaoCompleta", Id);
             return View(faturaItensVM);
         }
 
@@ -57,21 +65,27 @@ namespace ControlFinWeb.App.Controllers
         {
             if (ModelState.IsValid)
             {
+                this.faturaItensVM = faturaItensVM;
                 if (faturaItensVM.Id > 0)
                 {
+                    faturaItensVM.FaturaVM = Mapper.Map<FaturaVM>(RepositorioFatura.ObterPorId(faturaItensVM.FaturaId));
+                    faturaItensVM.PessoaVM = Mapper.Map<PessoaVM>(RepositorioPessoa.ObterPorId(faturaItensVM.PessoaId));
+                    faturaItensVM.SubGastoVM = Mapper.Map<SubGastoVM>(RepositorioSubGasto.ObterPorId(faturaItensVM.SubGastoId));
                     faturaItens = Repositorio.ObterPorId(faturaItensVM.Id);
                     faturaItens.UsuarioAlteracao = Configuracao.Usuario;
+                    cloneFaturaItens = (FaturaItens)faturaItens.Clone();
                 }
                 else
                     faturaItens.UsuarioCriacao = Configuracao.Usuario;
-
+                
                 faturaItens = Mapper.Map(faturaItensVM, faturaItens);
                 faturaItens.Fatura = RepositorioFatura.ObterPorId(faturaItens.Fatura.Id);
-                Repositorio.SalvarAlterarFaturaItemEAlterarParcela(faturaItens, faturaItensVM.NumeroParcelas, faturaItensVM.Replicar);
+                //Repositorio.SalvarAlterarFaturaItemEAlterarParcela(faturaItens, faturaItensVM.NumeroParcelas, faturaItensVM.Replicar);
+                CompararAlteracoes();
                 return RedirectToAction("ConsultaItensRelacionados", new { codItemRelacionado = faturaItens.CodigoItemRelacionado });
             }
             ViewBag.Pessoas = new SelectList(new RepositorioPessoa(NHibernateHelper.ObterSessao()).ObterPorParametros(x => x.Situacao == Situacao.Ativo), "Id", "Nome", faturaItensVM.Id);
-            ViewBag.Subgastos = new SelectList(new RepositorioSubGasto(NHibernateHelper.ObterSessao()).ObterPorParametros(x => x.Situacao == Situacao.Ativo), "Id", "DescricaoCompleta", faturaItensVM.Id);
+            ViewBag.Subgastos = new SelectList(new RepositorioSubGasto(NHibernateHelper.ObterSessao()).ObterPorParametros(x => x.Situacao == Situacao.Ativo), "Id", "_DescricaoCompleta", faturaItensVM.Id);
             return View(faturaItensVM);
         }
 
@@ -79,7 +93,7 @@ namespace ControlFinWeb.App.Controllers
         [IgnoreAntiforgeryToken]
         public JsonResult Deletar(Int64 id)
         {
-            Repositorio.ExcluirItemFaturaEAlterarParcela(id);
+            Repositorio.ExcluirItemFaturaEAlterarParcela(id, Configuracao.Usuario);
             return Json("Excluído com sucesso");
         }
 
@@ -118,7 +132,8 @@ namespace ControlFinWeb.App.Controllers
                 {
                     if (faturaItem.Valor != novoValor)
                         faturaItem.Valor = novoValor;
-                    Repositorio.SalvarAlterarFaturaItemEAlterarParcela(faturaItem, "1", false);
+                    //Repositorio.SalvarAlterarFaturaItemEAlterarParcela(faturaItem, "1", false);
+                    CompararAlteracoes();
                     return new EmptyResult();
                 }
             }
@@ -133,9 +148,23 @@ namespace ControlFinWeb.App.Controllers
             foreach (var item in itens)
             {
                 if (item.Fatura.SituacaoFatura == Dominio.ObjetoValor.SituacaoFatura.Aberta)
-                    Repositorio.ExcluirItemFaturaEAlterarParcela(item.Id);
+                    Repositorio.ExcluirItemFaturaEAlterarParcela(item.Id, Configuracao.Usuario);
             }
             return Json("Excluído com sucesso");
+        }
+
+        private void CompararAlteracoes()
+        {
+            var comparer = new ObjectsComparer.Comparer<FaturaItens>();
+            comparer.AddComparerOverride<Usuario>(DoNotCompareValueComparer.Instance);
+            comparer.AddComparerOverride<Fatura>(DoNotCompareValueComparer.Instance);
+            comparer.AddComparerOverride<Int64>(DoNotCompareValueComparer.Instance, member => member.Name.Contains("Id"));
+            comparer.AddComparerOverride<String>(DoNotCompareValueComparer.Instance, member => member.Name.StartsWith("_"));
+            comparer.IgnoreMember("DataGeracao");
+            comparer.IgnoreMember("DataAlteracao");
+            var igual = comparer.Compare(cloneFaturaItens, faturaItens, out IEnumerable<Difference> diferencas);
+            if (!igual)
+                Repositorio.SalvarAlterarFaturaItemEAlterarParcela(faturaItens, faturaItensVM.NumeroParcelas, faturaItensVM.Replicar, diferencas, Configuracao.Usuario);
         }
     }
 }

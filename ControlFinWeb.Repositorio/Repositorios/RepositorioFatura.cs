@@ -1,7 +1,9 @@
 ﻿using ControlFinWeb.Dominio.Entidades;
 using ControlFinWeb.Dominio.ObjetoValor;
 using NHibernate;
+using ObjectsComparer;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace ControlFinWeb.Repositorio.Repositorios
@@ -10,10 +12,12 @@ namespace ControlFinWeb.Repositorio.Repositorios
     {
         private readonly RepositorioParcela RepositorioParcela;
         private readonly RepositorioCartao RepositorioCartao;
-        public RepositorioFatura(ISession session, RepositorioParcela repositorioParcela, RepositorioCartao repositorioCartao) : base(session)
+        private readonly RepositorioLogModificacao RepositorioLog;
+        public RepositorioFatura(ISession session, RepositorioParcela repositorioParcela, RepositorioCartao repositorioCartao, RepositorioLogModificacao repositorioLog) : base(session)
         {
             RepositorioParcela = repositorioParcela;
             RepositorioCartao = repositorioCartao;
+            RepositorioLog = repositorioLog;
         }
 
         public void SalvarEGerarNovaParcela(Fatura entidade)
@@ -49,7 +53,7 @@ namespace ControlFinWeb.Repositorio.Repositorios
             RepositorioParcela.AdicionarNovaParcela(0, dataVenc, entidade.UsuarioCriacao, null, entidade);
         }
 
-        public void ExcluirOuCancelarFaturaEParcela(Int64 Id)
+        public void ExcluirOuCancelarFaturaEParcela(Int64 Id, Usuario usuario)
         {
             using (var trans = Session.BeginTransaction())
             {
@@ -62,12 +66,32 @@ namespace ControlFinWeb.Repositorio.Repositorios
                         RepositorioParcela.ExcluirLote(existeParcela);
                     ExcluirLote(fatura);
 
+                    RepositorioLog.RegistrarLog($"Fatura {fatura._DescricaoCompleta}\nParcela[{existeParcela.Id}] nº {existeParcela?.Numero} - valor {existeParcela.ValorAberto.ToString("C2")}\nforam excluídas", usuario, $"Fatura[{Id}]");
+
                     trans.Commit();
                 }
                 catch (Exception ex)
                 {
                     trans.Rollback();
                     throw new Exception(ex.ToString());
+                }
+            }
+        }
+
+        public void EditarRegistrarLog(Fatura fatura, IEnumerable<Difference> diferencas, Usuario usuario, String chave)
+        {
+            using (var trans = Session.BeginTransaction())
+            {
+                try
+                {
+                    RepositorioLog.RegistrarLogModificacao(diferencas, usuario, chave);
+                    AlterarLote(fatura);
+                    trans.Commit();
+                }
+                catch (Exception ex)
+                {
+                    trans.Rollback();
+                    throw new Exception(ex.Message);
                 }
             }
         }

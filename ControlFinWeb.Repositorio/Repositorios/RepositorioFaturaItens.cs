@@ -1,7 +1,9 @@
 ﻿using ControlFinWeb.Dominio.Entidades;
 using ControlFinWeb.Dominio.ObjetoValor;
 using NHibernate;
+using ObjectsComparer;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace ControlFinWeb.Repositorio.Repositorios
@@ -10,14 +12,16 @@ namespace ControlFinWeb.Repositorio.Repositorios
     {
         private readonly RepositorioParcela RepositorioParcela;
         private readonly RepositorioFatura RepositorioFatura;
+        private readonly RepositorioLogModificacao RepositorioLog;
 
-        public RepositorioFaturaItens(RepositorioParcela repositorioParcela, RepositorioFatura repositorioFatura, ISession session) : base(session)
+        public RepositorioFaturaItens(RepositorioParcela repositorioParcela, RepositorioFatura repositorioFatura, RepositorioLogModificacao repositorioLog, ISession session) : base(session)
         {
             RepositorioParcela = repositorioParcela;
             RepositorioFatura = repositorioFatura;
+            RepositorioLog = repositorioLog;
         }
 
-        public void SalvarAlterarFaturaItemEAlterarParcela(FaturaItens faturaItens, String nParcelas, Boolean replicar)
+        public void SalvarAlterarFaturaItemEAlterarParcela(FaturaItens faturaItens, String nParcelas, Boolean replicar, IEnumerable<Difference> diferencas, Usuario usuario)
         {
             using (var trans = Session.BeginTransaction())
             {
@@ -47,7 +51,7 @@ namespace ControlFinWeb.Repositorio.Repositorios
                         {
                             faturaItens.Valor = valorParcela;
                             faturaItens.QuantidadeRelacionado = faturaItens.Id == 0 ? String.Format("{0}/{1}", i + 1, numParcelas) : faturaItens.QuantidadeRelacionado;
-                            SalvarOuAlterar(faturaItens);
+                            SalvarOuAlterar(faturaItens, diferencas, usuario);
 
                             if (String.IsNullOrEmpty(faturaItens.CodigoItemRelacionado))
                             {
@@ -84,15 +88,16 @@ namespace ControlFinWeb.Repositorio.Repositorios
                                 };
                                 RepositorioFatura.SalvarEGerarNovaParcelaLote(novaFatura);
                                 novoItemFatura.Fatura = novaFatura;
-                                SalvarOuAlterar(novoItemFatura);
+                                SalvarOuAlterar(novoItemFatura, diferencas, usuario);
                             }
                             else
                             {
                                 novoItemFatura.Fatura = proximaFatura;
-                                SalvarOuAlterar(novoItemFatura);
+                                SalvarOuAlterar(novoItemFatura, diferencas, usuario);
                             }
                         }
                     }
+
                     trans.Commit();
                 }
                 catch (Exception ex)
@@ -103,7 +108,7 @@ namespace ControlFinWeb.Repositorio.Repositorios
             }
         }
 
-        public void ExcluirItemFaturaEAlterarParcela(Int64 Id)
+        public void ExcluirItemFaturaEAlterarParcela(Int64 Id, Usuario usuario)
         {
             using (var trans = Session.BeginTransaction())
             {
@@ -113,6 +118,7 @@ namespace ControlFinWeb.Repositorio.Repositorios
                     faturaItem.Fatura.FaturaItens.Remove(faturaItem);
                     RepositorioParcela.AlterarParcelaFatura(faturaItem, true);
                     ExcluirLote(faturaItem);
+                    RepositorioLog.RegistrarLog($"Item {faturaItem.Nome} da Fatura {faturaItem.Fatura._DescricaoCompleta} excluído", usuario, $"Fatura[{faturaItem.Fatura.Id}] - Item[{faturaItem.Id}]");
                     trans.Commit();
                 }
                 catch (Exception ex)
@@ -123,12 +129,13 @@ namespace ControlFinWeb.Repositorio.Repositorios
             }
         }
 
-        public void SalvarOuAlterar(FaturaItens faturaItem)
+        public void SalvarOuAlterar(FaturaItens faturaItem, IEnumerable<Difference> diferencas, Usuario usuario)
         {
             if (faturaItem.Id > 0)
             {
                 RepositorioParcela.AlterarParcelaFatura(faturaItem, false, true);
                 AlterarLote(faturaItem);
+                RepositorioLog.RegistrarLogModificacao(diferencas, usuario, $"Fatura[{faturaItem.Fatura.Id}] - Item[{faturaItem.Id}]");
             }
             else
             {

@@ -14,12 +14,17 @@ namespace ControlFinWeb.Dominio.Entidades
         public virtual Pessoa Pessoa { get; set; }
         public virtual Fatura Fatura { get; set; }
 
+        public override string ToString()
+        {
+            return $"[{Id}] - {Nome}";
+        }
+
         public virtual object Clone()
         {
             var clone = (FaturaItens)this.MemberwiseClone();
-            clone.SubGasto = (SubGasto)clone.SubGasto.Clone();
-            clone.Pessoa = (Pessoa)clone.Pessoa.Clone();
-            clone.Fatura = (Fatura)clone.Fatura.Clone();
+            clone.SubGasto = (SubGasto)clone.SubGasto?.Clone();
+            clone.Pessoa = (Pessoa)clone.Pessoa?.Clone();
+            clone.Fatura = (Fatura)clone.Fatura?.Clone();
             return clone;
         }
     }

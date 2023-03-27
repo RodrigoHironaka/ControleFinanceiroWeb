@@ -136,7 +136,7 @@ namespace ControlFinWeb.Repositorio.Repositorios
                 {
                     var contaOuFatura = parcela.Conta != null ? "Conta" : "Fatura";
                     var idContaOuFatura = parcela.Conta != null ? parcela.Conta.Id : parcela.Fatura.Id;
-                    RepositorioLog.RegistrarLogExclusao($"Parcela Nº {parcela.Numero} foi excluída!", usuario, $"{contaOuFatura}[{idContaOuFatura}]");
+                    RepositorioLog.RegistrarLog($"Parcela Nº {parcela.Numero} foi excluída!", usuario, $"{contaOuFatura}[{idContaOuFatura}]");
                     ExcluirLote(parcela);
                     trans.Commit();
                 }

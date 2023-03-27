@@ -10,7 +10,7 @@ namespace ControlFinWeb.Repositorio.Repositorios
 {
     public class RepositorioLogModificacao : RepositorioBase<LogModificacao>
     {
-        public RepositorioLogModificacao(ISession session) : base(session) {}
+        public RepositorioLogModificacao(ISession session) : base(session) { }
 
         public void RegistrarLogModificacao(IEnumerable<Difference> diferencas, Usuario usuario, String chave)
         {
@@ -27,7 +27,7 @@ namespace ControlFinWeb.Repositorio.Repositorios
                     historico.AppendLine(String.Format("Campo: {0} | Antes: {1} | Depois: {2}", item.MemberPath, item.Value1, item.Value2));
                 }
             }
-                
+
             var log = new LogModificacao
             {
                 DataGeracao = DateTime.Now,
@@ -39,7 +39,7 @@ namespace ControlFinWeb.Repositorio.Repositorios
             SalvarLote(log);
         }
 
-        public void RegistrarLogExclusao(String historico, Usuario usuario, String chave)
+        public void RegistrarLog(String historico, Usuario usuario, String chave)
         {
             var log = new LogModificacao
             {

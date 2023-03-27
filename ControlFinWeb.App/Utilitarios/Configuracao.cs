@@ -20,7 +20,7 @@ namespace ControlFinWeb.App.Utilitarios
             {
                 if (String.IsNullOrEmpty(httpContextAcessor.HttpContext.Session?.GetString("Usuario")))
                 {
-                    Usuario usu = new RepositorioUsuario(NHibernateHttpModule.CurrentSession).ObterPorId(Int64.Parse(httpContextAcessor.HttpContext.User.Identity.Name));
+                    Usuario usu = new RepositorioUsuario(NHibernateHttpModule.CurrentSession, null).ObterPorId(Int64.Parse(httpContextAcessor.HttpContext.User.Identity.Name));
 
                     Usuario = new Usuario
                     {
