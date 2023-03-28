@@ -99,6 +99,13 @@ namespace ControlFinWeb.App.Controllers
         {
             if (ModelState.IsValid)
             {
+                if (contaBancariaVM.TransfereParaCaixa == true)
+                {
+                    var saldo = Repositorio.Saldo(DateTime.Now, contaBancariaVM.BancoId);
+                    if(saldo < contaBancariaVM.Valor)
+                        return Json(new { result = false, error = "Saldo insuficiente na conta bancária!" });
+                }
+
                 if (contaBancariaVM.Id > 0)
                 {
                     contaBancariaVM.CaixaVM = Mapper.Map<CaixaVM>(RepositorioCaixa.ObterPorId(contaBancariaVM.CaixaId));

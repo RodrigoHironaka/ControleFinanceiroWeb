@@ -149,23 +149,23 @@
             });
         });
 
-        function ExibirModalExcluir(id) {
-            $("#modal-excluir").modal("show");
-            $(".btnConfirmar").on("click", function () {
-                $.ajax({
-                    method: "POST",
-                    url: "Deletar",
-                    data: { id: id },
-                    success: function () {
-                        location.reload();
-                    },
-                    error: function () {
-                        $("#modal-excluir").modal("hide");
-                        $("#mensagem").addClass('alert alert-danger').html("<strong>Erro!</strong> Não é possível excluir, por favor inative o registro!").delay(10000).fadeOut(400);
-                    }
-                });
-            })
-        }
+        //function ExibirModalExcluir(id) {
+        //    $("#modal-excluir").modal("show");
+        //    $(".btnConfirmar").on("click", function () {
+        //        $.ajax({
+        //            method: "POST",
+        //            url: "Deletar",
+        //            data: { id: id },
+        //            success: function () {
+        //                location.reload();
+        //            },
+        //            error: function () {
+        //                $("#modal-excluir").modal("hide");
+        //                $("#mensagem").addClass('alert alert-danger').html("<strong>Erro!</strong> Não é possível excluir, por favor inative o registro!").delay(10000).fadeOut(400);
+        //            }
+        //        });
+        //    })
+        //}
 
         $(function () {
             $(".abrirFecharCaixa").click(function () {
@@ -206,11 +206,15 @@
                     $("#modal").load("/ContasBancarias/Editar?valorTransferencia=" + valor, function () {
                         $(".modal-title").html("TRANSFERIR PARA O BANCO");
                         $("#CaixaId").val(idCaixa);
-                        $("#TransfereParaBanco").val(true);
+                        $("#TransfereParaCaixa").val(false);
                         $("#modal").modal("show");
                     });
                 } else {
-                    $("#mensagem").addClass('alert alert-warning').html("<strong>Erro!</strong> Balanço Final é negativo! Não é possível transferir.").delay(10000).fadeOut(400);
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Oops...',
+                        text: "Balanço Final é negativo! Não é possível transferir.",
+                    });
                 }
 
             });
@@ -222,7 +226,7 @@
                 $("#modal").load("/ContasBancarias/Editar?valorTransferencia=" + valor, function () {
                     $(".modal-title").html("TRANSFERIR PARA O CAIXA");
                     $("#CaixaId").val(idCaixa);
-                    $("#TransfereParaBanco").val(false);
+                    $("#TransfereParaCaixa").val(true);
                     $("#modal").modal("show");
                 });
             });

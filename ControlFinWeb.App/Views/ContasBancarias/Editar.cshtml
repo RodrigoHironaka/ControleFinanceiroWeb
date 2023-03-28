@@ -17,7 +17,7 @@
                 <input asp-for="Id" type="hidden" />
                 <input asp-for="CaixaId" type="hidden" />
                 <input asp-for="GerarFluxoCaixa" type="hidden" />
-                <input asp-for="TransfereParaBanco" type="hidden" />
+                <input asp-for="TransfereParaCaixa" type="hidden" />
                 <div class="form-group">
                     <label asp-for="Nome" class="control-label"></label>
                     <textarea asp-for="Nome" class="form-control" rows="2"></textarea>
@@ -47,7 +47,7 @@
                         <span asp-validation-for="TransacaoBancaria" class="text-danger"></span>
                     </div>
                     <div class="col-md-3">
-                        <label asp-for="Situacao" class="control-label"></label>
+                        <label asp-for="Situacao" id="labelSituacao" class="control-label"></label>
                         <select class="form-select" asp-for="Situacao" id="SituacaoDefinida" asp-items="Html.GetEnumSelectList<EntradaSaida>()"></select>
                         <span asp-validation-for="Situacao" class="text-danger"></span>
                     </div>
@@ -80,26 +80,37 @@
                     if (retorno == "")
                         location.reload();
                     else {
-                        $("#modal").html(retorno);
-                        if ($("#id").val() > 0)
-                            $(".modal-title").html("ALTERANDO REGISTRO");
-                        else
-                            $(".modal-title").html("NOVO REGISTRO");
+                        if (retorno.result == false) {
+                            Swal.fire({
+                                icon: 'warning',
+                                title: 'Oops...',
+                                text: retorno.error,
+                            });
+                        }
+                        else {
+                            $("#modal").html(retorno);
+                            if ($("#id").val() > 0)
+                                $(".modal-title").html("ALTERANDO REGISTRO");
+                            else
+                                $(".modal-title").html("NOVO REGISTRO");
+                        }
+
                     }
                 }
-
             });
         }
 
         $(document).ready(function () {
-            var transfereParaBanco = $("#TransfereParaBanco").val();
-            if (transfereParaBanco == "true") {
-                $("#SituacaoDefinida").val(0);
-                $("#SituacaoDefinida").attr("disabled", true);
-            }
-            else if (transfereParaBanco == "false"){
+            var transfereParaCaixa = $("#TransfereParaCaixa").val();
+            if (transfereParaCaixa == "true") {
                 $("#SituacaoDefinida").val(1);
-                $("#SituacaoDefinida").attr("disabled", true);
+                $("#SituacaoDefinida").attr("hidden", true);
+                $("#labelSituacao").attr("hidden", true);
+            }
+            else if (transfereParaCaixa == "false") {
+                $("#SituacaoDefinida").val(0);
+                $("#SituacaoDefinida").attr("hidden", true);
+                $("#labelSituacao").attr("hidden", true);
             }
         });
     </script>

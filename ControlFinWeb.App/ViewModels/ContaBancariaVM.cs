@@ -12,7 +12,7 @@ namespace ControlFinWeb.App.ViewModels
     {
         public ContaBancariaVM()
         {
-            TransfereParaBanco = null;
+            TransfereParaCaixa = null;
         }
 
         [DisplayName("Código")]
@@ -39,7 +39,7 @@ namespace ControlFinWeb.App.ViewModels
         public EntradaSaida Situacao { get; set; }
 
         public Boolean GerarFluxoCaixa { get; set; }
-        public Boolean? TransfereParaBanco { get; set; }
+        public Boolean? TransfereParaCaixa { get; set; }
 
         [Range(1, Int64.MaxValue, ErrorMessage = "Informe um Banco")]
         [DisplayName("Banco")]

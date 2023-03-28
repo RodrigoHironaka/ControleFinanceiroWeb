@@ -1,10 +1,13 @@
 ﻿using ControlFinWeb.Dominio.Entidades;
 using ControlFinWeb.Dominio.ObjetoValor;
+using LinqKit;
 using NHibernate;
 using ObjectsComparer;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
+using Utils.Extensions.Enums;
 
 namespace ControlFinWeb.Repositorio.Repositorios
 {
@@ -79,14 +82,13 @@ namespace ControlFinWeb.Repositorio.Repositorios
                 var caixa = RepositorioCaixa.ObterPorId(contaBancaria.Caixa.Id);
                 SalvarLote(contaBancaria);
                 var fluxoCaixa = new FluxoCaixa();
-                if(contaBancaria.Situacao == EntradaSaida.Entrada)
+                if (contaBancaria.Situacao == EntradaSaida.Entrada)
                 {
                     fluxoCaixa.DebitoCredito = DebitoCredito.Débito;
                     fluxoCaixa.Nome = $"Transferência do caixa para {banco._DadosCompletos}";
                 }
                 else
                 {
-                    //VERIFICAR SALDO CONTA AQUI - TRATAR CONTABANCARIA INICIO E FIM DE MES
                     fluxoCaixa.DebitoCredito = DebitoCredito.Crédito;
                     fluxoCaixa.Nome = $"Transferência do {banco._DadosCompletos} para o caixa";
                 }
@@ -98,7 +100,7 @@ namespace ControlFinWeb.Repositorio.Repositorios
                 fluxoCaixa.Caixa = caixa;
                 fluxoCaixa.DataGeracao = DateTime.Now;
                 fluxoCaixa.UsuarioCriacao = usuario;
-               
+
                 RepositorioFluxoCaixa.SalvarLote(fluxoCaixa);
                 trans.Commit();
             }
@@ -144,6 +146,24 @@ namespace ControlFinWeb.Repositorio.Repositorios
                 }
             }
 
+        }
+
+        public Decimal Saldo(DateTime data, Int64 bancoId)
+        {
+            decimal saldo = 0;
+            var predicado = CriarPredicado();
+            predicado = predicado.And(x => x.Banco.Id == bancoId);
+            predicado = predicado.And(x => x.DataRegistro >= data.PrimeiroDiaMes());
+            predicado = predicado.And(x => x.DataRegistro <= data.UltimoDiaMes().FinalDia());
+
+            var registros = ObterPorParametros(predicado).ToList();
+            if (registros.Count > 0)
+            {
+                var saldoEntrada = registros.Where(x => x.Situacao == EntradaSaida.Entrada).Sum(x => x.Valor);
+                var saldoSaida = registros.Where(x => x.Situacao == EntradaSaida.Saída).Sum(x => x.Valor);
+                saldo = saldoEntrada - saldoSaida;
+            }
+            return saldo;
         }
     }
 }
