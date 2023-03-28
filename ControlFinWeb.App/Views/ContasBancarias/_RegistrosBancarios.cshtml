@@ -1,0 +1,65 @@
+﻿@model IEnumerable<ControlFinWeb.App.ViewModels.ContaBancariaVM>
+
+<table id="tabelaRegistros" class="table table-bordered table-hover">
+    <thead>
+        <tr>
+            <th>Data</th>
+            <th>Tipo</th>
+            <th style="text-align:right">Valor</th>
+            <th>Banco</th>
+            <th>Transação</th>
+            <th>Descrição</th>
+            <th style="text-align:center">Opções</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.Raw(item.DataRegistro.Value.Date.ToShortDateString())
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Situacao)
+                </td>
+                <td align="right">
+                    @if (item.Situacao == ControlFinWeb.Dominio.ObjetoValor.EntradaSaida.Entrada)
+                    {
+                        @Html.DisplayFor(modelItem => item.Valor)
+                    }
+                    else
+                    {
+                        var valor = item.Valor * -1;
+                        @Html.DisplayFor(modelItem => valor)
+                    }
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.BancoVM.NomeETipo)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.TransacaoBancaria)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.DescricaoComCodigo)
+                </td>
+                <td align="center">
+                    <button class="btn btn-sm btn-primary modal-trigger editar" data-id="@item.Id"><i class="bi bi-pencil-square"></i></button>
+                    <button class="btn btn-sm btn-danger modal-trigger" onclick="ExibirModalExcluir(@item.Id)"><i class="bi bi-x-square"></i></button>
+                </td>
+            </tr>
+        }
+    </tbody>
+    <tfoot>
+        <tr style="text-align:right">
+            <th colspan="1">Total:</th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+        </tr>
+    </tfoot>
+</table>
+
+

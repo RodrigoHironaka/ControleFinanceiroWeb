@@ -58,7 +58,6 @@
         $(document).on("mousedown touchstart", ".editarFatura", function () {
             $("#modal").modal("hide");
             var id = $(this).attr("data-id");
-            console.log(id);
             $("#modal").load("/Faturas/Editar?id=" + id, function () {
                 $(".modal-title").html("ALTERANDO REGISTRO");
                 $("#modal").modal("show");

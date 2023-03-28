@@ -46,7 +46,7 @@ namespace ControlFinWeb.App.AutoMapper
             CreateMap<HoraExtraVM, HoraExtra>()
                .AfterMap((src, dest) => { dest.Pessoa = new Pessoa { Id = src.PessoaId }; });
             CreateMap<ContaBancariaVM, ContaBancaria>()
-               .AfterMap((src, dest) => { dest.Banco = new Banco { Id = src.BancoId }; dest.Caixa = src.CaixaId > 0 ? new Caixa { Id = src.CaixaId } : null; });
+               .AfterMap((src, dest) => { dest.Banco = new Banco { Id = src.BancoId, Nome = src.BancoVM?.Nome }; dest.Caixa = src.CaixaId > 0 ? new Caixa { Id = src.CaixaId, Numero = src.CaixaVM.Numero } : null; });
             CreateMap<ContaVM, Conta>()
               .AfterMap((src, dest) =>
               {

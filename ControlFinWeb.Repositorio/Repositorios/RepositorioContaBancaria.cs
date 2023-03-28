@@ -1,6 +1,7 @@
 ﻿using ControlFinWeb.Dominio.Entidades;
 using ControlFinWeb.Dominio.ObjetoValor;
 using NHibernate;
+using ObjectsComparer;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,13 +13,16 @@ namespace ControlFinWeb.Repositorio.Repositorios
         private readonly RepositorioFluxoCaixa RepositorioFluxoCaixa;
         private readonly RepositorioCaixa RepositorioCaixa;
         private readonly RepositorioBanco RepositorioBanco;
+        private readonly RepositorioLogModificacao RepositorioLog;
         public RepositorioContaBancaria(RepositorioFluxoCaixa repositorioFluxoCaixa,
            RepositorioCaixa repositorioCaixa, RepositorioBanco repositorioBanco,
+           RepositorioLogModificacao repositorioLog,
         ISession session) : base(session)
         {
             RepositorioFluxoCaixa = repositorioFluxoCaixa;
             RepositorioCaixa = repositorioCaixa;
             RepositorioBanco = repositorioBanco;
+            RepositorioLog = repositorioLog;
         }
 
         public Decimal ObterSaldoContaBancaria(Int64 idBanco)
@@ -103,6 +107,43 @@ namespace ControlFinWeb.Repositorio.Repositorios
                 trans.Rollback();
                 throw new Exception(ex.ToString());
             }
+        }
+
+        public void EditarRegistrarLog(ContaBancaria contaBancaria, IEnumerable<Difference> diferencas, Usuario usuario, String chave)
+        {
+            using (var trans = Session.BeginTransaction())
+            {
+                try
+                {
+                    RepositorioLog.RegistrarLogModificacao(diferencas, usuario, chave);
+                    AlterarLote(contaBancaria);
+                    trans.Commit();
+                }
+                catch (Exception ex)
+                {
+                    trans.Rollback();
+                    throw new Exception(ex.Message);
+                }
+            }
+        }
+
+        public void ExcluirRegistrarLog(ContaBancaria contaBancaria, Usuario usuario)
+        {
+            using (var trans = Session.BeginTransaction())
+            {
+                try
+                {
+                    RepositorioLog.RegistrarLog($"Registro excluído!", usuario, $"ContaBancaria[{contaBancaria.Id}]");
+                    ExcluirLote(contaBancaria);
+                    trans.Commit();
+                }
+                catch (Exception ex)
+                {
+                    trans.Rollback();
+                    throw new Exception(ex.Message);
+                }
+            }
+
         }
     }
 }

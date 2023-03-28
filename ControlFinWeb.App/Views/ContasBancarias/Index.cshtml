@@ -1,7 +1,7 @@
-﻿@model IEnumerable<ControlFinWeb.App.ViewModels.ContaBancariaVM>
+﻿@model ControlFinWeb.App.ViewModels.FiltroContaBancariaVM
 
 @{
-    ViewData["Title"] = "Contas Bancárias";
+    ViewData["Title"] = "Index";
 }
 
 <div class="row">
@@ -12,96 +12,106 @@
         <span class="input-group-text fw-bold">Registros Bancários</span>
     </div>
 </div>
-<table id="tabela" class="table table-bordered table-hover" style="width:100%">
-    <thead>
-        <tr>
-            <th>Data</th>
-            <th>Tipo</th>
-            <th>Transação</th>
-            <th>Valor</th>
-            <th>Banco</th>
-            <th>Descrição</th>
-            <th style="text-align:center">Opções</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td>
-                    @Html.Raw(item.DataRegistro.Value.Date.ToShortDateString())
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Situacao)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.TransacaoBancaria)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Valor)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.BancoVM.NomeETipo)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.DescricaoComCodigo)
-                </td>
-                <td align="center">
-                    <button class="btn btn-sm btn-primary modal-trigger editar" data-id="@item.Id"><i class="bi bi-pencil-square"></i></button>
-                    <button class="btn btn-sm btn-danger modal-trigger" onclick="ExibirModalExcluir(@item.Id)"><i class="bi bi-x-square"></i></button>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+<hr />
 
-
+<form asp-action="Index" id="frmFiltroRegistroBancarios">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <input asp-for="Mes" type="hidden"/>
+    <div class="row">
+        <div class="col-md-3">
+            <select class="form-select" asp-for="BancoId" asp-items="ViewBag.BancoId">
+                <option value="0">---Selecione um banco---</option>
+            </select>
+            <span asp-validation-for="BancoId" class="text-danger"></span>
+        </div>
+        <div class="col-md-1">
+            <input asp-for="Ano" class="form-control" placeholder="ANO" min="2000" max="5000" value="@DateTime.Now.Year" />
+            <span asp-validation-for="Ano" class="text-danger"></span>
+        </div>
+        <div class="col-md-7">
+            <nav class="nav nav-pills nav-justified">
+                <a class="nav-link" onclick="VerificaMes(1)" value="1">JAN</a>
+                <a class="nav-link" onclick="VerificaMes(2)" value="2" >FEV</a>
+                <a class="nav-link" onclick="VerificaMes(3)" value="3" href="#">MAR</a>
+                <a class="nav-link" onclick="VerificaMes(4)" value="4" href="#">ABR</a>
+                <a class="nav-link" onclick="VerificaMes(5)" value="5" href="#">MAI</a>
+                <a class="nav-link" onclick="VerificaMes(6)" value="6" href="#">JUN</a>
+                <a class="nav-link" onclick="VerificaMes(7)" value="7" href="#">JUL</a>
+                <a class="nav-link" onclick="VerificaMes(8)" value="8" href="#">AGO</a>
+                <a class="nav-link" onclick="VerificaMes(9)" value="9" href="#">SET</a>
+                <a class="nav-link" onclick="VerificaMes(10)" value="10" href="#">OUT</a>
+                <a class="nav-link" onclick="VerificaMes(11)" value="11" href="#">NOV</a>
+                <a class="nav-link" onclick="VerificaMes(12)" value="12" href="#">DEZ</a>
+            </nav>
+ 
+        </div>
+     
+    </div>
+</form>
+<div id="tabelaRegistrosBancarios" class="mt-1">
+    <partial name="_RegistrosBancarios" model="@Model.ContasBancarias" />
+</div>
 <div id="modal" class="modal fade" role="dialog" data-bs-backdrop="static" data-bs-keyboard="false"></div>
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 
-@section Scripts
-{
-    <script>
-        $(document).ready(function () {
-            var collapsedGroups = {};
-
-            var table = $('#tabela').DataTable({
-                order: [[4, 'asc']],
-                rowGroup: {
-                    // Uses the 'row group' plugin
-                    dataSrc: 4,
-                    startRender: function (rows, group) {
-                        var collapsed = !!collapsedGroups[group];
-
-                        rows.nodes().each(function (r) {
-                            r.style.display = collapsed ? 'none' : '';
-                        });
-
-                        // Add category name to the <tr>. NOTE: Hardcoded colspan
-                        return $('<tr/>')
-                            .append('<td class="group-start" style="background-color: #ddd !important; font-weight:bold;" colspan="7" >'
-                                + group + ' Qtd Registros: [' + rows.count() + ']</td>')
-                            .attr('data-name', group)
-                            .toggleClass('collapsed', collapsed);
-                    }
-                },
-                language: {
-                    url: "//cdn.datatables.net/plug-ins/1.11.5/i18n/pt-BR.json"
-                },
-                responsive: true
-            });
-
-            $('#tabela tbody tr.group-start').each(function () {
-                var name = $(this).data('name');
-                collapsedGroups[name] = !collapsedGroups[name];
-            });
-            table.draw(false);
-
-            $('#tabela tbody').on('click', 'tr.group-start', function () {
-                var name = $(this).data('name');
-                collapsedGroups[name] = !collapsedGroups[name];
-                table.draw(false);
-            });
+    <script type="text/javascript">
+        $("#Ano").blur(function () {
+            var data = new Date();
+            var ano = data.getFullYear();
+            if ($(this).val() == "" || parseInt($(this).val()) < 2000 || parseInt($(this).val()) > 5000) {
+                $(this).val(ano);
+            }
         });
+        
+        function VerificaMes(mes){
+            $("#Mes").val(mes);
+            var bancoId = $("#BancoId").val();
+            var ano = $("#Ano").val();
+            var dados = $("#frmFiltroRegistroBancarios").serialize();
+            $.ajax({
+                url: '/ContasBancarias/Filtrar',
+                method: 'GET',
+                data: dados,
+                success: function (retorno) {
+                    $("#tabelaRegistrosBancarios").empty();
+                    $("#tabelaRegistrosBancarios").html(retorno);
+                    JqueryDataTable();
+                }
+            });
+        }
+
+        $(document).ready(function () {
+            JqueryDataTable();
+        });
+
+        function JqueryDataTable(){
+            $('#tabelaRegistros').DataTable({
+                "language": {
+                    "url": "//cdn.datatables.net/plug-ins/1.11.5/i18n/pt-BR.json"
+                },
+                paging: false,
+                info: false,
+                responsive: true,
+                footerCallback: function (row, data, start, end, display) {
+                    var numFormat = $.fn.dataTable.render.number('\.', ',', 2).display;
+                    var api = this.api();
+
+                    parcelaTotal = api
+                        .column(2, { page: 'current' })
+                        .data()
+                        .reduce(function (a, b) {
+                            return parseFloat(a.toString().replace(",", ".")) + parseFloat(b.toString().replace(",", "."));
+                        }, 0);
+                   
+                    $(api.column(2).footer()).html(numFormat(parcelaTotal));
+                   
+
+                },
+            });
+        }
 
         function ExibirModalExcluir(id) {
             Swal.fire({
@@ -134,23 +144,32 @@
             })
         }
 
+        $(document).on(TipoClick().toString(), ".novo", function () {
+            var id = $(this).attr("data-id");
+            $("#modal").load("/ContasBancarias/Editar?id=" + id, function () {
+                $(".modal-title").html("NOVO REGISTRO");
+                $("#modal").modal("show");
+            })
+
+        });
+
         $(function () {
-             $(document).on(TipoClick().toString(), ".novo", function () {
+            $(document).on(TipoClick().toString(), ".novo", function () {
                 var id = $(this).attr("data-id");
-                $("#modal").load("Editar?id=" + id, function () {
+                $("#modal").load("/ContasBancarias/Editar?id=" + id, function () {
                     $(".modal-title").html("NOVO REGISTRO");
                     $("#modal").modal("show");
                 })
-
             });
 
-             $(document).on(TipoClick().toString(), ".editar", function () {
+            $(document).on(TipoClick().toString(), ".editar", function () {
                 var id = $(this).attr("data-id");
-                $("#modal").load("Editar?id=" + id, function () {
+                $("#modal").load("/ContasBancarias/Editar?id=" + id, function () {
                     $(".modal-title").html("ALTERANDO REGISTRO");
                     $("#modal").modal("show");
                 })
             });
         })
+
     </script>
 }

@@ -17,7 +17,7 @@ namespace ControlFinWeb.Dominio.Entidades
 
         public virtual String _DadosCompletos
         {
-            get { return String.Format("{0} ({1}) - {2}", Nome, TipoContaBanco.GetDisplayName(), PessoaRefBanco.Nome); }
+            get { return String.Format("{0} ({1}) - {2}", Nome, TipoContaBanco.GetDisplayName(), PessoaRefBanco?.Nome); }
         }
 
         public virtual object Clone()

@@ -5,38 +5,75 @@ using ControlFinWeb.App.ViewModels;
 using ControlFinWeb.Dominio.Entidades;
 using ControlFinWeb.Dominio.ObjetoValor;
 using ControlFinWeb.Repositorio.Repositorios;
+using LinqKit;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Options;
+using ObjectsComparer;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Utils.Extensions.Enums;
 
 namespace ControlFinWeb.App.Controllers
 {
     public class ContasBancariasController : Controller
     {
         private readonly RepositorioContaBancaria Repositorio;
-
-        
+        private readonly RepositorioCaixa RepositorioCaixa;
+        private readonly RepositorioBanco RepositorioBanco;
         private readonly IMapper Mapper;
 
-        public ContasBancariasController(RepositorioContaBancaria repositorio, IMapper mapper)
+        public ContasBancariasController(RepositorioContaBancaria repositorio, RepositorioCaixa repositorioCaixa, RepositorioBanco repositorioBanco, IMapper mapper)
         {
             Repositorio = repositorio;
+            RepositorioCaixa = repositorioCaixa;
+            RepositorioBanco = repositorioBanco;
             Mapper = mapper;
         }
 
         ContaBancaria contaBancaria = new ContaBancaria();
         ContaBancariaVM contaBancariaVM = new ContaBancariaVM();
+        ContaBancaria cloneContaBancaria;
 
-        public IActionResult Index()
+        public IActionResult Index(FiltroContaBancariaVM filtroContaBancariaVM)
         {
-            IEnumerable<ContaBancaria> contasBancarias = Repositorio.ObterPorParametros(x => x.UsuarioCriacao.Id == Configuracao.Usuario.Id);
-            List<ContaBancariaVM> contasBancariasVM = Mapper.Map<List<ContaBancariaVM>>(contasBancarias);
-            return View(contasBancariasVM);
+            var predicado = Repositorio.CriarPredicado();
+            var inicioMes = new DateTime(filtroContaBancariaVM.Ano, filtroContaBancariaVM.Mes, 1);
+            var finalMes = inicioMes.UltimoDiaMes().FinalDia();
+
+            predicado = predicado.And(x => x.DataRegistro >= inicioMes);
+            predicado = predicado.And(x => x.DataRegistro <= finalMes);
+
+            if(filtroContaBancariaVM.BancoId > 0)
+                predicado = predicado.And(x => x.Banco.Id == filtroContaBancariaVM.BancoId);
+
+            filtroContaBancariaVM.ContasBancarias = Mapper.Map<List<ContaBancariaVM>>(Repositorio.ObterPorParametros(predicado));
+ 
+            ViewBag.BancoId = new SelectList(new RepositorioBanco(NHibernateHelper.ObterSessao()).ObterPorParametros(x => x.Situacao == Situacao.Ativo), "Id", "_DadosCompletos", 0);
+
+            return View(filtroContaBancariaVM);
+        }
+
+        public IActionResult Filtrar(FiltroContaBancariaVM filtroContaBancariaVM)
+        {
+            var predicado = Repositorio.CriarPredicado();
+            var inicioMes = new DateTime(filtroContaBancariaVM.Ano, filtroContaBancariaVM.Mes, 1);
+            var finalMes = inicioMes.UltimoDiaMes().FinalDia();
+
+            predicado = predicado.And(x => x.DataRegistro >= inicioMes);
+            predicado = predicado.And(x => x.DataRegistro <= finalMes);
+
+            if (filtroContaBancariaVM.BancoId > 0)
+                predicado = predicado.And(x => x.Banco.Id == filtroContaBancariaVM.BancoId);
+
+            filtroContaBancariaVM.ContasBancarias = Mapper.Map<List<ContaBancariaVM>>(Repositorio.ObterPorParametros(predicado));
+
+            ViewBag.BancoId = new SelectList(new RepositorioBanco(NHibernateHelper.ObterSessao()).ObterPorParametros(x => x.Situacao == Situacao.Ativo), "Id", "_DadosCompletos", 0);
+
+            return PartialView("_RegistrosBancarios", filtroContaBancariaVM.ContasBancarias);
         }
 
         public IActionResult Editar(Int64 Id = 0, decimal valorTransferencia = 0)
@@ -53,7 +90,7 @@ namespace ControlFinWeb.App.Controllers
                 contaBancariaVM.GerarFluxoCaixa = true;
             }
 
-            ViewBag.BancoId = new SelectList(new RepositorioBanco(NHibernateHelper.ObterSessao()).ObterPorParametros(x => x.Situacao == Situacao.Ativo), "Id", "DadosCompletos", Id);
+            ViewBag.BancoId = new SelectList(new RepositorioBanco(NHibernateHelper.ObterSessao()).ObterPorParametros(x => x.Situacao == Situacao.Ativo), "Id", "_DadosCompletos", Id);
             return View(contaBancariaVM);
         }
 
@@ -64,10 +101,13 @@ namespace ControlFinWeb.App.Controllers
             {
                 if (contaBancariaVM.Id > 0)
                 {
+                    contaBancariaVM.CaixaVM = Mapper.Map<CaixaVM>(RepositorioCaixa.ObterPorId(contaBancariaVM.CaixaId));
+                    contaBancariaVM.BancoVM = Mapper.Map<BancoVM>(RepositorioBanco.ObterPorId(contaBancariaVM.BancoId));
                     contaBancaria = Repositorio.ObterPorId(contaBancariaVM.Id);
+                    cloneContaBancaria = (ContaBancaria)contaBancaria.Clone();
                     contaBancaria = Mapper.Map(contaBancariaVM, contaBancaria);
                     contaBancaria.UsuarioAlteracao = Configuracao.Usuario;
-                    Repositorio.Alterar(contaBancaria);
+                    CompararAlteracoes();
                 }
                 else
                 {
@@ -81,7 +121,7 @@ namespace ControlFinWeb.App.Controllers
 
                 return new EmptyResult();
             }
-            ViewBag.BancoId = new SelectList(new RepositorioBanco(NHibernateHelper.ObterSessao()).ObterPorParametros(x => x.Situacao == Situacao.Ativo), "Id", "DadosCompletos", contaBancariaVM.Id);
+            ViewBag.BancoId = new SelectList(new RepositorioBanco(NHibernateHelper.ObterSessao()).ObterPorParametros(x => x.Situacao == Situacao.Ativo), "Id", "_DadosCompletos", contaBancariaVM.Id);
             return View(contaBancariaVM);
         }
 
@@ -90,8 +130,22 @@ namespace ControlFinWeb.App.Controllers
         public JsonResult Deletar(Int64 Id)
         {
             contaBancaria = Repositorio.ObterPorId(Id);
-            Repositorio.Excluir(contaBancaria);
+            Repositorio.ExcluirRegistrarLog(contaBancaria, Configuracao.Usuario);
             return Json(contaBancaria.Nome + "excluído com sucesso");
+        }
+
+        private void CompararAlteracoes()
+        {
+            var comparer = new ObjectsComparer.Comparer<ContaBancaria>();
+            comparer.AddComparerOverride<Usuario>(DoNotCompareValueComparer.Instance);
+            comparer.AddComparerOverride<Caixa>(DoNotCompareValueComparer.Instance);
+            comparer.AddComparerOverride<Int64>(DoNotCompareValueComparer.Instance, member => member.Name.Contains("Id"));
+            comparer.AddComparerOverride<String>(DoNotCompareValueComparer.Instance, member => member.Name.StartsWith("_"));
+            comparer.IgnoreMember("DataGeracao");
+            comparer.IgnoreMember("DataAlteracao");
+            var igual = comparer.Compare(cloneContaBancaria, contaBancaria, out IEnumerable<Difference> diferencas);
+            if (!igual)
+                Repositorio.EditarRegistrarLog(contaBancaria, diferencas, Configuracao.Usuario, String.Format("ContaBancaria[{0}]", contaBancaria.Id));
         }
     }
 }
