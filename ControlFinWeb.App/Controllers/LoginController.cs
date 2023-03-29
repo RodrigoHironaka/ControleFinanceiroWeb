@@ -4,6 +4,7 @@ using ControlFinWeb.Repositorio.Repositorios;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,11 +19,13 @@ namespace ControlFinWeb.App.Controllers
     {
         private readonly RepositorioUsuario RepositorioUsuario;
         private readonly RepositorioLogModificacao RepositorioLog;
+        private readonly ILogger<LoginController> _logger;
 
-        public LoginController(RepositorioUsuario repositorioUsuario, RepositorioLogModificacao repositorioLog)
+        public LoginController(RepositorioUsuario repositorioUsuario, RepositorioLogModificacao repositorioLog, ILogger<LoginController> logger)
         {
             RepositorioUsuario = repositorioUsuario;
             RepositorioLog = repositorioLog;
+            _logger = logger;
         }
         public IActionResult Index()
         {
@@ -61,6 +64,7 @@ namespace ControlFinWeb.App.Controllers
                 }
                 else
                 {
+                    _logger.LogWarning("Usuário ou Senha incorretos ou não autorizado!");
                     ViewData["Mensagem"] = "<div class='alert alert-danger'>Usuário\\Senha incorretos ou não autorizado!</div>";
                 }
             }

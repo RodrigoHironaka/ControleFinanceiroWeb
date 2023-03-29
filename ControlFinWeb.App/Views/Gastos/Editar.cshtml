@@ -52,6 +52,13 @@
                         else
                             $(".modal-title").html("NOVO REGISTRO");
                     }
+                },
+                error: function (retorno) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: 'Houve um erro com o status: ' + retorno.status + '. O log foi gerado, entre em contato com o suporte!',
+                    })
                 }
 
             });

@@ -10,8 +10,10 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using ObjectsComparer;
+using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,12 +26,14 @@ namespace ControlFinWeb.App.Controllers
         private readonly RepositorioPessoa RepositorioPessoa;
         private readonly RepositorioSubGasto RepositorioSubGasto;
         private readonly IMapper Mapper;
-        public ContasController(RepositorioConta repositorio, RepositorioPessoa repositorioPessoa, RepositorioSubGasto repositorioSubGasto, IMapper mapper)
+        private readonly ILogger<ContasController> _logger;
+        public ContasController(RepositorioConta repositorio, RepositorioPessoa repositorioPessoa, RepositorioSubGasto repositorioSubGasto, IMapper mapper, ILogger<ContasController> logger)
         {
             Repositorio = repositorio;
             RepositorioPessoa = repositorioPessoa;
             RepositorioSubGasto = repositorioSubGasto;
             Mapper = mapper;
+            _logger = logger;
         }
 
         Conta conta = new Conta();
@@ -141,6 +145,7 @@ namespace ControlFinWeb.App.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Erro finalizar conta");
                 return Json(new { result = false, error = ex.Message });
                 
             }
@@ -164,6 +169,7 @@ namespace ControlFinWeb.App.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Erro reabrir conta");
                 return Json(new { result = false, error = ex.Message });
             }
            

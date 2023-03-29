@@ -10,6 +10,7 @@ using LinqKit;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using ObjectsComparer;
 using System;
@@ -31,8 +32,9 @@ namespace ControlFinWeb.App.Controllers
         private readonly RepositorioBanco RepositorioBanco;
         private readonly RepositorioFluxoCaixa RepositorioFluxoCaixa;
         private readonly IMapper Mapper;
+        private readonly ILogger<ParcelasController> _logger;
         public ParcelasController(RepositorioParcela repositorio, RepositorioFormaPagamento repositorioFormaPagamento, RepositorioConta repositorioConta,
-            RepositorioFatura repositorioFatura, RepositorioBanco repositorioBanco, RepositorioFluxoCaixa repositorioFluxoCaixa, IMapper mapper)
+            RepositorioFatura repositorioFatura, RepositorioBanco repositorioBanco, RepositorioFluxoCaixa repositorioFluxoCaixa, IMapper mapper, ILogger<ParcelasController> logger)
         {
             Repositorio = repositorio;
             RepositorioFormaPagamento = repositorioFormaPagamento;
@@ -41,6 +43,7 @@ namespace ControlFinWeb.App.Controllers
             RepositorioBanco = repositorioBanco;
             RepositorioFluxoCaixa = repositorioFluxoCaixa;
             Mapper = mapper;
+            _logger = logger;
         }
 
         Parcela parcela = new Parcela();
@@ -305,6 +308,7 @@ namespace ControlFinWeb.App.Controllers
                 }
                 catch (Exception ex)
                 {
+                    _logger.LogError(ex, "Erro pagar parcelas");
                     return Json(new { result = false, error = ex.Message.ToString() });
                 }
             }

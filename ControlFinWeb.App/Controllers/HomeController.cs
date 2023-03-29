@@ -1,7 +1,6 @@
 ﻿using ControlFinWeb.App.Models;
 using ControlFinWeb.App.Utilitarios;
 using ControlFinWeb.App.ViewModels;
-using ControlFinWeb.Dominio.Entidades;
 using ControlFinWeb.Repositorio.Repositorios;
 using LinqKit;
 using Microsoft.AspNetCore.Mvc;
@@ -10,7 +9,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Threading.Tasks;
 using Utils.Extensions.Enums;
 
 namespace ControlFinWeb.App.Controllers

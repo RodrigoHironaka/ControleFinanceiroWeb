@@ -47,9 +47,11 @@
 </div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-   
- <script>
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script>
         function Salvar() {
             var dados = $("#FrmBanco").serialize();
             $.ajax({
@@ -57,10 +59,9 @@
                 method: 'POST',
                 data: dados,
                 success: function (retorno) {
+                    alert(retorno);
                     if (retorno == "") {
                         location.reload();
-                        //$("#modal").modal('hide');
-                        //$("#mensagem").addClass('alert alert-success').html("<strong>Sucesso!</strong> Item salvo no banco de dados!").delay(10000).fadeOut(400);
                     }
                     else {
                         $("#modal").html(retorno);
@@ -68,7 +69,14 @@
                             $(".modal-title").html("ALTERANDO REGISTRO");
                         else
                             $(".modal-title").html("NOVO REGISTRO");
-                    } 
+                    }
+                },
+                error: function (retorno) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: 'Houve um erro com o status: ' + retorno.status + '. O log foi gerado, entre en contato com o suporte!',
+                    })
                 }
 
             });

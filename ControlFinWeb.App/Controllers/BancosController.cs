@@ -32,7 +32,7 @@ namespace ControlFinWeb.App.Controllers
 
         public IActionResult Index()
         {
-            IEnumerable<Banco> bancos = Repositorio.ObterPorParametros(x => x.UsuarioCriacao.Id == Configuracao.Usuario.Id); 
+            IEnumerable<Banco> bancos = Repositorio.ObterPorParametros(x => x.UsuarioCriacao.Id == Configuracao.Usuario.Id);
             List<BancoVM> bancosVM = Mapper.Map<List<BancoVM>>(bancos);
             return View(bancosVM);
         }

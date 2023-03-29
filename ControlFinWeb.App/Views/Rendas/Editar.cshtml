@@ -33,27 +33,36 @@
 </div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-<script>
-    function Salvar() {
-        var dados = $("#FrmRenda").serialize();
-        $.ajax({
-            url: '/Rendas/Editar',
-            method: 'POST',
-            data: dados,
-            success: function (retorno) {
-                if (retorno == "")
-                    location.reload();
-                else {
-                    $("#modal").html(retorno);
-                    if ($("#id").val() > 0)
-                        $(".modal-title").html("ALTERANDO REGISTRO");
-                    else
-                        $(".modal-title").html("NOVO REGISTRO");
-                }
-            }
-
-        });
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
-</script>
+    <script>
+        function Salvar() {
+            var dados = $("#FrmRenda").serialize();
+            $.ajax({
+                url: '/Rendas/Editar',
+                method: 'POST',
+                data: dados,
+                success: function (retorno) {
+                    if (retorno == "")
+                        location.reload();
+                    else {
+                        $("#modal").html(retorno);
+                        if ($("#id").val() > 0)
+                            $(".modal-title").html("ALTERANDO REGISTRO");
+                        else
+                            $(".modal-title").html("NOVO REGISTRO");
+                    }
+                },
+                error: function (retorno) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: 'Houve um erro com o status: ' + retorno.status + '. O log foi gerado, entre em contato com o suporte!',
+                    })
+                }
+
+            });
+        }
+    </script>
 }
