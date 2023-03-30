@@ -30,6 +30,7 @@ namespace ControlFinWeb.App.Controllers
             _logger = logger;
         }
 
+        [Route("Principal")]
         public IActionResult Index()
         {
             ParcelasAtrasadas();

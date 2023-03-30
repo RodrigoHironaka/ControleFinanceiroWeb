@@ -12,6 +12,7 @@ namespace ControlFinWeb.Dominio.Dominios
         }
         public virtual Situacao Situacao { get; set; }
         public virtual bool DebitoAutomatico { get; set; }
+        public virtual bool GerarRegistroFatura { get; set; }
 
         public virtual object Clone()
         {

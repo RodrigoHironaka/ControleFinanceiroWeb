@@ -17,6 +17,9 @@ namespace ControlFinWeb.App.ViewModels
         [DisplayName("Possui função débito automático?")]
         public bool DebitoAutomatico { get; set; }
 
+        [DisplayName("Gerar registro na fatura?")]
+        public bool GerarRegistroFatura { get; set; }
+
         [DisplayName("Situação")]
         public Situacao Situacao { get; set; }
     }

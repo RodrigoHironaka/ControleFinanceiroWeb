@@ -25,6 +25,7 @@
         <tr>
             <th>Nome</th>
             <th>É Débito Automático?</th>
+            <th>Gerar Registro Fatura?</th>
             <th>Situação</th>
             <th style="text-align:center">Opções</th>
         </tr>
@@ -38,6 +39,16 @@
                 </td>
                 <td>
                     @if (item.DebitoAutomatico)
+                    {
+                        @Html.Raw("Sim")
+                    }
+                    else
+                    {
+                        @Html.Raw("Não")
+                    }
+                </td>
+                <td>
+                    @if (item.GerarRegistroFatura)
                     {
                         @Html.Raw("Sim")
                     }

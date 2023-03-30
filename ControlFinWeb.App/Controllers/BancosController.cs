@@ -37,6 +37,7 @@ namespace ControlFinWeb.App.Controllers
             return View(bancosVM);
         }
 
+       
         public IActionResult Editar(Int64 Id = 0)
         {
             if (Id > 0)
@@ -78,6 +79,7 @@ namespace ControlFinWeb.App.Controllers
 
         [HttpPost]
         [IgnoreAntiforgeryToken]
+        [Route("Excluir-Banco/{Id}")]
         public JsonResult Deletar(Int64 Id)
         {
             banco = Repositorio.ObterPorId(Id);
