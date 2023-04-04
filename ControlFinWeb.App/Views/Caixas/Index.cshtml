@@ -146,6 +146,10 @@
                     // Update footer
                     $(api.column(2).footer()).html(numFormat(pageTotal));
                 },
+                dom: 'Bfrtip',
+                buttons: [
+                    'copy', 'csv', 'excel', 'pdf', 'print'
+                ]
             });
         });
 

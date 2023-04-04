@@ -58,7 +58,7 @@
     </div>
 </div>
 
-<div>
+<div class="mt-3">
     <table class="table table-bordered table-striped table-hover" id="tabelaParcelas">
         <thead>
             <tr>
@@ -205,6 +205,10 @@
                     $(api.column(5).footer()).html(numFormat(pagoTotal));
                     
                 },
+                dom: 'Bfrtip',
+                buttons: [
+                    'copy', 'csv', 'excel', 'pdf', 'print'
+                ]
             });
         });
 
