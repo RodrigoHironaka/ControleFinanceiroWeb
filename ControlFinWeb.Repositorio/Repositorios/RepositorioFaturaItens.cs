@@ -104,7 +104,7 @@ namespace ControlFinWeb.Repositorio.Repositorios
                     #region Usado quando a parcela é paga usando credito de fatura
                     if (RegFluxo)
                     {
-                        RepositorioFluxoCaixa.GerarFluxoCaixa(parcela, usuario, caixa, 0);
+                        RepositorioFluxoCaixa.GerarFluxoCaixa(parcela, usuario, caixa, 0,null, faturaItens.Valor);
                         parcela.ValorPago = parcela.ValorAberto;
                         parcela.ValorAberto = 0;
                         parcela.DataPagamento = DateTime.Now;

@@ -25,7 +25,7 @@ namespace ControlFinWeb.Dominio.Entidades
             get
             {
                 if(Cartao != null)
-                    return string.Format("{0} - {1:MMyyyy}", Cartao.Nome, MesAnoReferencia);
+                    return string.Format("{0} - {1:MMyyyy} - {2}", Cartao.Nome, MesAnoReferencia, Pessoa.Nome);
                 return string.Empty;
             }
         }

@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using Utils.Extensions.Enums;
 
 namespace ControlFinWeb.App.ViewModels
 {
@@ -11,7 +12,7 @@ namespace ControlFinWeb.App.ViewModels
         public FiltroParcelasVM()
         {
             DataInicio = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
-            DataFinal = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month));
+            DataFinal = DateTime.Now.UltimoDiaMes().FinalDia();
             TipoConta = TipoConta.Pagar;
             if (String.IsNullOrEmpty(SituacaoParcela))
             {

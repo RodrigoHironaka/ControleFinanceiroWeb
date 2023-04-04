@@ -26,5 +26,11 @@ namespace ControlFinWeb.App.ViewModels
         [Required(ErrorMessage = "Campo Obrigátorio")]
         [DisplayName("Dividir em")]
         public Int32 Quantidade { get; set; }
+
+        [Required(ErrorMessage = "Campo Obrigátorio")]
+        [DisplayName("Juros")]
+        public Decimal Juros { get; set; }
+
+
     }
 }

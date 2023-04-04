@@ -19,6 +19,11 @@
                     <input asp-for="ParcelaVM._DadosCompletos" class="form-control" readonly />
                 </div>
                 <div class="form-group">
+                    <label asp-for="Juros" class="control-label"></label>
+                    <input asp-for="Juros" class="form-control" />
+                    <span asp-validation-for="Juros" class="text-danger"></span>
+                </div>
+                <div class="form-group">
                     <label asp-for="FaturaId" class="control-label"></label>
                     <select asp-for="FaturaId" class="form-select" asp-items="ViewBag.FaturaId"></select>
                     <span asp-validation-for="FaturaId" class="text-danger"></span>
@@ -58,6 +63,7 @@
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }
 <script>
+    $("#Juros").maskMoney({ thousands: '', decimal: ',', allowZero: true });
     $(".minUm").blur(function () {
         if ($(this).val() == "" || parseInt($(this).val()) <= 0) {
             $(this).val(1);

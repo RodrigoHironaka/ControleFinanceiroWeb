@@ -11,12 +11,13 @@ namespace ControlFinWeb.Repositorio.Repositorios
     {
         public RepositorioFluxoCaixa(ISession session) : base(session) { }
 
-        public void GerarFluxoCaixa(Parcela parcela, Usuario usuario, Caixa caixa, decimal valorPagoParcela, Banco banco = null)
+        public void GerarFluxoCaixa(Parcela parcela, Usuario usuario, Caixa caixa, decimal valorPagoParcela, Banco banco = null, decimal valorSecundarioParcela = 0)
         {
             if (parcela != null)
             {
                 var descricaoParcela = String.Format("Parcela Nº: {0} - {1}", parcela.Numero, parcela.Conta != null ? parcela.Conta._DescricaoCompleta : parcela.Fatura._DescricaoCompleta);
                 var novoFluxoCaixa = new FluxoCaixa();
+                var valor = valorPagoParcela > 0 ? valorPagoParcela : valorSecundarioParcela;
 
                 if (parcela.Conta != null)
                 {
@@ -30,7 +31,7 @@ namespace ControlFinWeb.Repositorio.Repositorios
                         }
                         else
                         {
-                            novoFluxoCaixa.Nome = $"Pagamento efetuado no valor de {valorPagoParcela:C2} referente a conta: {parcela.Conta._DescricaoCompleta} - parcela N.º: [{parcela.Numero}] {parcela.DataVencimento.Value.ToShortDateString()}";
+                            novoFluxoCaixa.Nome = $"Pagamento efetuado no valor de {valor:C2} referente a conta: {parcela.Conta._DescricaoCompleta} - parcela N.º: [{parcela.Numero}] {parcela.DataVencimento.Value.ToShortDateString()}";
                             novoFluxoCaixa.DebitoCredito = Dominio.ObjetoValor.DebitoCredito.Débito;
                         }
                        
@@ -44,7 +45,7 @@ namespace ControlFinWeb.Repositorio.Repositorios
                         }
                         else
                         {
-                            novoFluxoCaixa.Nome = $"Recebimento efetuado no valor de {valorPagoParcela:C2} referente a conta {parcela.Conta._DescricaoCompleta} - parcela N.º: [{parcela.Numero}] {parcela.DataVencimento.Value.ToShortDateString()}";
+                            novoFluxoCaixa.Nome = $"Recebimento efetuado no valor de {valor:C2} referente a conta {parcela.Conta._DescricaoCompleta} - parcela N.º: [{parcela.Numero}] {parcela.DataVencimento.Value.ToShortDateString()}";
                             novoFluxoCaixa.DebitoCredito = Dominio.ObjetoValor.DebitoCredito.Crédito;
                         }
                     }
@@ -58,7 +59,7 @@ namespace ControlFinWeb.Repositorio.Repositorios
                     }
                     else
                     {
-                        novoFluxoCaixa.Nome = $"Pagamento efetuado no valor de {valorPagoParcela:C2} referente a fatura {parcela.Fatura._DescricaoCompleta}";
+                        novoFluxoCaixa.Nome = $"Pagamento efetuado no valor de {valor:C2} referente a fatura {parcela.Fatura._DescricaoCompleta}";
                         novoFluxoCaixa.DebitoCredito = Dominio.ObjetoValor.DebitoCredito.Débito;
                     }
                 }

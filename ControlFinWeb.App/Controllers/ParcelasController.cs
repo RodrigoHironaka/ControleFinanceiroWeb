@@ -62,8 +62,7 @@ namespace ControlFinWeb.App.Controllers
         PagarParcelaVM pagarParcelaVM = new PagarParcelaVM();
         GerarRegistroFaturaVM gerarRegistroFaturaVM = new GerarRegistroFaturaVM();
         Parcela cloneParcela;
-
-        public IActionResult Index(FiltroParcelasVM filtrarParcelasVM)
+        public IList<Parcela> FiltroParcelas(FiltroParcelasVM filtrarParcelasVM)
         {
             var predicado = Repositorio.CriarPredicado();
             predicado = predicado.And(x => x.UsuarioCriacao.Id == Configuracao.Usuario.Id);
@@ -106,11 +105,49 @@ namespace ControlFinWeb.App.Controllers
             {
                 parcelas = parcelas.Where(x => x.Conta?.Situacao != SituacaoConta.Cancelado || x.Fatura?.SituacaoFatura != SituacaoFatura.Cancelada).ToList();
             }
+            return parcelas;
+        }
 
-            filtrarParcelasVM.Parcelas = Mapper.Map<List<ParcelaVM>>(parcelas);
+        public IActionResult Index(FiltroParcelasVM filtrarParcelasVM)
+        {
+            filtrarParcelasVM.Parcelas = Mapper.Map<List<ParcelaVM>>(FiltroParcelas(filtrarParcelasVM));
 
             ViewBag.PessoaId = new SelectList(new RepositorioPessoa(NHibernateHelper.ObterSessao()).ObterPorParametros(x => x.Situacao == Situacao.Ativo), "Id", "Nome", filtrarParcelasVM.PessoaId);
             return View(filtrarParcelasVM);
+        }
+
+        public IActionResult APagar()
+        {
+            var filtrarParcelasVM = new FiltroParcelasVM()
+            {
+                TipoConta = TipoConta.Pagar,
+            };
+            filtrarParcelasVM.Parcelas = Mapper.Map<List<ParcelaVM>>(FiltroParcelas(filtrarParcelasVM));
+
+            return RedirectToAction("Index", filtrarParcelasVM);
+        }
+
+        public IActionResult AReceber()
+        {
+            var filtrarParcelasVM = new FiltroParcelasVM()
+            {
+                TipoConta = TipoConta.Receber,
+            };
+            filtrarParcelasVM.Parcelas = Mapper.Map<List<ParcelaVM>>(FiltroParcelas(filtrarParcelasVM));
+
+            return RedirectToAction("Index", filtrarParcelasVM);
+        }
+
+        public IActionResult Atrasados()
+        {
+            var filtrarParcelasVM = new FiltroParcelasVM()
+            {
+                TipoConta = TipoConta.Pagar,
+                SituacaoParcela = "2",
+            };
+            filtrarParcelasVM.Parcelas = Mapper.Map<List<ParcelaVM>>(FiltroParcelas(filtrarParcelasVM));
+
+            return RedirectToAction("Index", filtrarParcelasVM);
         }
 
         public IActionResult Editar(Int64 Id = 0)
@@ -358,7 +395,7 @@ namespace ControlFinWeb.App.Controllers
 
             var faturaItem = new FaturaItens();
             faturaItem.Fatura = fatura;
-            faturaItem.Valor = parcela.ValorAberto;
+            faturaItem.Valor = parcela.ValorAberto + gerarRegistroFaturaVM.Juros;
             faturaItem.DataCompra = DateTime.Now;
             faturaItem.DataGeracao = DateTime.Now;
             faturaItem.UsuarioCriacao = Configuracao.Usuario;

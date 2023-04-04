@@ -16,7 +16,6 @@ namespace ControlFinWeb.App.AutoMapper
             #region ViewModel Para Dominio
             CreateMap<FormaPagamentoVM, FormaPagamento>();
             CreateMap<GastoVM, Gasto>();
-            CreateMap<RendaVM, Renda>();
             CreateMap<UsuarioVM, Usuario>();
             CreateMap<PessoaVM, Pessoa>();
             CreateMap<ParcelaVM, Parcela>()
@@ -117,7 +116,6 @@ namespace ControlFinWeb.App.AutoMapper
             #region Dominio Para ViewModel
             CreateMap<FormaPagamento, FormaPagamentoVM>();
             CreateMap<Gasto, GastoVM>();
-            CreateMap<Renda, RendaVM>();
             CreateMap<Usuario, UsuarioVM>();
             CreateMap<Pessoa, PessoaVM>();
             CreateMap<Parcela, ParcelaVM>()

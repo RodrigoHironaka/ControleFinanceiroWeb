@@ -24,7 +24,7 @@ namespace ControlFinWeb.Dominio.Entidades
         public virtual object Clone()
         {
             var clone = (SubGasto)this.MemberwiseClone();
-            clone.Gasto = (Gasto)this.Gasto.Clone();
+            clone.Gasto = (Gasto)this.Gasto?.Clone();
             return clone;
         }
     }

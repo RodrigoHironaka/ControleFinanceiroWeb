@@ -17,16 +17,16 @@
         <div class="col-md-3">
             <div class="card w-100 card-1">
                 <div class="card-body">
-                    <h5 class="card-title">PAGAR</h5>
+                    <h5 class="card-title"> <a class="btn btn-outline-danger" asp-controller="Parcelas" asp-action="APagar">PAGAR</a></h5>
                     <h2 class="card-text">@Model.TotalPagar.ToString("C2")</h2>
-
+                   
                 </div>
             </div>
         </div>
         <div class="col-md-3">
             <div class="card w-100 card-2">
                 <div class="card-body">
-                    <h5 class="card-title">RECEBER</h5>
+                    <h5 class="card-title"> <a class="btn btn-outline-success" asp-controller="Parcelas" asp-action="AReceber">RECEBER</a></h5>
                     <h2 class="card-text">@Model.TotalReceber.ToString("C2")</h2>
 
                 </div>
@@ -35,7 +35,7 @@
         <div class="col-md-3">
             <div class="card w-100 card-3">
                 <div class="card-body">
-                    <h5 class="card-title">CAIXA</h5>
+                    <h5 class="card-title"> <a class="btn btn-outline-primary" asp-controller="Caixas" asp-action="Index">CAIXA</a></h5>
                     <h2 class="card-text">@Model.TotalBalanco.ToString("C2")</h2>
 
                 </div>
@@ -44,7 +44,7 @@
         <div class="col-md-3">
             <div class="card w-100 card-4">
                 <div class="card-body">
-                    <h5 class="card-title">ATRASADOS</h5>
+                    <h5 class="card-title"> <a class="btn btn-outline-warning" asp-controller="Parcelas" asp-action="Atrasados">ATRASADOS</a></h5>
                     <h2 class="card-text">@Model.TotalAtrasadas.ToString("C2")</h2>
 
                 </div>
@@ -74,7 +74,6 @@
 
 <script type="text/javascript">
     var lineChart = document.getElementById('lineChart').getContext('2d');
-
     var chart = new Chart(lineChart, {
         type: 'line',
         data: {
@@ -102,9 +101,7 @@
         }
     });
 
-
     var pieChart = document.getElementById('pieChart').getContext('2d');
-
     var pizza = new Chart(pieChart, {
         type: 'pie',
         data: {
@@ -134,5 +131,25 @@
         }
     });
 
+    //$(document).on(TipoClick().toString(), ".pagar", function () {
+       
+    //    window.location.href = "/Parcelas/APagar";
+    //    //$("#modal").load("/Parcelas/APagar", function () {
+    //    //    $("#modal").modal("show");
+    //    //})
+    //});
+
+    //$(document).on(TipoClick().toString(), ".receber", function () {
+
+    //    $("#modal").load("/Parcelas/AReceber", function () {
+    //        $("#modal").modal("show");
+    //    })
+    //});
+    //$(document).on(TipoClick().toString(), ".atrasados", function () {
+
+    //    $("#modal").load("/Parcelas/Atrasados", function () {
+    //        $("#modal").modal("show");
+    //    })
+    //});
     
 </script>

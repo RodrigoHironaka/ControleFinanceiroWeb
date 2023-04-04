@@ -42,7 +42,6 @@
                                     @if (User.IsInRole(TipoUsuario.Administrador.ToString()))
                                     {
                                         <a class="dropdown-item" asp-action="Index" asp-controller="FormasPagamento">Formas de Pagamento</a>
-                                        <a class="dropdown-item" asp-action="Index" asp-controller="Rendas">Rendas</a>
                                         <a class="dropdown-item" asp-action="Index" asp-controller="Gastos">Gastos</a>
                                         <a class="dropdown-item" asp-action="Index" asp-controller="SubGastos">SubGastos</a>
                                     }
@@ -58,10 +57,10 @@
                                 <a class="nav-link" asp-action="Index" asp-controller="Caixas">Caixa</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" asp-action="Index" asp-controller="ContasBancarias">Conta Bancaria</a>
+                                <a class="nav-link" asp-action="Index" asp-controller="ContasBancarias">Conta Bancária</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" asp-action="Index" asp-controller="Parcelas">Consulta Parcelas</a>
+                                <a class="nav-link" asp-action="Index" asp-controller="Parcelas">Parcelas</a>
                             </li>
                         </ul>
                     </div>

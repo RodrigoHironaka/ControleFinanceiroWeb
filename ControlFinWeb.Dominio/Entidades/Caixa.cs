@@ -21,7 +21,7 @@ namespace ControlFinWeb.Dominio.Entidades
         public virtual object Clone()
         {
             var clone = (Caixa)this.MemberwiseClone();
-            clone.UsuarioCriacao = (Usuario)clone.UsuarioCriacao.Clone();
+            clone.UsuarioCriacao = (Usuario)clone.UsuarioCriacao?.Clone();
             clone.UsuarioAlteracao = (Usuario)clone.UsuarioAlteracao?.Clone();
             return clone;
         }

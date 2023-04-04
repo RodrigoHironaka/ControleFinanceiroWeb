@@ -23,7 +23,7 @@ namespace ControlFinWeb.Dominio.Entidades
         public virtual object Clone()
         {
             var clone = (Banco)this.MemberwiseClone();
-            clone.PessoaRefBanco = (Pessoa)clone.PessoaRefBanco.Clone();
+            clone.PessoaRefBanco = (Pessoa)clone.PessoaRefBanco?.Clone();
             return clone;
         }
     }

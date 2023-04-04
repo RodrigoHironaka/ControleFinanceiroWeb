@@ -18,7 +18,7 @@ namespace ControlFinWeb.Dominio.Entidades
         public virtual object Clone()
         {
             var clone = (Cartao)this.MemberwiseClone();
-            clone.Banco = (Banco)clone.Banco.Clone();
+            clone.Banco = (Banco)clone.Banco?.Clone();
             return clone;
         }
     }

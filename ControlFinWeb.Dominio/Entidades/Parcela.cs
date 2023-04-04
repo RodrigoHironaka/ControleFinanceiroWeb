@@ -40,7 +40,7 @@ namespace ControlFinWeb.Dominio.Entidades
             clone.FormaPagamento = (FormaPagamento)clone.FormaPagamento?.Clone();
             clone.Conta = (Conta)clone.Conta?.Clone();
             clone.Fatura = (Fatura)clone.Fatura?.Clone();
-            clone.UsuarioCriacao = (Usuario)clone.UsuarioCriacao.Clone();
+            clone.UsuarioCriacao = (Usuario)clone.UsuarioCriacao?.Clone();
             clone.UsuarioAlteracao = (Usuario)clone.UsuarioAlteracao?.Clone();
             return clone;
         }
