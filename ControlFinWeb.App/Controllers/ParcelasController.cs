@@ -2,6 +2,7 @@
 using AutoMapper;
 using ControlFinWeb.App.Utilitarios;
 using ControlFinWeb.App.ViewModels;
+using ControlFinWeb.App.ViewModels.Acesso;
 using ControlFinWeb.Dominio.Entidades;
 using ControlFinWeb.Dominio.ObjetoValor;
 using ControlFinWeb.Repositorio.Repositorios;
@@ -29,19 +30,26 @@ namespace ControlFinWeb.App.Controllers
         private readonly RepositorioFormaPagamento RepositorioFormaPagamento;
         private readonly RepositorioConta RepositorioConta;
         private readonly RepositorioFatura RepositorioFatura;
+        private readonly RepositorioFaturaItens RepositorioFaturaItens;
         private readonly RepositorioBanco RepositorioBanco;
+        private readonly RepositorioCaixa RepositorioCaixa;
         private readonly RepositorioFluxoCaixa RepositorioFluxoCaixa;
+        private readonly RepositorioSubGasto RepositorioSubGasto;
         private readonly IMapper Mapper;
         private readonly ILogger<ParcelasController> _logger;
         public ParcelasController(RepositorioParcela repositorio, RepositorioFormaPagamento repositorioFormaPagamento, RepositorioConta repositorioConta,
-            RepositorioFatura repositorioFatura, RepositorioBanco repositorioBanco, RepositorioFluxoCaixa repositorioFluxoCaixa, IMapper mapper, ILogger<ParcelasController> logger)
+            RepositorioFatura repositorioFatura, RepositorioFaturaItens repositorioFaturaItens, RepositorioBanco repositorioBanco, RepositorioCaixa repositorioCaixa, RepositorioFluxoCaixa repositorioFluxoCaixa, 
+            RepositorioSubGasto repositorioSubGasto, IMapper mapper, ILogger<ParcelasController> logger)
         {
             Repositorio = repositorio;
             RepositorioFormaPagamento = repositorioFormaPagamento;
             RepositorioConta = repositorioConta;
             RepositorioFatura = repositorioFatura;
+            RepositorioFaturaItens = repositorioFaturaItens;
             RepositorioBanco = repositorioBanco;
+            RepositorioCaixa = repositorioCaixa;
             RepositorioFluxoCaixa = repositorioFluxoCaixa;
+            RepositorioSubGasto = repositorioSubGasto;
             Mapper = mapper;
             _logger = logger;
         }
@@ -52,6 +60,7 @@ namespace ControlFinWeb.App.Controllers
         IList<ParcelaVM> parcelasVM = new List<ParcelaVM>();
         GerarParcelasVM gerarParcelasVM = new GerarParcelasVM();
         PagarParcelaVM pagarParcelaVM = new PagarParcelaVM();
+        GerarRegistroFaturaVM gerarRegistroFaturaVM = new GerarRegistroFaturaVM();
         Parcela cloneParcela;
 
         public IActionResult Index(FiltroParcelasVM filtrarParcelasVM)
@@ -316,6 +325,51 @@ namespace ControlFinWeb.App.Controllers
             ViewBag.FormaPagamentoId = new SelectList(new RepositorioFormaPagamento(NHibernateHelper.ObterSessao()).ObterPorParametros(x => x.Situacao == Situacao.Ativo), "Id", "Nome");
             ViewBag.BancoId = new SelectList(new RepositorioBanco(NHibernateHelper.ObterSessao()).ObterPorParametros(x => x.Situacao == Situacao.Ativo), "Id", "_DadosCompletos");
             return PartialView(pagarParcelaVM);
+        }
+
+        public IActionResult GerarRegistroFatura(Int64 IdParcela)
+        {
+            if(IdParcela > 0)
+            {
+                gerarRegistroFaturaVM.ParcelaId = IdParcela;
+                gerarRegistroFaturaVM.ParcelaVM = Mapper.Map<ParcelaVM>(Repositorio.ObterPorId(IdParcela));
+            }
+
+            var faturas = RepositorioFatura.ObterPorParametros(x => x.SituacaoFatura == SituacaoFatura.Aberta && x.MesAnoReferencia >= DateTime.Now.PrimeiroDiaMes() && x.MesAnoReferencia <= DateTime.Now.AddMonths(1).UltimoDiaMes().FinalDia()).ToList();
+            if(faturas != null && faturas.Count == 0 ) 
+                return RedirectToAction("Editar", "Faturas");
+
+            ViewBag.FormaPagamentoId = new SelectList(RepositorioFormaPagamento.ObterPorParametros(x => x.Situacao == Situacao.Ativo && x.GerarRegistroFatura == true), "Id", "Nome");
+            ViewBag.SubGastoId = new SelectList(RepositorioSubGasto.ObterPorParametros(x => x.Situacao == Situacao.Ativo), "Id", "_DescricaoCompleta");
+            ViewBag.FaturaId = new SelectList(faturas, "Id", "_DescricaoCompleta");
+            return View(gerarRegistroFaturaVM);
+        }
+
+        [HttpPost]
+        [IgnoreAntiforgeryToken]
+        public IActionResult GerarRegistroFatura(GerarRegistroFaturaVM gerarRegistroFaturaVM)
+        {
+            var formaPagamento = RepositorioFormaPagamento.ObterPorId(gerarRegistroFaturaVM.FormaPagamentoId);
+            var subgasto = RepositorioSubGasto.ObterPorId(gerarRegistroFaturaVM.SubGastoId);
+            var fatura = RepositorioFatura.ObterPorId(gerarRegistroFaturaVM.FaturaId);
+            var parcela = Repositorio.ObterPorId(gerarRegistroFaturaVM.ParcelaId);
+            var caixaAberto = RepositorioCaixa.ObterCaixaAberto(Configuracao.Usuario.Id);
+            parcela.FormaPagamento = formaPagamento;
+
+            var faturaItem = new FaturaItens();
+            faturaItem.Fatura = fatura;
+            faturaItem.Valor = parcela.ValorAberto;
+            faturaItem.DataCompra = DateTime.Now;
+            faturaItem.DataGeracao = DateTime.Now;
+            faturaItem.UsuarioCriacao = Configuracao.Usuario;
+            faturaItem.SubGasto = subgasto;
+            faturaItem.Pessoa = parcela.Conta != null ? parcela.Conta.Pessoa : parcela.Fatura.Pessoa;
+            faturaItem.Nome = parcela.Conta != null ? parcela.Conta.Nome : parcela.Fatura._DescricaoCompleta;
+
+            RepositorioFaturaItens.SalvarAlterarFaturaItemEAlterarParcela(faturaItem, gerarRegistroFaturaVM.Quantidade.ToString(),false, null, Configuracao.Usuario, caixaAberto, parcela, true );
+            
+            return RedirectToAction("Index", "Parcelas");
+            
         }
 
         [HttpGet("FormaPagamentoDebito/{idFormaPagamento}")]

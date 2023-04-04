@@ -83,5 +83,13 @@ namespace ControlFinWeb.App.ViewModels
         public UsuarioVM UsuarioAlteracaoVM { get; set; }
 
         public Boolean Selecionado { get; set; }
+
+        public String _DadosCompletos
+        {
+            get
+            {
+                return $"Parcela Nº {Numero} - Valor: {ValorAberto:C2}";
+            }
+        }
     }
 }

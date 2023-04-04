@@ -7,12 +7,6 @@
 }
 
 <div class="row">
-    @* <div class="input-group mb-3">
-    <div class="input-group-prepend">
-    <a class="btn btn-lg btn-dark" href="javascript:window.history.back(-1);"><i class="bi bi-arrow-left-circle"></i></a>
-    </div>
-    <span class="input-group-text fw-bold" style="font-size:20px;">CONTA @Model.Nome?.ToUpper()</span>
-    </div>*@
     <h6>CONTA @Model.Nome?.ToUpper()</h6>
     <hr />
 </div>
@@ -72,9 +66,7 @@
                         </div>
                         <div class="col-md-4">
                             <label asp-for="PessoaId" class="control-label"></label>
-                            <select class="form-select" asp-for="PessoaId" asp-items="ViewBag.PessoaId">
-                                <option value="0">---Selecione um item---</option>
-                            </select>
+                            <select class="form-select" asp-for="PessoaId" asp-items="ViewBag.PessoaId"></select>
                             <span asp-validation-for="PessoaId" class="text-danger"></span>
                         </div>
                         <div class="col-md-4">

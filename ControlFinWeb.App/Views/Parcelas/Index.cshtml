@@ -48,12 +48,10 @@
                     </select>
                 </div>
                 <div class="col-md-1">
-                    <br />
-                    <button type="submit" class="w-100 btn btn-primary"><i class="bi bi-funnel"></i></button>
+                    <button type="submit" class="w-100 H-100 btn btn-primary btn-lg mt-1"><i class="bi bi-funnel"></i> FILTRO</button>
                 </div>
                 <div class="col-md-1">
-                    <br />
-                    <button type="button" class="w-100 btn btn-success pagar"><i class="bi bi-cash-coin"></i></button>
+                    <button type="button" class="w-100 h-100 btn btn-success btn-lg mt-1 pagar"><i class="bi bi-cash-coin"></i> PAGAR</button>
                 </div>
             </div>
         </form>
@@ -131,6 +129,7 @@
                         {
                             <button type="button" class="btn btn-secondary abrirFatura" data-id="@item.FaturaId"><i class="bi bi-file-plus"></i></button>
                         }
+                        <button type="button" class="btn btn-success gerarRegistroFatura" data-id="@item.Id"><i class="bi bi-credit-card"></i></button>
                     </td>
                 </tr>
             }
@@ -321,5 +320,13 @@
             var idFatura = $(this).attr("data-id");
             window.location.href = '/Faturas/Index?idFatura=' + idFatura;
         });
+
+        $(document).on(TipoClick().toString(), ".gerarRegistroFatura", function () {
+            var idParcela = $(this).attr("data-id");
+            $("#modal").load("/Parcelas/GerarRegistroFatura?IdParcela=" + idParcela, function () {
+                $("#modal").modal("show");
+            })
+        });
+       
     </script>
 }

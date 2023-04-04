@@ -57,9 +57,7 @@
                     </div>
                     <div class="col-md-6">
                         <label asp-for="PessoaId" class="control-label"></label>
-                        <select class="form-select" asp-for="PessoaId" asp-items="ViewBag.Pessoas">
-                            <option value="0">---Selecione um item---</option>
-                        </select>
+                        <select class="form-select" asp-for="PessoaId" asp-items="ViewBag.Pessoas"></select>
                         <span asp-validation-for="PessoaId" class="text-danger"></span>
                     </div>
                 </div>

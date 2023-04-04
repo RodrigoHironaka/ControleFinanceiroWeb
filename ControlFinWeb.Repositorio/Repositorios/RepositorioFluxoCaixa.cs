@@ -30,7 +30,7 @@ namespace ControlFinWeb.Repositorio.Repositorios
                         }
                         else
                         {
-                            novoFluxoCaixa.Nome = $"Pagamento efetuado no valor de {valorPagoParcela:C2} referente a conta: {parcela.Conta._DescricaoCompleta} - parcela N.º: [{parcela.Numero}] {parcela.DataVencimento}";
+                            novoFluxoCaixa.Nome = $"Pagamento efetuado no valor de {valorPagoParcela:C2} referente a conta: {parcela.Conta._DescricaoCompleta} - parcela N.º: [{parcela.Numero}] {parcela.DataVencimento.Value.ToShortDateString()}";
                             novoFluxoCaixa.DebitoCredito = Dominio.ObjetoValor.DebitoCredito.Débito;
                         }
                        
@@ -44,7 +44,7 @@ namespace ControlFinWeb.Repositorio.Repositorios
                         }
                         else
                         {
-                            novoFluxoCaixa.Nome = $"Recebimento efetuado no valor de {valorPagoParcela:C2} referente a conta {parcela.Conta._DescricaoCompleta} - parcela N.º: [{parcela.Numero}] {parcela.DataVencimento}";
+                            novoFluxoCaixa.Nome = $"Recebimento efetuado no valor de {valorPagoParcela:C2} referente a conta {parcela.Conta._DescricaoCompleta} - parcela N.º: [{parcela.Numero}] {parcela.DataVencimento.Value.ToShortDateString()}";
                             novoFluxoCaixa.DebitoCredito = Dominio.ObjetoValor.DebitoCredito.Crédito;
                         }
                     }

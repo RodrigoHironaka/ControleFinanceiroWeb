@@ -12,16 +12,18 @@ namespace ControlFinWeb.Repositorio.Repositorios
     {
         private readonly RepositorioParcela RepositorioParcela;
         private readonly RepositorioFatura RepositorioFatura;
+        private readonly RepositorioFluxoCaixa RepositorioFluxoCaixa;
         private readonly RepositorioLogModificacao RepositorioLog;
 
-        public RepositorioFaturaItens(RepositorioParcela repositorioParcela, RepositorioFatura repositorioFatura, RepositorioLogModificacao repositorioLog, ISession session) : base(session)
+        public RepositorioFaturaItens(RepositorioParcela repositorioParcela, RepositorioFatura repositorioFatura, RepositorioFluxoCaixa repositorioFluxoCaixa, RepositorioLogModificacao repositorioLog, ISession session) : base(session)
         {
             RepositorioParcela = repositorioParcela;
             RepositorioFatura = repositorioFatura;
+            RepositorioFluxoCaixa = repositorioFluxoCaixa;
             RepositorioLog = repositorioLog;
         }
 
-        public void SalvarAlterarFaturaItemEAlterarParcela(FaturaItens faturaItens, String nParcelas, Boolean replicar, IEnumerable<Difference> diferencas, Usuario usuario)
+        public void SalvarAlterarFaturaItemEAlterarParcela(FaturaItens faturaItens, String nParcelas, Boolean replicar, IEnumerable<Difference> diferencas, Usuario usuario, Caixa caixa = null, Parcela parcela = null, Boolean RegFluxo = false)
         {
             using (var trans = Session.BeginTransaction())
             {
@@ -85,6 +87,7 @@ namespace ControlFinWeb.Repositorio.Repositorios
                                     MesAnoReferencia = faturaItens.Fatura.MesAnoReferencia.AddMonths(i),
                                     Cartao = faturaItens.Fatura.Cartao,
                                     UsuarioCriacao = faturaItens.UsuarioCriacao,
+                                    Pessoa = faturaItens.Fatura.Pessoa
                                 };
                                 RepositorioFatura.SalvarEGerarNovaParcelaLote(novaFatura);
                                 novoItemFatura.Fatura = novaFatura;
@@ -97,6 +100,29 @@ namespace ControlFinWeb.Repositorio.Repositorios
                             }
                         }
                     }
+
+                    #region Usado quando a parcela é paga usando credito de fatura
+                    if (RegFluxo)
+                    {
+                        RepositorioFluxoCaixa.GerarFluxoCaixa(parcela, usuario, caixa, 0);
+                        parcela.ValorPago = parcela.ValorAberto;
+                        parcela.ValorAberto = 0;
+                        parcela.DataPagamento = DateTime.Now;
+                        parcela.SituacaoParcela = SituacaoParcela.Pago;
+                        RepositorioParcela.AlterarLote(parcela);
+
+                        if(parcela.Fatura != null)
+                        {
+                            if (parcela.Fatura.SituacaoFatura == SituacaoFatura.Aberta)
+                            {
+                                parcela.Fatura.DataFechamento = DateTime.Now;
+                                parcela.Fatura.Nome = $"Fatura foi fechada na hora do pagamento e valor registrado na nova fatura {faturaItens.Fatura._DescricaoCompleta}!";
+                            }
+                            parcela.Fatura.SituacaoFatura = SituacaoFatura.Paga;
+                            RepositorioFatura.AlterarLote(parcela.Fatura);
+                        }
+                    }
+                    #endregion
 
                     trans.Commit();
                 }

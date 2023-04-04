@@ -15,10 +15,10 @@ namespace ControlFinWeb.Repositorio.Repositorios
         private readonly RepositorioCaixa RepositorioCaixa;
         private readonly RepositorioContaBancaria RepositorioContaBancaria;
         private readonly RepositorioLogModificacao RepositorioLog;
-        public RepositorioParcela(ISession session, RepositorioFluxoCaixa repositorioFluxoCaixa, 
-            RepositorioCaixa repositorioCaixa, 
-            RepositorioContaBancaria repositorioContaBancaria,
-            RepositorioLogModificacao repositorioLog) : base(session)
+        public RepositorioParcela(ISession session, RepositorioFluxoCaixa repositorioFluxoCaixa,
+           RepositorioCaixa repositorioCaixa,
+           RepositorioContaBancaria repositorioContaBancaria,
+           RepositorioLogModificacao repositorioLog) : base(session)
         {
             RepositorioFluxoCaixa = repositorioFluxoCaixa;
             RepositorioCaixa = repositorioCaixa;
@@ -48,7 +48,7 @@ namespace ControlFinWeb.Repositorio.Repositorios
         public void AlterarParcelaFatura(FaturaItens faturaItens, Boolean RemovendoItemFatura = false, Boolean AlterandoItemFatura = false)
         {
             var existeParcela = ObterPorParametros(x => x.Fatura.Id.Equals(faturaItens.Fatura.Id)).FirstOrDefault();
-            
+
             if (RemovendoItemFatura)
             {
                 existeParcela.ValorParcela -= faturaItens.Valor;
@@ -149,5 +149,6 @@ namespace ControlFinWeb.Repositorio.Repositorios
 
 
         }
+       
     }
 }

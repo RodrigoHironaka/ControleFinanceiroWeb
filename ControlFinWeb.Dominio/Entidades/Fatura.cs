@@ -41,8 +41,8 @@ namespace ControlFinWeb.Dominio.Entidades
         public virtual object Clone()
         {
             var clone = (Fatura)this.MemberwiseClone();
-            clone.Cartao = (Cartao)clone.Cartao.Clone();
-            clone.Pessoa = (Pessoa)clone.Pessoa.Clone();
+            clone.Cartao = (Cartao)clone.Cartao?.Clone();
+            clone.Pessoa = (Pessoa)clone.Pessoa?.Clone();
             return clone;
         }
     }
