@@ -1,6 +1,8 @@
 ﻿using ControlFinWeb.App.Models;
 using ControlFinWeb.App.Utilitarios;
 using ControlFinWeb.App.ViewModels;
+using ControlFinWeb.Dominio.Entidades;
+using ControlFinWeb.Dominio.ObjetoValor;
 using ControlFinWeb.Repositorio.Repositorios;
 using LinqKit;
 using Microsoft.AspNetCore.Mvc;
@@ -9,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Text;
 using Utils.Extensions.Enums;
 
 namespace ControlFinWeb.App.Controllers
@@ -19,14 +22,17 @@ namespace ControlFinWeb.App.Controllers
         private readonly RepositorioParcela RepositorioParcela;
         private readonly RepositorioCaixa RepositorioCaixa;
         private readonly RepositorioContaBancaria RepositorioContaBancaria;
+        private readonly RepositorioCartao RepositorioCartao;
         public HomeController(RepositorioParcela repositorioParcela,
             RepositorioCaixa repositorioCaixa,
             RepositorioContaBancaria repositorioContaBancaria,
+            RepositorioCartao repositorioCartao,
             ILogger<HomeController> logger)
         {
             RepositorioParcela = repositorioParcela;
             RepositorioCaixa = repositorioCaixa;
             RepositorioContaBancaria = repositorioContaBancaria;
+            RepositorioCartao = repositorioCartao;
             _logger = logger;
         }
 
@@ -37,7 +43,7 @@ namespace ControlFinWeb.App.Controllers
 
             var predicado = RepositorioParcela.CriarPredicado();
             predicado = predicado.And(x => x.SituacaoParcela != Dominio.ObjetoValor.SituacaoParcela.Pago && x.SituacaoParcela != Dominio.ObjetoValor.SituacaoParcela.Cancelado);
-            predicado = predicado.And(x => x.DataVencimento >= DateTime.Now.PrimeiroDiaMes() );
+            predicado = predicado.And(x => x.DataVencimento >= DateTime.Now.PrimeiroDiaMes());
             predicado = predicado.And(x => x.DataVencimento <= DateTime.Now.UltimoDiaMes().FinalDia());
 
             var parcelas = RepositorioParcela.ObterPorParametros(predicado).ToList();
@@ -79,6 +85,7 @@ namespace ControlFinWeb.App.Controllers
         private void ParcelasAtrasadas()
         {
             var predicado = RepositorioParcela.CriarPredicado();
+            predicado = predicado.And(x => x.UsuarioCriacao.Id == Configuracao.Usuario.Id);
             predicado = predicado.And(x => x.SituacaoParcela != Dominio.ObjetoValor.SituacaoParcela.Pago && x.SituacaoParcela != Dominio.ObjetoValor.SituacaoParcela.Cancelado && x.SituacaoParcela != Dominio.ObjetoValor.SituacaoParcela.Atrasado);
             predicado = predicado.And(x => x.DataVencimento.Value.Date < DateTime.Now.Date);
             var parcelas = RepositorioParcela.ObterPorParametros(predicado).ToList();
@@ -137,7 +144,7 @@ namespace ControlFinWeb.App.Controllers
             x.UsuarioCriacao.Id == Configuracao.Usuario.Id &&
             x.Conta != null &&
             x.Conta.TipoConta == Dominio.ObjetoValor.TipoConta.Pagar).ToList();
-            
+
             var auxListaFaturas = RepositorioParcela.ObterPorParametros(x =>
            x.DataVencimento >= DateTime.Now.PrimeiroDiaMes() &&
            x.DataVencimento <= DateTime.Now.UltimoDiaMes().FinalDia() &&
@@ -193,7 +200,7 @@ namespace ControlFinWeb.App.Controllers
                         Valor = faturas[i].Total,
                         Descricao = faturas[i].Descricao
                     });
-                   
+
                 }
             }
             var listaTeste2 = listateste.GroupBy(x => x.Descricao).Select(gp => new
@@ -213,6 +220,74 @@ namespace ControlFinWeb.App.Controllers
             ViewBag.Totais1 = totais;
             ViewBag.Cores1 = cores;
             ViewBag.Mes1 = $"({DateTime.Now.ToString("MMM")})";
+        }
+
+        public String TodosAvisos()
+        {
+            var aviso = new StringBuilder();
+
+            var avisoCaixa = AvisoGastos();
+            if (!String.IsNullOrEmpty(avisoCaixa))
+                aviso.AppendLine(avisoCaixa);
+
+            var avisoCartao = AvisoCartao();
+            if (!String.IsNullOrEmpty(avisoCartao))
+                aviso.AppendLine(avisoCartao);
+
+           
+
+            return aviso.ToString();
+
+        }
+
+        private String AvisoCartao()
+        {
+            var avisoCartao = new StringBuilder();
+
+            var predicadoCartao = RepositorioCartao.CriarPredicado();
+            predicadoCartao = predicadoCartao.And(x => x.UsuarioCriacao.Id == Configuracao.Usuario.Id);
+            predicadoCartao = predicadoCartao.And(x => x.Situacao == Situacao.Ativo);
+            predicadoCartao = predicadoCartao.And(x => x.VencimentoCartao.Value >= DateTime.Now.AddMonths(-2));
+            predicadoCartao = predicadoCartao.And(x => x.VencimentoCartao.Value <= DateTime.Now.FinalDia());
+            var cartoesProximosVencimento = RepositorioCartao.ObterPorParametros(predicadoCartao);
+            cartoesProximosVencimento.ForEach(x => avisoCartao.AppendLine(String.Format("<p>Cartão {0} próximo do vencimento {1:MM/yyyy}</p>", x.Nome, x.VencimentoCartao.Value)));
+
+            var predicadoCartaoAposVencimento = RepositorioCartao.CriarPredicado();
+            predicadoCartaoAposVencimento = predicadoCartaoAposVencimento.And(x => x.UsuarioCriacao.Id == Configuracao.Usuario.Id);
+            predicadoCartaoAposVencimento = predicadoCartaoAposVencimento.And(x => x.Situacao == Situacao.Ativo);
+            predicadoCartaoAposVencimento = predicadoCartaoAposVencimento.And(x => x.VencimentoCartao.Value < DateTime.Now.FinalDia());
+            var cartoesVencidos = RepositorioCartao.ObterPorParametros(predicadoCartaoAposVencimento);
+            cartoesVencidos.ForEach(x => avisoCartao.AppendLine(String.Format("<p>Cartão {0}  vencido em {1:MM/yyyy}</p>", x.Nome, x.VencimentoCartao.Value)));
+
+
+            return avisoCartao.ToString();
+        }
+
+        private String AvisoGastos()
+        {
+            var avisoGasto = new StringBuilder();
+            Decimal totalMesAtual = 0, totalMesAnterior = 0;
+
+            var predicadoMesAtual = RepositorioParcela.CriarPredicado();
+            predicadoMesAtual = predicadoMesAtual.And(x => x.UsuarioCriacao.Id == Configuracao.Usuario.Id);
+            predicadoMesAtual = predicadoMesAtual.And(x => x.DataVencimento >= DateTime.Now.PrimeiroDiaMes());
+            predicadoMesAtual = predicadoMesAtual.And(x => x.DataVencimento <= DateTime.Now.UltimoDiaMes().FinalDia());
+            var MesAtual = RepositorioParcela.ObterPorParametros(predicadoMesAtual).ToList();
+            totalMesAtual = MesAtual.Sum(x => x.ValorAberto);
+
+            var predicadoMesAterior = RepositorioParcela.CriarPredicado();
+            predicadoMesAterior = predicadoMesAterior.And(x => x.UsuarioCriacao.Id == Configuracao.Usuario.Id);
+            predicadoMesAterior = predicadoMesAterior.And(x => x.DataVencimento >= DateTime.Now.AddMonths(-1).PrimeiroDiaMes());
+            predicadoMesAterior = predicadoMesAterior.And(x => x.DataVencimento <= DateTime.Now.AddMonths(-1).UltimoDiaMes().FinalDia());
+            var MesAnterior = RepositorioParcela.ObterPorParametros(predicadoMesAterior).ToList();
+            totalMesAnterior = MesAnterior.Sum(x => x.ValorPago);
+
+            var resultado = (totalMesAtual * 100) / totalMesAnterior;
+
+            if(resultado != 0)
+                avisoGasto.Append(String.Format("Gasto entre o mês atual e o anterior: {0:N2}%", resultado));
+
+            return avisoGasto.ToString();
         }
     }
 }
