@@ -1,0 +1,90 @@
+﻿@model ControlFinWeb.App.ViewModels.Acesso.LogModificacaoVM
+
+@{
+    ViewData["Title"] = "Logs";
+}
+
+<h1>Logs</h1>
+<hr />
+
+<div class="mb-1">
+    <form asp-action="Logs">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div class="row">
+            <div class="col-md-2">
+                <label asp-for="DataInicio" class="control-label"></label>
+                <input asp-for="DataInicio" class="form-control" type="date" />
+                <span asp-validation-for="DataInicio" class="text-danger"></span>
+            </div>
+            <div class="col-md-2">
+                <label asp-for="DataFinal" class="control-label"></label>
+                <input asp-for="DataFinal" class="form-control" type="date" />
+                <span asp-validation-for="DataFinal" class="text-danger"></span>
+            </div>
+            <div class="col-md-7">
+                <label asp-for="Chave" class="control-label"></label>
+                <input asp-for="Chave" class="form-control" />
+                <span asp-validation-for="Chave" class="text-danger"></span>
+            </div>
+            <div class="col-md-1">
+                <br />
+                <input type="submit" value="Filtrar" class="w-100 btn btn-primary" />
+            </div>
+        </div>
+    </form>
+</div>
+
+<table id="tabelaLogs" class="table table-bordered table-striped table-hover mt-1">
+    <thead>
+        <tr>
+            <th>Data</th>
+            <th>Usuário</th>
+            <th>Chave</th>
+            <th>Histórico</th>
+
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Logs)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.DataGeracao)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.UsuarioCriacao.Nome)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Chave)
+                </td>
+                <td>
+                    @Html.Raw(item.Historico)
+                </td>
+
+            </tr>
+        }
+    </tbody>
+</table>
+
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script>
+        $('#tabelaLogs').DataTable({
+            order: [[0, 'asc']],
+            "language": {
+                "url": "//cdn.datatables.net/plug-ins/1.11.5/i18n/pt-BR.json"
+            },
+            searching: false,
+            info: false,
+            responsive: true,
+            dom: 'Bfrtip',
+            buttons: [
+                'copy', 'csv', 'excel', 'pdf', 'print'
+            ]
+        });
+    </script>
+}
