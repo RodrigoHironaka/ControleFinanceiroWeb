@@ -26,6 +26,7 @@ namespace ControlFinWeb.Repositorio.Mapeamentos
             Property(x => x.HoraFinalNoite);
             Property(x => x.TotalNoite);
             Property(x => x.HoraFinalDia);
+            Property(x => x.AjusteManual);
             Property(x => x.DataGeracao);
             Property(x => x.DataAlteracao);
             ManyToOne(x => x.Pessoa, m => m.Column("Pessoa"));

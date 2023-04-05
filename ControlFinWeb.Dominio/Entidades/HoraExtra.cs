@@ -20,6 +20,7 @@ namespace ControlFinWeb.Dominio.Entidades
         public virtual TimeSpan TotalTarde { get; set; }
         public virtual TimeSpan TotalNoite { get; set; }
         public virtual TimeSpan HoraFinalDia { get; set; }
+        public virtual TimeSpan AjusteManual { get; set; }
 
         public virtual object Clone()
         {
