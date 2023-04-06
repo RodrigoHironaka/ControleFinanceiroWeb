@@ -1,6 +1,6 @@
 ﻿@model IEnumerable<ControlFinWeb.App.ViewModels.ContaBancariaVM>
 
-<table id="tabelaRegistros" class="table table-bordered table-hover">
+<table id="tabelaRegistros" class="table table-bordered table-hover small">
     <thead>
         <tr>
             <th>Data</th>
@@ -44,7 +44,7 @@
                 </td>
                 <td align="center">
                     <button class="btn btn-sm btn-primary modal-trigger editar" data-id="@item.Id"><i class="bi bi-pencil-square"></i></button>
-                    <button class="btn btn-sm btn-danger modal-trigger" onclick="ExibirModalExcluir(@item.Id)"><i class="bi bi-x-square"></i></button>
+                    <button class="btn btn-sm btn-danger modal-trigger" onclick="ExibirModalExcluir(@item.Id)"><i class="bi bi-trash-fill"></i></button>
                 </td>
             </tr>
         }

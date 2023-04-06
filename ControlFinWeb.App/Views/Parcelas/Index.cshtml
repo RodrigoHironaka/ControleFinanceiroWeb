@@ -59,7 +59,7 @@
 </div>
 
 <div class="mt-3">
-    <table class="table table-bordered table-striped table-hover" id="tabelaParcelas">
+    <table class="table table-bordered table-striped table-hover small" id="tabelaParcelas">
         <thead>
             <tr>
                 <th><input class="form-check-input" id="checkAll" type="checkbox"></th>
@@ -81,25 +81,27 @@
                 <tr>
                     <td scope='row'><input class='form-check-input check' id='check' type='checkbox' onclick='ClickCheckItem()' value="@item.Id"></td>
                     <td style="text-align:center">
-                        @if(item.ContaVM != null)
+                        @if (item.ContaVM != null)
                             @Html.DisplayFor(modelItem => item.ContaVM.TipoConta)
                         else
                             @TipoConta.Pagar
-                    </td>
-                    <td style="text-align:center">
-                        @Html.DisplayFor(modelItem => item.Numero)
-                    </td>
-                    <td style="text-align:right">
-                        @Html.DisplayFor(modelItem => item.ValorAberto)
-                    </td>
-                    <td style="text-align:right">
-                        @Html.Raw(item.DataVencimento.Value.ToShortDateString())
-                    </td>
-                    <td style="text-align:right">
-                        @Html.DisplayFor(modelItem => item.ValorPago)
-                    </td>
-                    <td style="text-align:right">
-                        @if (item.DataPagamento != null)
+
+
+                        </td>
+                        <td style="text-align:center">
+                            @Html.DisplayFor(modelItem => item.Numero)
+                        </td>
+                        <td style="text-align:right">
+                            @Html.DisplayFor(modelItem => item.ValorAberto)
+                        </td>
+                        <td style="text-align:right">
+                            @Html.Raw(item.DataVencimento.Value.ToShortDateString())
+                        </td>
+                        <td style="text-align:right">
+                            @Html.DisplayFor(modelItem => item.ValorPago)
+                        </td>
+                        <td style="text-align:right">
+                            @if (item.DataPagamento != null)
                         {
                             @Html.Raw(item.DataPagamento.Value.ToShortDateString())
                         }
@@ -121,15 +123,30 @@
                         }
                     </td>
                     <td style="text-align:center">
-                        @if (item.ContaId > 0)
+                        @if (item.SituacaoParcela == SituacaoParcela.Pendente || item.SituacaoParcela == SituacaoParcela.PendenteParcial || item.SituacaoParcela == SituacaoParcela.Atrasado)
                         {
-                            <button type="button" class="btn btn-secondary abrirConta" data-id="@item.ContaId"><i class="bi bi-file-plus"></i></button>
+                            @if (item.ContaId > 0)
+                            {
+                                <button type="button" class="btn btn-sm btn-warning abrirConta" data-id="@item.ContaId" data-bs-toggle="tooltip" data-bs-title="Editar Conta"><i class="bi bi-pencil-square"></i></button>
+                            }
+                            else
+                            {
+                                <button type="button" class="btn btn-sm btn-warning abrirFatura" data-id="@item.FaturaId" data-bs-toggle="tooltip" data-bs-title="Editar Fatura"><i class="bi bi-pencil-square"></i></button>
+                            }
+                            <button type="button" class="btn btn-sm btn-success gerarRegistroFatura" data-id="@item.Id" data-bs-toggle="tooltip" data-bs-title="Pagar gerando registro em fatura"><i class="bi bi-credit-card"></i></button>
                         }
                         else
                         {
-                            <button type="button" class="btn btn-secondary abrirFatura" data-id="@item.FaturaId"><i class="bi bi-file-plus"></i></button>
+                            @if (item.ContaId > 0)
+                            {
+                                <button type="button" class="btn btn-sm btn-warning disabled" data-bs-toggle="tooltip" data-bs-title="Editar Conta"><i class="bi bi-pencil-square"></i></button>
+                            }
+                            else
+                            {
+                                <button type="button" class="btn btn-sm btn-warning disabled" data-bs-toggle="tooltip" data-bs-title="Editar Fatura"><i class="bi bi-pencil-square"></i></button>
+                            }
+                            <button type="button" class="btn btn-sm btn-success disabled" data-bs-toggle="tooltip" data-bs-title="Pagar gerando registro em fatura"><i class="bi bi-credit-card"></i></button>
                         }
-                        <button type="button" class="btn btn-success gerarRegistroFatura" data-id="@item.Id"><i class="bi bi-credit-card"></i></button>
                     </td>
                 </tr>
             }
@@ -160,7 +177,7 @@
     }
 
     <script type="text/javascript">
-        $(document).ready(function() {
+        $(document).ready(function () {
             $('#filtroParcelas').multiselect({
                 buttonClass: 'form-select',
                 templates: {
@@ -170,7 +187,7 @@
                 allSelectedText: 'Todos',
                 nonSelectedText: 'Filtro Situação',
                 nSelectedText: 'selecionado(s)',
-                onChange: function(option, checked, select) {
+                onChange: function (option, checked, select) {
                     SituacoesSelecionadas();
                 }
             });
@@ -194,22 +211,23 @@
                             return parseFloat(a.toString().replace(",", ".")) + parseFloat(b.toString().replace(",", "."));
                         }, 0);
                     pagoTotal = api
-                    .column(5, { page: 'current' })
-                    .data()
-                    .reduce(function (a, b) {
-                        return parseFloat(a.toString().replace(",", ".")) + parseFloat(b.toString().replace(",", "."));
-                    }, 0);
+                        .column(5, { page: 'current' })
+                        .data()
+                        .reduce(function (a, b) {
+                            return parseFloat(a.toString().replace(",", ".")) + parseFloat(b.toString().replace(",", "."));
+                        }, 0);
 
                     // Update footer
                     $(api.column(3).footer()).html(numFormat(parcelaTotal));
                     $(api.column(5).footer()).html(numFormat(pagoTotal));
-                    
+
                 },
                 dom: 'Bfrtip',
                 buttons: [
                     'copy', 'csv', 'excel', 'pdf', 'print'
                 ]
             });
+            HabilitarToolTip();
         });
 
         function Filtrar() {
@@ -218,7 +236,7 @@
                 url: '/Parcelas/Index',
                 method: 'POST',
                 data: dados,
-                success: function(retorno) {
+                success: function (retorno) {
                 }
 
             });
@@ -257,12 +275,12 @@
         }
 
         //CheckAll
-        $('#checkAll').change(function() {
+        $('#checkAll').change(function () {
             $('.check').prop('checked', this.checked);
         });
 
         function ClickCheckItem() {
-            $('.check').change(function() {
+            $('.check').change(function () {
                 if ($('.check:checked').length == $('.check').length) {
                     $('#checkAll').prop('checked', true);
                 }
@@ -331,6 +349,6 @@
                 $("#modal").modal("show");
             })
         });
-       
+
     </script>
 }

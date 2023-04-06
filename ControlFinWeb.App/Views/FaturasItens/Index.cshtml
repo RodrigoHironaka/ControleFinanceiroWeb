@@ -23,7 +23,7 @@
                     </div>
                 </div>
                 <div id="mensagemItem" role="alert"></div>
-                <table id="tabelaItensFatura" class="table table-bordered table-striped table-hover tabelaItensFatura" style="font-size: 14px;">
+                <table id="tabelaItensFatura" class="table table-bordered table-striped table-hover tabelaItensFatura small">
                     <thead>
                         <tr>
                             <th>Nome</th>
@@ -55,7 +55,7 @@
                                 </td>
                                 <td align="center">
                                     <button class="btn btn-sm btn-primary modal-trigger editar" data-id="@item.Id"><i class="bi bi-pencil-square"></i></button>
-                                    <button class="btn btn-sm btn-danger modal-trigger" onclick="ExibirModalExcluir(@item.Id)"><i class="bi bi-x-square"></i></button>
+                                    <button class="btn btn-sm btn-danger modal-trigger" onclick="ExibirModalExcluir(@item.Id)"><i class="bi bi-trash-fill"></i></button>
                                 </td>
                             </tr>
                         }

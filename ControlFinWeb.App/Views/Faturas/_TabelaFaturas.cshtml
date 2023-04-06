@@ -1,7 +1,7 @@
 ﻿@model IEnumerable<ControlFinWeb.App.ViewModels.FaturaVM>
 
 <div id="mensagem" role="alert"></div>
-<table id="tabelaPesquisaFatura" class="table table-bordered  table-hover flex-md-nowrap" width="100%" style="font-size: 14px;">
+<table id="tabelaPesquisaFatura" class="table table-bordered  table-hover flex-md-nowrap small" width="100%" style="font-size: 14px;">
     <thead>
         <tr>
             <th width="50">Mês/Ano</th>
@@ -34,11 +34,11 @@
                         @Html.DisplayFor(modelItem => item.PessoaVM.Nome)
                     </td>
                     <td align="center">
-                        <button class="btn btn-sm btn-success modal-trigger" onclick="MostrarDetalhesFatura(@item.Id)"><i class="bi bi-file-earmark-check-fill"></i></button>
+                        <button class="btn btn-sm btn-success modal-trigger" onclick="MostrarDetalhesFatura(@item.Id)" data-bs-toggle="tooltip" data-bs-title="Selecionar fatura"><i class="bi bi-file-earmark-check-fill"></i></button>
                         @if (item.SituacaoFatura == ControlFinWeb.Dominio.ObjetoValor.SituacaoFatura.Aberta)
                         {
                             <button class="btn btn-sm btn-primary modal-trigger editarFatura" data-id="@item.Id"><i class="bi bi-pencil-square"></i></button>
-                            <button class="btn btn-sm btn-danger modal-trigger" onclick="ExibirModalExcluir(@item.Id)"><i class="bi bi-x-square"></i></button>
+                            <button class="btn btn-sm btn-danger modal-trigger" onclick="ExibirModalExcluir(@item.Id)"><i class="bi bi-trash-fill"></i></button>
                         }
                         else
                         {
@@ -120,6 +120,7 @@
                 'copy', 'csv', 'excel', 'pdf', 'print'
             ]
         });
+        HabilitarToolTip();
     });
 
 

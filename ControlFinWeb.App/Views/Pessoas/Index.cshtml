@@ -5,15 +5,16 @@
 }
 
 <div class="row">
-    <div class="input-group mb-3">
-        <div class="input-group-prepend">
-            <button class="btn btn-dark novo" data-id="0"><i class="bi bi-plus-lg"></i></button>
-        </div>
-        <span class="input-group-text fw-bold">Lista de Pessoas</span>
+    <div class="col-md-1">
+        <button class=" w-100 btn btn-success novo" data-id="0"><i class="bi bi-plus-lg"></i> Novo</button>
+    </div>
+    <div class="col-md-11">
+        <h3>Pessoas</h3>
     </div>
 </div>
+<hr />
 <div id="alert" role="alert" style="display:none;"></div>
-<table id="tabela" class="table table-bordered table-striped table-hover">
+<table id="tabela" class="table table-bordered table-striped table-hover small">
     <thead>
         <tr>
             <th>Nome</th>
@@ -39,11 +40,11 @@
                     <button class="btn btn-sm btn-primary modal-trigger editar" data-id="@item.Id"><i class="bi bi-pencil-square"></i></button>
                     @if (item.Situacao != Situacao.Ativo)
                     {
-                        <button class="btn btn-sm btn-danger modal-trigger" disabled><i class="bi bi-x-square"></i></button>
+                        <button class="btn btn-sm btn-danger modal-trigger" disabled><i class="bi bi-trash-fill"></i></button>
                     }
                     else
                     {
-                        <button class="btn btn-sm btn-danger modal-trigger" onclick="ExibirModalExcluir(@item.Id)"><i class="bi bi-x-square"></i></button>
+                        <button class="btn btn-sm btn-danger modal-trigger" onclick="ExibirModalExcluir(@item.Id)"><i class="bi bi-trash-fill"></i></button>
                     }
                 </td>
             </tr>
@@ -62,7 +63,7 @@
                     "url": "//cdn.datatables.net/plug-ins/1.11.5/i18n/pt-BR.json"
                 },
                 responsive: true,
-               
+
             });
         });
 
@@ -99,7 +100,7 @@
         }
 
         $(function () {
-           $(document).on(TipoClick().toString(), ".novo", function () {
+            $(document).on(TipoClick().toString(), ".novo", function () {
                 var id = $(this).attr("data-id");
                 $("#modal").load("Editar?id=" + id, function () {
                     $(".modal-title").html("NOVO REGISTRO");

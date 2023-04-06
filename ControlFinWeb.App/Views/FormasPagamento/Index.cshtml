@@ -5,22 +5,16 @@
 }
 
 <div class="row">
-    <div class="col-md-3">
-        <div class="input-group mb-3">
-            <button class="btn btn-dark novo" type="button" data-id="0" id="btnNovo"><i class="bi bi-plus-lg"></i></button>
-            <input type="text" class="form-control fw-bold" placeholder="" readonly value="Lista de Formas de Pagamento" aria-describedby="btnNovo">
-        </div>
+    <div class="col-md-1">
+        <button class=" w-100 btn btn-success novo" data-id="0"><i class="bi bi-plus-lg"></i> Novo</button>
     </div>
-   @* <div class="input-group mb-3 input-group-lg inv-amount-block center-block " ">
-        <div class="input-group-prepend">
-            <button class="btn btn-dark novo" data-id="0"><i class="bi bi-plus-lg"></i></button>
-        </div>
-        <span class="input-group-text fw-bold">Lista de Formas de Pagamento</span>
-    </div>*@
-   
+    <div class="col-md-11">
+        <h3>Formas de Pagamento</h3>
+    </div>
 </div>
+<hr />
 
-<table id="tabela" class="table table-bordered table-striped table-hover">
+<table id="tabela" class="table table-bordered table-striped table-hover small">
     <thead>
         <tr>
             <th>Nome</th>
@@ -62,7 +56,7 @@
                 </td>
                 <td align="center">
                     <button class="btn btn-sm btn-primary modal-trigger editar" data-id="@item.Id"><i class="bi bi-pencil-square"></i></button>
-                    <button class="btn btn-sm btn-danger modal-trigger" onclick="ExibirModalExcluir(@item.Id)"><i class="bi bi-x-square"></i></button>
+                    <button class="btn btn-sm btn-danger modal-trigger" onclick="ExibirModalExcluir(@item.Id)"><i class="bi bi-trash-fill"></i></button>
                 </td>
             </tr>
         }

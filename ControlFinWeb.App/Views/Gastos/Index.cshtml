@@ -5,14 +5,15 @@
 }
 
 <div class="row">
-    <div class="input-group mb-3">
-        <div class="input-group-prepend">
-            <button class="btn btn-dark novo" data-id="0"><i class="badge-info bi-plus-lg"></i></button>
-        </div>
-        <span class="input-group-text fw-bold">Lista de gastos</span>
+    <div class="col-md-1">
+        <button class=" w-100 btn btn-success novo" data-id="0"><i class="bi bi-plus-lg"></i> Novo</button>
+    </div>
+    <div class="col-md-11">
+        <h3>Gastos</h3>
     </div>
 </div>
-<table id="tabela" class="table table-bordered table-striped table-hover">
+<hr />
+<table id="tabela" class="table table-bordered table-striped table-hover small">
     <thead>
         <tr>
             <th>Nome</th>
@@ -32,7 +33,7 @@
                 </td>
                 <td align="center">
                     <button class="btn btn-sm btn-primary modal-trigger editar" data-id="@item.Id"><i class="bi bi-pencil-square"></i></button>
-                    <button class="btn btn-sm btn-danger modal-trigger" onclick="ExibirModalExcluir(@item.Id)"><i class="bi bi-x-square"></i></button>
+                    <button class="btn btn-sm btn-danger modal-trigger" onclick="ExibirModalExcluir(@item.Id)"><i class="bi bi-trash-fill"></i></button>
                 </td>
             </tr>
         }

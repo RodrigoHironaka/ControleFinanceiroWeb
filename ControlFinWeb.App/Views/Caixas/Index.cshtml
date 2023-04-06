@@ -7,14 +7,14 @@
 
 <div class="row mb-3">
     <div class="col-sm-5 d-flex justify-content-start">
-        <button type="button" class="w-100 btn-md btn btn-dark pesquisar"><i class="bi bi-search"></i> Pesquisar</button>
+        <button type="button" class="w-100 btn-md btn btn-secondary pesquisar"><i class="bi bi-search"></i> Pesquisar</button>
         @if (Model.Situacao == SituacaoCaixa.Aberto)
         {
-            <button type="button" class="w-100 btn-md btn btn-secondary abrirFecharCaixa" data-id="@Model.Id"><i class="bi bi-cash-stack"></i> Abrir Caixa</button>
+            <button type="button" class="w-100 btn-md btn btn-primary abrirFecharCaixa" data-id="@Model.Id"><i class="bi bi-cash-stack"></i> Abrir Caixa</button>
         }
         @if (Model.Id > 0 && Model.Situacao == SituacaoCaixa.Aberto)
         {
-            <button type="button" class="w-100 btn btn-md btn-dark novo" data-id="0"><i class="bi bi-plus-lg"></i> Adicionar</button>
+            <button type="button" class="w-100 btn btn-md btn-success novo" data-id="0"><i class="bi bi-plus-lg"></i> Adicionar</button>
             <div class="btn-group">
                 <button type="button" class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
                     <i class="bi bi-bank2"></i> Transferir
@@ -39,7 +39,7 @@
 
 <div id="mensagem" role="alert"></div>
 
-<table id="tabela" class="table table-bordered table-striped table-hover">
+<table id="tabela" class="table table-bordered table-striped table-hover small">
     <thead>
         <tr>
             <th style="text-align:center">Tipo</th>
