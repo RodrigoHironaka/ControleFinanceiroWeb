@@ -1,6 +1,8 @@
 using ControlFinWeb.App.AutoMapper;
 using ControlFinWeb.App.Configurations;
 using ControlFinWeb.App.Utilitarios;
+using ControlFinWeb.Repositorio.Interface;
+using ControlFinWeb.Repositorio.Servicos;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -40,6 +42,7 @@ namespace ControlFinWeb.App
             });
 
             services.AddAutoMapper(typeof(AutoMapperSetup));
+            services.AddScoped<IDbBackupService, DbBackupService>();
         }
 
     

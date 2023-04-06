@@ -83,6 +83,7 @@
                                     @if (User.IsInRole(TipoUsuario.Administrador.ToString()))
                                     {
                                         <a class="dropdown-item" asp-action="Index" asp-controller="Usuarios">Usuários</a>
+                                        <a class="dropdown-item" asp-action="DownloadZip" asp-controller="DbBackup">Backup</a>
                                         <a class="dropdown-item" asp-action="Logs" asp-controller="LogModificacoes">Logs</a>
                                         <hr class="dropdown-divider">
                                     }
