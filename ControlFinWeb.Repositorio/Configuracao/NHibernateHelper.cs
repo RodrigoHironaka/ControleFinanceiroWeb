@@ -12,7 +12,8 @@ namespace App1.Repositorio.Configuracao
     {
         private static ISessionFactory _sessionFactory;
 
-        private static String connectionString = "Server=localhost;Port=3306;Database=ControlFin;Uid=root;Pwd=123456;SslMode=none";
+        //private static String connectionString = "Server=localhost;Port=3306;Database=ControlFin;Uid=root;Pwd=123456;SslMode=none";
+        private static String connectionString = "Server=MYSQL8003.site4now.net;Database=db_a97813_finan;Uid=a97813_finan;Pwd=q1w2e3r4";
 
         public static ISession ObterSessao()
         {

@@ -13,8 +13,8 @@
         </div>
         <div class="modal-body">
             <div class="row">
-                <div class="col-md-3">
-                    <select class="form-select mt-1" id="CartaoId" asp-items="@Model.First().ComboCartoes"></select>
+                <div class="col-md-4">
+                    <select class="form-select mt-1" id="CartaoId" asp-items="ViewBag.Cartoes"></select>
                 </div>
                 <div class="col-md-3">
                     <div class="form-check form-switch">
@@ -22,7 +22,7 @@
                         <label class="form-check-label mt-1" for="flexSwitchCheckChecked">Somente Aberto</label>
                     </div>
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-2">
                     <button type="button" class="w-100 btn btn-sm btn-primary mt-1" onclick="Filtrar()"><i class="bi bi-funnel"></i> Filtrar</button>
                 </div>
                 <div class="col-md-3">

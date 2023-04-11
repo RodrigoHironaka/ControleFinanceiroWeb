@@ -19,6 +19,7 @@ namespace ControlFinWeb.App.ViewModels
         public String Nome { get; set; }
 
         [Range(1, Int64.MaxValue, ErrorMessage = "Informe uma Pessoa")]
+        [DisplayName("Pessoa")]
         public Int64 PessoaId { get; set; }
         public PessoaVM PessoaVM { get; set; }
         public SelectList ComboPessoas

@@ -157,7 +157,7 @@ namespace ControlFinWeb.App.Utilitarios
             {
                 try
                 {
-                    lista.AddRange(from p in session.Query<Gasto>().Where(x => x.Situacao == Dominio.ObjetoValor.Situacao.Ativo)
+                    lista.AddRange(from p in session.Query<Gasto>().Where(x => x.Situacao == Dominio.ObjetoValor.Situacao.Ativo).OrderBy(x => x.Nome)
                                    select new Gasto
                                    {
                                        Id = p.Id,
@@ -180,7 +180,7 @@ namespace ControlFinWeb.App.Utilitarios
             {
                 try
                 {
-                    lista.AddRange(from p in session.Query<SubGasto>().Where(x => x.Situacao == Dominio.ObjetoValor.Situacao.Ativo)
+                    lista.AddRange(from p in session.Query<SubGasto>().Where(x => x.Situacao == Dominio.ObjetoValor.Situacao.Ativo).OrderBy(x => x.Gasto.Nome)
                                    select new SubGasto
                                    {
                                        Id = p.Id,

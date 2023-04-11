@@ -54,7 +54,7 @@ namespace ControlFinWeb.App.Controllers
         {
             IEnumerable<Fatura> faturas = Repositorio.ObterPorParametros(x => x.UsuarioCriacao.Id == Configuracao.Usuario.Id && x.SituacaoFatura == SituacaoFatura.Aberta);
             List<FaturaVM> faturasVM = Mapper.Map<List<FaturaVM>>(faturas);
-           // ViewBag.Cartoes = new SelectList(new RepositorioCartao(NHibernateHelper.ObterSessao()).ObterPorParametros(x => x.Situacao == Situacao.Ativo), "Id", "Nome", null);
+            ViewBag.Cartoes = PreencheCombo.Cartoes(); //new SelectList(new RepositorioCartao(NHibernateHelper.ObterSessao()).ObterPorParametros(x => x.Situacao == Situacao.Ativo), "Id", "Nome", null);
             return View(faturasVM);
         }
 
