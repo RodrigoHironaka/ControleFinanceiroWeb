@@ -266,7 +266,7 @@ namespace ControlFinWeb.App.Controllers
         private String AvisoGastos()
         {
             var avisoGasto = new StringBuilder();
-            Decimal totalMesAtual = 0, totalMesAnterior = 0;
+            Decimal totalMesAtual = 0, totalMesAnterior = 0, resultado = 0;
 
             var predicadoMesAtual = RepositorioParcela.CriarPredicado();
             predicadoMesAtual = predicadoMesAtual.And(x => x.UsuarioCriacao.Id == Configuracao.Usuario.Id);
@@ -282,7 +282,8 @@ namespace ControlFinWeb.App.Controllers
             var MesAnterior = RepositorioParcela.ObterPorParametros(predicadoMesAterior).ToList();
             totalMesAnterior = MesAnterior.Sum(x => x.ValorPago);
 
-            var resultado = (totalMesAtual * 100) / totalMesAnterior;
+            if(totalMesAnterior > 0)
+                resultado = (totalMesAtual * 100) / totalMesAnterior;
 
             if(resultado != 0)
                 avisoGasto.Append(String.Format("Gasto entre o mês atual e o anterior: {0:N2}%", resultado));
