@@ -111,8 +111,6 @@ namespace ControlFinWeb.App.Controllers
         public IActionResult Index(FiltroParcelasVM filtrarParcelasVM)
         {
             filtrarParcelasVM.Parcelas = Mapper.Map<List<ParcelaVM>>(FiltroParcelas(filtrarParcelasVM));
-
-            ViewBag.PessoaId = new SelectList(new RepositorioPessoa(NHibernateHelper.ObterSessao()).ObterPorParametros(x => x.Situacao == Situacao.Ativo), "Id", "Nome", filtrarParcelasVM.PessoaId);
             return View(filtrarParcelasVM);
         }
 
@@ -157,8 +155,6 @@ namespace ControlFinWeb.App.Controllers
                 parcela = Repositorio.ObterPorId(Id);
                 parcelaVM = Mapper.Map(parcela, parcelaVM);
             }
-            ViewBag.FormaPagamentoId = new SelectList(new RepositorioFormaPagamento(NHibernateHelper.ObterSessao()).ObterPorParametros(x => x.Situacao == Situacao.Ativo), "Id", "Nome", Id);
-
             return View(parcelaVM);
         }
 
@@ -183,7 +179,6 @@ namespace ControlFinWeb.App.Controllers
                 }
                 return new EmptyResult();
             }
-            ViewBag.FormaPagamentoId = new SelectList(new RepositorioFormaPagamento(NHibernateHelper.ObterSessao()).ObterPorParametros(x => x.Situacao == Situacao.Ativo), "Id", "Nome", parcelaVM.Id);
             return View(parcelaVM);
         }
 
@@ -266,9 +261,6 @@ namespace ControlFinWeb.App.Controllers
                 pagarParcelaVM.Mensagens.Add(String.Format("Valor à pagar já possui desconto de {0:C2}", parcelas.Sum(x => x.DescontoValor)));
 
             pagarParcelaVM.JsonParcelasPagar = JsonConvert.SerializeObject(Mapper.Map<List<ParcelaVM>>(parcelas));
-
-            ViewBag.FormaPagamentoId = new SelectList(new RepositorioFormaPagamento(NHibernateHelper.ObterSessao()).ObterPorParametros(x => x.Situacao == Situacao.Ativo), "Id", "Nome");
-            ViewBag.BancoId = new SelectList(new RepositorioBanco(NHibernateHelper.ObterSessao()).ObterPorParametros(x => x.Situacao == Situacao.Ativo), "Id", "_DadosCompletos");
             return PartialView(pagarParcelaVM);
         }
 
@@ -358,9 +350,6 @@ namespace ControlFinWeb.App.Controllers
                     return Json(new { result = false, error = ex.Message.ToString() });
                 }
             }
-
-            ViewBag.FormaPagamentoId = new SelectList(new RepositorioFormaPagamento(NHibernateHelper.ObterSessao()).ObterPorParametros(x => x.Situacao == Situacao.Ativo), "Id", "Nome");
-            ViewBag.BancoId = new SelectList(new RepositorioBanco(NHibernateHelper.ObterSessao()).ObterPorParametros(x => x.Situacao == Situacao.Ativo), "Id", "_DadosCompletos");
             return PartialView(pagarParcelaVM);
         }
 
@@ -376,8 +365,6 @@ namespace ControlFinWeb.App.Controllers
             if(faturas != null && faturas.Count == 0 ) 
                 return RedirectToAction("Editar", "Faturas");
 
-            ViewBag.FormaPagamentoId = new SelectList(RepositorioFormaPagamento.ObterPorParametros(x => x.Situacao == Situacao.Ativo && x.GerarRegistroFatura == true), "Id", "Nome");
-            ViewBag.SubGastoId = new SelectList(RepositorioSubGasto.ObterPorParametros(x => x.Situacao == Situacao.Ativo), "Id", "_DescricaoCompleta");
             ViewBag.FaturaId = new SelectList(faturas, "Id", "_DescricaoCompleta");
             return View(gerarRegistroFaturaVM);
         }

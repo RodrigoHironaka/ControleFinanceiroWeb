@@ -59,14 +59,12 @@
                     <div class="row">
                         <div class="col-md-4">
                             <label asp-for="SubGastoId" class="control-label"></label>
-                            <select class="form-select" asp-for="SubGastoId" asp-items="ViewBag.SubGastoId">
-                                <option value="0">---Selecione um item---</option>
-                            </select>
+                            <select class="form-select" asp-for="SubGastoId" asp-items="@Model.ComboSubGastos"></select>
                             <span asp-validation-for="SubGastoId" class="text-danger"></span>
                         </div>
                         <div class="col-md-4">
                             <label asp-for="PessoaId" class="control-label"></label>
-                            <select class="form-select" asp-for="PessoaId" asp-items="ViewBag.PessoaId"></select>
+                            <select class="form-select" asp-for="PessoaId" asp-items="@Model.ComboPessoas"></select>
                             <span asp-validation-for="PessoaId" class="text-danger"></span>
                         </div>
                         <div class="col-md-4">

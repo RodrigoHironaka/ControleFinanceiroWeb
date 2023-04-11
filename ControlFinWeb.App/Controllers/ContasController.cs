@@ -56,10 +56,6 @@ namespace ControlFinWeb.App.Controllers
                 contaVM = Mapper.Map<ContaVM>(conta);
                 contaVM.JsonParcelas = JsonConvert.SerializeObject(contaVM.ParcelasVM);
             }
-            ViewBag.FormaPagamentoId = new SelectList(new RepositorioFormaPagamento(NHibernateHelper.ObterSessao()).ObterPorParametros(x => x.Situacao == Situacao.Ativo), "Id", "Nome", Id);
-            ViewBag.PessoaId = new SelectList(RepositorioPessoa.ObterPorParametros(x => x.Situacao == Situacao.Ativo), "Id", "Nome", Id);
-            ViewBag.SubGastoId = new SelectList(RepositorioSubGasto.ObterPorParametros(x => x.Situacao == Situacao.Ativo), "Id", "_DescricaoCompleta", Id);
-
             return View(contaVM);
         }
 
@@ -102,9 +98,6 @@ namespace ControlFinWeb.App.Controllers
 
                 return RedirectToAction("Editar", new { id = conta.Id });
             }
-            ViewBag.FormaPagamentoId = new SelectList(new RepositorioFormaPagamento(NHibernateHelper.ObterSessao()).ObterPorParametros(x => x.Situacao == Situacao.Ativo), "Id", "Nome", contaVM.Id);
-            ViewBag.PessoaId = new SelectList(RepositorioPessoa.ObterPorParametros(x => x.Situacao == Situacao.Ativo), "Id", "Nome", contaVM.Id);
-            ViewBag.SubGastoId = new SelectList(RepositorioSubGasto.ObterPorParametros(x => x.Situacao == Situacao.Ativo), "Id", "_DescricaoCompleta", contaVM.Id);
             return View(contaVM);
         }
         [HttpPost]

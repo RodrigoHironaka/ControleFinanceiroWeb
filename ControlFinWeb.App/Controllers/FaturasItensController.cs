@@ -54,9 +54,6 @@ namespace ControlFinWeb.App.Controllers
                 faturaItens = Repositorio.ObterPorId(Id);
                 faturaItensVM = Mapper.Map<FaturaItensVM>(faturaItens);
             }
-
-            ViewBag.Pessoas = new SelectList(new RepositorioPessoa(NHibernateHelper.ObterSessao()).ObterPorParametros(x => x.Situacao == Situacao.Ativo), "Id", "Nome", Id);
-            ViewBag.Subgastos = new SelectList(new RepositorioSubGasto(NHibernateHelper.ObterSessao()).ObterPorParametros(x => x.Situacao == Situacao.Ativo), "Id", "_DescricaoCompleta", Id);
             return View(faturaItensVM);
         }
 
@@ -80,12 +77,9 @@ namespace ControlFinWeb.App.Controllers
                 
                 faturaItens = Mapper.Map(faturaItensVM, faturaItens);
                 faturaItens.Fatura = RepositorioFatura.ObterPorId(faturaItens.Fatura.Id);
-                //Repositorio.SalvarAlterarFaturaItemEAlterarParcela(faturaItens, faturaItensVM.NumeroParcelas, faturaItensVM.Replicar);
                 CompararAlteracoes();
                 return RedirectToAction("ConsultaItensRelacionados", new { codItemRelacionado = faturaItens.CodigoItemRelacionado });
             }
-            ViewBag.Pessoas = new SelectList(new RepositorioPessoa(NHibernateHelper.ObterSessao()).ObterPorParametros(x => x.Situacao == Situacao.Ativo), "Id", "Nome", faturaItensVM.Id);
-            ViewBag.Subgastos = new SelectList(new RepositorioSubGasto(NHibernateHelper.ObterSessao()).ObterPorParametros(x => x.Situacao == Situacao.Ativo), "Id", "_DescricaoCompleta", faturaItensVM.Id);
             return View(faturaItensVM);
         }
 
@@ -132,7 +126,6 @@ namespace ControlFinWeb.App.Controllers
                 {
                     if (faturaItem.Valor != novoValor)
                         faturaItem.Valor = novoValor;
-                    //Repositorio.SalvarAlterarFaturaItemEAlterarParcela(faturaItem, "1", false);
                     CompararAlteracoes();
                     return new EmptyResult();
                 }

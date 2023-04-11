@@ -19,9 +19,7 @@
     <input asp-for="Mes" type="hidden"/>
     <div class="row">
         <div class="col-md-3">
-            <select class="form-select" asp-for="BancoId" asp-items="ViewBag.BancoId">
-                <option value="0">---Selecione um banco---</option>
-            </select>
+            <select class="form-select" asp-for="BancoId" asp-items="@Model.ComboBancos"></select>
             <span asp-validation-for="BancoId" class="text-danger"></span>
         </div>
         <div class="col-md-1">

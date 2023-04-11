@@ -54,7 +54,7 @@ namespace ControlFinWeb.App.Controllers
         {
             IEnumerable<Fatura> faturas = Repositorio.ObterPorParametros(x => x.UsuarioCriacao.Id == Configuracao.Usuario.Id && x.SituacaoFatura == SituacaoFatura.Aberta);
             List<FaturaVM> faturasVM = Mapper.Map<List<FaturaVM>>(faturas);
-            ViewBag.Cartoes = new SelectList(new RepositorioCartao(NHibernateHelper.ObterSessao()).ObterPorParametros(x => x.Situacao == Situacao.Ativo), "Id", "Nome", null);
+           // ViewBag.Cartoes = new SelectList(new RepositorioCartao(NHibernateHelper.ObterSessao()).ObterPorParametros(x => x.Situacao == Situacao.Ativo), "Id", "Nome", null);
             return View(faturasVM);
         }
 
@@ -71,7 +71,6 @@ namespace ControlFinWeb.App.Controllers
 
             IEnumerable<Fatura> faturas = Repositorio.ObterPorParametros(predicado);
             List<FaturaVM> faturasVM = Mapper.Map<List<FaturaVM>>(faturas);
-            ViewBag.Cartoes = new SelectList(new RepositorioCartao(NHibernateHelper.ObterSessao()).ObterPorParametros(x => x.Situacao == Situacao.Ativo), "Id", "Nome", null);
             return PartialView("_TabelaFaturas", faturasVM);
         }
 
@@ -82,9 +81,6 @@ namespace ControlFinWeb.App.Controllers
                 fatura = Repositorio.ObterPorId(Id);
                 faturaVM = Mapper.Map<FaturaVM>(fatura);
             }
-
-            ViewBag.Cartoes = new SelectList(new RepositorioCartao(NHibernateHelper.ObterSessao()).ObterPorParametros(x => x.Situacao == Situacao.Ativo), "Id", "Nome", Id);
-            ViewBag.Pessoas = new SelectList(new RepositorioPessoa(NHibernateHelper.ObterSessao()).ObterPorParametros(x => x.Situacao == Situacao.Ativo), "Id", "Nome", Id);
             return View(faturaVM);
         }
 
@@ -111,8 +107,6 @@ namespace ControlFinWeb.App.Controllers
                 }
                 return new EmptyResult();
             }
-            ViewBag.Cartoes = new SelectList(new RepositorioCartao(NHibernateHelper.ObterSessao()).ObterPorParametros(x => x.Situacao == Situacao.Ativo), "Id", "Nome", fatura.Id);
-            ViewBag.Pessoas = new SelectList(new RepositorioPessoa(NHibernateHelper.ObterSessao()).ObterPorParametros(x => x.Situacao == Situacao.Ativo), "Id", "Nome", fatura.Id);
             return View(faturaVM);
         }
 

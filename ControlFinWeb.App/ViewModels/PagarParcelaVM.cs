@@ -1,4 +1,6 @@
-﻿using System;
+﻿using ControlFinWeb.App.Utilitarios;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
@@ -47,10 +49,24 @@ namespace ControlFinWeb.App.ViewModels
         [Required(ErrorMessage = "Campo Obrigatório")]
         public Int64 FormaPagamentoId { get; set; }
         public FormaPagamentoVM FormaPagamentoVM { get; set; }
+        public SelectList ComboFormasPagamento
+        {
+            get
+            {
+                return PreencheCombo.FormasPagamento();
+            }
+        }
 
         [DisplayName("Banco")]
         public Int64 BancoId { get; set; }
         public BancoVM BancoVM { get; set; }
+        public SelectList ComboBancos
+        {
+            get
+            {
+                return PreencheCombo.BancosDadosCompletos();
+            }
+        }
 
         public String JsonParcelasPagar { get; set; }
         public List<String> Mensagens { get; set; }

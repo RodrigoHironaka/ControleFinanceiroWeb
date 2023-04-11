@@ -14,9 +14,7 @@
         <div class="modal-body">
             <div class="row">
                 <div class="col-md-3">
-                    <select class="form-select mt-1" id="CartaoId" asp-items="ViewBag.Cartoes">
-                        <option value="0">---Selecione---</option>
-                    </select>
+                    <select class="form-select mt-1" id="CartaoId" asp-items="@Model.First().ComboCartoes"></select>
                 </div>
                 <div class="col-md-3">
                     <div class="form-check form-switch">

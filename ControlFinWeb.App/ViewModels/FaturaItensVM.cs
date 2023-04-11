@@ -1,4 +1,6 @@
-﻿using ControlFinWeb.Dominio.ObjetoValor;
+﻿using ControlFinWeb.App.Utilitarios;
+using ControlFinWeb.Dominio.ObjetoValor;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -51,10 +53,24 @@ namespace ControlFinWeb.App.ViewModels
         [Range(1, Int64.MaxValue, ErrorMessage = "Informe um Gasto")]
         public Int64 SubGastoId { get; set; }
         public SubGastoVM SubGastoVM { get; set; }
+        public SelectList ComboSubGastos
+        {
+            get
+            {
+                return PreencheCombo.SubGastos();
+            }
+        }
 
         [DisplayName("Pessoa")]
         public Int64 PessoaId { get; set; }
         public PessoaVM PessoaVM { get; set; }
+        public SelectList ComboPessoas
+        {
+            get
+            {
+                return PreencheCombo.Pessoas();
+            }
+        }
 
         [DisplayName("Fatura")]
         public Int64 FaturaId { get; set; }

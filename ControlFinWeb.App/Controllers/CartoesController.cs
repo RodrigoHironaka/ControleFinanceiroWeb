@@ -41,8 +41,6 @@ namespace ControlFinWeb.App.Controllers
                 cartao = Repositorio.ObterPorId(Id);
                 cartaoVM = Mapper.Map<CartaoVM>(cartao);
             }
-
-            ViewBag.BancoId = new SelectList(new RepositorioBanco(NHibernateHelper.ObterSessao()).ObterPorParametros(x => x.Situacao == Situacao.Ativo), "Id", "Nome", Id);
             return View(cartaoVM);
         }
 
@@ -67,7 +65,6 @@ namespace ControlFinWeb.App.Controllers
 
                 return new EmptyResult();
             }
-            ViewBag.BancoId = new SelectList(new RepositorioBanco(NHibernateHelper.ObterSessao()).ObterPorParametros(x => x.Situacao == Situacao.Ativo), "Id", "Nome", cartaoVM.Id);
             return View(cartaoVM);
         }
 

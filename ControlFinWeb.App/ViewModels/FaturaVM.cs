@@ -1,4 +1,6 @@
-﻿using ControlFinWeb.Dominio.ObjetoValor;
+﻿using ControlFinWeb.App.Utilitarios;
+using ControlFinWeb.Dominio.ObjetoValor;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -35,11 +37,25 @@ namespace ControlFinWeb.App.ViewModels
         [Range(1, Int64.MaxValue, ErrorMessage = "Informe um Cartão")]
         public Int64 CartaoId { get; set; }
         public CartaoVM CartaoVM { get; set; }
+        public SelectList ComboCartoes
+        {
+            get
+            {
+                return PreencheCombo.Cartoes();
+            }
+        }
 
         [DisplayName("Pessoa")]
         [Range(1, Int64.MaxValue, ErrorMessage = "Informe uma pessoa")]
         public Int64 PessoaId { get; set; }
         public PessoaVM PessoaVM { get; set; }
+        public SelectList ComboPessoas
+        {
+            get
+            {
+                return PreencheCombo.Pessoas();
+            }
+        }
         #endregion
 
         public IList<FaturaItensVM> FaturaItensVM { get; set; }

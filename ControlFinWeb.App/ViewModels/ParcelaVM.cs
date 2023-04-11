@@ -1,5 +1,7 @@
-﻿using ControlFinWeb.App.ViewModels.Acesso;
+﻿using ControlFinWeb.App.Utilitarios;
+using ControlFinWeb.App.ViewModels.Acesso;
 using ControlFinWeb.Dominio.ObjetoValor;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -62,6 +64,13 @@ namespace ControlFinWeb.App.ViewModels
         [DisplayName("F. Pagamento")]
         public Int64 FormaPagamentoId { get; set; }
         public FormaPagamentoVM FormaPagamentoVM { get; set; }
+        public SelectList ComboFormasPagamento
+        {
+            get
+            {
+                return PreencheCombo.FormasPagamento();
+            }
+        }
 
         [DisplayName("Conta")]
         public Int64 ContaId { get; set; }
@@ -74,6 +83,13 @@ namespace ControlFinWeb.App.ViewModels
         [DisplayName("Banco")]
         public Int64 BancoId { get; set; }
         public BancoVM BancoVM { get; set; }
+        public SelectList ComboBancos
+        {
+            get
+            {
+                return PreencheCombo.Bancos();
+            }
+        }
 
         public DateTime DataGeracao { get; set; }
         public DateTime? DataAlteracao { get; set; }

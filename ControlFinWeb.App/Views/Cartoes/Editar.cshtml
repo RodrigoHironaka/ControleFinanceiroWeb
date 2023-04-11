@@ -39,9 +39,7 @@
                 </div>
                 <div class="form-group">
                     <label asp-for="BancoId" class="control-label"></label>
-                    <select class="form-select" asp-for="BancoId" asp-items="ViewBag.BancoId">
-                        <option value="0">---Selecione um item---</option>
-                    </select>
+                    <select class="form-select" asp-for="BancoId" asp-items="@Model.ComboBancos"></select>
                     <span asp-validation-for="BancoId" class="text-danger"></span>
                 </div>
                 <div class="form-group">

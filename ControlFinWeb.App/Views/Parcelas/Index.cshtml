@@ -43,9 +43,7 @@
                 </div>
                 <div class="col-md-2">
                     <label asp-for="PessoaId" class="control-label">Pessoa Referenciada</label>
-                    <select class="form-select" asp-for="PessoaId" asp-items="ViewBag.PessoaId">
-                        <option value="0">---Selecione um item---</option>
-                    </select>
+                    <select class="form-select" asp-for="PessoaId" asp-items="@Model.ComboPessoas"></select>
                 </div>
                 <div class="col-md-1">
                     <button type="submit" class="w-100 H-100 btn btn-primary btn-lg mt-1"><i class="bi bi-funnel"></i> FILTRO</button>

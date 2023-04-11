@@ -52,8 +52,6 @@ namespace ControlFinWeb.App.Controllers
                 horaExtraVM.HorasTrabalhoTarde = ultimoRegistro != null ? ultimoRegistro.HorasTrabalhoTarde : TimeSpan.Zero;
                 horaExtraVM.HorasTrabalhoNoite = ultimoRegistro != null ? ultimoRegistro.HorasTrabalhoNoite : TimeSpan.Zero;
             }
-           
-            ViewBag.PessoaId = new SelectList(new RepositorioPessoa(NHibernateHelper.ObterSessao()).ObterPorParametros(x => x.Situacao == Situacao.Ativo), "Id", "Nome", Id);
             return View(horaExtraVM);
         }
 
@@ -78,7 +76,6 @@ namespace ControlFinWeb.App.Controllers
 
                 return new EmptyResult();
             }
-            ViewBag.PessoaId = new SelectList(new RepositorioPessoa(NHibernateHelper.ObterSessao()).ObterPorParametros(x => x.Situacao == Situacao.Ativo), "Id", "Nome", horaExtraVM.Id);
            
             return View(horaExtraVM);
            

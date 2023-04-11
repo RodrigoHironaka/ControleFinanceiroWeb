@@ -27,14 +27,14 @@ namespace ControlFinWeb.App.Controllers
         }
 
         [HttpPost]
-        public ActionResult Sql(string connectionString)
+        public IActionResult Sql(string connectionString)
         {
             Byte[] stream = _dbBackupService.GetDbBackupBytes(connectionString);
             ActionResult actionResult = File(stream, System.Net.Mime.MediaTypeNames.Text.Plain);
             return actionResult;
         }
 
-        public ActionResult DownloadSql(string connectionString)
+        public IActionResult DownloadSql(string connectionString)
         {
             Byte[] stream = _dbBackupService.GetDbBackupBytes(connectionString);
             string fileNameWithoutExtension = GetFileNameWithoutExtension();
@@ -43,7 +43,7 @@ namespace ControlFinWeb.App.Controllers
             return fileContentResult;
         }
 
-        public ActionResult DownloadZip()
+        public IActionResult DownloadZip()
         {
             string connectionString = _configuration.GetConnectionString("DefaultConnection");
             string fileNameWithoutExtension = GetFileNameWithoutExtension();

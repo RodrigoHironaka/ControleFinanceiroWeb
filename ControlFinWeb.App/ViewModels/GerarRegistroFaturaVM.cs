@@ -1,4 +1,6 @@
-﻿using System;
+﻿using ControlFinWeb.App.Utilitarios;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using System;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
@@ -18,10 +20,24 @@ namespace ControlFinWeb.App.ViewModels
         [Required(ErrorMessage = "Campo Obrigátorio")]
         [DisplayName("Forma de Pagamento")]
         public Int64 FormaPagamentoId { get; set; }
+        public SelectList ComboFormasPagamento
+        {
+            get
+            {
+                return PreencheCombo.FormasPagamentoGeraFatura();
+            }
+        }
 
         [Required(ErrorMessage = "Campo Obrigátorio")]
         [DisplayName("SubGasto")]
         public Int64 SubGastoId { get; set; }
+        public SelectList ComboSubGastos
+        {
+            get
+            {
+                return PreencheCombo.SubGastos();
+            }
+        }
 
         [Required(ErrorMessage = "Campo Obrigátorio")]
         [DisplayName("Dividir em")]

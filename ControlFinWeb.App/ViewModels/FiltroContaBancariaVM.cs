@@ -1,4 +1,6 @@
-﻿using System;
+﻿using ControlFinWeb.App.Utilitarios;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -21,6 +23,13 @@ namespace ControlFinWeb.App.ViewModels
         public Int32 Mes { get; set; }
         public Int64 BancoId { get; set; }
         public BancoVM BancoVM { get; set; }
+        public SelectList ComboBancos
+        {
+            get
+            {
+                return PreencheCombo.Bancos();
+            }
+        }
 
         public IList<ContaBancariaVM> ContasBancarias { get; set; }
     }

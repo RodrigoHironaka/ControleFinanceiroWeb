@@ -1,5 +1,7 @@
-﻿using ControlFinWeb.Dominio.ObjetoValor;
+﻿using ControlFinWeb.App.Utilitarios;
+using ControlFinWeb.Dominio.ObjetoValor;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -44,5 +46,12 @@ namespace ControlFinWeb.App.ViewModels
         public Int64 BancoId { get; set; }
 
         public BancoVM BancoVM { get; set; }
+        public SelectList ComboBancos
+        {
+            get
+            {
+                return PreencheCombo.Bancos();
+            }
+        }
     }
 }

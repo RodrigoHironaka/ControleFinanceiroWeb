@@ -51,8 +51,6 @@ namespace ControlFinWeb.App.Controllers
                 predicado = predicado.And(x => x.Banco.Id == filtroContaBancariaVM.BancoId);
 
             filtroContaBancariaVM.ContasBancarias = Mapper.Map<List<ContaBancariaVM>>(Repositorio.ObterPorParametros(predicado));
- 
-            ViewBag.BancoId = new SelectList(new RepositorioBanco(NHibernateHelper.ObterSessao()).ObterPorParametros(x => x.Situacao == Situacao.Ativo), "Id", "_DadosCompletos", 0);
 
             return View(filtroContaBancariaVM);
         }
@@ -71,8 +69,6 @@ namespace ControlFinWeb.App.Controllers
 
             filtroContaBancariaVM.ContasBancarias = Mapper.Map<List<ContaBancariaVM>>(Repositorio.ObterPorParametros(predicado));
 
-            ViewBag.BancoId = new SelectList(new RepositorioBanco(NHibernateHelper.ObterSessao()).ObterPorParametros(x => x.Situacao == Situacao.Ativo), "Id", "_DadosCompletos", 0);
-
             return PartialView("_RegistrosBancarios", filtroContaBancariaVM.ContasBancarias);
         }
 
@@ -89,8 +85,6 @@ namespace ControlFinWeb.App.Controllers
                 contaBancariaVM.Valor = valorTransferencia;
                 contaBancariaVM.GerarFluxoCaixa = true;
             }
-
-            ViewBag.BancoId = new SelectList(new RepositorioBanco(NHibernateHelper.ObterSessao()).ObterPorParametros(x => x.Situacao == Situacao.Ativo), "Id", "_DadosCompletos", Id);
             return View(contaBancariaVM);
         }
 
@@ -128,7 +122,6 @@ namespace ControlFinWeb.App.Controllers
 
                 return new EmptyResult();
             }
-            ViewBag.BancoId = new SelectList(new RepositorioBanco(NHibernateHelper.ObterSessao()).ObterPorParametros(x => x.Situacao == Situacao.Ativo), "Id", "_DadosCompletos", contaBancariaVM.Id);
             return View(contaBancariaVM);
         }
 

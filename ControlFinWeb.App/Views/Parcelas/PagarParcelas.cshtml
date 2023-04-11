@@ -77,18 +77,14 @@
                     <div class="row">
                         <div class="col-md-12">
                             <label asp-for="FormaPagamentoId" class="control-label">Forma Pagamento</label>
-                            <select asp-for="FormaPagamentoId" onchange="VerificarDebitoAutomatico()" class="form-select" asp-items="ViewBag.FormaPagamentoId">
-                                <option value="0">---Selecione um item---</option>
-                            </select>
+                            <select asp-for="FormaPagamentoId" onchange="VerificarDebitoAutomatico()" class="form-select" asp-items="@Model.ComboFormasPagamento"></select>
                             <span asp-validation-for="FormaPagamentoId" class="text-danger"></span>
                         </div>
                     </div>
                     <div class="row rowBancoId" id="rowBancoId" style="display: none;">
                         <div class="col-md-12">
                             <label asp-for="BancoId" class="control-label"></label>
-                            <select asp-for="BancoId" class="form-select" asp-items="ViewBag.BancoId">
-                                <option value="0">---Selecione um item---</option>
-                            </select>
+                            <select asp-for="BancoId" class="form-select" asp-items="@Model.ComboBancos"></select>
                             <span asp-validation-for="BancoId" class="text-danger"></span>
                         </div>
                     </div>

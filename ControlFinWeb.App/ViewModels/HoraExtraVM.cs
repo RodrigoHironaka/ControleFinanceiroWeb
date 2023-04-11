@@ -1,4 +1,6 @@
-﻿using ControlFinWeb.Dominio.Entidades;
+﻿using ControlFinWeb.App.Utilitarios;
+using ControlFinWeb.Dominio.Entidades;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -19,6 +21,13 @@ namespace ControlFinWeb.App.ViewModels
         [Range(1, Int64.MaxValue, ErrorMessage = "Informe uma Pessoa")]
         public Int64 PessoaId { get; set; }
         public PessoaVM PessoaVM { get; set; }
+        public SelectList ComboPessoas
+        {
+            get
+            {
+                return PreencheCombo.Pessoas();
+            }
+        }
 
         [DisplayName("Manhã")]
         [Required(ErrorMessage = "Campo Obrigatório")]
@@ -106,7 +115,7 @@ namespace ControlFinWeb.App.ViewModels
             get
             {
                 if (HoraFinalDia < HorasTrabalhoDia)
-                    return String.Format("-{0:hh\\:mm}", HoraFinalDia.Subtract(HorasTrabalhoDia).Add(AjusteManual)); 
+                    return String.Format("-{0:hh\\:mm}", HoraFinalDia.Subtract(HorasTrabalhoDia).Add(AjusteManual));
                 else if (HoraFinalDia > HorasTrabalhoDia)
                     return String.Format("+{0:hh\\:mm}", HorasTrabalhoDia.Subtract(HoraFinalDia).Add(AjusteManual));
 

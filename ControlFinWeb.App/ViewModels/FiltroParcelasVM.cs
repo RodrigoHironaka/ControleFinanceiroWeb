@@ -1,4 +1,6 @@
-﻿using ControlFinWeb.Dominio.ObjetoValor;
+﻿using ControlFinWeb.App.Utilitarios;
+using ControlFinWeb.Dominio.ObjetoValor;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -38,6 +40,13 @@ namespace ControlFinWeb.App.ViewModels
         [DisplayName("Pessoa Referenciada")]
         public Int64 PessoaId { get; set; }
         public PessoaVM PessoaVM { get; set; }
+        public SelectList ComboPessoas
+        {
+            get
+            {
+                return PreencheCombo.Pessoas2();
+            }
+        }
 
         public IList<ParcelaVM> Parcelas { get; set; }
     }

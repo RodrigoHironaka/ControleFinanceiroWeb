@@ -27,6 +27,13 @@ namespace ControlFinWeb.App.ViewModels
         [DisplayName("Gasto")]
         public Int64 GastoId { get; set; }
         public GastoVM GastoVM { get; set; }
+        public SelectList ComboGastos
+        {
+            get
+            {
+                return PreencheCombo.Gastos();
+            }
+        }
 
         public String DescricaoCompleta
         {
