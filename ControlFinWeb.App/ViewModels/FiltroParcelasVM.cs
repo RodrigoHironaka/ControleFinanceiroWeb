@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using Utils.Extensions.Enums;
 
 namespace ControlFinWeb.App.ViewModels
@@ -49,5 +50,15 @@ namespace ControlFinWeb.App.ViewModels
         }
 
         public IList<ParcelaVM> Parcelas { get; set; }
+        public String TotalParcelas
+        {
+            get
+            {
+                if(Parcelas != null && Parcelas.Count > 0)
+                    return Parcelas.Sum(x => x.ValorAberto).ToString("N2");
+                else
+                    return "0";
+            }
+        }
     }
 }

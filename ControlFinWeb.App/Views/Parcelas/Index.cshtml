@@ -46,10 +46,14 @@
                     <select class="form-select" asp-for="PessoaId" asp-items="@Model.ComboPessoas"></select>
                 </div>
                 <div class="col-md-1">
-                    <button type="submit" class="w-100 H-100 btn btn-primary btn-lg mt-1"><i class="bi bi-funnel"></i> FILTRO</button>
+                    <label class="control-label">Selecionados</label>
+                    <input class="form-control fw-bold" value="0,00" id="totalSelecionados" readonly style="text-align:right" />
                 </div>
                 <div class="col-md-1">
-                    <button type="button" class="w-100 h-100 btn btn-success btn-lg mt-1 pagar"><i class="bi bi-cash-coin"></i> PAGAR</button>
+                    <div class="row">
+                        <button type="submit" class="w-100 btn btn-primary "><i class="bi bi-funnel"></i> FILTRO</button>
+                        <button type="button" class="w-100 btn btn-success mt-1 pagar"><i class="bi bi-cash-coin"></i> PAGAR</button>
+                    </div>
                 </div>
             </div>
         </form>
@@ -80,26 +84,30 @@
                     <td scope='row'><input class='form-check-input check' id='check' type='checkbox' onclick='ClickCheckItem()' value="@item.Id"></td>
                     <td style="text-align:center">
                         @if (item.ContaVM != null)
+                        {
+
                             @Html.DisplayFor(modelItem => item.ContaVM.TipoConta)
+                        }
                         else
+                        {
+
                             @TipoConta.Pagar
-
-
-                        </td>
-                        <td style="text-align:center">
-                            @Html.DisplayFor(modelItem => item.Numero)
-                        </td>
-                        <td style="text-align:right">
-                            @Html.DisplayFor(modelItem => item.ValorAberto)
-                        </td>
-                        <td style="text-align:right">
-                            @Html.Raw(item.DataVencimento.Value.ToShortDateString())
-                        </td>
-                        <td style="text-align:right">
-                            @Html.DisplayFor(modelItem => item.ValorPago)
-                        </td>
-                        <td style="text-align:right">
-                            @if (item.DataPagamento != null)
+                        }
+                    </td>
+                    <td style="text-align:center">
+                        @Html.DisplayFor(modelItem => item.Numero)
+                    </td>
+                    <td style="text-align:right" class="valorAberto">
+                        @Html.DisplayFor(modelItem => item.ValorAberto)
+                    </td>
+                    <td style="text-align:right">
+                        @Html.Raw(item.DataVencimento.Value.ToShortDateString())
+                    </td>
+                    <td style="text-align:right">
+                        @Html.DisplayFor(modelItem => item.ValorPago)
+                    </td>
+                    <td style="text-align:right">
+                        @if (item.DataPagamento != null)
                         {
                             @Html.Raw(item.DataPagamento.Value.ToShortDateString())
                         }
@@ -275,10 +283,18 @@
         //CheckAll
         $('#checkAll').change(function () {
             $('.check').prop('checked', this.checked);
+            if ($(this).is(":checked")) {
+                var total = @Model.TotalParcelas.ToString().Replace(".","").Replace(",",".");
+                $("#totalSelecionados").val(total.toFixed(2).toString().replace(".", ","));
+            } else {
+                $("#totalSelecionados").val("0,00");
+            }
+            
         });
 
         function ClickCheckItem() {
             $('.check').change(function () {
+               
                 if ($('.check:checked').length == $('.check').length) {
                     $('#checkAll').prop('checked', true);
                 }
@@ -287,6 +303,18 @@
                 }
             });
         }
+
+         $('.check').click(function () {
+            var totalSelecionados = parseFloat($("#totalSelecionados").val().replace(",", "."));
+            var valorSelecionado = parseFloat($(this).closest('tr').find('.valorAberto').text().trim().replace(",", "."));
+           
+            if ($(this).is(":checked")) {
+                totalSelecionados += valorSelecionado;
+            } else {
+                totalSelecionados -= valorSelecionado;
+            }
+            $("#totalSelecionados").val(totalSelecionados.toFixed(2).toString().replace(".", ","));
+         });
 
         $(document).on(TipoClick().toString(), ".pagar", function () {
             var trs = $("tbody input:checked").closest("tr"); //pega no tr os elementos que estão checados
