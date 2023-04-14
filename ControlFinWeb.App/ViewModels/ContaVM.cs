@@ -35,7 +35,6 @@ namespace ControlFinWeb.App.ViewModels
         public SituacaoConta Situacao { get; set; }
 
         [DisplayName("Emissão")]
-        [Range(typeof(DateTime), "01/01/1980", "31/12/5000", ErrorMessage = "Data Inválida!")]
         [Required(ErrorMessage = "Campo Obrigatório")]
         public DateTime? DataEmissao { get; set; }
 

@@ -23,7 +23,6 @@ namespace ControlFinWeb.App.ViewModels
         public String Nome { get; set; }
 
         [DisplayName("Mês e Ano de Referência")]
-        [Range(typeof(DateTime), "01/01/1980", "31/12/5000", ErrorMessage = "Data Inválida!")]
         [Required(ErrorMessage = "Campo Obrigatório")]
         public DateTime MesAnoReferencia { get; set; }
 

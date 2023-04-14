@@ -24,7 +24,6 @@ namespace ControlFinWeb.App.ViewModels
         public DebitoCredito DebitoCredito { get; set; }
 
         [DisplayName("Data")]
-        [Range(typeof(DateTime), "01/01/1980", "31/12/5000", ErrorMessage = "Data Inválida!")]
         [Required(ErrorMessage = "Campo Obrigatório")]
         public virtual DateTime? Data { get; set; }
 
