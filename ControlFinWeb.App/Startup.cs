@@ -5,6 +5,7 @@ using ControlFinWeb.Repositorio.Interface;
 using ControlFinWeb.Repositorio.Servicos;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Localization;
@@ -13,6 +14,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 
 namespace ControlFinWeb.App
 {
@@ -43,9 +45,9 @@ namespace ControlFinWeb.App
 
             services.AddAutoMapper(typeof(AutoMapperSetup));
             services.AddScoped<IDbBackupService, DbBackupService>();
+            services.AddDataProtection().PersistKeysToFileSystem(new DirectoryInfo(Path.Combine(Directory.GetCurrentDirectory(), @"Configurations\DirectoryKeys")));
         }
 
-    
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IHttpContextAccessor accessor)
         {
             if (env.IsDevelopment())
@@ -78,12 +80,14 @@ namespace ControlFinWeb.App
 
             app.UseCookiePolicy();
 
+            app.UseGlobalizationConfig();
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Login}/{action=Entrar}/{id?}");
-               
+
             });
 
 

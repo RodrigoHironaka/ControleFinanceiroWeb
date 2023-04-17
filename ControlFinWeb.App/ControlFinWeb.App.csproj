@@ -70,6 +70,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Configurations\DirectoryKeys\" />
     <Folder Include="wwwroot\img\Usuarios\" />
   </ItemGroup>
 
