@@ -19,7 +19,7 @@ namespace ControlFinWeb.App.Utilitarios
             {
                 try
                 {
-                    lista.AddRange(from p in session.Query<Pessoa>().Where(x => x.Situacao == Dominio.ObjetoValor.Situacao.Ativo)
+                    lista.AddRange(from p in session.Query<Pessoa>().Where(x => x.Situacao == Dominio.ObjetoValor.Situacao.Ativo && x.UsuarioCriacao.Id == Configuracao.Usuario.Id)
                                    select new Pessoa
                                    {
                                        Id = p.Id,
@@ -42,7 +42,7 @@ namespace ControlFinWeb.App.Utilitarios
             {
                 try
                 {
-                    lista.AddRange(from p in session.Query<Pessoa>().Where(x => x.Situacao == Dominio.ObjetoValor.Situacao.Ativo)
+                    lista.AddRange(from p in session.Query<Pessoa>().Where(x => x.Situacao == Dominio.ObjetoValor.Situacao.Ativo && x.UsuarioCriacao.Id == Configuracao.Usuario.Id)
                                    select new Pessoa
                                    {
                                        Id = p.Id,
@@ -65,7 +65,7 @@ namespace ControlFinWeb.App.Utilitarios
             {
                 try
                 {
-                    lista.AddRange(from p in session.Query<Banco>().Where(x => x.Situacao == Dominio.ObjetoValor.Situacao.Ativo)
+                    lista.AddRange(from p in session.Query<Banco>().Where(x => x.Situacao == Dominio.ObjetoValor.Situacao.Ativo && x.UsuarioCriacao.Id == Configuracao.Usuario.Id)
                                    select new Banco
                                    {
                                        Id = p.Id,
@@ -88,7 +88,7 @@ namespace ControlFinWeb.App.Utilitarios
             {
                 try
                 {
-                    lista.AddRange(from p in session.Query<Banco>().Where(x => x.Situacao == Dominio.ObjetoValor.Situacao.Ativo)
+                    lista.AddRange(from p in session.Query<Banco>().Where(x => x.Situacao == Dominio.ObjetoValor.Situacao.Ativo && x.UsuarioCriacao.Id == Configuracao.Usuario.Id)
                                    select new Banco
                                    {
                                        Id = p.Id,
@@ -203,7 +203,7 @@ namespace ControlFinWeb.App.Utilitarios
             {
                 try
                 {
-                    lista.AddRange(from p in session.Query<Cartao>().Where(x => x.Situacao == Dominio.ObjetoValor.Situacao.Ativo)
+                    lista.AddRange(from p in session.Query<Cartao>().Where(x => x.Situacao == Dominio.ObjetoValor.Situacao.Ativo && x.UsuarioCriacao.Id == Configuracao.Usuario.Id)
                                    select new Cartao
                                    {
                                        Id = p.Id,

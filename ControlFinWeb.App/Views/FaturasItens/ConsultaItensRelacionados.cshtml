@@ -40,7 +40,7 @@
                                         <input class='form-control' style='text-align:center' type='text' readonly value="@item.FaturaVM.DescricaoCompleta">
                                     </td>
                                     <td style="text-align:center">
-                                        <button class="btn btn-sm btn-success modal-trigger alterar" data-id="@item.Id"><i class="bi bi-check-lg"></i></button>
+                                        <button class="btn btn-sm btn-success modal-trigger alterarRegistro" data-id="@item.Id"><i class="bi bi-check-lg"></i></button>
                                     </td>
                                 </tr>
                             }
@@ -59,31 +59,31 @@
     <script>
         $(".Valor").maskMoney({ thousands: '', decimal: ',', allowZero: true });
 
-        $(function() {
-            $(".alterar").click(function() {
+        $(function () {
+            $(".alterarRegistro").click(function () {
                 var id = $(this).attr("data-id");
                 var valor = $('#Valor_' + id).val();
                 $.ajax({
                     method: "POST",
-                    url: "/FaturasItens/EditarDireto",
+                    url: "/FaturasItens/EditarPeloRegistro",
                     data: { idFaturaItem: id, novoValor: valor },
-                    success: function(retorno) {
-                        if (retorno == "") {
-                            $("#msgItensRelacionados").addClass('alert alert-success').html("<strong>Alterado com sucesso!</strong>").delay(30000).fadeOut(400);
+                    success: function (retorno) {
+                        if (retorno.result == true) {
+                            $("#msgItensRelacionados").addClass('alert alert-success').html("<strong>"+retorno.message+"</strong>").delay(30000).fadeOut(400);
                         } else {
-                            $("#msgItensRelacionados").addClass('alert alert-warning').html("<strong>Não foi possível alterar! Verifique com o suporte.</strong>").delay(30000).fadeOut(400);
+                            $("#msgItensRelacionados").addClass('alert alert-warning').html("<strong>Não foi possível alterar! " + retorno.error + ".</strong>").delay(30000).fadeOut(400);
                         }
                     }
                 });
             });
 
-            $(".removerTodos").click(function() {
+            $(".removerTodos").click(function () {
                 var codItemRel = $("#CodigoItemRelacionado").val();
                 $.ajax({
                     method: "POST",
                     url: "/FaturasItens/DeletarPeloCodigoRelacionado",
                     data: { codItemRelacionado: codItemRel },
-                    success: function() {
+                    success: function () {
                         $("#msgItensRelacionados").addClass('alert alert-info').html("<strong>Todos os itens foram removidos!</strong>").delay(30000).fadeOut(400);
                         $("#tBodyCampos").empty();
                         $(".removerTodos").prop("disabled", true);

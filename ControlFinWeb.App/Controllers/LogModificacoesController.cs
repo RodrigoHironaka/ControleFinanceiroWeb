@@ -10,6 +10,7 @@ using LinqKit;
 using ControlFinWeb.App.Utilitarios;
 using ControlFinWeb.App.ViewModels.Acesso;
 using System.Linq;
+using Utils.Extensions.Enums;
 
 namespace ControlFinWeb.App.Controllers
 {
@@ -26,7 +27,7 @@ namespace ControlFinWeb.App.Controllers
             var predicado = Repositorio.CriarPredicado();
             predicado = predicado.And(x => x.UsuarioCriacao.Id == Configuracao.Usuario.Id);
             predicado = predicado.And(x => x.DataGeracao >= logModificacaoVM.DataInicio);
-            predicado = predicado.And(x => x.DataGeracao <= logModificacaoVM.DataFinal);
+            predicado = predicado.And(x => x.DataGeracao <= logModificacaoVM.DataFinal.FinalDia());
             if(!String.IsNullOrEmpty(logModificacaoVM.Chave))
                 predicado = predicado.And(x => x.Chave.Contains(logModificacaoVM.Chave));
 

@@ -23,7 +23,7 @@ namespace ControlFinWeb.App.Controllers
         private readonly RepositorioPessoa RepositorioPessoa;
         private readonly RepositorioSubGasto RepositorioSubGasto;
         private readonly IMapper Mapper;
-        public FaturasItensController(RepositorioFaturaItens repositorio, RepositorioFatura repositorioFatura, 
+        public FaturasItensController(RepositorioFaturaItens repositorio, RepositorioFatura repositorioFatura,
             RepositorioParcela repositorioParcela, RepositorioPessoa repositorioPessoa, RepositorioSubGasto repositorioSubGasto,
             IMapper mapper)
         {
@@ -74,7 +74,7 @@ namespace ControlFinWeb.App.Controllers
                 }
                 else
                     faturaItens.UsuarioCriacao = Configuracao.Usuario;
-                
+
                 faturaItens = Mapper.Map(faturaItensVM, faturaItens);
                 faturaItens.Fatura = RepositorioFatura.ObterPorId(faturaItens.Fatura.Id);
                 CompararAlteracoes();
@@ -117,20 +117,27 @@ namespace ControlFinWeb.App.Controllers
         }
 
         [HttpPost]
-        public IActionResult EditarDireto(Int64 idFaturaItem, decimal novoValor)
+        [IgnoreAntiforgeryToken]
+        public JsonResult EditarPeloRegistro(String idFaturaItem, String novoValor)
         {
-            if (idFaturaItem > 0 && novoValor > 0)
+            var id = Int64.Parse(idFaturaItem);
+            var valor = Decimal.Parse(novoValor);
+            if (id > 0 && valor > 0)
             {
-                var faturaItem = Repositorio.ObterPorId(idFaturaItem);
+                var faturaItem = Repositorio.ObterPorId(id);
+                var difference = new Difference("Valor", faturaItem.Valor.ToString("N2"), novoValor);
+                IEnumerable<Difference> differences;
+                differences = new Difference[] { difference };
                 if (faturaItem != null)
                 {
-                    if (faturaItem.Valor != novoValor)
-                        faturaItem.Valor = novoValor;
-                    CompararAlteracoes();
-                    return new EmptyResult();
+                    if (faturaItem.Valor != valor)
+                        faturaItem.Valor = valor;
+                   
+                    Repositorio.SalvarAlterarFaturaItemEAlterarParcela(faturaItem, "1", faturaItensVM.Replicar, differences, Configuracao.Usuario);
+                    return Json(new { result = true, message = "Alterado com sucesso! Novo valor " + faturaItem.Valor.ToString("C2") +" - ["+faturaItem.QuantidadeRelacionado+"]" });
                 }
             }
-            return Json("Erro! Item não encontrado.");
+            return Json(new { result = false, error = "Erro! Id da fatura ou valor igual a zero!" });
         }
 
         [HttpPost]

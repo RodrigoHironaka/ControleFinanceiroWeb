@@ -28,15 +28,20 @@ namespace ControlFinWeb.Repositorio.Repositorios
                 }
             }
 
-            var log = new LogModificacao
+            if(historico.Length > 0)
             {
-                DataGeracao = DateTime.Now,
-                UsuarioCriacao = usuario,
-                Historico = historico.ToString(),
-                Chave = chave,
-            };
+                var log = new LogModificacao
+                {
+                    DataGeracao = DateTime.Now,
+                    UsuarioCriacao = usuario,
+                    Historico = historico.ToString(),
+                    Chave = chave,
+                };
+                SalvarLote(log);
+            }
+            
 
-            SalvarLote(log);
+            
         }
 
         public void RegistrarLog(String historico, Usuario usuario, String chave)
