@@ -124,10 +124,14 @@ namespace ControlFinWeb.App.AutoMapper
                     dest.UsuarioCriacaoVM = AutoMapperConfig<Usuario, UsuarioVM>.Mapear(src.UsuarioCriacao);
                     dest.UsuarioAlteracaoVM = AutoMapperConfig<Usuario, UsuarioVM>.Mapear(src.UsuarioAlteracao);
                     dest.FormaPagamentoVM = AutoMapperConfig<FormaPagamento, FormaPagamentoVM>.Mapear(src.FormaPagamento);
-                    dest.ContaVM = AutoMapperConfig<Conta, ContaVM>.Mapear(src.Conta);
+                    dest.ContaVM = new MapperConfiguration(cfg => cfg.CreateMap<Conta, ContaVM>().AfterMap((src, dest) =>
+                    {
+                        dest.PessoaVM = AutoMapperConfig<Pessoa, PessoaVM>.Mapear(src.Pessoa);
+                    })).CreateMapper().Map<ContaVM>(src.Conta);
                     dest.FaturaVM = new MapperConfiguration(cfg => cfg.CreateMap<Fatura, FaturaVM>().AfterMap((src, dest) =>
                     {
                         dest.CartaoVM = AutoMapperConfig<Cartao, CartaoVM>.Mapear(src.Cartao);
+                        dest.PessoaVM = AutoMapperConfig<Pessoa, PessoaVM>.Mapear(src.Pessoa);
                        
                     }))
                   .CreateMapper().Map<FaturaVM>(src.Fatura);

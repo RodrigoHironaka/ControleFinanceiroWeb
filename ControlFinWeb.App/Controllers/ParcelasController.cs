@@ -66,7 +66,10 @@ namespace ControlFinWeb.App.Controllers
         {
             var predicado = Repositorio.CriarPredicado();
             predicado = predicado.And(x => x.UsuarioCriacao.Id == Configuracao.Usuario.Id);
-            predicado = predicado.And(x => x.Conta.TipoConta == filtrarParcelasVM.TipoConta || x.Fatura != null);
+            if(filtrarParcelasVM.TipoConta == TipoConta.Pagar)
+                predicado = predicado.And(x => x.Conta.TipoConta == filtrarParcelasVM.TipoConta || x.Fatura != null);
+            else
+                predicado = predicado.And(x => x.Conta.TipoConta == filtrarParcelasVM.TipoConta);// Não existe opção de receber de uma futura, sempre será "PAGAR"
 
             if (filtrarParcelasVM.DataInicio != null)
                 predicado = predicado.And(x => x.DataVencimento >= filtrarParcelasVM.DataInicio);
@@ -98,8 +101,9 @@ namespace ControlFinWeb.App.Controllers
             {
                 if (filtrarParcelasVM.ContaFatura == ContaFatura.Conta)
                     parcelas = parcelas.Where(x => x.Conta?.Situacao == SituacaoConta.Aberto).ToList();
-                else
-                    parcelas = parcelas.Where(x => x.Fatura?.SituacaoFatura != SituacaoFatura.Cancelada).ToList();
+                else if (filtrarParcelasVM.ContaFatura == ContaFatura.Fatura)
+                    parcelas = parcelas.Where(x => x.Fatura != null && x.Fatura.SituacaoFatura != SituacaoFatura.Cancelada).ToList();
+              
             }
             else
             {
@@ -109,7 +113,7 @@ namespace ControlFinWeb.App.Controllers
         }
 
         public IActionResult Index(FiltroParcelasVM filtrarParcelasVM)
-        {
+         {
             filtrarParcelasVM.Parcelas = Mapper.Map<List<ParcelaVM>>(FiltroParcelas(filtrarParcelasVM));
             return View(filtrarParcelasVM);
         }

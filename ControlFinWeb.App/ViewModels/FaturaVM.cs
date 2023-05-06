@@ -64,7 +64,7 @@ namespace ControlFinWeb.App.ViewModels
             get
             {
                 if (CartaoVM != null)
-                    return string.Format("FATURA: {0} - {1:MMyyyy}", CartaoVM.Nome, MesAnoReferencia);
+                    return string.Format("FATURA: {0} - {1:MMyyyy} - Ref: {2}", CartaoVM.Nome, MesAnoReferencia, PessoaVM.Nome);
                 else
                     return string.Empty;
             }
