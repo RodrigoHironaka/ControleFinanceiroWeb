@@ -38,7 +38,7 @@ namespace ControlFinWeb.App.Controllers
         private readonly IMapper Mapper;
         private readonly ILogger<ParcelasController> _logger;
         public ParcelasController(RepositorioParcela repositorio, RepositorioFormaPagamento repositorioFormaPagamento, RepositorioConta repositorioConta,
-            RepositorioFatura repositorioFatura, RepositorioFaturaItens repositorioFaturaItens, RepositorioBanco repositorioBanco, RepositorioCaixa repositorioCaixa, RepositorioFluxoCaixa repositorioFluxoCaixa, 
+            RepositorioFatura repositorioFatura, RepositorioFaturaItens repositorioFaturaItens, RepositorioBanco repositorioBanco, RepositorioCaixa repositorioCaixa, RepositorioFluxoCaixa repositorioFluxoCaixa,
             RepositorioSubGasto repositorioSubGasto, IMapper mapper, ILogger<ParcelasController> logger)
         {
             Repositorio = repositorio;
@@ -316,26 +316,28 @@ namespace ControlFinWeb.App.Controllers
 
                     parcelas = Mapper.Map(parcelasVM, parcelas);
 
-                    if (parcelasVM.First().ContaId > 0)
-                        parcelas.ForEach(x => x.Conta = RepositorioConta.ObterPorId(parcelasVM.First().ContaId));
-                    else
+                    foreach (var parcelaConta in parcelas.Where(x => x.Conta != null))
                     {
-                        foreach (var parcelaFatura in parcelas)
+                        parcelaConta.Conta = RepositorioConta.ObterPorId(parcelaConta.Conta.Id);
+                    }
+                    
+                    foreach (var parcelaFatura in parcelas.Where(x => x.Fatura != null))
+                    {
+                        var fatura = RepositorioFatura.ObterPorId(parcelaFatura.Fatura.Id);
+                        if (fatura != null)
                         {
-                            var faturaId = parcelasVM.Where(x => x.Id == parcelaFatura.Id).First().FaturaId;
-                            var fatura = RepositorioFatura.ObterPorId(faturaId);
-                            if (fatura != null)
+                            if (fatura.SituacaoFatura == SituacaoFatura.Aberta)
                             {
-                                if (fatura.SituacaoFatura == SituacaoFatura.Aberta)
-                                {
-                                    fatura.DataFechamento = DateTime.Now;
-                                    fatura.Nome = "Fatura foi fechada na hora do pagamento!";
-                                }
-                                fatura.SituacaoFatura = SituacaoFatura.Paga;
-                                RepositorioFatura.AlterarLote(fatura);
+                                fatura.DataFechamento = DateTime.Now;
+                                fatura.Nome = "Fatura foi fechada na hora do pagamento!";
                             }
-                            parcelaFatura.Fatura = fatura;
+                            if (parcelaFatura.ValorAberto == 0)
+                                fatura.SituacaoFatura = SituacaoFatura.Paga;
+                            else if (parcelaFatura.ValorPago > 0)
+                                fatura.SituacaoFatura = SituacaoFatura.AbertaParcial;
+                            RepositorioFatura.AlterarLote(fatura);
                         }
+                        parcelaFatura.Fatura = fatura;
                     }
 
                     var banco = parcelasVM.First().BancoId > 0 ? RepositorioBanco.ObterPorId(parcelasVM.First().BancoId) : null;
@@ -355,14 +357,14 @@ namespace ControlFinWeb.App.Controllers
 
         public IActionResult GerarRegistroFatura(Int64 IdParcela)
         {
-            if(IdParcela > 0)
+            if (IdParcela > 0)
             {
                 gerarRegistroFaturaVM.ParcelaId = IdParcela;
                 gerarRegistroFaturaVM.ParcelaVM = Mapper.Map<ParcelaVM>(Repositorio.ObterPorId(IdParcela));
             }
 
             var faturas = RepositorioFatura.ObterPorParametros(x => x.SituacaoFatura == SituacaoFatura.Aberta && x.MesAnoReferencia >= DateTime.Now.PrimeiroDiaMes() && x.MesAnoReferencia <= DateTime.Now.AddMonths(1).UltimoDiaMes().FinalDia()).ToList();
-            if(faturas != null && faturas.Count == 0 ) 
+            if (faturas != null && faturas.Count == 0)
                 return RedirectToAction("Editar", "Faturas");
 
             ViewBag.FaturaId = new SelectList(faturas, "Id", "_DescricaoCompleta");
@@ -390,10 +392,10 @@ namespace ControlFinWeb.App.Controllers
             faturaItem.Pessoa = parcela.Conta != null ? parcela.Conta.Pessoa : parcela.Fatura.Pessoa;
             faturaItem.Nome = parcela.Conta != null ? parcela.Conta.Nome : parcela.Fatura._DescricaoCompleta;
 
-            RepositorioFaturaItens.SalvarAlterarFaturaItemEAlterarParcela(faturaItem, gerarRegistroFaturaVM.Quantidade.ToString(),false, null, Configuracao.Usuario, caixaAberto, parcela, true );
-            
+            RepositorioFaturaItens.SalvarAlterarFaturaItemEAlterarParcela(faturaItem, gerarRegistroFaturaVM.Quantidade.ToString(), false, null, Configuracao.Usuario, caixaAberto, parcela, true);
+
             return RedirectToAction("Index", "Parcelas");
-            
+
         }
 
         [HttpGet("FormaPagamentoDebito/{idFormaPagamento}")]
