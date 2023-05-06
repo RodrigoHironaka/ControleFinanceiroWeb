@@ -50,7 +50,7 @@ namespace ControlFinWeb.App.ViewModels
         {
             get
             {
-                return PreencheCombo.Bancos();
+                return PreencheCombo.BancosDadosCompletos();
             }
         }
 

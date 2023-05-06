@@ -27,21 +27,45 @@
             <span asp-validation-for="Ano" class="text-danger"></span>
         </div>
         <div class="col-md-7">
-            <nav class="nav nav-pills nav-justified">
-                <a class="nav-link" onclick="VerificaMes(1)" value="1">JAN</a>
-                <a class="nav-link" onclick="VerificaMes(2)" value="2" >FEV</a>
-                <a class="nav-link" onclick="VerificaMes(3)" value="3" href="#">MAR</a>
-                <a class="nav-link" onclick="VerificaMes(4)" value="4" href="#">ABR</a>
-                <a class="nav-link" onclick="VerificaMes(5)" value="5" href="#">MAI</a>
-                <a class="nav-link" onclick="VerificaMes(6)" value="6" href="#">JUN</a>
-                <a class="nav-link" onclick="VerificaMes(7)" value="7" href="#">JUL</a>
-                <a class="nav-link" onclick="VerificaMes(8)" value="8" href="#">AGO</a>
-                <a class="nav-link" onclick="VerificaMes(9)" value="9" href="#">SET</a>
-                <a class="nav-link" onclick="VerificaMes(10)" value="10" href="#">OUT</a>
-                <a class="nav-link" onclick="VerificaMes(11)" value="11" href="#">NOV</a>
-                <a class="nav-link" onclick="VerificaMes(12)" value="12" href="#">DEZ</a>
-            </nav>
- 
+            <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="pills-jan-tab" data-bs-toggle="pill" data-bs-target="#pills-jan" type="button" role="tab" aria-controls="pills-jan" aria-selected="false" onclick="VerificaMes(1)" value="1">JAN</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="pills-fev-tab" data-bs-toggle="pill" data-bs-target="#pills-fev" type="button" role="tab" aria-controls="pills-fev" aria-selected="false" onclick="VerificaMes(2)" value="2">FEV</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="pills-mar-tab" data-bs-toggle="pill" data-bs-target="#pills-mar" type="button" role="tab" aria-controls="pills-mar" aria-selected="false" onclick="VerificaMes(3)" value="3">MAR</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="pills-abr-tab" data-bs-toggle="pill" data-bs-target="#pills-abr" type="button" role="tab" aria-controls="pills-abr" aria-selected="false" onclick="VerificaMes(4)" value="4">ABR</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="pills-mai-tab" data-bs-toggle="pill" data-bs-target="#pills-mai" type="button" role="tab" aria-controls="pills-mai" aria-selected="false" onclick="VerificaMes(5)" value="5">MAI</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="pills-jun-tab" data-bs-toggle="pill" data-bs-target="#pills-jun" type="button" role="tab" aria-controls="pills-jun" aria-selected="false" onclick="VerificaMes(6)" value="6">JUN</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="pills-jul-tab" data-bs-toggle="pill" data-bs-target="#pills-jul" type="button" role="tab" aria-controls="pills-jul" aria-selected="false" onclick="VerificaMes(7)" value="7">JUL</button>
+                </li>
+                 <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="pills-ago-tab" data-bs-toggle="pill" data-bs-target="#pills-ago" type="button" role="tab" aria-controls="pills-ago" aria-selected="false" onclick="VerificaMes(8)" value="8">AGO</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="pills-set-tab" data-bs-toggle="pill" data-bs-target="#pills-set" type="button" role="tab" aria-controls="pills-set" aria-selected="false" onclick="VerificaMes(9)" value="9">SET</button>
+                </li>
+                 <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="pills-out-tab" data-bs-toggle="pill" data-bs-target="#pills-out" type="button" role="tab" aria-controls="pills-out" aria-selected="false" onclick="VerificaMes(10)" value="10">OUT</button>
+                </li>
+                 <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="pills-nov-tab" data-bs-toggle="pill" data-bs-target="#pills-nov" type="button" role="tab" aria-controls="pills-nov" aria-selected="false" onclick="VerificaMes(11)" value="11">NOV</button>
+                </li>
+                 <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="pills-dez-tab" data-bs-toggle="pill" data-bs-target="#pills-dez" type="button" role="tab" aria-controls="pills-dez" aria-selected="false" onclick="VerificaMes(12)" value="12">DEZ</button>
+                </li>
+
+            </ul>
         </div>
      
     </div>
