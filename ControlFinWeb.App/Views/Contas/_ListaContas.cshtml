@@ -1,0 +1,182 @@
+﻿@using ControlFinWeb.Dominio.ObjetoValor;
+@model IEnumerable<ControlFinWeb.App.ViewModels.ContaVM>
+
+<table class="table table-bordered table-striped table-hover small" id="tabela">
+    <thead>
+        <tr>
+            <th style="text-align:center">Tipo</th>
+            <th style="text-align:center">Emissão</th>
+            <th>Descrição</th>
+            <th style="text-align:right">Qtd</th>
+            <th style="text-align:right">Total Parcelas</th>
+            <th style="text-align:right">Total Reajustado</th>
+            <th style="text-align:right">Total Aberto</th>
+            <th style="text-align:right">Situação</th>
+            <th style="text-align:center">Opções</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td style="text-align:center">
+                    @Html.DisplayFor(modelItem => item.TipoConta)
+                </td>
+                <td style="text-align:center">
+                    @Html.Raw(item.DataEmissao.Value.ToShortDateString())
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Nome)
+                </td>
+                <td style="text-align:right">
+                    @Html.DisplayFor(modelItem => item.QtdTotalParcelas)
+                </td>
+                <td style="text-align:right">
+                    @Html.DisplayFor(modelItem => item.ValorTotalConta)
+                </td>
+                <td style="text-align:right">
+                    @Html.DisplayFor(modelItem => item.ValorTotalReajustado)
+                </td>
+                <td style="text-align:right">
+                    @Html.DisplayFor(modelItem => item.ValorTotalAberto)
+                </td>
+                <td style="text-align:right">
+                    @Html.DisplayFor(modelItem => item.Situacao)
+                </td>
+                <td align="center">
+                    <a class="btn btn-sm btn-primary modal-trigger" asp-action="Editar" asp-route-id="@item.Id"><i class="bi bi-pencil-square"></i></a>
+                    @if (item.Situacao != SituacaoConta.Aberto)
+                    {
+                        <button class="btn btn-sm btn-danger modal-trigger" disabled><i class="bi bi-trash-fill"></i></button>
+                        <button class="btn btn-sm btn-warning modal-trigger" onclick="ReabrirConta(@item.Id)" data-bs-toggle="tooltip" data-bs-title="Reabrir"><i class="bi bi-file-earmark-check"></i></button>
+                    }
+                    else
+                    {
+                        <button class="btn btn-sm btn-danger modal-trigger" onclick="ExibirModalExcluir(@item.Id)"><i class="bi bi-trash-fill"></i></button>
+                        <button class="btn btn-sm btn-success modal-trigger" onclick="FinalizarConta(@item.Id)" data-bs-toggle="tooltip" data-bs-title="Finalizar"><i class="bi bi-file-earmark-check"></i></button>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+
+@*<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Id)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.NumeroDocumento)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Nome)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TipoConta)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Situacao)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DataEmissao)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Observacao)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.SubGastoId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PessoaId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ValorTotalConta)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.QtdTotalParcelas)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ValorTotalAberto)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ValorTotalReajustado)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.QtdTotalParcelasEmAberto)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.JsonParcelas)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DescricaoCompleta)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Id)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.NumeroDocumento)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Nome)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TipoConta)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Situacao)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DataEmissao)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Observacao)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.SubGastoId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PessoaId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ValorTotalConta)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.QtdTotalParcelas)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ValorTotalAberto)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ValorTotalReajustado)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.QtdTotalParcelasEmAberto)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.JsonParcelas)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DescricaoCompleta)
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
+                @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
+                @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
+*@

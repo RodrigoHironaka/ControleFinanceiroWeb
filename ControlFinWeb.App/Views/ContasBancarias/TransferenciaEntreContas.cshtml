@@ -52,13 +52,11 @@
 
     function Transferir() {
         var dados = $("#FrmTransferencia").serialize();
-        alert(dados);
         $.ajax({
             url: '/ContasBancarias/TransferenciaEntreContas',
             method: 'POST',
             data: dados,
             success: function (retorno) {
-                console.log(retorno);
                 if (retorno == "")
                     location.reload();
                 else {

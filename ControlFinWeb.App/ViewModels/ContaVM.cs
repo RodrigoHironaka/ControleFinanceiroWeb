@@ -127,7 +127,7 @@ namespace ControlFinWeb.App.ViewModels
         {
             get
             {
-                return $"CONTA: {Nome} [{Id}] - Ref: {PessoaVM.Nome}";
+                return $"CONTA: {Nome} [{Id}] - Ref: {PessoaVM?.Nome}";
             }
         }
     }

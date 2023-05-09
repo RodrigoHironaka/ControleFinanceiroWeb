@@ -42,11 +42,28 @@ namespace ControlFinWeb.App.Controllers
 
         public IActionResult Index()
         {
-            IEnumerable<Conta> contas = Repositorio.ObterPorParametros(x => x.UsuarioCriacao.Id == Configuracao.Usuario.Id);
+            var predicado = Repositorio.CriarPredicado();
+            predicado = predicado.And(x => x.UsuarioCriacao.Id == Configuracao.Usuario.Id);
+            predicado = predicado.And(x => x.Situacao == SituacaoConta.Aberto);
+
+            IEnumerable<Conta> contas = Repositorio.ObterPorParametros(predicado);
             List<ContaVM> contasVM = Mapper
                 .Map<List<ContaVM>>(contas);
             return View(contasVM);
         }
+        public IActionResult Filtrar(Boolean somenteAbertos)
+        {
+            var predicado = Repositorio.CriarPredicado();
+            predicado = predicado.And(x => x.UsuarioCriacao.Id == Configuracao.Usuario.Id);
+            if (somenteAbertos)
+                predicado = predicado.And(x => x.Situacao == SituacaoConta.Aberto);
+
+            IEnumerable<Conta> contas = Repositorio.ObterPorParametros(predicado);
+            List<ContaVM> contasVM = Mapper
+                .Map<List<ContaVM>>(contas);
+            return PartialView("_ListaContas",contasVM);
+        }
+
 
         public IActionResult Editar(Int64 Id = 0)
         {

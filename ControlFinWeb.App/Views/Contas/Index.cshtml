@@ -6,76 +6,24 @@
 }
 
 <div>
-    
     <div class="row">
-        <div class="col-md-1">
-            <a asp-action="Editar" asp-route-id="0" class="btn btn-success"><i class="badge-info bi-plus-lg"></i> Novo</a>
+        <div class="col-md-2">
+            <a asp-action="Editar" asp-route-id="0" class="w-100 btn btn-success"><i class="badge-info bi-plus-lg"></i> Novo</a>
         </div>
-        <div class="col-md-11">
+        <div class="col-md-8">
             <h3>Contas</h3>
+        </div>
+        <div class="col-md-2">
+            <div class="form-check form-switch">
+                <input id="SomenteAberto" class="mt-2 form-check-input" type="checkbox" checked onclick="Filtrar()">
+                <label class="form-check-label mt-1" for="flexSwitchCheckChecked">Somente Aberto</label>
+            </div>
         </div>
     </div>
     <hr />
-    <table class="table table-bordered table-striped table-hover small" id="tabela">
-        <thead>
-            <tr>
-
-                <th style="text-align:center">Tipo</th>
-                <th style="text-align:center">Emissão</th>
-                <th>Descrição</th>
-                <th style="text-align:right">Qtd</th>
-                <th style="text-align:right">Total Parcelas</th>
-                <th style="text-align:right">Total Reajustado</th>
-                <th style="text-align:right">Total Aberto</th>
-                <th style="text-align:right">Situação</th>
-                <th style="text-align:center">Opções</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model)
-            {
-                <tr>
-                    <td style="text-align:center">
-                        @Html.DisplayFor(modelItem => item.TipoConta)
-                    </td>
-                    <td style="text-align:center">
-                        @Html.Raw(item.DataEmissao.Value.ToShortDateString())
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Nome)
-                    </td>
-                    <td style="text-align:right">
-                        @Html.DisplayFor(modelItem => item.QtdTotalParcelas)
-                    </td>
-                    <td style="text-align:right">
-                        @Html.DisplayFor(modelItem => item.ValorTotalConta)
-                    </td>
-                    <td style="text-align:right">
-                        @Html.DisplayFor(modelItem => item.ValorTotalReajustado)
-                    </td>
-                    <td style="text-align:right">
-                        @Html.DisplayFor(modelItem => item.ValorTotalAberto)
-                    </td>
-                    <td style="text-align:right">
-                        @Html.DisplayFor(modelItem => item.Situacao)
-                    </td>
-                    <td align="center">
-                        <a class="btn btn-sm btn-primary modal-trigger" asp-action="Editar" asp-route-id="@item.Id"><i class="bi bi-pencil-square"></i></a>
-                        @if (item.Situacao != SituacaoConta.Aberto)
-                        {
-                            <button class="btn btn-sm btn-danger modal-trigger" disabled><i class="bi bi-trash-fill"></i></button>
-                            <button class="btn btn-sm btn-warning modal-trigger" onclick="ReabrirConta(@item.Id)" data-bs-toggle="tooltip" data-bs-title="Reabrir"><i class="bi bi-file-earmark-check"></i></button>
-                        }
-                        else
-                        {
-                            <button class="btn btn-sm btn-danger modal-trigger" onclick="ExibirModalExcluir(@item.Id)"><i class="bi bi-trash-fill"></i></button>
-                            <button class="btn btn-sm btn-success modal-trigger" onclick="FinalizarConta(@item.Id)" data-bs-toggle="tooltip" data-bs-title="Finalizar"><i class="bi bi-file-earmark-check"></i></button>
-                        }
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
+    <div id="listaContas" class="mt-1">
+        <partial name="_ListaContas" />
+    </div>
 </div>
 <div id="modal" class="modal fade" role="dialog" data-bs-backdrop="static" data-bs-keyboard="false"></div>
 
@@ -189,6 +137,20 @@
                     });
                 }
             })
+        }
+
+        function Filtrar() {
+            var somenteAbertos = $("#SomenteAberto").prop("checked");
+            $.ajax({
+                method: "GET",
+                url: "/Contas/Filtrar",
+                data: { somenteAbertos: somenteAbertos },
+                success: function (retorno) {
+                    $("#listaContas").empty();
+                    $("#listaContas").html(retorno);
+                }
+            });
+
         }
     </script>
 }

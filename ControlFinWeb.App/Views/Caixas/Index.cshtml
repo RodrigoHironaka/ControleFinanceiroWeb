@@ -10,7 +10,7 @@
         <button type="button" class="w-100 btn-md btn btn-secondary pesquisar"><i class="bi bi-search"></i> Pesquisar</button>
         @if (Model.Situacao == SituacaoCaixa.Aberto)
         {
-            <button type="button" class="w-100 btn-md btn btn-primary abrirFecharCaixa" data-id="@Model.Id"><i class="bi bi-cash-stack"></i> Abrir Caixa</button>
+            <button type="button" class="w-100 btn-md btn btn-primary abrirFecharCaixa" data-id="@Model.Id"><i class="bi bi-cash-stack"></i> Abrir</button>
         }
         @if (Model.Id > 0 && Model.Situacao == SituacaoCaixa.Aberto)
         {
@@ -118,7 +118,7 @@
             $(".modal-excluir").modal();
 
             if (@Model.Id > 0) {
-                $(".abrirFecharCaixa").addClass('small').addClass('bi bi-cash-stack').text(" Fechar Caixa");
+                $(".abrirFecharCaixa").addClass('small').addClass('bi bi-cash-stack').text(" Fechar");
             }
 
             if (parseInt(@Model.Situacao.GetHashCode()) == parseInt(@SituacaoCaixa.Fechado.GetHashCode())) {
@@ -153,33 +153,15 @@
             });
         });
 
-        //function ExibirModalExcluir(id) {
-        //    $("#modal-excluir").modal("show");
-        //    $(".btnConfirmar").on("click", function () {
-        //        $.ajax({
-        //            method: "POST",
-        //            url: "Deletar",
-        //            data: { id: id },
-        //            success: function () {
-        //                location.reload();
-        //            },
-        //            error: function () {
-        //                $("#modal-excluir").modal("hide");
-        //                $("#mensagem").addClass('alert alert-danger').html("<strong>Erro!</strong> Não é possível excluir, por favor inative o registro!").delay(10000).fadeOut(400);
-        //            }
-        //        });
-        //    })
-        //}
-
         $(function () {
             $(".abrirFecharCaixa").click(function () {
                 var id = $(this).attr("data-id");
                 $("#modal").load("Editar?id=" + id, function () {
                     if (id > 0) {
-                        $(".modal-title").html("FECHAR CAIXA");
+                        $(".modal-title").html("FECHAR");
                         $("#ValorAberturaFechamento").prop('readonly', true);
                     } else {
-                        $(".modal-title").html("ABRIR CAIXA");
+                        $(".modal-title").html("ABRIR");
                     }
                     $("#modal").modal("show");
                 })
