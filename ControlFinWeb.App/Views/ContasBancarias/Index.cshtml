@@ -5,11 +5,14 @@
 }
 
 <div class="row">
-    <div class="col-md-1">
+    <div class="col-md-2">
         <button class=" w-100 btn btn-success novo" data-id="0"><i class="bi bi-plus-lg"></i> Novo</button>
     </div>
-    <div class="col-md-11">
+    <div class="col-md-7">
         <h3>Registros Bancários</h3>
+    </div>
+    <div class="col-md-3">
+        <button class=" w-100 btn btn-primary transferenciaEntreContas" data-id="0"><i class="bi bi-arrow-left-right"></i> Transferência entre contas</button>
     </div>
 </div>
 <hr />
@@ -26,7 +29,7 @@
             <input asp-for="Ano" class="form-control" placeholder="ANO" min="2000" max="5000" value="@DateTime.Now.Year" />
             <span asp-validation-for="Ano" class="text-danger"></span>
         </div>
-        <div class="col-md-7">
+        <div class="col-md-8">
             <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
                 <li class="nav-item" role="presentation">
                     <button class="nav-link" id="pills-jan-tab" data-bs-toggle="pill" data-bs-target="#pills-jan" type="button" role="tab" aria-controls="pills-jan" aria-selected="false" onclick="VerificaMes(1)" value="1">JAN</button>
@@ -170,15 +173,6 @@
             })
         }
 
-        $(document).on(TipoClick().toString(), ".novo", function () {
-            var id = $(this).attr("data-id");
-            $("#modal").load("/ContasBancarias/Editar?id=" + id, function () {
-                $(".modal-title").html("NOVO REGISTRO");
-                $("#modal").modal("show");
-            })
-
-        });
-
         $(function () {
             $(document).on(TipoClick().toString(), ".novo", function () {
                 var id = $(this).attr("data-id");
@@ -192,6 +186,12 @@
                 var id = $(this).attr("data-id");
                 $("#modal").load("/ContasBancarias/Editar?id=" + id, function () {
                     $(".modal-title").html("ALTERANDO REGISTRO");
+                    $("#modal").modal("show");
+                })
+            });
+
+            $(document).on(TipoClick().toString(), ".transferenciaEntreContas", function () {
+                $("#modal").load("/ContasBancarias/TransferenciaEntreContas", function () {
                     $("#modal").modal("show");
                 })
             });

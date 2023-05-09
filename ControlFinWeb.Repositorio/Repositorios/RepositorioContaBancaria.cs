@@ -165,5 +165,48 @@ namespace ControlFinWeb.Repositorio.Repositorios
             }
             return saldo;
         }
+
+        public void TransferenciaentreContas(Int64 bancoSaidaId, Int64 bancoEntradaId, Decimal valor, TransacaoBancaria transBancaria, Usuario usuario)
+        {
+            using (var trans = Session.BeginTransaction())
+            {
+                try
+                {
+                    var bancoSaida = RepositorioBanco.ObterPorId(bancoSaidaId);
+                    if (bancoSaida == null)
+                        throw new Exception("Houve um erro: Nenhuma conta saída foi definida!");
+
+                    var bancoEntrada = RepositorioBanco.ObterPorId(bancoEntradaId);
+                    if (bancoEntrada == null)
+                        throw new Exception("Houve um erro: Nenhuma conta entrada foi definida!");
+
+                    GeraNovoRegistro(bancoSaida, EntradaSaida.Saída, valor, transBancaria, $"Saída via transferência entre bancos: enviado para {bancoEntrada._DadosCompletos}", usuario);
+                    GeraNovoRegistro(bancoEntrada, EntradaSaida.Entrada, valor, transBancaria, $"Entrada via transferência entre bancos: recebido de {bancoSaida._DadosCompletos}", usuario);
+
+                    trans.Commit();
+                }
+                catch (Exception ex)
+                {
+                    trans.Rollback();
+                    throw new Exception(ex.Message);
+                }
+            }
+        }
+
+        public void GeraNovoRegistro(Banco banco, EntradaSaida entradaSaida, Decimal valor, TransacaoBancaria transBancaria, String descricao, Usuario usuario)
+        {
+            var novoRegistro = new ContaBancaria
+            {
+                Valor = valor,
+                DataRegistro = DateTime.Now,
+                TransacaoBancaria = transBancaria,
+                Situacao = entradaSaida,
+                Caixa = null,
+                Banco = banco,
+                UsuarioCriacao = usuario,
+                Nome = descricao
+            };
+            SalvarLote(novoRegistro);
+        }
     }
 }

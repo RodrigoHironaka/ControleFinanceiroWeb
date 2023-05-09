@@ -63,7 +63,7 @@ namespace ControlFinWeb.App.ViewModels
         }
         public String DescricaoComTipoConta
         {
-            get { return String.Format("{0} - {1}", Nome,  BancoVM!= null ? BancoVM.TipoContaBanco: String.Empty); }
+            get { return String.Format("{0} - {1}", Nome,  BancoVM != null ? BancoVM.TipoContaBanco: String.Empty); }
         }
     }
 }

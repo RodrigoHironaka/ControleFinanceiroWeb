@@ -103,6 +103,7 @@ namespace ControlFinWeb.App.Utilitarios
                 }
             }
         }
+       
         public static SelectList FormasPagamento()
         {
             var lista = new List<FormaPagamento>();
@@ -218,6 +219,5 @@ namespace ControlFinWeb.App.Utilitarios
                 }
             }
         }
-
     }
 }

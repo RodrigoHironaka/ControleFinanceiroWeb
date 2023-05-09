@@ -2,6 +2,7 @@
 using AutoMapper;
 using ControlFinWeb.App.Utilitarios;
 using ControlFinWeb.App.ViewModels;
+using ControlFinWeb.App.ViewModels.Acesso;
 using ControlFinWeb.Dominio.Entidades;
 using ControlFinWeb.Dominio.ObjetoValor;
 using ControlFinWeb.Repositorio.Repositorios;
@@ -47,7 +48,7 @@ namespace ControlFinWeb.App.Controllers
             predicado = predicado.And(x => x.DataRegistro >= inicioMes);
             predicado = predicado.And(x => x.DataRegistro <= finalMes);
 
-            if(filtroContaBancariaVM.BancoId > 0)
+            if (filtroContaBancariaVM.BancoId > 0)
                 predicado = predicado.And(x => x.Banco.Id == filtroContaBancariaVM.BancoId);
 
             filtroContaBancariaVM.ContasBancarias = Mapper.Map<List<ContaBancariaVM>>(Repositorio.ObterPorParametros(predicado));
@@ -96,7 +97,7 @@ namespace ControlFinWeb.App.Controllers
                 if (contaBancariaVM.TransfereParaCaixa == true)
                 {
                     var saldo = Repositorio.Saldo(DateTime.Now, contaBancariaVM.BancoId);
-                    if(saldo < contaBancariaVM.Valor)
+                    if (saldo < contaBancariaVM.Valor)
                         return Json(new { result = false, error = "Saldo insuficiente na conta bancária!" });
                 }
 
@@ -132,6 +133,47 @@ namespace ControlFinWeb.App.Controllers
             contaBancaria = Repositorio.ObterPorId(Id);
             Repositorio.ExcluirRegistrarLog(contaBancaria, Configuracao.Usuario);
             return Json(contaBancaria.Nome + "excluído com sucesso");
+        }
+
+        public IActionResult TransferenciaEntreContas()
+        {
+            return View(new TransferenciaEntreContasVM());
+        }
+
+        [HttpPost]
+        [IgnoreAntiforgeryToken]
+        public IActionResult TransferenciaEntreContas(TransferenciaEntreContasVM transEntreContasVM)
+        {
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    if (transEntreContasVM.Valor <= 0)
+                        return Json(new { result = false, error = "Valor não pode ser zero!" });
+
+                    if (transEntreContasVM.BancoSaidaId <= 0)
+                        return Json(new { result = false, error = "Nenhuma conta saída foi definida!" });
+
+                    if (transEntreContasVM.BancoEntradaId <= 0)
+                        return Json(new { result = false, error = "Nenhuma conta entrada foi definida!" });
+
+                    var saldoBancoSaida = Repositorio.Saldo(DateTime.Now, transEntreContasVM.BancoSaidaId);
+                    if (saldoBancoSaida < transEntreContasVM.Valor)
+                        return Json(new { result = false, error = "Saldo banco saída insuficiente para transferência!" });
+
+                    if (transEntreContasVM.BancoSaidaId.Equals(transEntreContasVM.BancoEntradaId))
+                        return Json(new { result = false, error = "Defina bancos diferentes para a transferência!" });
+
+                    Repositorio.TransferenciaentreContas(transEntreContasVM.BancoSaidaId, transEntreContasVM.BancoEntradaId, transEntreContasVM.Valor, transEntreContasVM.TransacaoBancaria, Configuracao.Usuario);
+                    return new EmptyResult();
+                }
+                catch (Exception ex)
+                {
+                    return Json(new { result = false, error = ex.Message });
+                }
+            }
+
+            return View(transEntreContasVM);
         }
 
         private void CompararAlteracoes()
