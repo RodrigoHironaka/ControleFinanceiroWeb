@@ -35,6 +35,7 @@
         </div>
     </div>
 </div>
+<div id="modalPesquisa" class="modal fade" role="dialog" data-bs-backdrop="static" data-bs-keyboard="false"></div>
 
 @section Scripts
     {
@@ -51,16 +52,14 @@
                     $("#tabelaFaturas").html(retorno);
                 }
             });
-
         }
 
         $(function () {
             $(".novo").click(function () {
-                $("#modal").modal("hide");
                 var id = $(this).attr("data-id");
-                $("#modal").load("Editar?id=" + id, function () {
+                $("#modalPesquisa").load("Editar?id=" + id, function () {
                     $(".modal-title").html("NOVO REGISTRO");
-                    $("#modal").modal("show");
+                    $("#modalPesquisa").modal("show");
                 })
             });
         });

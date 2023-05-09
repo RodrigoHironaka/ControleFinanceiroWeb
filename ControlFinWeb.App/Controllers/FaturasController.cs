@@ -136,7 +136,7 @@ namespace ControlFinWeb.App.Controllers
 
         public Boolean ExisteFatura(FaturaVM faturaVM)
         {
-            var existeFatura = Repositorio.ObterPorParametros(x => x.Cartao.Id == faturaVM.CartaoId && x.MesAnoReferencia == faturaVM.MesAnoReferencia && x.Pessoa.Id == faturaVM.PessoaId).FirstOrDefault();
+            var existeFatura = Repositorio.ObterPorParametros(x => x.Cartao.Id == faturaVM.CartaoId && x.MesAnoReferencia == faturaVM.MesAnoReferencia && x.Pessoa.Id == faturaVM.PessoaId && x.Id != faturaVM.Id).FirstOrDefault();
             if (existeFatura != null)
                 return true;
 

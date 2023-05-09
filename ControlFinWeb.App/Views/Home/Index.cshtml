@@ -18,8 +18,7 @@
             <div class="card w-100 card-1">
                 <div class="card-body">
                     <h5 class="card-title"> <a class="btn btn-outline-danger" asp-controller="Parcelas" asp-action="APagar">PAGAR</a></h5>
-                    <h2 class="card-text">@Model.TotalPagar.ToString("C2")</h2>
-
+                    <h5 class="card-text">@Model.TotalPagar.ToString("C2")</h5>
                 </div>
             </div>
         </div>
@@ -27,8 +26,7 @@
             <div class="card w-100 card-2">
                 <div class="card-body">
                     <h5 class="card-title"> <a class="btn btn-outline-success" asp-controller="Parcelas" asp-action="AReceber">RECEBER</a></h5>
-                    <h2 class="card-text">@Model.TotalReceber.ToString("C2")</h2>
-
+                    <h5 class="card-text">@Model.TotalReceber.ToString("C2")</h5>
                 </div>
             </div>
         </div>
@@ -36,8 +34,7 @@
             <div class="card w-100 card-3">
                 <div class="card-body">
                     <h5 class="card-title"> <a class="btn btn-outline-primary" asp-controller="Caixas" asp-action="Index">CAIXA</a></h5>
-                    <h2 class="card-text">@Model.TotalBalanco.ToString("C2")</h2>
-
+                    <h5 class="card-text">@Model.TotalBalanco.ToString("C2")</h5>
                 </div>
             </div>
         </div>
@@ -45,8 +42,7 @@
             <div class="card w-100 card-4">
                 <div class="card-body">
                     <h5 class="card-title"> <a class="btn btn-outline-warning" asp-controller="Parcelas" asp-action="Atrasados">ATRASADOS</a></h5>
-                    <h2 class="card-text">@Model.TotalAtrasadas.ToString("C2")</h2>
-
+                    <h5 class="card-text">@Model.TotalAtrasadas.ToString("C2")</h5>
                 </div>
             </div>
         </div>

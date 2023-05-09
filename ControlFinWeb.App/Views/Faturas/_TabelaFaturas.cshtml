@@ -56,16 +56,17 @@
 <script>
     $(function () {
         $(document).on("mousedown touchstart", ".editarFatura", function () {
-            $("#modal").modal("hide");
             var id = $(this).attr("data-id");
-            $("#modal").load("/Faturas/Editar?id=" + id, function () {
+            $("#modalPesquisa").load("/Faturas/Editar?id=" + id, function () {
                 $(".modal-title").html("ALTERANDO REGISTRO");
-                $("#modal").modal("show");
+                $("#modalPesquisa").modal("show");
             })
         });
     });
 
     function ExibirModalExcluir(id) {
+        var cartaoId = $("#CartaoId").val();
+        var somenteAtivos = $("#SomenteAberto").prop("checked");
         Swal.fire({
             title: 'Deseja realmente excluir?',
             text: "ATENÇÃO: Ao excluir essa fatura todos os itens adicionados serão excluídos também!",
@@ -81,11 +82,23 @@
                     method: "POST",
                     url: "/Faturas/Deletar",
                     data: { id: id },
-                    success: function () {
-                        $("#modal").modal("hide");
-                        $("#modal").load("Pesquisa", function () {
-                            $("#modal").modal("show");
-                        })
+                    success: function (retorno) {
+                        $.ajax({
+                            method: "POST",
+                            url: "/Faturas/Pesquisa",
+                            data: { cartaoId: cartaoId, somenteAtivos: somenteAtivos },
+                            success: function (retorno) {
+                                $("#tabelaFaturas").empty();
+                                $("#tabelaFaturas").html(retorno);
+                            },
+                            error: function () {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Oops...',
+                                    text: 'Não é possível carregar os registros!',
+                                })
+                            }
+                        });
                     },
                     error: function () {
                         Swal.fire({

@@ -70,11 +70,22 @@ namespace ControlFinWeb.App.ViewModels
             }
         }
 
+        public string DescricaoCompletaSemReferencia
+        {
+            get
+            {
+                if (CartaoVM != null)
+                    return string.Format("FATURA: {0} - {1:MMyyyy}", CartaoVM.Nome, MesAnoReferencia);
+                else
+                    return string.Empty;
+            }
+        }
+
         public string DescricaoCompletaTitulo
         {
             get
             {
-                return string.Format("{0} - {1} - {2}", DescricaoCompleta, ValorFatura.ToString("C2"), SituacaoFatura.ToString().ToUpper());
+                return string.Format("{0} - {1} - {2}", DescricaoCompletaSemReferencia, ValorFatura.ToString("C2"), SituacaoFatura.ToString().ToUpper());
 
             }
         }

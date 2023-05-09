@@ -61,6 +61,8 @@
 
         function Salvar() {
             var dados = $("#FrmFatura").serialize();
+            var cartaoId = $("#CartaoId").val();
+            var somenteAtivos = $("#SomenteAberto").prop("checked");
             $.ajax({
                 url: '/Faturas/ExisteFatura',
                 method: 'GET',
@@ -73,10 +75,26 @@
                             data: dados,
                             success: function (retorno) {
                                 if (retorno == "") {
-                                    $("#modal").load("/Faturas/Pesquisa", function () {});
+                                    $.ajax({
+                                        method: "POST",
+                                        url: "/Faturas/Pesquisa",
+                                        data: { cartaoId: cartaoId, somenteAtivos: somenteAtivos },
+                                        success: function (retorno) {
+                                            $("#modalPesquisa").modal("hide");
+                                            $("#tabelaFaturas").empty();
+                                            $("#tabelaFaturas").html(retorno);
+                                        },
+                                        error: function () {
+                                            Swal.fire({
+                                                icon: 'error',
+                                                title: 'Oops...',
+                                                text: 'Não é possível carregar os registros!',
+                                            })
+                                        }
+                                    });
                                 }
                                 else {
-                                    $("#modal").html(retorno);
+                                    $("#modalPesquisa").html(retorno);
                                     if ($("#id").val() > 0)
                                         $(".modal-title").html("ALTERANDO REGISTRO");
                                     else
@@ -100,9 +118,7 @@
         }
 
         function Fechar() {
-            $("#modal").load("/Faturas/Pesquisa", function () {
-                $("#modal").modal("show");
-            });
+            $("#modalPesquisa").modal("hide");
         }
 
     </script>
