@@ -480,6 +480,38 @@ namespace ControlFinWeb.App.Controllers
             return PartialView("_HistoricoParcela", historicosVM);
         }
 
+        public IActionResult AlterarParcelasSeguintesConta(ParcelaVM parcelaVM)
+        {
+            var parcela = Repositorio.ObterPorId(parcelaVM.Id);
+            var parcelasAlteradas = new List<Parcela>();
+            if(parcela != null)
+            {
+                try
+                {
+                    var parcelasConta = Repositorio.ObterPorParametros(x => x.Conta.Id == parcela.Conta.Id && x.Numero > parcela.Numero && x.SituacaoParcela == SituacaoParcela.Pendente).ToList();
+                    Int16 i = 1;
+                    foreach (var parc in parcelasConta)
+                    {
+                        parc.ValorParcela = parcela.ValorParcela;
+                        parc.ValorAberto = parcela.ValorParcela;
+                        parc.ValorReajustado = parcela.ValorParcela;
+                        parc.DataVencimento = parcela.DataVencimento.Value.AddMonths(i);
+                        parcelasAlteradas.Add(parc);
+                        i++;
+                    }
+                    Repositorio.Alterar(parcelasAlteradas);
+                    return Json(new { result = true, message = "Parcelas alteradas com sucesso!" });
+                }
+                catch (Exception ex)
+                {
+                    return Json(new { result = false, error = "Erro:" + ex.Message });
+                }
+               
+            }
+            else
+                return Json(new { result = false, error="Parcela não foi encontrada!" });
+        }
+
         private void CompararAlteracoes()
         {
             var comparer = new ObjectsComparer.Comparer<Parcela>();
