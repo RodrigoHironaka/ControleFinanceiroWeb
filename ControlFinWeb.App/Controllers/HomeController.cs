@@ -6,6 +6,7 @@ using ControlFinWeb.Dominio.ObjetoValor;
 using ControlFinWeb.Repositorio.Repositorios;
 using LinqKit;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Diagnostics;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -107,6 +108,7 @@ namespace ControlFinWeb.App.Controllers
 
             for (int i = 12; i >= 0; i--)
             {
+                var gastosTotais = new List<Parcela>();
                 var primeiroDiaMes = DateTime.Now.AddMonths(-i).PrimeiroDiaMes();
                 var ultimoDiaMes = DateTime.Now.AddMonths(-i).UltimoDiaMes().FinalDia();
                 var auxLista = RepositorioParcela.ObterPorParametros(x =>
@@ -115,11 +117,19 @@ namespace ControlFinWeb.App.Controllers
                  x.SituacaoParcela != Dominio.ObjetoValor.SituacaoParcela.Cancelado &&
                 x.UsuarioCriacao.Id == Configuracao.Usuario.Id).ToList();
 
-                var random = new Random();
-                if (auxLista.Count > 0)
+                gastosTotais.AddRange(auxLista);
+                foreach (var item in auxLista.Where(x => x.Conta != null))
                 {
-                    var nomeMes = String.Format("{0}/{1}", auxLista.First().DataVencimento.Value.ToString("MMM").ToUpper(), auxLista.First().DataVencimento.Value.ToString("yyyy"));
-                    total += auxLista.Sum(x => x.ValorReajustado).ToString("N2").Replace(".", "").Replace(",", ".") + ",";
+                    if (item.Conta.TipoConta == TipoConta.Receber)
+                        gastosTotais.Remove(item);
+                }
+
+                var random = new Random();
+
+                if (gastosTotais.Count > 0)
+                {
+                    var nomeMes = String.Format("{0}/{1}", gastosTotais.First().DataVencimento.Value.ToString("MMM").ToUpper(), gastosTotais.First().DataVencimento.Value.ToString("yyyy"));
+                    total += gastosTotais.Sum(x => x.ValorReajustado).ToString("N2").Replace(".", "").Replace(",", ".") + ",";
                     descricao += "'" + nomeMes + "',";
                     cor += "'" + String.Format("#{0:X6}", random.Next(0x1000000)) + "',";
                 }
