@@ -338,7 +338,7 @@ namespace ControlFinWeb.App.Controllers
                             if (parcelaFatura.ValorAberto == 0)
                                 fatura.SituacaoFatura = SituacaoFatura.Paga;
                             else if (parcelaFatura.ValorPago > 0)
-                                fatura.SituacaoFatura = SituacaoFatura.AbertaParcial;
+                                fatura.SituacaoFatura = SituacaoFatura.Aberta;
                             RepositorioFatura.AlterarLote(fatura);
                         }
                         parcelaFatura.Fatura = fatura;

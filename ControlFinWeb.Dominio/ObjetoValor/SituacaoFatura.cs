@@ -11,8 +11,6 @@ namespace ControlFinWeb.Dominio.ObjetoValor
         Fechada,
         Aberta,
         Cancelada,
-        Paga,
-        AbertaParcial
-
+        Paga
     }
 }

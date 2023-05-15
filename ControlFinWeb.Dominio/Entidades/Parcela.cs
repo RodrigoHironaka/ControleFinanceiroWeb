@@ -34,6 +34,16 @@ namespace ControlFinWeb.Dominio.Entidades
         public virtual Usuario UsuarioCriacao { get; set; }
         public virtual Usuario UsuarioAlteracao { get; set; }
 
+        public virtual Decimal CalculaValorReajustado()
+        {
+            return ValorParcela + JurosValor - DescontoValor;
+        }
+
+        public virtual Decimal CalculaValorAberto()
+        {
+            return ValorParcela + JurosValor - DescontoValor - ValorPago;
+        }
+
         public virtual object Clone()
         {
             var clone = (Parcela)this.MemberwiseClone();

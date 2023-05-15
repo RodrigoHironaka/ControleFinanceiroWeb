@@ -58,14 +58,14 @@ namespace ControlFinWeb.Repositorio.Repositorios
             else if (AlterandoItemFatura)
             {
                 existeParcela.ValorParcela = faturaItens.Fatura._ValorFatura;
-                existeParcela.ValorReajustado = faturaItens.Fatura._ValorFatura;
-                existeParcela.ValorAberto = faturaItens.Fatura._ValorFatura;
+                existeParcela.ValorReajustado = existeParcela.CalculaValorReajustado();
+                existeParcela.ValorAberto = existeParcela.CalculaValorAberto();
             }
             else
             {
                 existeParcela.ValorParcela = faturaItens.Fatura._ValorFatura + faturaItens.Valor;
-                existeParcela.ValorReajustado = faturaItens.Fatura._ValorFatura + faturaItens.Valor;
-                existeParcela.ValorAberto = faturaItens.Fatura._ValorFatura + faturaItens.Valor;
+                existeParcela.ValorReajustado = existeParcela.CalculaValorReajustado();
+                existeParcela.ValorAberto += faturaItens.Valor;
             }
 
             AlterarLote(existeParcela);
