@@ -66,7 +66,7 @@ namespace ControlFinWeb.App.Controllers
         {
             var predicado = Repositorio.CriarPredicado();
             predicado = predicado.And(x => x.UsuarioCriacao.Id == Configuracao.Usuario.Id);
-            if(filtrarParcelasVM.TipoConta == TipoConta.Pagar)
+            if (filtrarParcelasVM.TipoConta == TipoConta.Pagar)
                 predicado = predicado.And(x => x.Conta.TipoConta == filtrarParcelasVM.TipoConta || x.Fatura != null);
             else
                 predicado = predicado.And(x => x.Conta.TipoConta == filtrarParcelasVM.TipoConta);// Não existe opção de receber de uma futura, sempre será "PAGAR"
@@ -103,7 +103,53 @@ namespace ControlFinWeb.App.Controllers
                     parcelas = parcelas.Where(x => x.Conta?.Situacao == SituacaoConta.Aberto).ToList();
                 else if (filtrarParcelasVM.ContaFatura == ContaFatura.Fatura)
                     parcelas = parcelas.Where(x => x.Fatura != null && x.Fatura.SituacaoFatura != SituacaoFatura.Cancelada).ToList();
-              
+
+            }
+            else
+            {
+                parcelas = parcelas.Where(x => x.Conta?.Situacao != SituacaoConta.Cancelado || x.Fatura?.SituacaoFatura != SituacaoFatura.Cancelada).ToList();
+            }
+            return parcelas;
+        }
+        public IList<Parcela> FiltroParcelasGastoPorPessoa(FiltroParcelasVM filtrarParcelasVM)
+        {
+            var predicado = Repositorio.CriarPredicado();
+            predicado = predicado.And(x => x.UsuarioCriacao.Id == Configuracao.Usuario.Id);
+            if (filtrarParcelasVM.TipoConta == TipoConta.Pagar)
+                predicado = predicado.And(x => x.Conta.TipoConta == filtrarParcelasVM.TipoConta || x.Fatura != null);
+            else
+                predicado = predicado.And(x => x.Conta.TipoConta == filtrarParcelasVM.TipoConta);// Não existe opção de receber de uma futura, sempre será "PAGAR"
+
+            if (filtrarParcelasVM.DataInicio != null)
+                predicado = predicado.And(x => x.DataVencimento >= filtrarParcelasVM.DataInicio);
+
+            if (filtrarParcelasVM.DataFinal != null)
+            {
+                if (filtrarParcelasVM.DataFinal >= filtrarParcelasVM.DataInicio)
+                    predicado = predicado.And(x => x.DataVencimento <= filtrarParcelasVM.DataFinal.Value.FinalDia());
+            }
+
+            if (!String.IsNullOrEmpty(filtrarParcelasVM.SituacaoParcela))
+            {
+                var situacaoesParcelas = new List<SituacaoParcela>();
+                var situacoes = filtrarParcelasVM.SituacaoParcela.Split(",");
+                foreach (var num in situacoes)
+                {
+                    var numero = Int32.Parse(num);
+                    situacaoesParcelas.Add((SituacaoParcela)Int32.Parse(num));
+                }
+                predicado = predicado.And(x => situacaoesParcelas.Contains(x.SituacaoParcela));
+            }
+
+            var parcelas = Repositorio.ObterPorParametros(predicado).ToList();
+
+            if (filtrarParcelasVM.ContaFatura != null)
+            {
+                if (filtrarParcelasVM.ContaFatura == ContaFatura.Conta)
+                    parcelas = parcelas.Where(x => x.Conta?.Situacao == SituacaoConta.Aberto).ToList();
+                else if (filtrarParcelasVM.ContaFatura == ContaFatura.Fatura)
+                    parcelas = parcelas.Where(x => x.Fatura != null && x.Fatura.SituacaoFatura != SituacaoFatura.Cancelada).ToList();
+
             }
             else
             {
@@ -113,7 +159,7 @@ namespace ControlFinWeb.App.Controllers
         }
 
         public IActionResult Index(FiltroParcelasVM filtrarParcelasVM)
-         {
+        {
             filtrarParcelasVM.Parcelas = Mapper.Map<List<ParcelaVM>>(FiltroParcelas(filtrarParcelasVM));
             return View(filtrarParcelasVM);
         }
@@ -324,7 +370,7 @@ namespace ControlFinWeb.App.Controllers
                     {
                         parcelaConta.Conta = RepositorioConta.ObterPorId(parcelaConta.Conta.Id);
                     }
-                    
+
                     foreach (var parcelaFatura in parcelas.Where(x => x.Fatura != null))
                     {
                         var fatura = RepositorioFatura.ObterPorId(parcelaFatura.Fatura.Id);
@@ -484,7 +530,7 @@ namespace ControlFinWeb.App.Controllers
         {
             var parcela = Repositorio.ObterPorId(parcelaVM.Id);
             var parcelasAlteradas = new List<Parcela>();
-            if(parcela != null)
+            if (parcela != null)
             {
                 try
                 {
@@ -506,10 +552,64 @@ namespace ControlFinWeb.App.Controllers
                 {
                     return Json(new { result = false, error = "Erro:" + ex.Message });
                 }
-               
+
             }
             else
-                return Json(new { result = false, error="Parcela não foi encontrada!" });
+                return Json(new { result = false, error = "Parcela não foi encontrada!" });
+        }
+
+        public IActionResult GastosPorPessoa(FiltroParcelasVM filtrarParcelasVM)
+        {
+            var parcelas = FiltroParcelasGastoPorPessoa(filtrarParcelasVM);
+            var parcelasContas = parcelas.Where(x => x.Conta != null);
+            var parcelasFaturas = parcelas.Where(x => x.Fatura != null);
+            var itensFatura = new List<FaturaItens>();
+
+            if (parcelasContas.Count() > 0)
+            {
+                if (filtrarParcelasVM.PessoaId > 0)
+                    parcelasContas = parcelasContas.Where(x => x.Conta.Pessoa.Id == filtrarParcelasVM.PessoaId);
+                
+                foreach (var parcConta in parcelasContas)
+                {
+                    var gastoPorPessoa = new GastosPessoaVM
+                    {
+                        ContaFatura = "Conta",
+                        Data = parcConta.Conta.DataEmissao.Value,
+                        Descricao = parcConta.Conta._DescricaoCompleta,
+                        Valor = parcConta.ValorReajustado.ToString("N2").Replace(".", ""),
+                        Pessoa = parcConta.Conta.Pessoa.Nome,
+                        Situacao = parcConta.SituacaoParcela.ToString()
+                    };
+                    filtrarParcelasVM.Gastos.Add(gastoPorPessoa);
+                }
+            }
+
+            if (parcelasFaturas.Count() > 0)
+            {
+                foreach (var parcFatura in parcelasFaturas)
+                {
+                    if (filtrarParcelasVM.PessoaId > 0)
+                        itensFatura = parcFatura.Fatura.FaturaItens.Where(x => x.Pessoa.Id == filtrarParcelasVM.PessoaId).ToList();
+                    else
+                        itensFatura = parcFatura.Fatura.FaturaItens.ToList();
+
+                    foreach (var item in itensFatura)
+                    {
+                        var gastoPorPessoa = new GastosPessoaVM
+                        {
+                            ContaFatura = "Fatura",
+                            Data = item.DataCompra.Value,
+                            Descricao = item.Nome,
+                            Valor = item.Valor.ToString("N2").Replace(".",""),
+                            Pessoa = item.Pessoa.Nome,
+                            Situacao = item.Fatura.SituacaoFatura.ToString()
+                        };
+                        filtrarParcelasVM.Gastos.Add(gastoPorPessoa);
+                    }
+                }
+            }
+            return View(filtrarParcelasVM);
         }
 
         private void CompararAlteracoes()

@@ -21,6 +21,7 @@ namespace ControlFinWeb.App.ViewModels
             {
                 SituacaoParcela = "0,1,2";
             }
+            Gastos = new List<GastosPessoaVM>();
         }
 
         [DisplayName("Início")]
@@ -35,7 +36,7 @@ namespace ControlFinWeb.App.ViewModels
         [DisplayName("Conta/Fatura")]
         public ContaFatura? ContaFatura { get; set; }
 
-        [DisplayName("Situação Parcela")]
+        [DisplayName("Situação")]
         public String SituacaoParcela { get; set; }
 
         [DisplayName("Pessoa Referenciada")]
@@ -50,6 +51,8 @@ namespace ControlFinWeb.App.ViewModels
         }
 
         public IList<ParcelaVM> Parcelas { get; set; }
+
+        public IList<GastosPessoaVM> Gastos { get; set; }
         public String TotalParcelas
         {
             get

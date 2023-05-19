@@ -1,0 +1,189 @@
+﻿@model ControlFinWeb.App.ViewModels.FiltroParcelasVM
+@using ControlFinWeb.Dominio.ObjetoValor
+
+@{
+    ViewData["Title"] = "Consulta";
+}
+
+<div id="alertParcelas" role="alert" style="display:none;"></div>
+<div class="card">
+    <div class="card-header"><strong>FILTRO</strong></div>
+    <div class="card-body">
+        <form id="frmFiltroParcelas" asp-action="GastosPorPessoa">
+            <input asp-for="SituacaoParcela" type="hidden" class="form-control">
+            <div class="row">
+                <div class="col-md-2">
+                    <label asp-for="DataInicio" class="control-label"></label>
+                    <div class="input-group mb-3">
+                        <button class="btn btn-outline-dark" type="button" id="btnDataInicio" onclick="ProximoMes()"><i class="bi bi-chevron-double-right"></i></button>
+                        <input asp-for="DataInicio" type="date" class="form-control" placeholder="" aria-label="" aria-describedby="btnDataInicio">
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <label asp-for="DataFinal" class="control-label"></label>
+                    <div class="input-group mb-3">
+                        <button class="btn btn-outline-dark" type="button" id="button-addon1" onclick="MesAnterior()"><i class="bi bi-chevron-double-left"></i></button>
+                        <input asp-for="DataFinal" type="date" class="form-control" placeholder="" aria-label="Example text with button addon" aria-describedby="button-addon1">
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <label asp-for="TipoConta" class="control-label"></label>
+                    <select class="form-select" asp-for="TipoConta" asp-items="Html.GetEnumSelectList<TipoConta>()"></select>
+                </div>
+
+                <div class="col-md-2">
+                    <label asp-for="SituacaoParcela" class="control-label"></label>
+                    <select id="filtroParcelas" asp-items="Html.GetEnumSelectList<SituacaoParcela>()" multiple="multiple"></select>
+                </div>
+                <div class="col-md-2">
+                    <label asp-for="PessoaId" class="control-label">Pessoa Referenciada</label>
+                    <select class="form-select" asp-for="PessoaId" asp-items="@Model.ComboPessoas"></select>
+                </div>
+                <div class="col-md-2">
+                    <br />
+                    <button type="submit" class="w-100 btn btn-primary"><i class="bi bi-funnel"></i> FILTRO</button>
+                </div>
+            </div>
+
+        </form>
+    </div>
+</div>
+
+<div class="mt-3">
+    <table class="table table-bordered table-striped table-hover small" id="tabelaGastos">
+        <thead>
+            <tr>
+                <th style="text-align:center">Tipo</th>
+                <th style="text-align:center">Data</th>
+                <th>Descrição</th>
+                <th style="text-align:right">Valor(R$)</th>
+                <th>Pessoa</th>
+                <th>Situação</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.Gastos)
+            {
+                <tr>
+                    <td style="text-align:center">
+                        @Html.DisplayFor(modelItem => item.ContaFatura)
+                    </td>
+                    <td style="text-align:center">
+                        @Html.Raw(item.Data.ToShortDateString())
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Descricao)
+                    </td>
+                    <td style="text-align:right">
+                        @Html.DisplayFor(modelItem => item.Valor)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Pessoa)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Situacao)
+                    </td>
+                </tr>
+            }
+        </tbody>
+        <tfoot>
+            <tr style="text-align: right">
+                <th>Total</th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+            </tr>
+        </tfoot>
+    </table>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#filtroParcelas').multiselect({
+                buttonClass: 'form-select',
+                templates: {
+                    button: '<button type="button" class="multiselect dropdown-toggle" id="filtroSituacao" data-bs-toggle="dropdown" aria-expanded="false"><span class="multiselect-selected-text"></span></button>',
+                },
+                buttonWidth: '100%',
+                allSelectedText: 'Todos',
+                nonSelectedText: 'Filtro Situação',
+                nSelectedText: 'selecionado(s)',
+                onChange: function (option, checked, select) {
+                    SituacoesSelecionadas();
+                }
+            });
+
+            $('#tabelaGastos').DataTable({
+                "language": {
+                    "url": "//cdn.datatables.net/plug-ins/1.11.5/i18n/pt-BR.json"
+                },
+                paging: false,
+                info: true,
+                searching: true,
+                responsive: true,
+                footerCallback: function (row, data, start, end, display) {
+                    var numFormat = $.fn.dataTable.render.number('\.', ',', 2).display;
+                    var api = this.api();
+
+                    valorTotal = api
+                        .column(3, { page: 'current' })
+                        .data()
+                        .reduce(function (a, b) {
+                            return parseFloat(a.toString().replace(",", ".")) + parseFloat(b.toString().replace(",", "."));
+                        }, 0);
+
+
+                    // Update footer
+                    $(api.column(3).footer()).html(numFormat(valorTotal));
+
+                },
+                dom: 'Bfrtip',
+                buttons: [
+                    'copy', 'csv', 'excel', 'pdf', 'print'
+                ]
+            });
+            HabilitarToolTip();
+        });
+
+        function ProximoMes() {
+
+            var data = $('#DataInicio').val();
+            var dataSel = new Date(data + " " + "00:00:00");
+
+            dataSel.setMonth(dataSel.getMonth() + 1);
+            var primeiroDia = new Date(dataSel.getFullYear(), dataSel.getMonth(), 1);
+            var ultimoDia = new Date(dataSel.getFullYear(), dataSel.getMonth() + 1, 0);
+
+            $('#DataInicio').val(primeiroDia.toJSON().substring(0, 10));
+            $('#DataFinal').val(ultimoDia.toJSON().substring(0, 10));
+
+
+        }
+        function MesAnterior() {
+            var data = $('#DataInicio').val();
+            var dataSel = new Date(data + " " + "00:00:00");
+
+            dataSel.setMonth(dataSel.getMonth() - 1);
+
+            var primeiroDia = new Date(dataSel.getFullYear(), dataSel.getMonth(), 1);
+            var ultimoDia = new Date(dataSel.getFullYear(), dataSel.getMonth() + 1, 0);
+
+            $('#DataInicio').val(primeiroDia.toJSON().substring(0, 10));
+            $('#DataFinal').val(ultimoDia.toJSON().substring(0, 10));
+        }
+
+        function SituacoesSelecionadas() {
+            var filtro = $("#filtroParcelas").val();
+            $('#SituacaoParcela').val(filtro);
+        }
+
+    </script>
+}
+
