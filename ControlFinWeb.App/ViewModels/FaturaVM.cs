@@ -97,7 +97,5 @@ namespace ControlFinWeb.App.ViewModels
                 return (FaturaItensVM != null) ? FaturaItensVM.Select(x => x.Valor).Sum() : 0;
             }
         }
-
-
     }
 }

@@ -153,6 +153,35 @@ namespace ControlFinWeb.App.Controllers
             return Json("Excluído com sucesso");
         }
 
+        public IActionResult Antecipar(Int64 id)
+        {
+            faturaItens = Repositorio.ObterPorId(id);
+            IList<FaturaItens> faturasItensFiltradas = new List<FaturaItens>();
+            IEnumerable<FaturaItens> faturasItens = Repositorio.ObterPorParametros(x => x.CodigoItemRelacionado == faturaItens.CodigoItemRelacionado && x.Fatura.MesAnoReferencia > faturaItens.Fatura.MesAnoReferencia);
+      
+            foreach (var item in faturasItens)
+            {
+                var fatura = RepositorioFatura.ObterPorId(item.Fatura.Id);
+                if (fatura != null && fatura.SituacaoFatura == Dominio.ObjetoValor.SituacaoFatura.Aberta)
+                    faturasItensFiltradas.Add(item);
+            }
+            List<FaturaItensVM> faturaItensVM = Mapper.Map<List<FaturaItensVM>>(faturasItensFiltradas);
+
+            ViewBag.Aviso = $"ATENÇÃO: Os itens selecionados acima serão adicionados na fatura: {faturaItens.Fatura._DescricaoCompleta}";
+            return View(faturaItensVM);
+        }
+
+        [HttpPost]
+        [IgnoreAntiforgeryToken]
+        public IActionResult Antecipar(List<Int64> ids, Int64 idFatura, Decimal desconto)
+        {
+            if (ids.Count == 0)
+                return Json(new { result = false, error = "Nenhum item selecionado!" });
+
+            Repositorio.Antecipar(ids, idFatura, desconto, Configuracao.Usuario);
+            return new EmptyResult();
+        }
+
         private void CompararAlteracoes()
         {
             var comparer = new ObjectsComparer.Comparer<FaturaItens>();

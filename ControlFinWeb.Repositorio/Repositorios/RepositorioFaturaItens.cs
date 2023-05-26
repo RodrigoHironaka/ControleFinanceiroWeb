@@ -1,5 +1,6 @@
 ﻿using ControlFinWeb.Dominio.Entidades;
 using ControlFinWeb.Dominio.ObjetoValor;
+using Google.Protobuf.WellKnownTypes;
 using NHibernate;
 using ObjectsComparer;
 using System;
@@ -104,14 +105,14 @@ namespace ControlFinWeb.Repositorio.Repositorios
                     #region Usado quando a parcela é paga usando credito de fatura
                     if (RegFluxo)
                     {
-                        RepositorioFluxoCaixa.GerarFluxoCaixa(parcela, usuario, caixa, 0,null, faturaItens.Valor);
+                        RepositorioFluxoCaixa.GerarFluxoCaixa(parcela, usuario, caixa, 0, null, faturaItens.Valor);
                         parcela.ValorPago = parcela.ValorAberto;
                         parcela.ValorAberto = 0;
                         parcela.DataPagamento = DateTime.Now;
                         parcela.SituacaoParcela = SituacaoParcela.Pago;
                         RepositorioParcela.AlterarLote(parcela);
 
-                        if(parcela.Fatura != null)
+                        if (parcela.Fatura != null)
                         {
                             if (parcela.Fatura.SituacaoFatura == SituacaoFatura.Aberta)
                             {
@@ -155,6 +156,15 @@ namespace ControlFinWeb.Repositorio.Repositorios
             }
         }
 
+        public void ExcluirItemFaturaEAlterarParcelaLote(Int64 Id, Usuario usuario)
+        {
+            var faturaItem = ObterPorId(Id);
+            faturaItem.Fatura.FaturaItens.Remove(faturaItem);
+            RepositorioParcela.AlterarParcelaFatura(faturaItem, true);
+            ExcluirLote(faturaItem);
+            RepositorioLog.RegistrarLog($"Item {faturaItem.Nome} da Fatura {faturaItem.Fatura._DescricaoCompleta} excluído", usuario, $"Fatura[{faturaItem.Fatura.Id}] - Item[{faturaItem.Id}]");
+        }
+
         public void SalvarOuAlterar(FaturaItens faturaItem, IEnumerable<Difference> diferencas, Usuario usuario)
         {
             if (faturaItem.Id > 0)
@@ -171,5 +181,65 @@ namespace ControlFinWeb.Repositorio.Repositorios
 
         }
 
+        public void Antecipar(List<Int64> ids, Int64 idFatura, Decimal desconto, Usuario usuario)
+        {
+            using (var trans = Session.BeginTransaction())
+            {
+                try
+                {
+                    var cloneFaturaItem = new FaturaItens();
+                    var faturaPrincipal = RepositorioFatura.ObterPorId(idFatura);
+                    var existeParcela = RepositorioParcela.ObterPorParametros(x => x.Fatura.Id.Equals(faturaPrincipal.Id)).FirstOrDefault();
+                    foreach (var id in ids)
+                    {
+                        var faturaItem = ObterPorId(id);
+                        cloneFaturaItem = (FaturaItens)faturaItem.Clone();
+                        ExcluirItemFaturaEAlterarParcelaLote(faturaItem.Id, usuario);
+
+                        cloneFaturaItem.Id = 0;
+                        cloneFaturaItem.Fatura = faturaPrincipal;
+                        cloneFaturaItem.Nome = $"Antecipado - {faturaItem.Nome}";
+                        
+                        existeParcela.ValorParcela += cloneFaturaItem.Valor;
+                        existeParcela.ValorReajustado = existeParcela.CalculaValorReajustado();
+                        existeParcela.ValorAberto = existeParcela.CalculaValorAberto();
+                        SalvarLote(cloneFaturaItem);
+                    }
+
+                    if (desconto > 0)
+                    {
+                        var novoItemFatura = new FaturaItens
+                        {
+                            QuantidadeRelacionado = "1/1",
+                            Nome = $"Desconto - {cloneFaturaItem.Nome}",
+                            Valor = desconto * -1,
+                            DataCompra = DateTime.Now,
+                            DataGeracao = DateTime.Now,
+                            Fatura = faturaPrincipal,
+                            SubGasto = cloneFaturaItem.SubGasto,
+                            Pessoa = cloneFaturaItem.Pessoa,
+                            UsuarioCriacao = usuario,
+                        };
+                        SalvarLote(novoItemFatura);
+                        novoItemFatura.CodigoItemRelacionado = $"{faturaPrincipal.Id}{novoItemFatura.Id}";
+                        AlterarLote(novoItemFatura);
+                       
+                        existeParcela.ValorParcela += novoItemFatura.Valor;
+                        existeParcela.ValorReajustado = existeParcela.CalculaValorReajustado();
+                        existeParcela.ValorAberto = existeParcela.CalculaValorAberto();
+                    }
+
+                    RepositorioParcela.AlterarLote(existeParcela);
+
+                    trans.Commit();
+                }
+                catch (Exception ex)
+                {
+                    trans.Rollback();
+                    throw new Exception(ex.ToString());
+                }
+            }
+
+        }
     }
 }

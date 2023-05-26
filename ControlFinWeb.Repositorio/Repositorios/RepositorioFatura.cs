@@ -49,7 +49,7 @@ namespace ControlFinWeb.Repositorio.Repositorios
             SalvarLote(entidade);
 
             var diaVenc = RepositorioCartao.ObterPorId(entidade.Cartao.Id).DiaVencimento;
-            var dataVenc = new DateTime(entidade.MesAnoReferencia.Year, entidade.MesAnoReferencia.AddMonths(1).Month, diaVenc);
+            var dataVenc = new DateTime(entidade.MesAnoReferencia.Year, entidade.MesAnoReferencia.Month, diaVenc).AddMonths(1);
             RepositorioParcela.AdicionarNovaParcela(0, dataVenc, entidade.UsuarioCriacao, null, entidade);
         }
 

@@ -63,11 +63,13 @@
                         {
                             <button class="btn btn-sm btn-primary modal-trigger editar" data-id="@item.Id"><i class="bi bi-pencil-square"></i></button>
                             <button class="btn btn-sm btn-danger modal-trigger" onclick="ExibirModalExcluir(@item.Id)"><i class="bi bi-trash-fill"></i></button>
+                            <button type="button" class="btn btn-sm btn-warning antecipar" data-id="@item.Id" data-bs-toggle="tooltip" data-bs-title="Antecipar Parcelamento"><i class="bi bi-cash-stack"></i></button>
                         }
                         else
                         {
-                            <button class="btn btn-sm btn-primary modal-trigger " disabled><i class="bi bi-pencil-square"></i></button>
+                            <button class="btn btn-sm btn-primary modal-trigger" disabled><i class="bi bi-pencil-square"></i></button>
                             <button class="btn btn-sm btn-danger modal-trigger" disabled><i class="bi bi-trash-fill"></i></button>
+                            <button type="button" class="btn btn-sm btn-warning" disabled data-bs-toggle="tooltip" data-bs-title="Antecipar Parcelamento"><i class="bi bi-cash-stack"></i></button>
                         }
                     </td>
                 </tr>
@@ -112,6 +114,14 @@
                 var id = $(this).attr("data-id");
                 $("#modal").load("/FaturasItens/Editar?id=" + id, function () {
                     $(".tituloItem").html("ALTERANDO ITEM");
+                    $("#modal").modal("show");
+                })
+            });
+
+            $(document).on(TipoClick().toString(), ".antecipar", function () {
+                var id = $(this).attr("data-id");
+                $("#modal").load("/FaturasItens/Antecipar?id=" + id, function () {
+                    $("#ultimaFaturaId").val(@Model.Id);
                     $("#modal").modal("show");
                 })
             });
@@ -209,6 +219,7 @@
                     'copy', 'csv', 'excel', 'pdf', 'print'
                 ]
             });
+            HabilitarToolTip();
         });
 
     </script>

@@ -1,0 +1,119 @@
+﻿@model IEnumerable<ControlFinWeb.App.ViewModels.FaturaItensVM>
+
+@{
+    ViewData["Title"] = "Antecipar Itens";
+}
+
+<div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="text-black">Antecipar</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <input id="ultimaFaturaId" class='form-control' style="display: none" />
+            <div class="row">
+                <div class="col-md">
+                    <label id="Desconto" class="control-label">Desconto</label>
+                    <input id="DescontoAntecipacao" class="form-control" value="0,00" />
+                    <br/>
+                    <table class="table table-bordered table-striped table-hover table-responsive small">
+                        <thead>
+                            <tr style="text-align:center">
+                                <th><input class="form-check-input" id="checkAll" type="checkbox" onclick="CheckAll()"></th>
+                                <th>Número</th>
+                                <th>Valor</th>
+                                <th>Fatura</th>
+                            </tr>
+                        </thead>
+                        <tbody id=tBodyCampos>
+                            @foreach (var item in Model)
+                            {
+                                <tr style="text-align:center">
+                                    <td>
+                                        <input class='form-check-input check' id='check' type='checkbox' value="@item.Id" onclick='ClickCheckItem()'>
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.QuantidadeRelacionado)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Valor)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.FaturaVM.DescricaoCompletaSemReferencia)
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                    <label class="form-text fw-bold justify-content-center">@ViewBag.Aviso</label>
+                    <button class="w-100 btn btn-sm btn-success mt-3 confirmar">Confirmar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script>
+        $("#DescontoAntecipacao").maskMoney({ thousands: '', decimal: ',', allowZero: true });
+
+        $(function () {
+            $(".confirmar").click(function () {
+                var trs = $("tbody input:checked").closest("tr"); //pega no tr os elementos que estão checados
+                var ids = $.map(trs, function (tr) { return $(tr).find('.check').val(); });
+                var ultimaFaturaId = $("#ultimaFaturaId").val();
+                var desconto = $("#DescontoAntecipacao").val();
+                if (ids.length != "") {
+                    Swal.fire({
+                        title: 'Você tem certeza que deseja antecipar?',
+                        text: "ATENÇÃO: Esse processo não pode ser revertido!",
+                        icon: 'question',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Sim, pode confirmar!',
+                        cancelButtonText: 'Cancelar'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            $.ajax({
+                                method: "POST",
+                                url: "/FaturasItens/Antecipar",
+                                data: { ids: ids, idFatura: ultimaFaturaId, desconto: desconto },
+                                success: function (retorno) {
+                                    if (retorno.result == false) {
+                                        Swal.fire({
+                                            icon: 'error',
+                                            title: 'Oops...',
+                                            text: retorno.error,
+                                        })
+                                    } else {
+                                        location.reload();
+                                    }
+                                },
+                                error: function (retorno) {
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: 'Oops...',
+                                        text: 'Houve um erro com o status: ' + retorno.status + '. O log foi gerado, entre em contato com o suporte!',
+                                    })
+                                }
+                            });
+                        }
+                    })
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: 'Nenhum item selecionado!',
+                    })
+                }
+            })
+            
+        })   
+    </script>
+    }
+

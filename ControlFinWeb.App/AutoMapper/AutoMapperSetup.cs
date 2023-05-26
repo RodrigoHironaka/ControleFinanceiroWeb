@@ -202,6 +202,7 @@ namespace ControlFinWeb.App.AutoMapper
                     dest.SubGastoVM = AutoMapperConfig<SubGasto, SubGastoVM>.Mapear(src.SubGasto);
                     dest.PessoaVM = AutoMapperConfig<Pessoa, PessoaVM>.Mapear(src.Pessoa);
                     dest.FaturaVM = AutoMapperConfig<Fatura, FaturaVM>.Mapear(src.Fatura);
+                    dest.FaturaVM.PessoaVM = AutoMapperConfig<Pessoa, PessoaVM>.Mapear(src.Fatura.Pessoa);
                     dest.FaturaVM.CartaoVM = AutoMapperConfig<Cartao, CartaoVM>.Mapear(src.Fatura.Cartao);
 
                 });
